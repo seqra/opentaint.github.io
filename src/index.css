@@ -1,0 +1,305 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --font-sans: "JetBrains Mono", ui-monospace, monospace;
+    --font-mono: "JetBrains Mono", monospace;
+
+    --background: 215 14% 98%;
+    --foreground: 215 14% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 215 10% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 10% 10%;
+    --primary: 0 72% 46%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 10% 94%;
+    --secondary-foreground: 215 10% 10%;
+    --muted: 215 10% 94%;
+    --muted-foreground: 215 8% 42%;
+    --accent: 0 72% 46%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 12 80% 46%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 215 10% 88%;
+    --input: 215 10% 88%;
+    --ring: 0 72% 46%;
+
+    --brand: 0 72% 46%;
+    --border-strong: 215 8% 76%;
+    --code-bg: 220 14% 98%;
+    --code-header: 220 14% 96%;
+    --code-border: 220 14% 90%;
+    --code-text: #3f3f46;
+    --code-muted: #71717a;
+    --code-line-num: #a1a1aa;
+    --code-keyword: #7c3aed;
+    --code-fn: #0284c7;
+    --code-string: #dc2626;
+    --code-annotation: #d97706;
+    --code-yaml-key: #e11d48;
+    --code-taint-bg: 0 72% 46% / 0.1;
+    --code-taint-text: #dc2626;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    color-scheme: dark;
+    --background: 215 14% 4%;
+    --foreground: 215 6% 92%;
+    --card: 215 10% 7%;
+    --card-foreground: 215 6% 90%;
+    --popover: 215 10% 7%;
+    --popover-foreground: 215 6% 90%;
+    --primary: 0 72% 52%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 8% 11%;
+    --secondary-foreground: 215 6% 80%;
+    --muted: 215 8% 11%;
+    --muted-foreground: 215 6% 50%;
+    --accent: 0 72% 52%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 12 80% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 215 8% 15%;
+    --input: 215 8% 15%;
+    --ring: 0 72% 52%;
+
+    --brand: 0 72% 52%;
+    --border-strong: 215 6% 20%;
+    --code-bg: 220 16% 10%;
+    --code-header: 220 14% 8%;
+    --code-border: 0 0% 15%;
+    --code-text: #d4d4d8;
+    --code-muted: #71717a;
+    --code-line-num: #52525b;
+    --code-keyword: #c4b5fd;
+    --code-fn: #7dd3fc;
+    --code-string: #f87171;
+    --code-annotation: #f7b955;
+    --code-yaml-key: #fda4af;
+    --code-taint-bg: 0 72% 50% / 0.15;
+    --code-taint-text: #fca5a5;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    min-width: 320px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: hsl(var(--brand) / 0.22);
+    color: hsl(var(--foreground));
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-sans;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+
+  code,
+  pre,
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  a,
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer components {
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded border px-3 py-1.5 text-[0.65rem] font-mono font-medium uppercase tracking-[0.2em] lg:text-[0.7rem] lg:px-3.5 lg:py-2;
+    border-color: hsl(var(--border-strong));
+    background-color: hsl(var(--card));
+    color: hsl(var(--brand));
+  }
+
+  .section-heading {
+    @apply text-2xl font-semibold sm:text-3xl md:text-4xl lg:text-[2.5rem];
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+  }
+
+  .theme-button {
+    @apply inline-flex h-11 w-11 items-center justify-center rounded border transition-colors;
+    border-color: hsl(var(--border));
+    background-color: hsl(var(--card));
+    color: hsl(var(--foreground));
+  }
+
+  .theme-button:hover {
+    border-color: hsl(var(--border-strong));
+    background-color: hsl(var(--secondary));
+  }
+
+  .theme-icon-sun,
+  .theme-icon-moon {
+    @apply h-5 w-5;
+  }
+
+  .dark .theme-icon-sun,
+  :root:not(.dark) .theme-icon-moon {
+    display: none;
+  }
+
+  .page-container {
+    @apply mx-auto px-4 sm:px-6;
+    max-width: 75rem;
+    min-height: 100vh;
+  }
+
+  .page-section {
+    position: relative;
+    /* Fluid padding: scales smoothly from small to large viewports */
+    /* Horizontal: 1.5rem at 320px → 6rem at 1400px+ */
+    /* Vertical:   1.75rem at 320px → 3.5rem at 1400px+ */
+    padding: clamp(1.75rem, 1rem + 1.5vw, 3.5rem) clamp(1.5rem, 0.5rem + 2vw, 3rem);
+    margin-top: clamp(1rem, 0.5rem + 1vw, 2rem);
+  }
+
+  .page-section {
+    border-top: 1px solid hsl(var(--brand));
+  }
+
+  .page-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 16px;
+    background: hsl(var(--brand));
+  }
+
+  .page-section::after {
+    content: "";
+    position: absolute;
+    top: -16px;
+    right: 0;
+    width: 1px;
+    height: 16px;
+    background: hsl(var(--brand));
+  }
+
+  .page-section:first-child {
+    border-top: none;
+    margin-top: 0;
+  }
+
+  .page-section:first-child::before,
+  .page-section:first-child::after {
+    display: none;
+  }
+
+  .section-title {
+    @apply font-mono text-base font-bold tracking-tight text-foreground lg:text-[17px];
+  }
+
+  .section-subtitle {
+    @apply mt-3 font-mono leading-[200%] text-muted-foreground lg:mt-4;
+    font-size: 15px;
+  }
+
+  @media (min-width: 1024px) {
+    .section-subtitle {
+      font-size: 1rem;
+    }
+  }
+
+  .feature-bullet {
+    @apply font-mono text-muted-foreground select-none;
+    font-size: 15px;
+  }
+
+  .feature-title {
+    @apply font-mono font-medium text-foreground;
+    font-size: 15px;
+    margin-right: 0.75rem;
+  }
+
+  @media (min-width: 1024px) {
+    .feature-bullet {
+      font-size: 1rem;
+    }
+
+    .feature-title {
+      font-size: 1rem;
+    }
+  }
+
+  .cta-pill {
+    @apply inline-flex items-center gap-2 rounded px-5 font-mono font-medium transition-colors lg:px-6;
+    font-size: 13px;
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+    background-color: hsl(var(--foreground));
+    color: hsl(var(--background));
+  }
+
+  .cta-pill:hover {
+    background-color: hsl(var(--foreground) / 0.85);
+  }
+
+  @media (min-width: 1024px) {
+    .cta-pill {
+      font-size: 14px;
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--brand) / 0.25) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(var(--brand) / 0.25);
+    border-radius: 999px;
+  }
+
+  .text-gradient-brand {
+    background-image: linear-gradient(
+      135deg,
+      hsl(var(--brand)),
+      hsl(var(--foreground))
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}

@@ -1,0 +1,51 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import SiteHeader from "@/components/astro/SiteHeader.astro";
+import LandingFooter from "@/components/astro/LandingFooter.astro";
+import { AnimatedHero } from "@/components/AnimatedHero";
+import WhatIsOpenTaint from "@/components/astro/WhatIsOpenTaint.astro";
+import SupportedTechnology from "@/components/astro/SupportedTechnology.astro";
+import FAQ from "@/components/astro/FAQ.astro";
+import { defaultKeywords, siteConfig } from "@/lib/site";
+
+const structuredData = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: siteConfig.title,
+    url: siteConfig.url,
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: siteConfig.author,
+    url: siteConfig.url,
+    logo: `${siteConfig.url}/pictures/logo.svg`,
+  },
+];
+---
+
+<BaseLayout
+  title="OpenTaint | The open source taint analysis engine for the AI era"
+  description="The open source taint analysis engine for the AI era. Enterprise-grade dataflow analysis with code-native rules — no paywall, no pattern-matching compromises."
+  keywords={defaultKeywords}
+  structuredData={structuredData}
+>
+  <div class="min-h-screen bg-background flex flex-col">
+    <SiteHeader />
+    <main class="flex-1 pt-16">
+      <div class="page-container">
+        <section class="page-section !pt-8 !pb-7 sm:!pt-16 sm:!pb-11 lg:!pt-20 lg:!pb-14">
+          <AnimatedHero client:load />
+        </section>
+
+        <WhatIsOpenTaint />
+
+        <SupportedTechnology />
+        <FAQ />
+
+        <LandingFooter />
+      </div>
+    </main>
+  </div>
+</BaseLayout>

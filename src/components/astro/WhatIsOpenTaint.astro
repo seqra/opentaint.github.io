@@ -1,0 +1,55 @@
+---
+const features = [
+  {
+    title: "AI agent-ready.",
+    description:
+      "Agents operate the rules, the CLI, the output. Scan code, triage findings, fix vulnerabilities, refine rules.",
+  },
+  {
+    title: "Cutting-edge dataflow analysis.",
+    description:
+      "Inter-procedural taint tracking across endpoints, persistence layers, aliases, and async code.",
+  },
+  {
+    title: "Enterprise-grade, finds real trophies.",
+    description:
+      "Powerful, precise, and performant at scale. Catches exploitable vulnerabilities.",
+  },
+  {
+    title: "Rules that read like code.",
+    description:
+      "Write and refine taint rules the same way you write application code — or let your AI agent do it.",
+  },
+  {
+    title: "Open source, batteries included.",
+    description:
+      "Engine, CLI, GitHub Action, GitLab CI, rules. Apache 2.0 and MIT licensed.",
+  },
+];
+---
+
+<section class="page-section" aria-labelledby="what-heading">
+  <h2 id="what-heading" class="section-title">Why OpenTaint</h2>
+  <p class="section-subtitle">
+    AI-generated code is scaling codebases fast. Pattern matchers produce too many false positives. Enterprise taint analyzers that work are paywalled. AI agents in a security role give no formal guarantees. OpenTaint does real inter-procedural taint analysis — tracks untrusted data from HTTP inputs to dangerous APIs across endpoints, persistence layers, and framework boundaries.
+  </p>
+
+  <ul class="mt-8 space-y-3 lg:mt-10 lg:space-y-4">
+    {features.map((feature) => (
+      <li class="flex gap-3 font-mono text-[15px] leading-[200%] lg:text-base lg:gap-4">
+        <span class="mt-[0.65em] h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true"></span>
+        <div>
+          <strong class="feature-title">{feature.title}</strong>
+          <span class="text-muted-foreground">{feature.description}</span>
+        </div>
+      </li>
+    ))}
+  </ul>
+
+  <div class="mt-8 lg:mt-10">
+    <a href="/blog" class="cta-pill">
+      <span>Read blog</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </a>
+  </div>
+</section>

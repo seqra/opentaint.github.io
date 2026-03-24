@@ -1,0 +1,254 @@
+---
+import type { Post } from "@/lib/content";
+
+type TocItem = {
+  id: string;
+  label: string;
+  level: 2 | 3;
+};
+
+type Props = {
+  post: Post;
+  headings?: { depth: number; slug: string; text: string }[];
+};
+
+const { post, headings = [] } = Astro.props;
+
+const toc: TocItem[] = headings
+  .filter((h) => h.depth === 2 || h.depth === 3)
+  .map((h) => ({
+    id: h.slug,
+    label: h.text,
+    level: h.depth as 2 | 3,
+  }));
+
+const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+});
+---
+
+{toc.length > 0 && (
+  <div class="fixed inset-x-0 top-14 z-30 border-b border-border bg-background/95 backdrop-blur-md xl:hidden" data-mobile-toc>
+    <div class="mx-auto max-w-[75rem]" style="padding-left: clamp(1.5rem, 0.5rem + 2vw, 3rem); padding-right: clamp(1.5rem, 0.5rem + 2vw, 3rem);">
+      <details>
+        <summary class="flex cursor-pointer list-none items-center gap-2 py-3 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground [&::-webkit-details-marker]:hidden">
+          <span class="shrink-0">On this page</span>
+          <span class="truncate text-foreground/70 normal-case tracking-normal" data-toc-current></span>
+          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-auto h-3 w-3 shrink-0 transition-transform duration-200 [[open]>&]:rotate-90"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </summary>
+        <nav class="max-h-[calc(85vh-8rem)] overflow-y-auto pb-3">
+          {toc.map((item) => (
+            <a
+              href={`#${item.id}`}
+              data-toc-link={item.id}
+              class:list={[
+                "block py-1.5 font-mono text-xs text-muted-foreground transition-colors hover:text-primary",
+                item.level === 3 && "pl-3",
+              ]}
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+      </details>
+    </div>
+  </div>
+)}
+
+<article>
+  <section class="page-section">
+    <div class="mb-4">
+      <a
+        href="/blog"
+        class="inline-flex items-center gap-1.5 font-mono text-xs text-muted-foreground transition-colors hover:text-primary lg:text-[13px]"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" x2="5" y1="12" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back to blog
+      </a>
+    </div>
+
+    <h1 class="mt-4 max-w-3xl break-words font-mono text-2xl font-semibold tracking-[-0.03em] text-foreground sm:text-3xl md:text-4xl lg:text-[2.5rem]">
+      {post.title}
+    </h1>
+
+    <p class="section-subtitle max-w-2xl break-words">
+      {post.description}
+    </p>
+
+    <div class="mt-4 flex flex-wrap items-center gap-3 font-mono text-[10px] text-muted-foreground sm:text-xs lg:text-[13px] lg:mt-5">
+      <span>{formattedDate}</span>
+      {post.readTime && (
+        <span class="text-muted-foreground/50">·</span>
+      )}
+      {post.readTime && <span>{post.readTime}</span>}
+    </div>
+
+    {post.tags.length > 0 && (
+      <div class="mt-3 flex flex-wrap gap-1.5">
+        {post.tags.map((tag) => (
+          <span class="rounded border border-border bg-card px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground lg:text-[11px] lg:px-2.5 lg:py-1">
+            {tag}
+          </span>
+        ))}
+      </div>
+    )}
+  </section>
+
+  <section class="page-section">
+    <div class="blog-prose max-w-none break-words font-mono text-[15px] leading-[190%] text-foreground/85 lg:text-base">
+      <slot />
+    </div>
+  </section>
+</article>
+
+<style is:global>
+  .blog-prose h2 {
+    @apply mt-8 mb-3 scroll-mt-32 font-mono text-xl font-semibold tracking-[-0.02em] text-foreground sm:text-2xl lg:text-[1.625rem] lg:mt-10 lg:mb-4;
+  }
+  .blog-prose h3 {
+    @apply mt-6 mb-2.5 scroll-mt-32 font-mono text-lg font-semibold tracking-[-0.02em] text-foreground lg:text-xl lg:mt-8 lg:mb-3;
+  }
+  .blog-prose .expressive-code {
+    @apply mb-5;
+  }
+  .blog-prose code:not(pre code) {
+    @apply rounded px-1.5 py-0.5 text-xs font-mono;
+    border: 1px solid hsl(var(--code-border));
+    background: hsl(var(--code-bg));
+  }
+  .blog-prose blockquote {
+    @apply my-5 border-l-2 border-border pl-4 text-muted-foreground;
+  }
+  .blog-prose table {
+    @apply w-full min-w-[50rem] border-collapse text-sm mb-5;
+  }
+  .blog-prose thead {
+    @apply border-b border-border;
+  }
+  .blog-prose th {
+    @apply px-3 py-2 text-left font-mono text-[10px] font-medium uppercase tracking-[0.1em] text-muted-foreground;
+  }
+  .blog-prose td {
+    @apply px-3 py-2 align-top text-sm;
+  }
+  .blog-prose tr {
+    @apply border-b border-border/40 transition-colors hover:bg-card;
+  }
+  .blog-prose td:first-child {
+    @apply font-medium text-foreground;
+  }
+  .blog-prose td:not(:first-child) {
+    white-space: nowrap;
+  }
+  .blog-prose .table-wrapper {
+    @apply relative overflow-x-auto rounded-lg border border-border mb-5;
+  }
+  .blog-prose a {
+    @apply text-primary underline transition-colors hover:text-foreground;
+  }
+  .blog-prose ul {
+    @apply mb-4 ml-5 list-disc space-y-1;
+  }
+  .blog-prose ol {
+    @apply mb-4 ml-5 list-decimal space-y-1;
+  }
+  .blog-prose p {
+    @apply mb-4 leading-[190%];
+  }
+  .blog-prose strong {
+    @apply text-foreground;
+  }
+  .blog-prose li {
+    @apply break-words;
+  }
+  .blog-prose hr {
+    @apply my-8 border-border;
+  }
+  [data-toc-link][aria-current="true"] {
+    color: hsl(var(--foreground));
+  }
+  /* Mobile scroll indicators for tables */
+  .table-wrapper {
+    position: relative;
+    overflow-x: auto;
+  }
+  .table-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 3rem;
+    background: linear-gradient(to right, transparent, hsl(var(--background)));
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.2s;
+  }
+  .table-wrapper.scrolled-end::after {
+    opacity: 0;
+  }
+  .scroll-hint {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.3rem;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.6rem;
+    color: hsl(var(--muted-foreground));
+    opacity: 0.7;
+    pointer-events: none;
+    z-index: 2;
+    white-space: nowrap;
+  }
+  .table-wrapper.scrolled-end .scroll-hint {
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+</style>
+
+<script>
+  document.querySelectorAll(".blog-prose table").forEach((table) => {
+    if (!table.parentElement?.classList.contains("table-wrapper")) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "table-wrapper";
+      table.parentNode?.insertBefore(wrapper, table);
+      wrapper.appendChild(table);
+    }
+  });
+
+  // Mobile scroll indicators for tables
+  function setupScrollIndicators(container: Element, scrollable: Element | null) {
+    const el = (scrollable || container) as HTMLElement;
+
+    function update() {
+      if (el.scrollWidth > el.clientWidth + 2) {
+        if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 2) {
+          container.classList.add('scrolled-end');
+        } else {
+          container.classList.remove('scrolled-end');
+        }
+      } else {
+        container.classList.add('scrolled-end');
+      }
+    }
+
+    update();
+    el.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+  }
+
+  // Wire up tables + inject scroll hint
+  document.querySelectorAll('.table-wrapper').forEach((wrapper) => {
+    const table = wrapper.querySelector('table') as HTMLElement | null;
+
+    if (!wrapper.querySelector('.scroll-hint')) {
+      const hint = document.createElement('span');
+      hint.className = 'scroll-hint';
+      hint.textContent = 'scroll →';
+      wrapper.appendChild(hint);
+    }
+
+    setupScrollIndicators(wrapper, null);
+  });
+</script>

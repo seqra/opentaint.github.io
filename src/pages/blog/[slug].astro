@@ -1,0 +1,106 @@
+---
+import { render } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import SiteHeader from "@/components/astro/SiteHeader.astro";
+import LandingFooter from "@/components/astro/LandingFooter.astro";
+import BlogPostView from "@/components/astro/BlogPostView.astro";
+import { getPosts } from "@/lib/content";
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+
+let Content: any = null;
+let headings: { depth: number; slug: string; text: string }[] = [];
+
+if (post.entry) {
+  const rendered = await render(post.entry);
+  Content = rendered.Content;
+  headings = rendered.headings;
+}
+
+const toc = headings
+  .filter((h) => h.depth === 2 || h.depth === 3)
+  .map((h) => ({
+    id: h.slug,
+    label: h.text,
+    level: h.depth as 2 | 3,
+  }));
+---
+
+<BaseLayout title={post.title} description={post.description} canonical={post.canonicalUrl}>
+  <div class="min-h-screen bg-background flex flex-col">
+    <SiteHeader />
+    <main class="flex-1 pt-16">
+      <div class="page-container min-w-0">
+        <div class="xl:grid xl:grid-cols-[1fr_14rem] xl:gap-x-8">
+          <div class="min-w-0">
+            <BlogPostView post={post} headings={headings}>
+              {Content ? <Content /> : <Fragment set:html={post.body} />}
+            </BlogPostView>
+            <LandingFooter />
+          </div>
+
+          {toc.length > 0 && (
+            <aside class="hidden xl:block min-w-0">
+              <div class="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto scrollbar-thin py-8">
+                <div class="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                  On this page
+                </div>
+                <nav class="mt-3 space-y-0.5">
+                  {toc.map((item) => (
+                    <a
+                      href={`#${item.id}`}
+                      data-toc-link={item.id}
+                      class:list={[
+                        "block py-1.5 font-mono text-xs text-muted-foreground transition-colors hover:text-primary",
+                        item.level === 3 && "pl-3",
+                      ]}
+                    >
+                      {item.label}
+                    </a>
+                  ))}
+                </nav>
+              </div>
+            </aside>
+          )}
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const headings = document.querySelectorAll(".blog-prose h2, .blog-prose h3");
+    const tocLinks = document.querySelectorAll("[data-toc-link]");
+    const currentDisplay = document.querySelector("[data-toc-current]");
+
+    if (headings.length > 0 && tocLinks.length > 0) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              const id = entry.target.id;
+              tocLinks.forEach((link) => {
+                const isActive = link.getAttribute("data-toc-link") === id;
+                link.setAttribute("aria-current", String(isActive));
+              });
+              if (currentDisplay) {
+                currentDisplay.textContent = entry.target.textContent || "";
+              }
+            }
+          }
+        },
+        { rootMargin: "0px 0px -80% 0px", threshold: 0 },
+      );
+
+      headings.forEach((h) => observer.observe(h));
+    }
+  </script>
+</BaseLayout>

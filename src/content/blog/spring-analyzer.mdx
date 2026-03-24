@@ -1,0 +1,395 @@
+---
+title: "Static Data Tracing Through Spring and Cross-Endpoint Flow"
+description: "OpenTaint's Spring-aware dataflow analysis — cross-endpoint detection, column-sensitive tracking, and modular security rules. Scannable code examples from the seqra-java-spring-demo."
+date: "2026-03-24"
+readTime: "12 min read"
+tags: ["Security", "Static Analysis", "Java", "Spring", "SAST", "OWASP"]
+---
+
+import Mermaid from "@/components/astro/Mermaid.astro";
+
+Spring Boot powers the majority of Java web applications in production today. Its annotation-driven architecture — `@Autowired`, `@Service`, `@RequestBody`, JPA persistence — makes development fast, but it also creates implicit data flows that cross class boundaries in ways no call graph can capture. When a `POST` endpoint persists user input through JPA and a separate `GET` endpoint renders it as HTML, you have a stored XSS vulnerability. Most SAST tools do not model these cross-endpoint persistence flows.
+
+One Spring Boot project was scanned with five SAST tools on the same commit: OpenTaint, CodeQL, Semgrep OSS, Semgrep PRO, and Snyk. In this setup, only OpenTaint detected the cross-endpoint stored XSS flows (both JPA-backed and service-field-backed). Within those detected flows, OpenTaint also tracked data per column so sanitized fields were not over-reported.
+
+## Key Results
+
+- **Thymeleaf and Freemarker SSTI with resolver awareness** — OpenTaint and CodeQL detect; OpenTaint suppresses the hardened `ALLOWS_NOTHING_RESOLVER` path
+- **Cross-endpoint stored XSS with column-sensitive tracking** — Detected only by OpenTaint in this benchmark; sanitized columns were suppressed within the detected flows
+- **Spring-specific trace context** — OpenTaint output includes endpoint-level context for where untrusted data enters and where dangerous APIs are reached
+
+## Spring Data Flow Analysis
+
+In a typical Spring controller, `@RequestBody` deserializes JSON into DTOs, `@Autowired` wires service dependencies, and user input traverses multiple class boundaries before it reaches dangerous APIs like template engines or file operations. These transitions are mostly framework-driven. OpenTaint models how data flows from untrusted data to dangerous APIs explicitly.
+
+OpenTaint analyzes compiled bytecode rather than plain code text. That requires a successful build before scanning, but gives precise resolution of inheritance, generics, and library calls. This matters in Spring, where runtime behavior depends on bean wiring, annotation metadata, proxies, and framework conventions that AST-only matching often treats as opaque.
+
+### From Controller to Vulnerability
+
+Consider a campaign management endpoint that lets users preview custom templates. The controller receives a JSON request body and delegates to an injected service:
+
+```java
+// CampaignController.java
+@RestController
+@RequestMapping("/api/campaigns")
+public class CampaignController {
+
+    private final TemplateRenderingService templateService;
+    ...
+
+    @PostMapping("/render")
+    public ResponseEntity<String> renderTemplate(@RequestBody RenderRequest request) {
+        String result = templateService.renderFromRequest(request);
+        return ResponseEntity.ok(result);
+    }
+}
+```
+
+The service extracts user-controlled content from the DTO and passes it to a Thymeleaf template engine:
+
+```java
+// TemplateRenderingService.java
+@Service
+public class TemplateRenderingService {
+
+    private final TemplateEngine templateEngine;
+    ...
+
+    public String renderFromRequest(RenderRequest request) {
+        String content = request.getTemplateContent();
+        return renderFromContent(content);
+    }
+
+    public String renderFromContent(String templateContent) {
+        Context context = new Context();
+        return templateEngine.process(templateContent, context); // user input processed as template code
+    }
+}
+```
+
+OpenTaint traces the complete path: `@RequestBody RenderRequest` → `renderFromRequest()` → `request.getTemplateContent()` → `renderFromContent()` → `templateEngine.process()`. The data crosses class boundaries, passes through DTO field access, and flows through an `@Autowired` service — all tracked as a single inter-procedural data flow.
+
+### Template Resolver Tracking
+
+The Thymeleaf SSTI above is straightforward — any user input reaching `templateEngine.process()` is dangerous. But not every template engine call is equally risky. For Freemarker, it depends on how the resolver is configured. OpenTaint resolves `@Autowired` bean constructors and tracks configuration state, distinguishing secure from insecure setups.
+
+Consider a controller that passes user-controlled template content to two different Freemarker services:
+
+```java
+// CampaignController.java
+@PostMapping("/marketing/preview")
+public ResponseEntity<String> previewMarketing(@RequestBody RenderRequest request) {
+    String result = marketingService.render(
+        request.getTemplateName(),
+        request.getTemplateContent()   // template body — the dangerous parameter
+    );
+    return ResponseEntity.ok(result);
+}
+```
+
+Both services call `template.process()` with user input. The difference is in their constructors:
+
+```java
+// MarketingTemplateService.java — vulnerable configuration
+this.templateConfig.setNewBuiltinClassResolver(TemplateClassResolver.UNRESTRICTED_RESOLVER);
+this.templateConfig.setAPIBuiltinEnabled(true);
+```
+
+```java
+// NotificationTemplateService.java — secure configuration
+this.templateConfig.setNewBuiltinClassResolver(TemplateClassResolver.ALLOWS_NOTHING_RESOLVER);
+this.templateConfig.setAPIBuiltinEnabled(false);
+```
+
+OpenTaint flags the marketing service (SSTI — unrestricted class loading allows remote code execution) and suppresses the notification service (`ALLOWS_NOTHING_RESOLVER` prevents class instantiation, so the template content is safe). A generic analyzer that doesn't track Freemarker configuration state would either flag both (false positive) or miss both.
+
+Real applications often mix secure and insecure template configurations within the same codebase.
+
+These single-request flows are well-studied. But Spring applications also create data flows that span multiple HTTP endpoints — through the database.
+
+## Cross-Endpoint Analysis
+
+Stored injection vulnerabilities span multiple endpoints. An attacker submits a payload through one endpoint, it gets stored — in a database or in service state — and a different endpoint later reads and renders it, triggering the vulnerability in a victim's browser. No direct code path connects the two endpoints. Detecting this requires tracking data flow across storage boundaries — whether that's JPA persistence or an `@Service` field.
+
+### Tracking Data Through the Database
+
+The demo project's messaging feature demonstrates this pattern. A POST endpoint accepts user content and stores it via JPA:
+
+<Mermaid chart={`sequenceDiagram
+    actor Attacker
+    participant POST as POST /api/messages
+    participant DB as Database
+    participant GET as GET .../{id}/content
+    actor Victim
+
+    Attacker->>POST: malicious payload
+    activate POST
+    POST->>DB: messageRepository.save()
+    deactivate POST
+
+    Note over DB: content stored as raw HTML
+
+    Victim->>GET: GET /api/messages/42/content
+    activate GET
+    GET->>DB: messageRepository.findById(42)
+    DB-->>GET: Message entity
+    GET-->>Victim: text/html — stored XSS
+    deactivate GET`} />
+
+*Stored XSS attack flow: a malicious payload is persisted via POST and later served to a victim via GET.*
+
+```java
+// MessageController.java
+@PostMapping
+public ResponseEntity<Long> createMessage(@RequestBody CreateMessageRequest request) {
+    Message message = messageService.createMessage(
+            request.getTitle(),
+            request.getContent(),
+            request.getAuthor()
+    );
+    return ResponseEntity.ok(message.getId());
+}
+```
+
+The service creates a JPA entity and persists it:
+
+```java
+// MessageService.java
+public Message createMessage(String title, String content, String author) {
+    this.lastContent = content;
+    Message message = new Message(title, content, author);
+    return messageRepository.save(message);
+}
+```
+
+A separate GET endpoint retrieves that content and returns it as HTML:
+
+```java
+// MessageController.java
+@GetMapping("/{id}/content")
+public ResponseEntity<String> getMessageContent(@PathVariable Long id) {
+    ...
+    String content = messageService.getMessageContent(message);
+    return ResponseEntity.ok()
+            .contentType(MediaType.TEXT_HTML)
+            .body(content);
+}
+```
+
+OpenTaint traces the full flow across both endpoints. The two share no direct method call — the database is the only link — yet OpenTaint detects the stored XSS.
+
+How this works: OpenTaint models JPA repository operations as database read/write boundaries. When an entity is persisted via `repository.save()`, the state of each field is recorded against that entity type. When a different endpoint retrieves via `repository.findById()`, OpenTaint looks up the stored state by entity type and propagates it per-column to the retrieved entity's fields. No actual database connection is needed — this is a static approximation of persistence-layer data flow.
+
+### Stored XSS Through Service Field State
+
+The database isn't the only storage boundary. The same `createMessage` method also stores the raw content in a service field:
+
+```java
+// MessageService.java
+@Service
+public class MessageService {
+
+    private String lastContent;
+    ...
+
+    public Message createMessage(String title, String content, String author) {
+        this.lastContent = content;
+        ...
+    }
+
+    public String getLastContent() {
+        return lastContent;
+    }
+}
+```
+
+A separate endpoint returns that field as HTML:
+
+```java
+// MessageController.java
+@GetMapping("/last-content")
+public ResponseEntity<String> getLastContent() {
+    String content = messageService.getLastContent();
+    ...
+    return ResponseEntity.ok()
+            .contentType(MediaType.TEXT_HTML)
+            .body(content);
+}
+```
+
+OpenTaint traces the data from `createMessage`'s `content` parameter through the `lastContent` field assignment and back out via `getLastContent()` — a cross-endpoint stored XSS that doesn't touch the database at all. The storage medium is an `@Service` bean's instance field, and the two endpoints share no direct call path.
+
+### Column Sensitivity
+
+Tracking data through persistence isn't useful if every column of an entity is treated as equally dangerous. The `Message` entity stores three user-controlled fields, but they aren't all equal:
+
+<Mermaid chart={`flowchart LR
+    POST("POST /api/messages") --> title("title")
+    POST --> content("content")
+    POST --> author("author")
+
+    title --> db_title[("raw")]
+    content --> db_content[("raw")]
+    author -->|"HtmlUtils.htmlEscape()"| db_author[("escaped")]
+
+    db_title --> get_title("GET .../title")
+    db_content --> get_content("GET .../content")
+    db_author --> get_author("GET .../author")
+
+    get_title --> xss1("XSS detected")
+    get_content --> xss2("XSS detected")
+    get_author --> safe("No finding")
+
+    style xss1 fill:#fee2e2,stroke:#ef4444,color:#991b1b
+    style xss2 fill:#fee2e2,stroke:#ef4444,color:#991b1b
+    style safe fill:#d1fae5,stroke:#10b981,color:#065f46
+    style db_title fill:#dbeafe,stroke:#3b82f6,color:#1e40af
+    style db_content fill:#dbeafe,stroke:#3b82f6,color:#1e40af
+    style db_author fill:#d1fae5,stroke:#10b981,color:#065f46`} />
+
+*Column-level tracking: sanitized fields (author) are distinguished from raw fields (title, content).*
+
+```java
+// Message.java
+public Message(String title, String content, String author) {
+    this.title = title;
+    this.content = content;
+    this.author = HtmlUtils.htmlEscape(author);  // sanitized before storage
+}
+```
+
+The `author` field is HTML-escaped before it reaches the database. The `title` and `content` fields are stored raw. OpenTaint tracks each column independently:
+
+- `GET /api/messages/{id}/content` → returns raw `content` → **XSS detected**
+- `GET /api/messages/{id}/title` → returns raw `title` → **XSS detected**
+- `GET /api/messages/{id}/author` → returns escaped `author` → **no finding**
+
+Entity-level tracking would either flag all three endpoints (false positives on `author`) or require suppressing the entire entity (missing real vulnerabilities on `content` and `title`). Column sensitivity gets it right.
+
+OpenTaint also recognizes sanitizers applied at read time. The `GET /api/messages/{id}/content/safe` endpoint passes content through `HtmlUtils.htmlEscape()` before returning it — OpenTaint sees the sanitizer and suppresses the finding for that path as well.
+
+### Endpoint Extraction in SARIF Output
+
+OpenTaint outputs results in standard [SARIF](https://sarifweb.azurewebsites.net/) format, compatible with GitHub Code Scanning and VS Code SARIF Viewer. Beyond the usual location and rule ID, each finding includes:
+
+- **`codeFlows`** — the full data trace from untrusted data through every propagation step to the dangerous API, ordered by execution. For the stored XSS above, this trace spans both endpoints: from `@RequestBody` in `createMessage` through `Message.<init>`, the database, `findById`, `getTitle()`, and finally the response body in `getMessageTitle`.
+- **`relatedLocations`** — the affected HTTP endpoints, automatically extracted from Spring annotations. For cross-endpoint findings, both the entry endpoint (`POST /api/messages`) and the dangerous-output endpoint (`GET /api/messages/{id}/title`) are included.
+
+Security teams can triage by API surface, link findings to API documentation, or feed the extracted endpoints directly into DAST tools for runtime verification.
+
+These analysis capabilities — dataflow, cross-endpoint detection, column sensitivity — are driven by a modular rule system.
+
+## Spring Security Rules
+
+OpenTaint ships with a comprehensive set of security rules organized in a modular architecture. Spring-specific untrusted-data and dangerous-API patterns are defined as reusable YAML library rules, composed into vulnerability detectors via `mode: join`. Adding support for a new Spring untrusted-data annotation automatically extends every connected rule — no need to update dozens of separate files.
+
+The Spring XSS rule illustrates this:
+
+```yaml
+# xss.yaml — Spring XSS detection
+mode: join
+join:
+  refs:
+    - rule: java/lib/spring/untrusted-data-source.yaml#spring-untrusted-data-source
+      as: untrusted-data
+    - rule: java/lib/spring/spring-xss-sinks.yaml#spring-xss-sink
+      as: dangerous-api
+  on:
+    - 'untrusted-data.$UNTRUSTED -> dangerous-api.$UNTRUSTED'
+```
+
+This rule composes two library rules: an untrusted-data library (models `@RequestBody`, `@RequestParam`, `@PathVariable`, Spring cookie handling — filters out safe types like `Integer`, `Boolean`, `BindingResult`) and a dangerous-API library (controller return values, `HttpServletResponse` writes — recognizes `HtmlUtils.htmlEscape()`, `JSoup.clean()`, `Encode.forHtml()` as sanitizers). Every other injection rule (SQLi, SSRF, SSTI, etc.) reuses the same untrusted-data library. The rule format is inspired by Semgrep, so simple pattern rules port directly.
+
+### OWASP Top 10 Coverage
+
+These four categories illustrate different detection styles:
+
+| Vulnerability | CWE | Spring-Specific Detection |
+|---|---|---|
+| XSS | CWE‑79 | Dataflow-based: tracks `@RequestBody`/`@RequestParam` through services to controller return values and `HttpServletResponse` writers; recognizes `HtmlUtils.htmlEscape()`, `JSoup.clean()`, OWASP `Encode.forHtml()` as sanitizers |
+| SQL Injection | CWE‑89 | Safe pattern recognition: detects string concatenation in `JdbcTemplate` queries, `EntityManager.createQuery()`, Hibernate `Session.createQuery()`; parameterized queries not flagged |
+| SSTI | CWE‑94 | Configuration sensitivity: Freemarker `Template.process()` with `UNRESTRICTED_RESOLVER` flagged; suppressed when `ALLOWS_NOTHING_RESOLVER` is configured (as shown in [Template Resolver Tracking](#template-resolver-tracking) above) |
+| SSRF | CWE‑918 | Breadth: tracks user input to `RestTemplate`, `WebClient`, `HttpURLConnection`, `OkHttp`; recognizes `URLEncoder.encode()` as sanitizer |
+
+Coverage extends to 20+ vulnerability classes including path traversal, XXE, command injection, SpEL injection, insecure deserialization, and more — see the [full rule index](https://github.com/seqra/opentaint/tree/main/rules) for the complete list.
+
+The dataflow analysis, cross-endpoint detection, and column sensitivity shown in this post all build on these shared rule libraries. Every capability ships out of the box — no custom rule authoring required.
+
+## How OpenTaint Compares
+
+The [demo project](https://github.com/seqra/seqra-java-spring-demo) was scanned with five SAST tools: OpenTaint, CodeQL, Semgrep OSS, Semgrep PRO, and Snyk. All tools ran on the same code, same commit, with each tool's default ruleset. SARIF outputs are included in the demo repository so you can inspect each finding directly.
+
+### Results
+
+| Capability | OpenTaint | CodeQL | Semgrep OSS | Semgrep PRO | Snyk |
+|---|---|---|---|---|---|
+| **DI-aware SSTI** | ✅ | ⚠️ | ❌ | ❌ | ❌ |
+| **Cross-endpoint stored XSS** | ✅ | ❌ | ❌ | ❌ | ❌ |
+
+### Legend
+
+- ✅ **Detected** — vulnerability found with accurate context
+- ⚠️ **Partial** — some findings detected, or includes over-reporting
+- ❌ **Missed** — not detected
+
+### Analysis
+
+- **DI-aware SSTI with resolver tracking**
+OpenTaint traces user-controlled template content through `@Autowired` services to Freemarker's `template.process()`, and resolves the `TemplateClassResolver` setting per bean. Both OpenTaint and CodeQL detect the SSTI, but CodeQL flags all three `template.process()` calls — including the `NotificationTemplateService` that uses `ALLOWS_NOTHING_RESOLVER` and disables API built-ins. OpenTaint correctly suppresses the hardened path, reporting only the two actually vulnerable services. Neither Semgrep nor Snyk detected these flows.
+
+- **Cross-endpoint stored XSS (with column sensitivity)**
+Three findings where a `POST` endpoint stores user input and separate `GET` endpoints return it as HTML. Two flow through JPA persistence (`repository.save()` → `repository.findById()`), and one flows through an `@Service` field (`this.lastContent = content` → `getLastContent()`). In both cases the storage boundary breaks the direct code path. Within the JPA-backed flows, OpenTaint tracks data per column: when `HtmlUtils.htmlEscape()` is applied to the `author` field before storage, OpenTaint suppresses findings on endpoints that return `author` while still flagging `title` and `content`. None of the other tools detected these cross-endpoint flows in this benchmark, so column-level precision was not directly evaluable for them.
+
+
+### Current Limitations
+
+No static analyzer is perfect. OpenTaint deliberately over-approximates in several areas to preserve coverage, which can increase false positives:
+
+Deliberate **false positives** can appear from:
+
+1. **Path insensitivity** — the analyzer does not track conditional branches, so it may report findings for paths guarded by validation logic. This is a common trade-off in static analysis: tracking all branches is expensive and path explosion makes the naive analysis impractical at scale. The practical mitigation is to use recognized sanitizer functions (which the rules understand) instead of conditional checks.
+2. **Configuration insensitivity** — the analyzer currently does not model Spring bean profiles or `@Conditional` annotations, so it resolves all potential bean instances on `@Autowired` and may produce findings from configurations that aren't actually active. This over-approximation ensures no injection is missed through an unexpected bean, but can be noisy in projects with many profiles.
+
+Both instances of insensitivity are planned to be fixed and are already on the roadmap.
+
+Other sources of inaccuracy:
+
+1. **Missing rules** — a source, sink, sanitizer, or propagator is not covered in the rules. Fixed by adding more rules.
+2. **Analyzer bugs** are possible.
+
+If you see an uncaught issue you expect to be detected or vice-versa, report it via [GitHub Issues](https://github.com/seqra/opentaint/issues) or [Discord](https://discord.gg/6BXDfbP4p9).
+
+## Conclusion
+
+Generic static analyzers treat Spring as plain Java. They don't model `@Autowired` service injection, they lose the data trail at JPA repository boundaries, and they can't distinguish a securely configured template engine from a vulnerable one. The result: they miss the vulnerabilities that matter most in Spring applications — stored XSS through the database, SSTI in misconfigured services, deep injection flows through DI chains — while flagging hardened code as vulnerable.
+
+OpenTaint is built to close these gaps. The scan results on the demo project show: cross-endpoint stored XSS that no other tool detected, column-sensitive suppression of sanitized fields within those flows, configuration-aware SSTI suppression that eliminates false positives, and deep DI-mediated flows that most tools can't follow.
+
+## Get Started
+
+Install OpenTaint:
+
+```bash
+curl -fsSL https://opentaint.org/install.sh | bash
+```
+
+Pre-built binaries and Docker images are also available — see the [installation docs](https://github.com/seqra/opentaint#installation) for all options.
+
+Scan your Spring project:
+
+```bash
+opentaint scan . --output opentaint.sarif
+```
+
+Or run the demo from this post:
+
+```bash
+git clone https://github.com/seqra/seqra-java-spring-demo
+opentaint scan --output opentaint.sarif seqra-java-spring-demo
+```
+
+OpenTaint integrates into CI/CD via [GitHub Actions](https://github.com/seqra/opentaint/github) and [GitLab CI](https://github.com/seqra/opentaint/gitlab) — see the setup guides for details. Results are output in standard SARIF format, compatible with GitHub Code Scanning and VS Code SARIF Viewer.
+
+Questions or feedback? Join the [Seqra Discord](https://discord.gg/6BXDfbP4p9).
+
+**Open source:** engine, rules, CI integrations. Apache 2.0 and MIT.

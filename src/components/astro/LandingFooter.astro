@@ -1,0 +1,54 @@
+---
+const links = [
+  { href: "https://github.com/seqra/opentaint", label: "GitHub", external: true },
+  { href: "https://discord.gg/6BXDfbP4p9", label: "Discord", external: true },
+  { href: "/blog", label: "Blog", external: false },
+  { href: "mailto:seqradev@gmail.com", label: "Contact", external: false },
+];
+---
+
+<footer class="mt-16 lg:mt-20">
+  <div class="footer-links grid grid-cols-2 sm:grid-cols-4">
+    {links.map((link) => (
+      <a
+        href={link.href}
+        target={link.external ? "_blank" : undefined}
+        rel={link.external ? "noopener noreferrer" : undefined}
+        class="flex items-center justify-center py-5 font-mono text-sm font-medium text-muted-foreground transition-colors hover:text-primary lg:py-6 lg:text-[15px]"
+      >
+        {link.label}
+      </a>
+    ))}
+  </div>
+
+  <div class="flex items-center justify-center py-6 lg:py-8">
+    <span class="font-mono text-xs text-muted-foreground lg:text-[13px]">&copy; 2026 Seqra Team</span>
+  </div>
+</footer>
+
+<style>
+  .footer-links {
+    position: relative;
+    border-top: 1px solid hsl(var(--brand));
+  }
+
+  .footer-links::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 16px;
+    background: hsl(var(--brand));
+  }
+
+  .footer-links::after {
+    content: "";
+    position: absolute;
+    top: -16px;
+    right: 0;
+    width: 1px;
+    height: 16px;
+    background: hsl(var(--brand));
+  }
+</style>

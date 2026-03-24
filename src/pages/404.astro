@@ -1,0 +1,21 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import SiteHeader from "@/components/astro/SiteHeader.astro";
+import LandingFooter from "@/components/astro/LandingFooter.astro";
+---
+
+<BaseLayout title="Page not found" description="The requested page could not be found." noIndex={true}>
+  <SiteHeader />
+  <main class="container mx-auto flex min-h-[60vh] items-center px-4 py-16 sm:px-6">
+    <section class="mx-auto max-w-2xl text-center">
+      <p class="font-mono text-xs uppercase tracking-[0.32em] text-primary">404</p>
+      <h1 class="mt-4 text-4xl font-bold sm:text-5xl lg:text-6xl">This route did not survive the migration.</h1>
+      <p class="mt-4 text-base leading-7 text-muted-foreground sm:text-lg lg:text-xl">Try the homepage, the source page, or the blog archive.</p>
+      <div class="mt-8 flex justify-center gap-3">
+        <a href="/" class="cta-pill">Home</a>
+        <a href="/blog" class="rounded border border-border bg-card px-5 py-2.5 font-mono text-sm font-medium text-foreground transition-colors hover:bg-secondary">Blog</a>
+      </div>
+    </section>
+  </main>
+  <LandingFooter />
+</BaseLayout>

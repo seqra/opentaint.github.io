@@ -1,0 +1,112 @@
+---
+const faqItems = [
+  {
+    question: "What is OpenTaint?",
+    answer: "OpenTaint is an open source taint analysis engine built for the AI coding era. It performs inter-procedural dataflow analysis on Java and Kotlin bytecode — cross-endpoint flow tracking, persistence layer modelling, alias analysis, and asynchronous code analysis — using code-native rules to find real vulnerabilities in web applications. No paywall, no pattern-matching compromises.",
+  },
+  {
+    question: "What vulnerabilities does OpenTaint detect?",
+    answer: "OpenTaint detects 20+ vulnerability types including SQL injection, XSS, SSRF, SpEL injection, open redirects, path traversal, command injection, and more. It tracks untrusted data from entry points through your application to dangerous APIs. Currently offers deep Spring Boot ecosystem support — every finding is automatically mapped to its HTTP endpoint, so you know exactly which APIs are affected.",
+  },
+  {
+    question: "What are code-native rules?",
+    answer: "Rules that look like code. Readable, writable, and tunable by humans and AI agents alike. The engine translates each rule into a full taint configuration — sources, sinks, sanitizers, and propagators connected by typed taint marks. When a rule produces a false positive, you refine the rule directly. No query language to learn, no black box to work around.",
+  },
+  {
+    question: "Why not just use an AI agent for security scanning?",
+    answer: "AI agents offer no formal guarantees. Run the same prompt twice and you may get different results — no determinism, no reproducibility. OpenTaint provides deterministic inter-procedural dataflow analysis with stable, reproducible findings. AI agents can read and write OpenTaint's code-native rules, so you get the best of both: AI flexibility with formal analysis underneath.",
+  },
+  {
+    question: "What languages and frameworks are supported?",
+    answer: "Java and Kotlin, analyzed at the bytecode level to precisely understand inheritance, generics, and library interactions. Deep Spring Boot framework ecosystem support including Spring MVC, Spring Data, and related libraries. More languages ahead.",
+  },
+  {
+    question: "How does OpenTaint compare to Semgrep?",
+    answer: "Both tools perform inter-procedural analysis. OpenTaint goes further: it tracks data across endpoint boundaries and through persistence layers, catching stored injections and multi-step attack paths that basic inter-procedural analysis cannot reach. Rules use a code-native format that the engine translates into complete taint configurations. Semgrep rule syntax is supported as a migration path.",
+  },
+  {
+    question: "How does OpenTaint compare to CodeQL?",
+    answer: "OpenTaint delivers enterprise-grade dataflow analysis without a specialized query language, proprietary licensing, or a paywall. Code-native rules mean you write what you know — code — and get full taint analysis out of the box.",
+  },
+  {
+    question: "Is OpenTaint free to use?",
+    answer: "Yes. The core engine is licensed under Apache 2.0. The CLI, CI integrations, and rules are licensed under MIT.",
+  },
+  {
+    question: "Can I use existing Semgrep rules?",
+    answer: "OpenTaint supports Semgrep rule syntax, so existing rules work as a starting point. The engine adds inter-procedural dataflow analysis on top, and you can migrate to code-native rules at your own pace for full control over taint configurations.",
+  },
+  {
+    question: "Still have questions?",
+    answer: "",
+    isContact: true,
+  },
+];
+---
+
+<section class="page-section" aria-labelledby="faq-heading">
+  <h2 id="faq-heading" class="section-title text-center">FAQ</h2>
+
+  <ul class="mx-auto mt-6 max-w-3xl lg:mt-8">
+    {faqItems.map((item, index) => (
+      <li class="border-r-2 border-transparent pr-16 transition-colors" data-faq-item>
+        <button
+          type="button"
+          class="flex w-full items-center gap-3 py-4 pr-4 text-left font-mono text-[15px] text-foreground transition-colors hover:text-primary lg:text-base lg:py-5 lg:pr-5"
+          aria-expanded="false"
+          aria-controls={`faq-answer-${index}`}
+          data-faq-toggle
+        >
+          <svg
+            data-faq-chevron
+            class="size-4 flex-shrink-0 text-muted-foreground transition-transform duration-200"
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M6 3l5 5-5 5" />
+          </svg>
+          <span>{item.question}</span>
+        </button>
+        <div id={`faq-answer-${index}`} class="hidden pb-4 pl-4 font-mono text-[15px] leading-[200%] text-muted-foreground lg:text-base lg:pb-5 lg:pl-5" data-faq-answer>
+          {item.isContact ? (
+            <span>
+              Ask us on{" "}
+              <a
+                href="https://discord.gg/6BXDfbP4p9"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-primary underline transition-colors hover:text-foreground"
+              >
+                Discord
+              </a>
+            </span>
+          ) : (
+            item.answer
+          )}
+        </div>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<script>
+  document.querySelectorAll("[data-faq-toggle]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const item = btn.closest("[data-faq-item]");
+      if (!item) return;
+      const answer = item.querySelector("[data-faq-answer]");
+      if (!answer) return;
+      const isOpen = btn.getAttribute("aria-expanded") === "true";
+      const chevron = btn.querySelector("[data-faq-chevron]");
+      btn.setAttribute("aria-expanded", String(!isOpen));
+      answer.classList.toggle("hidden", isOpen);
+      item.classList.toggle("border-transparent", isOpen);
+      item.classList.toggle("border-primary", !isOpen);
+      if (chevron) chevron.classList.toggle("rotate-90", !isOpen);
+    });
+  });
+</script>

@@ -1,0 +1,79 @@
+import { getCollection, type CollectionEntry } from "astro:content";
+import { siteConfig } from "@/lib/site";
+
+export type PostSummary = {
+  slug: string;
+  title: string;
+  description: string;
+  date: string;
+  readTime?: string;
+  tags: string[];
+};
+
+export type Post = PostSummary & {
+  body: string;
+  bodyFormat: "mdx" | "html";
+  canonicalUrl: string;
+  entry?: CollectionEntry<"blog">;
+};
+
+function normalizeSummary(record: {
+  slug: string;
+  title?: string;
+  description?: string;
+  publishedAt?: string;
+  date?: string;
+  readTime?: string;
+  tags?: string[];
+}): PostSummary {
+  const date = record.publishedAt || record.date || new Date().toISOString();
+
+  return {
+    slug: record.slug,
+    title: record.title || record.slug,
+    description: record.description || "",
+    date,
+    readTime: record.readTime,
+    tags: record.tags || [],
+  };
+}
+
+async function getLocalPosts(): Promise<Post[]> {
+  const entries = await getCollection("blog");
+
+  const posts: Post[] = entries.map((entry) => {
+    const summary = normalizeSummary({
+      slug: entry.id,
+      title: entry.data.title,
+      description: entry.data.description,
+      date: entry.data.date,
+      readTime: entry.data.readTime,
+      tags: entry.data.tags,
+    });
+
+    return {
+      ...summary,
+      body: "",
+      bodyFormat: "mdx",
+      canonicalUrl: `${siteConfig.url}/blog/${entry.id}`,
+      entry,
+    } satisfies Post;
+  });
+
+  return posts.sort(
+    (left, right) =>
+      new Date(right.date).getTime() - new Date(left.date).getTime(),
+  );
+}
+
+export async function getPosts(): Promise<Post[]> {
+  return getLocalPosts();
+}
+
+export async function getPostSummaries(): Promise<PostSummary[]> {
+  const posts = await getPosts();
+  return posts.map(
+    ({ body: _body, bodyFormat: _bodyFormat, canonicalUrl: _canonicalUrl, entry: _entry, ...post }) =>
+      post,
+  );
+}

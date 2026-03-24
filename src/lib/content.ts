@@ -6,8 +6,6 @@ export type PostSummary = {
   title: string;
   description: string;
   date: string;
-  readTime?: string;
-  tags: string[];
 };
 
 export type Post = PostSummary & {
@@ -23,8 +21,6 @@ function normalizeSummary(record: {
   description?: string;
   publishedAt?: string;
   date?: string;
-  readTime?: string;
-  tags?: string[];
 }): PostSummary {
   const date = record.publishedAt || record.date || new Date().toISOString();
 
@@ -33,8 +29,6 @@ function normalizeSummary(record: {
     title: record.title || record.slug,
     description: record.description || "",
     date,
-    readTime: record.readTime,
-    tags: record.tags || [],
   };
 }
 
@@ -47,8 +41,6 @@ async function getLocalPosts(): Promise<Post[]> {
       title: entry.data.title,
       description: entry.data.description,
       date: entry.data.date,
-      readTime: entry.data.readTime,
-      tags: entry.data.tags,
     });
 
     return {

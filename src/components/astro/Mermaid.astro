@@ -106,7 +106,7 @@ const { chart } = Astro.props;
       el.setAttribute("data-rendered", "true");
       try {
         const { svg } = await mermaid.render(`mermaid-${++id}`, source);
-        el.innerHTML = `<div class="my-6 rounded-xl border border-border p-6" style="background: hsl(var(--code-bg))"><div class="flex justify-center overflow-x-auto [&_svg]:max-w-full">${svg}</div></div>`;
+        el.innerHTML = `<div class="my-6 rounded-xl border border-border p-4 sm:p-6 scrollbar-thin" style="background: hsl(var(--code-bg))"><div class="overflow-x-auto scrollbar-thin [&_svg]:min-w-[600px] [&_svg]:sm:min-w-0 [&_svg]:max-w-full">${svg}</div></div>`;
       } catch (err) {
         el.innerHTML = `<pre class="bg-destructive/10 text-destructive p-4 rounded-lg text-sm overflow-auto mb-6">${String(err)}</pre>`;
       }

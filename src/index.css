@@ -275,7 +275,7 @@
 @layer utilities {
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: hsl(var(--brand) / 0.25) transparent;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
   }
 
   .scrollbar-thin::-webkit-scrollbar {
@@ -288,7 +288,7 @@
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: hsl(var(--brand) / 0.25);
+    background: hsl(var(--muted-foreground) / 0.3);
     border-radius: 999px;
   }
 
@@ -301,5 +301,17 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+  }
+}
+
+/* Expressive-code copy button: smaller & more transparent on mobile */
+@media (max-width: 639px) {
+  .expressive-code .copy {
+    opacity: 0.5;
+  }
+
+  .expressive-code .copy button {
+    width: 1.75rem !important;
+    height: 1.75rem !important;
   }
 }

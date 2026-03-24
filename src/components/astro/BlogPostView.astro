@@ -79,21 +79,8 @@ const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
 
     <div class="mt-4 flex flex-wrap items-center gap-3 font-mono text-[10px] text-muted-foreground sm:text-xs lg:text-[13px] lg:mt-5">
       <span>{formattedDate}</span>
-      {post.readTime && (
-        <span class="text-muted-foreground/50">·</span>
-      )}
-      {post.readTime && <span>{post.readTime}</span>}
     </div>
 
-    {post.tags.length > 0 && (
-      <div class="mt-3 flex flex-wrap gap-1.5">
-        {post.tags.map((tag) => (
-          <span class="rounded border border-border bg-card px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground lg:text-[11px] lg:px-2.5 lg:py-1">
-            {tag}
-          </span>
-        ))}
-      </div>
-    )}
   </section>
 
   <section class="page-section">

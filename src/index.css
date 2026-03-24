@@ -304,7 +304,10 @@
   }
 }
 
-/* Expressive-code copy button: smaller & more transparent on mobile */
+.expressive-code .copy .feedback {
+  display: none !important;
+}
+
 @media (max-width: 639px) {
   .expressive-code .copy {
     opacity: 0.5;

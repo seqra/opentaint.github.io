@@ -54,7 +54,7 @@ export function AnimatedHero() {
                   type="button"
                   onClick={() => setActiveMethod(method.id)}
                   className={[
-                    "rounded border px-3 py-1.5 font-mono text-xs uppercase tracking-[0.14em] transition-colors lg:px-3.5 lg:py-2 lg:text-[13px]",
+                    "rounded border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.1em] transition-colors sm:px-3 sm:py-1.5 sm:text-xs sm:tracking-[0.14em] lg:px-3.5 lg:py-2 lg:text-[13px]",
                     isActive
                       ? "border-primary bg-primary/10 text-primary"
                       : "border-border bg-background text-muted-foreground hover:text-foreground hover:border-border-strong",

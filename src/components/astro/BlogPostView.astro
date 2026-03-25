@@ -30,10 +30,10 @@ const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
 ---
 
 {toc.length > 0 && (
-  <div class="fixed inset-x-0 top-14 z-30 border-b border-border bg-background/95 backdrop-blur-md xl:hidden" data-mobile-toc>
+  <div class="fixed inset-x-0 top-16 z-30 border-b border-border bg-background/95 backdrop-blur-md xl:hidden" data-mobile-toc>
     <div class="mx-auto max-w-[75rem]" style="padding-left: clamp(1.5rem, 0.5rem + 2vw, 3rem); padding-right: clamp(1.5rem, 0.5rem + 2vw, 3rem);">
       <details>
-        <summary class="flex cursor-pointer list-none items-center gap-2 py-3 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground [&::-webkit-details-marker]:hidden">
+        <summary class="flex cursor-pointer list-none items-center gap-2 py-3 font-mono text-[10px] leading-none uppercase tracking-[0.14em] text-muted-foreground [&::-webkit-details-marker]:hidden">
           <span class="shrink-0">On this page</span>
           <span class="truncate text-foreground/70 normal-case tracking-normal" data-toc-current></span>
           <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-auto h-3 w-3 shrink-0 transition-transform duration-200 [[open]>&]:rotate-90"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -195,6 +195,27 @@ const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
 </style>
 
 <script>
+  // Close mobile ToC on link click or outside click
+  const mobileToc = document.querySelector("[data-mobile-toc]");
+  if (mobileToc) {
+    const details = mobileToc.querySelector("details");
+    if (details) {
+      // Close on ToC link click
+      mobileToc.querySelectorAll("[data-toc-link]").forEach((link) => {
+        link.addEventListener("click", () => {
+          details.removeAttribute("open");
+        });
+      });
+
+      // Close on outside click
+      document.addEventListener("click", (e) => {
+        if (details.hasAttribute("open") && !mobileToc.contains(e.target as Node)) {
+          details.removeAttribute("open");
+        }
+      });
+    }
+  }
+
   document.querySelectorAll(".blog-prose table").forEach((table) => {
     if (!table.parentElement?.classList.contains("table-wrapper")) {
       const wrapper = document.createElement("div");

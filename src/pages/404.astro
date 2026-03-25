@@ -5,17 +5,23 @@ import LandingFooter from "@/components/astro/LandingFooter.astro";
 ---
 
 <BaseLayout title="Page not found" description="The requested page could not be found." noIndex={true}>
-  <SiteHeader />
-  <main class="container mx-auto flex min-h-[60vh] items-center px-4 py-16 sm:px-6">
-    <section class="mx-auto max-w-2xl text-center">
-      <p class="font-mono text-xs uppercase tracking-[0.32em] text-primary">404</p>
-      <h1 class="mt-4 text-4xl font-bold sm:text-5xl lg:text-6xl">This route did not survive the migration.</h1>
-      <p class="mt-4 text-base leading-7 text-muted-foreground sm:text-lg lg:text-xl">Try the homepage, the source page, or the blog archive.</p>
-      <div class="mt-8 flex justify-center gap-3">
-        <a href="/" class="cta-pill">Home</a>
-        <a href="/blog" class="rounded border border-border bg-card px-5 py-2.5 font-mono text-sm font-medium text-foreground transition-colors hover:bg-secondary">Blog</a>
+  <div class="min-h-screen bg-background flex flex-col">
+    <SiteHeader />
+    <main class="flex-1 pt-16">
+      <div class="page-container">
+        <section class="page-section flex items-center justify-center" style="min-height: calc(100vh - 4rem - 10rem);">
+          <div class="mx-auto max-w-2xl text-center">
+            <p class="font-mono text-6xl font-bold tracking-[0.32em] text-primary sm:text-7xl lg:text-8xl">404</p>
+            <h1 class="mt-4 section-heading">Page not found.</h1>
+            <p class="section-subtitle">The page you're looking for doesn't exist or has been moved.</p>
+            <div class="mt-8 flex justify-center gap-3">
+              <a href="/" class="cta-pill">Home</a>
+              <a href="/blog" class="rounded border border-border bg-card px-5 py-2.5 font-mono text-sm font-medium text-foreground transition-colors hover:bg-secondary">Blog</a>
+            </div>
+          </div>
+        </section>
+        <LandingFooter />
       </div>
-    </section>
-  </main>
-  <LandingFooter />
+    </main>
+  </div>
 </BaseLayout>

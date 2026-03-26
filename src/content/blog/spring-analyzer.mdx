@@ -90,13 +90,11 @@ Both services call `template.process()` with user input. The difference is in th
 ```java
 // MarketingTemplateService.java — vulnerable configuration
 this.templateConfig.setNewBuiltinClassResolver(TemplateClassResolver.UNRESTRICTED_RESOLVER);
-this.templateConfig.setAPIBuiltinEnabled(true);
 ```
 
 ```java
 // NotificationTemplateService.java — secure configuration
 this.templateConfig.setNewBuiltinClassResolver(TemplateClassResolver.ALLOWS_NOTHING_RESOLVER);
-this.templateConfig.setAPIBuiltinEnabled(false);
 ```
 
 OpenTaint resolves `@Autowired` bean constructors and tracks configuration state. It flags the marketing service — `UNRESTRICTED_RESOLVER` allows class loading, enabling remote code execution — and suppresses the notification service, where `ALLOWS_NOTHING_RESOLVER` prevents class instantiation. Getting this distinction wrong means noise or missed vulnerabilities.

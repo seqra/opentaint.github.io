@@ -10,7 +10,7 @@ Spring Boot's annotation-driven architecture creates data flows that are invisib
 
 These are not edge cases. They are the default architecture of most Java web applications. And they create three progressively harder challenges for static analysis:
 
-1. **Following data through dependency injection** — across class boundaries that exist only at runtime.
+1. **Following data across file and class boundaries** — through DTO field access and method chains.
 2. **Connecting endpoints through persistence** — where the database or service state is the only link.
 3. **Distinguishing dangerous fields from safe ones** — at per-column granularity within those flows.
 
@@ -22,11 +22,11 @@ The first two challenges — dependency injection and configuration-aware sinks 
 
 For JVM languages, OpenTaint operates on bytecode rather than source text. This requires a successful build before scanning, but gives precise resolution of inheritance, generics, and library calls — precision that matters in Spring, where runtime behavior depends on bean wiring, annotation metadata, and framework conventions that AST-only tools treat as opaque.
 
-### Following Data Through Dependency Injection
+### Following Data Across File and Class Boundaries
 
-The first place conventional tools lose the trail is at `@Autowired` service boundaries. When a controller delegates to an injected service, there is no direct method call in the source — the wiring happens through Spring's DI container. An analyzer that doesn't model bean injection sees a dead end.
+The first place conventional tools lose the trail is at class boundaries. When a controller delegates to a service, the data crosses files, passes through DTO field access, and chains through multiple methods before reaching a sink. An analyzer that only tracks flow within a single method or file sees a dead end.
 
-Consider a campaign management endpoint that lets users preview custom templates. The controller receives a JSON request body and delegates to an injected service:
+Consider a campaign management endpoint that lets users preview custom templates. The controller receives a JSON request body and delegates to a service:
 
 ```java
 // CampaignController.java

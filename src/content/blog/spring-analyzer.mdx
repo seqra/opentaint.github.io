@@ -14,11 +14,13 @@ These are not edge cases. They are the default architecture of most Java web app
 2. **Connecting endpoints through persistence** — where the database or service state is the only link.
 3. **Distinguishing dangerous fields from safe ones** — at per-column granularity within those flows.
 
-Each level requires a deeper understanding of Spring's framework semantics. OpenTaint models all three. This post shows how.
+Each level requires a deeper understanding of Spring's framework semantics. The engine models all three.
 
 ## Single-Request Flows
 
-OpenTaint operates on bytecode rather than source text. This requires a successful build before scanning, but gives precise resolution of inheritance, generics, and library calls — precision that matters in Spring, where runtime behavior depends on bean wiring, annotation metadata, and framework conventions that AST-only tools treat as opaque.
+The first two challenges — dependency injection and configuration-aware sinks — occur within a single HTTP request. The data enters through a controller, crosses class and service boundaries, and reaches a sink before the response returns.
+
+For JVM languages, OpenTaint operates on bytecode rather than source text. This requires a successful build before scanning, but gives precise resolution of inheritance, generics, and library calls — precision that matters in Spring, where runtime behavior depends on bean wiring, annotation metadata, and framework conventions that AST-only tools treat as opaque.
 
 ### Following Data Through Dependency Injection
 
@@ -65,7 +67,7 @@ public class TemplateRenderingService {
 }
 ```
 
-OpenTaint traces the complete path: `@RequestBody RenderRequest` → `renderFromRequest()` → `request.getTemplateContent()` → `renderFromContent()` → `templateEngine.process()`. The data crosses a class boundary, passes through DTO field access, and flows through an `@Autowired` service — all tracked as a single inter-procedural data flow.
+The engine traces the complete path: `@RequestBody RenderRequest` → `renderFromRequest()` → `request.getTemplateContent()` → `renderFromContent()` → `templateEngine.process()`. The data crosses a class boundary, passes through DTO field access, and flows through an `@Autowired` service — all tracked as a single inter-procedural data flow.
 
 ### Configuration-Aware Sinks
 
@@ -97,7 +99,7 @@ this.templateConfig.setNewBuiltinClassResolver(TemplateClassResolver.UNRESTRICTE
 this.templateConfig.setNewBuiltinClassResolver(TemplateClassResolver.ALLOWS_NOTHING_RESOLVER);
 ```
 
-OpenTaint resolves `@Autowired` bean constructors and tracks configuration state. It flags the marketing service — `UNRESTRICTED_RESOLVER` allows class loading, enabling remote code execution — and suppresses the notification service, where `ALLOWS_NOTHING_RESOLVER` prevents class instantiation. Getting this distinction wrong means noise or missed vulnerabilities.
+We resolve `@Autowired` bean constructors and track configuration state. We flag the marketing service — `UNRESTRICTED_RESOLVER` allows class loading, enabling remote code execution — and suppress the notification service, where `ALLOWS_NOTHING_RESOLVER` prevents class instantiation. Getting this distinction wrong means noise or missed vulnerabilities.
 
 ## Cross-Endpoint Flows
 
@@ -170,7 +172,7 @@ public ResponseEntity<String> getMessageContent(@PathVariable Long id) {
 }
 ```
 
-The two endpoints share no direct method call. OpenTaint traces the full flow across both by modeling JPA repository operations as database read/write boundaries. When an entity is persisted via `repository.save()`, the taint state of each field is recorded against that entity type. When a different endpoint retrieves via `repository.findById()`, OpenTaint looks up the stored state and propagates it per-column to the retrieved entity's fields. No actual database connection is needed — this is a static approximation of persistence-layer data flow.
+The two endpoints share no direct method call. We trace the full flow across both by modeling JPA repository operations as database read/write boundaries. When an entity is persisted via `repository.save()`, the taint state of each field is recorded against that entity type. When a different endpoint retrieves via `repository.findById()`, we look up the stored state and propagate it per-column to the retrieved entity's fields. No actual database connection is needed — this is a static approximation of persistence-layer data flow.
 
 ### Through Service State
 
@@ -209,7 +211,7 @@ public ResponseEntity<String> getLastContent() {
 }
 ```
 
-OpenTaint traces the data from `createMessage`'s `content` parameter through the `lastContent` field assignment and back out via `getLastContent()` — a cross-endpoint stored XSS that doesn't touch the database at all.
+We trace the data from `createMessage`'s `content` parameter through the `lastContent` field assignment and back out via `getLastContent()` — a cross-endpoint stored XSS that doesn't touch the database at all.
 
 ### Column-Level Precision
 
@@ -252,7 +254,7 @@ public Message(String title, String content, String author) {
 }
 ```
 
-The `author` field is HTML-escaped before it reaches the database. The `title` and `content` fields are stored raw. OpenTaint tracks each column independently:
+The `author` field is HTML-escaped before it reaches the database. The `title` and `content` fields are stored raw. We track each column independently:
 
 - `GET /api/messages/{id}/content` → returns raw `content` → **XSS detected**
 - `GET /api/messages/{id}/title` → returns raw `title` → **XSS detected**
@@ -260,13 +262,13 @@ The `author` field is HTML-escaped before it reaches the database. The `title` a
 
 Without column-level tracking, the choice is between flagging all three endpoints (false positives on `author`) or suppressing the entire entity (missing real vulnerabilities on `content` and `title`). Per-column sensitivity avoids the trade-off.
 
-OpenTaint also recognizes sanitizers applied at read time. The `GET /api/messages/{id}/content/safe` endpoint passes content through `HtmlUtils.htmlEscape()` before returning it — OpenTaint sees the sanitizer and suppresses the finding for that path as well.
+We also recognize sanitizers applied at read time. The `GET /api/messages/{id}/content/safe` endpoint passes content through `HtmlUtils.htmlEscape()` before returning it — the engine sees the sanitizer and suppresses the finding for that path as well.
 
 ## Limitations
 
-OpenTaint deliberately over-approximates in several areas to preserve coverage. Deliberate **false positives** can appear from:
+We deliberately over-approximate in several areas to preserve coverage. Deliberate false positives can appear from:
 
-1. **Path insensitivity** — the analyzer does not track conditional branches, so it may report findings for paths guarded by validation logic. This is a common trade-off in static analysis: tracking all branches is expensive and path explosion makes the naive analysis impractical at scale. The practical mitigation is to use recognized sanitizer functions (which the rules understand) instead of conditional checks.
+1. **Path insensitivity** — the analyzer does not track conditional branches, so it may report findings for paths guarded by validation logic. This is a common trade-off in static analysis: tracking all branches is expensive and path explosion makes the naive analysis impractical at scale. The practical mitigation is to use recognized sanitizer functions — which the rules understand — instead of conditional checks.
 2. **Configuration insensitivity** — the analyzer currently does not model Spring bean profiles or `@Conditional` annotations, so it resolves all potential bean instances on `@Autowired` and may produce findings from configurations that aren't actually active. This over-approximation ensures no injection is missed through an unexpected bean, but can be noisy in projects with many profiles.
 
 Both are on the roadmap. Beyond these deliberate trade-offs, there are also straightforward gaps:
@@ -274,12 +276,14 @@ Both are on the roadmap. Beyond these deliberate trade-offs, there are also stra
 1. **Missing rules** — a source, sink, sanitizer, or propagator is not covered in the rules. Fixed by adding more rules.
 2. **Analyzer bugs** are possible.
 
-If you see an uncaught issue you expect to be detected or vice-versa, report it via [GitHub Issues](https://github.com/seqra/opentaint/issues) or [Discord](https://discord.gg/6BXDfbP4p9).
+If you see an uncaught issue you expect to be detected or vice-versa, report it via GitHub Issues or Discord.
 
 ## Conclusion
 
-Each section of this post showed a harder problem: following data through dependency injection, connecting endpoints through persistence, and distinguishing dangerous fields from safe ones within those flows. Each required OpenTaint to model a layer of Spring semantics that generic static analyzers ignore — bean wiring, JPA repository boundaries, template engine configuration, and per-column taint state.
+Each section showed a harder problem: following data through dependency injection, connecting endpoints through persistence, and distinguishing dangerous fields from safe ones within those flows. Each required the engine to model a layer of Spring semantics that generic static analyzers ignore — bean wiring, JPA repository boundaries, template engine configuration, and per-column taint state.
 
-On the [demo project](https://github.com/seqra/java-spring-demo), these capabilities surface real vulnerabilities that conventional tools miss: cross-endpoint stored XSS through JPA and service fields, configuration-dependent SSTI in Freemarker, and deep DI-mediated injection paths — while suppressing sanitized columns and hardened configurations that would otherwise be false positives.
+On the demo project, these capabilities surface real vulnerabilities that conventional tools miss: cross-endpoint stored XSS through JPA and service fields, configuration-dependent SSTI in Freemarker, and deep DI-mediated injection paths — while suppressing sanitized columns and hardened configurations that would otherwise be false positives.
+
+Each new service, persistence layer, and injection boundary is another place for the data trail to break. The engine follows it through all of them.
 
 Try it on your own project — see the [quick start guide](https://github.com/seqra/opentaint#quick-start).

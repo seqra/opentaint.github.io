@@ -1,6 +1,6 @@
 ---
 title: "Taint Analysis for Spring: Data Flow Beyond the Call Graph"
-description: "Most SAST tools lose the data trail at Spring's DI and JPA boundaries. OpenTaint follows tainted input through @Autowired services, across database persistence, and into dangerous API calls — flagging stored injections per-column while suppressing sanitized fields."
+description: "Conventional static analysis breaks where Spring's architecture begins — dependency injection, JPA persistence, framework configuration. OpenTaint traces tainted data through every layer, from injected services to database storage to dangerous API calls, distinguishing raw columns from sanitized ones."
 date: "2026-03-25"
 ---
 
@@ -20,7 +20,7 @@ Each level requires a deeper understanding of Spring's framework semantics. The 
 
 The first two challenges — dependency injection and configuration-aware sinks — occur within a single HTTP request. The data enters through a controller, crosses class and service boundaries, and reaches a sink before the response returns.
 
-For JVM languages, OpenTaint operates on bytecode rather than source text. This requires a successful build before scanning, but gives precise resolution of inheritance, generics, and library calls — precision that matters in Spring, where runtime behavior depends on bean wiring, annotation metadata, and framework conventions that AST-only tools treat as opaque.
+For JVM languages, OpenTaint operates on bytecode rather than source text. This requires a successful build before scanning, but gives precise resolution of inheritance, generics, and library calls. That precision matters in Spring — runtime behavior depends on bean wiring, annotation metadata, and framework conventions that AST-only tools treat as opaque.
 
 ### Following Data Across File and Class Boundaries
 
@@ -271,7 +271,7 @@ We deliberately over-approximate in several areas to preserve coverage. Delibera
 1. **Path insensitivity** — the analyzer does not track conditional branches, so it may report findings for paths guarded by validation logic. This is a common trade-off in static analysis: tracking all branches is expensive and path explosion makes the naive analysis impractical at scale. The practical mitigation is to use recognized sanitizer functions — which the rules understand — instead of conditional checks.
 2. **Configuration insensitivity** — the analyzer currently does not model Spring bean profiles or `@Conditional` annotations, so it resolves all potential bean instances on `@Autowired` and may produce findings from configurations that aren't actually active. This over-approximation ensures no injection is missed through an unexpected bean, but can be noisy in projects with many profiles.
 
-Both are on the roadmap. Beyond these deliberate trade-offs, there are also straightforward gaps:
+ Beyond these deliberate trade-offs, there are also straightforward gaps:
 
 1. **Missing rules** — a source, sink, sanitizer, or propagator is not covered in the rules. Fixed by adding more rules.
 2. **Analyzer bugs** are possible.
@@ -284,6 +284,8 @@ Each section showed a harder problem: following data through dependency injectio
 
 On the demo project, these capabilities surface real vulnerabilities that conventional tools miss: cross-endpoint stored XSS through JPA and service fields, configuration-dependent SSTI in Freemarker, and deep DI-mediated injection paths — while suppressing sanitized columns and hardened configurations that would otherwise be false positives.
 
-Each new service, persistence layer, and injection boundary is another place for the data trail to break. The engine follows it through all of them.
+Each new service, persistence layer, and injection boundary is another place for the data trail to break. OpenTaint follows it through all of them.
+
+All examples in this post come from a [purpose-built Spring Boot demo](https://github.com/seqra/java-spring-demo) — clone it to reproduce every finding.
 
 Try it on your own project — see the [quick start guide](https://github.com/seqra/opentaint#quick-start).

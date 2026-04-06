@@ -40,7 +40,7 @@ export function AnimatedHero() {
       </h1>
 
       <p className="mt-5 font-mono text-[15px] leading-[200%] text-muted-foreground sm:max-w-[82%] lg:text-base lg:mt-6">
-        Enterprise-grade dataflow analysis with code-native rules — no paywall, no pattern-matching compromises.
+        Formal inter-procedural taint analysis — finds what pattern matching engines miss, enacts what AI agents discover as permanent rules, scales where neither can alone.
       </p>
 
       <div className="mt-8 flex gap-3 sm:hidden">

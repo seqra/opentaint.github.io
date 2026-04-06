@@ -1,29 +1,19 @@
 ---
 const features = [
   {
-    title: "AI agent-ready.",
+    title: "Finds what pattern matching engines miss.",
     description:
-      "Agents operate the rules, the CLI, the output. Scan code, triage findings, fix vulnerabilities, refine rules.",
+      "Inter-procedural dataflow engine tracks untrusted data across function boundaries, persistence layers, aliases, and async code — 100+ rules across 20+ vulnerability classes, out of the box.",
   },
   {
-    title: "Cutting-edge dataflow analysis.",
+    title: "One finding becomes total coverage.",
     description:
-      "Inter-procedural taint tracking across endpoints, persistence layers, aliases, and async code.",
-  },
-  {
-    title: "Enterprise-grade, finds real trophies.",
-    description:
-      "Powerful, precise, and performant at scale. Catches exploitable vulnerabilities.",
-  },
-  {
-    title: "Rules that read like code.",
-    description:
-      "Write and refine taint rules the same way you write application code — or let your AI agent do it.",
+      "Your AI agent finds one vulnerability. OpenTaint finds every instance of it across your codebase — deterministically, in minutes of CPU compute.",
   },
   {
     title: "Open source, batteries included.",
     description:
-      "Engine, CLI, GitHub Action, GitLab CI, rules. Apache 2.0 and MIT licensed.",
+      "Engine, rules, CI integrations — the entire stack, including the deep analysis, ships under Apache 2.0 and MIT. No paid tier to unlock taint tracking. No vendor lock-in on your rule library.",
   },
 ];
 ---
@@ -31,10 +21,10 @@ const features = [
 <section class="page-section" aria-labelledby="what-heading">
   <h2 id="what-heading" class="section-title text-center">Why OpenTaint?</h2>
   <p class="section-subtitle">
-    AI-generated code is scaling codebases fast. Pattern matchers produce too many false positives. Enterprise taint analyzers that work are paywalled. AI agents in a security role give no formal guarantees.
+    AI generates production code faster than today's security tooling can keep up with. The code looks production-ready — yet it buries vulnerabilities in data flows that are structurally hard to catch. Untrusted input winding through framework abstractions. Cross-controller interactions with persistence layers. Async code. Humans can't review it at the depth it requires.
   </p>
   <p class="section-subtitle">
-    OpenTaint does real inter-procedural taint analysis — tracks untrusted data from HTTP inputs to dangerous APIs across endpoints, persistence layers, and framework boundaries.
+    The tools meant to help aren't keeping up either. Pattern matching engines flag syntax but lose the trail across boundaries. LLM agents cost more with every file and still give different answers each run. Enterprise analyzers that go deeper gate the analysis behind a paywall. The more AI writes code, the more you need formal analysis underneath.
   </p>
 
   <ul class="mt-8 space-y-3 lg:mt-10 lg:space-y-4">
@@ -49,10 +39,4 @@ const features = [
     ))}
   </ul>
 
-  <div class="mt-8 lg:mt-10">
-    <a href="/blog" class="cta-pill">
-      <span>Read blog</span>
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-    </a>
-  </div>
 </section>

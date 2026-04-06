@@ -2,6 +2,7 @@
 const navItems = [
   { href: "/", label: "Home" },
   { href: "/blog", label: "Blog" },
+  { href: "https://github.com/seqra/opentaint/tree/main/docs", label: "Docs", external: true },
 ];
 ---
 
@@ -15,7 +16,7 @@ const navItems = [
     </div>
 
     <nav class="hidden items-center gap-6 md:flex lg:gap-8" role="navigation" aria-label="Main navigation">
-      {navItems.map((item) => <a href={item.href} class="font-mono text-sm font-medium uppercase tracking-[0.16em] text-muted-foreground transition-colors hover:text-primary lg:text-[15px]">{item.label}</a>)}
+      {navItems.map((item) => <a href={item.href} target={item.external ? "_blank" : undefined} rel={item.external ? "noopener noreferrer" : undefined} class="font-mono text-sm font-medium uppercase tracking-[0.16em] text-muted-foreground transition-colors hover:text-primary lg:text-[15px]">{item.label}</a>)}
     </nav>
 
     <div class="flex flex-1 items-center justify-end gap-2 sm:gap-3">
@@ -64,7 +65,7 @@ const navItems = [
     <div class="absolute left-0 right-0 top-full z-50 border-t border-border bg-background md:hidden">
       <nav class="container space-y-3 px-4 py-4" role="navigation" aria-label="Mobile navigation">
         {navItems.map((item) => (
-          <a href={item.href} class="block py-1.5 font-mono text-sm font-medium uppercase tracking-[0.16em] text-muted-foreground transition-colors hover:text-primary">
+          <a href={item.href} target={item.external ? "_blank" : undefined} rel={item.external ? "noopener noreferrer" : undefined} class="block py-1.5 font-mono text-sm font-medium uppercase tracking-[0.16em] text-muted-foreground transition-colors hover:text-primary">
             {item.label}
           </a>
         ))}

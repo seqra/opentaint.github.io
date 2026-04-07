@@ -22,13 +22,39 @@ const structuredData = [
     name: siteConfig.author,
     url: siteConfig.url,
     logo: `${siteConfig.url}/apple-touch-icon.png`,
+    sameAs: [
+      siteConfig.github,
+      siteConfig.discord,
+      "https://twitter.com/seqradev",
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: siteConfig.title,
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "Linux, macOS, Windows",
+    description: "Open source taint analysis engine for Java and Kotlin. Enterprise-grade inter-procedural dataflow analysis with code-native rules for Spring Boot applications.",
+    url: siteConfig.url,
+    downloadUrl: "https://github.com/seqra/opentaint/releases",
+    license: "https://www.apache.org/licenses/LICENSE-2.0",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    author: {
+      "@type": "Organization",
+      name: siteConfig.author,
+      url: siteConfig.url,
+    },
   },
 ];
 ---
 
 <BaseLayout
   title="The open source taint analysis engine for the AI era"
-  description="The open source taint analysis engine for the AI era. Enterprise-grade dataflow analysis with code-native rules — no paywall, no pattern-matching compromises."
+  description="The open source taint analysis engine for the AI era. Formal inter-procedural taint analysis — finds what pattern matching engines miss, enacts what LLM agents discover as rules, scales where neither can alone."
   keywords={defaultKeywords}
   structuredData={structuredData}
 >

@@ -3,6 +3,9 @@ export const siteConfig = {
   description: "The open source taint analysis engine for the AI era.",
   url: "https://opentaint.org",
   author: "Seqra Team",
+  twitter: "@seqradev",
+  github: "https://github.com/seqra/opentaint",
+  discord: "https://discord.gg/6BXDfbP4p9",
 } as const;
 
 export const defaultKeywords = [

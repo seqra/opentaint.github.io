@@ -166,8 +166,8 @@
   }
 
   .page-container {
-    @apply mx-auto px-4 sm:px-6;
-    max-width: 75rem;
+    @apply mx-auto w-full;
+    padding-inline: clamp(1rem, 4vw, 6rem);
     min-height: 100vh;
   }
 

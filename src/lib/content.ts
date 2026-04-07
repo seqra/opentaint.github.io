@@ -12,6 +12,8 @@ export type Post = PostSummary & {
   body: string;
   bodyFormat: "mdx" | "html";
   canonicalUrl: string;
+  keywords?: string[];
+  author?: string;
   entry?: CollectionEntry<"blog">;
 };
 
@@ -48,6 +50,8 @@ async function getLocalPosts(): Promise<Post[]> {
       body: "",
       bodyFormat: "mdx",
       canonicalUrl: `${siteConfig.url}/blog/${entry.id}`,
+      keywords: entry.data.keywords,
+      author: entry.data.author,
       entry,
     } satisfies Post;
   });

@@ -13,15 +13,15 @@ const structuredData = [
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: siteConfig.title,
-    alternateName: "opentaint",
+    alternateName: ["opentaint", "opentaint.org"],
     url: siteConfig.url,
   },
   {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: siteConfig.author,
+    name: siteConfig.title,
     url: siteConfig.url,
-    logo: `${siteConfig.url}/apple-touch-icon.png`,
+    logo: `${siteConfig.url}/logo.png`,
     sameAs: [
       siteConfig.github,
       siteConfig.discord,

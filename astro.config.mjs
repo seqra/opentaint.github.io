@@ -42,7 +42,12 @@ export default defineConfig({
     }),
     mdx(),
     tailwind(),
-    sitemap(),
+    sitemap({
+      serialize(item) {
+        item.lastmod = new Date().toISOString();
+        return item;
+      },
+    }),
   ],
   markdown: {
     gfm: true,

@@ -2,6 +2,16 @@
 title: "Semgrep vs. CodeQL vs. OpenTaint: XSS Detection Depth Compared"
 description: "We tested Semgrep, CodeQL, and OpenTaint on five progressively harder XSS cases in a Java Spring application — from direct returns to builder patterns with virtual dispatch — to show where each tool's analysis model hits its limit."
 date: "2026-03-24"
+keywords:
+  - "semgrep vs codeql"
+  - "xss detection comparison"
+  - "java static analysis tools"
+  - "spring security scanning"
+  - "taint analysis comparison"
+  - "sast tool benchmark"
+  - "open source sast"
+  - "inter-procedural analysis"
+author: "Seqra Team"
 ---
 
 Spring applications accumulate indirection fast — helper methods, builders, persistence layers, and interface calls add up before anyone measures what the security tooling can still follow. Each layer is another place where an analyzer can lose track of tainted data. We tested Semgrep, CodeQL, and OpenTaint on five progressively harder XSS cases in the same Spring Boot application to measure where each engine stops following the data.

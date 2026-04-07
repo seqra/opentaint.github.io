@@ -3,17 +3,17 @@ const features = [
   {
     title: "Finds what pattern matching engines miss.",
     description:
-      "Inter-procedural dataflow engine tracks untrusted data across function boundaries, persistence layers, aliases, and async code — 100+ rules across 20+ vulnerability classes, out of the box.",
+      "The inter-procedural dataflow engine tracks untrusted data across function boundaries, persistence layers, aliases, and async code. 100+ rules across 20+ vulnerability classes.",
   },
   {
     title: "One finding becomes total coverage.",
     description:
-      "Your AI agent finds one vulnerability. OpenTaint finds every instance of it across your codebase — deterministically, in minutes of CPU compute.",
+      "Code-native rules let you enact every uncovered vulnerability as a rule with the engine applying it across the entire codebase, deterministically, in minutes of CPU.",
   },
   {
     title: "Open source, batteries included.",
     description:
-      "Engine, rules, CI integrations — the entire stack, including the deep analysis, ships under Apache 2.0 and MIT. No paid tier to unlock taint tracking. No vendor lock-in on your rule library.",
+      "Engine, rules, CI integrations — the entire stack ships under Apache 2.0 and MIT. No paid tier to unlock taint tracking, no gates on writing your own rules.",
   },
 ];
 ---
@@ -21,10 +21,13 @@ const features = [
 <section class="page-section" aria-labelledby="what-heading">
   <h2 id="what-heading" class="section-title text-center">Why OpenTaint?</h2>
   <p class="section-subtitle">
-    AI generates production code faster than today's security tooling can keep up with. The code looks production-ready — yet it buries vulnerabilities in data flows that are structurally hard to catch. Untrusted input winding through framework abstractions. Cross-controller interactions with persistence layers. Async code. Humans can't review it at the depth it requires.
+    AI generates production code faster than today's security tooling can keep up with.
   </p>
   <p class="section-subtitle">
-    The tools meant to help aren't keeping up either. Pattern matching engines flag syntax but lose the trail across boundaries. LLM agents cost more with every file and still give different answers each run. Enterprise analyzers that go deeper gate the analysis behind a paywall. The more AI writes code, the more you need formal analysis underneath.
+    LLM security agents find vulnerabilities humans miss, burn tokens on every file, and still can't guarantee they catch everything.
+  </p>
+  <p class="section-subtitle">
+    The more AI writes code, the more you need formal methods underneath.
   </p>
 
   <ul class="mt-8 space-y-3 lg:mt-10 lg:space-y-4">

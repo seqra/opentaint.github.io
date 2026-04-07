@@ -41,7 +41,7 @@ const toc = headings
     <SiteHeader />
     <main class="flex-1 pt-28 xl:pt-16">
       <div class="page-container min-w-0">
-        <div class="xl:grid xl:grid-cols-[1fr_14rem] xl:gap-x-8">
+        <div class="xl:grid xl:grid-cols-[1fr_14rem] xl:gap-x-14">
           <div class="min-w-0">
             <BlogPostView post={post} headings={headings}>
               {Content ? <Content /> : <Fragment set:html={post.body} />}

@@ -31,7 +31,7 @@ const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
 
 {toc.length > 0 && (
   <div class="fixed inset-x-0 top-16 z-30 border-b border-border bg-background/95 backdrop-blur-md xl:hidden" data-mobile-toc>
-    <div class="mx-auto max-w-[75rem]" style="padding-left: clamp(1.5rem, 0.5rem + 2vw, 3rem); padding-right: clamp(1.5rem, 0.5rem + 2vw, 3rem);">
+      <div class="mx-auto w-full" style="padding-inline: clamp(1rem, 4vw, 6rem);">
       <details>
         <summary class="flex cursor-pointer list-none items-center gap-2 py-3 font-mono text-[10px] leading-none uppercase tracking-[0.14em] text-muted-foreground [&::-webkit-details-marker]:hidden">
           <span class="shrink-0">On this page</span>
@@ -59,11 +59,11 @@ const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
 
 <article>
   <section class="page-section">
-    <h1 class="max-w-3xl break-words font-mono text-2xl font-semibold tracking-[-0.03em] text-foreground sm:text-3xl md:text-4xl lg:text-[2.5rem]">
+    <h1 class="max-w-5xl break-words font-mono text-2xl font-semibold tracking-[-0.03em] text-foreground sm:text-3xl md:text-4xl lg:text-[2.5rem]">
       {post.title}
     </h1>
 
-    <p class="section-subtitle max-w-2xl break-words">
+    <p class="section-subtitle max-w-4xl break-words">
       {post.description}
     </p>
 

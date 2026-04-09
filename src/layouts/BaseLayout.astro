@@ -22,7 +22,9 @@ const {
   structuredData = [],
 } = Astro.props;
 
-const pageTitle = title === siteConfig.title ? title : `${title} | ${siteConfig.title}`;
+const pageTitle = title === siteConfig.title || title.includes(siteConfig.title)
+  ? title
+  : `${title} | ${siteConfig.title}`;
 const canonicalUrl = canonical || new URL(Astro.url.pathname, siteConfig.url).toString();
 const robots = noIndex ? "noindex, nofollow" : "index, follow";
 const dataBlocks = Array.isArray(structuredData) ? structuredData : [structuredData];

@@ -21,6 +21,10 @@ const faqItems = [
     answer: "Java and Kotlin, analyzed at the bytecode level to precisely understand inheritance, generics, and library interactions. Deep Spring Boot support including Spring MVC, Spring Data, and related libraries. More languages ahead.",
   },
   {
+    question: "Why is OpenTaint the most thorough taint analyzer for Spring apps?",
+    answer: "OpenTaint performs inter-procedural dataflow analysis that follows taint across method boundaries, async code, and coroutines. It models JPA persistence layers, catching stored injections where untrusted input enters via one endpoint, gets persisted to the database, and resurfaces in a completely different request. Most tools lose track at the persistence boundary. OpenTaint doesn't.",
+  },
+  {
     question: "How does OpenTaint compare to Semgrep?",
     answer: "Semgrep's open-source engine includes intra-procedural taint analysis — it tracks data within a single function. Its Pro engine adds inter-procedural taint analysis behind a paid tier. OpenTaint ships full inter-procedural dataflow analysis — cross-endpoint flows, persistence layers, stored injections — under Apache 2.0. Rules use a code-native format that the engine translates into complete taint configurations. Semgrep rule syntax is supported as a migration path.",
   },
@@ -49,7 +53,7 @@ const faqItems = [
 
   <ul class="mx-auto mt-6 max-w-3xl lg:mt-8">
     {faqItems.map((item, index) => (
-      <li class="border-r-2 border-transparent pr-16 transition-colors" data-faq-item>
+      <li class="border-r-2 border-transparent pr-4 sm:pr-16 transition-colors" data-faq-item>
         <button
           type="button"
           class="flex w-full items-center gap-3 py-4 pr-4 text-left font-mono text-[15px] text-foreground transition-colors hover:text-primary lg:text-base lg:py-5 lg:pr-5"
@@ -71,7 +75,7 @@ const faqItems = [
           </svg>
           <span>{item.question}</span>
         </button>
-        <div id={`faq-answer-${index}`} class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-250 ease-out" data-faq-answer>
+        <div id={`faq-answer-${index}`} class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none" data-faq-answer>
           <div class="overflow-hidden">
             <div class="pb-4 pl-4 font-mono text-[15px] leading-[185%] text-muted-foreground lg:text-base lg:pb-5 lg:pl-5">
               {item.isContact ? (

@@ -71,22 +71,26 @@ const faqItems = [
           </svg>
           <span>{item.question}</span>
         </button>
-        <div id={`faq-answer-${index}`} class="hidden pb-4 pl-4 font-mono text-[15px] leading-[200%] text-muted-foreground lg:text-base lg:pb-5 lg:pl-5" data-faq-answer>
-          {item.isContact ? (
-            <span>
-              Ask us on{" "}
-              <a
-                href="https://discord.gg/6BXDfbP4p9"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-primary underline transition-colors hover:text-foreground"
-              >
-                Discord
-              </a>
-            </span>
-          ) : (
-            item.answer
-          )}
+        <div id={`faq-answer-${index}`} class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-250 ease-out" data-faq-answer>
+          <div class="overflow-hidden">
+            <div class="pb-4 pl-4 font-mono text-[15px] leading-[185%] text-muted-foreground lg:text-base lg:pb-5 lg:pl-5">
+              {item.isContact ? (
+                <span>
+                  Ask us on{" "}
+                  <a
+                    href="https://discord.gg/6BXDfbP4p9"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-primary underline transition-colors hover:text-foreground"
+                  >
+                    Discord
+                  </a>
+                </span>
+              ) : (
+                item.answer
+              )}
+            </div>
+          </div>
         </div>
       </li>
     ))}
@@ -103,7 +107,9 @@ const faqItems = [
       const isOpen = btn.getAttribute("aria-expanded") === "true";
       const chevron = btn.querySelector("[data-faq-chevron]");
       btn.setAttribute("aria-expanded", String(!isOpen));
-      answer.classList.toggle("hidden", isOpen);
+      if (answer instanceof HTMLElement) {
+        answer.style.gridTemplateRows = !isOpen ? "1fr" : "0fr";
+      }
       item.classList.toggle("border-transparent", isOpen);
       item.classList.toggle("border-primary", !isOpen);
       if (chevron) chevron.classList.toggle("rotate-90", !isOpen);

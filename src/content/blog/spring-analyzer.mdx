@@ -81,7 +81,7 @@ The engine traces the complete path: `@RequestBody RenderRequest` → `renderFro
 
 ### Configuration-Aware Sinks
 
-Not every call to a template engine is equally dangerous. Whether user input reaching `template.process()` constitutes an SSTI depends on how the engine is configured — and production codebases frequently have both hardened and default configurations side by side. An analyzer that doesn't track configuration state either flags both (noise) or misses both.
+Not every call to a template engine is equally dangerous. Whether user input reaching `template.process()` constitutes an SSTI depends on how the engine is configured. An analyzer that doesn't distinguish between hardened and default configurations either flags both (noise) or misses both.
 
 Consider a controller that passes user-controlled template content to two different Freemarker services:
 
@@ -109,7 +109,7 @@ this.templateConfig.setNewBuiltinClassResolver(TemplateClassResolver.UNRESTRICTE
 this.templateConfig.setNewBuiltinClassResolver(TemplateClassResolver.ALLOWS_NOTHING_RESOLVER);
 ```
 
-We resolve `@Autowired` bean constructors and track configuration state. We flag the marketing service — `UNRESTRICTED_RESOLVER` allows class loading, enabling remote code execution — and suppress the notification service, where `ALLOWS_NOTHING_RESOLVER` prevents class instantiation. Getting this distinction wrong means noise or missed vulnerabilities.
+The engine resolves `@Autowired` bean constructors and tracks configuration state. It flags the marketing service — `UNRESTRICTED_RESOLVER` allows class loading, enabling remote code execution — and suppresses the notification service, where `ALLOWS_NOTHING_RESOLVER` prevents class instantiation.
 
 ## Cross-Endpoint Flows
 
@@ -182,7 +182,7 @@ public ResponseEntity<String> getMessageContent(@PathVariable Long id) {
 }
 ```
 
-The two endpoints share no direct method call. We trace the full flow across both by modeling JPA repository operations as database read/write boundaries. When an entity is persisted via `repository.save()`, the taint state of each field is recorded against that entity type. When a different endpoint retrieves via `repository.findById()`, we look up the stored state and propagate it per-column to the retrieved entity's fields. No actual database connection is needed — this is a static approximation of persistence-layer data flow.
+The two endpoints share no direct method call. The engine traces the full flow across both by modeling JPA repository operations as database read/write boundaries. When an entity is persisted via `repository.save()`, the taint state of each field is recorded against that entity type. When a different endpoint retrieves via `repository.findById()`, the engine looks up the stored state and propagates it per-column to the retrieved entity's fields. No actual database connection is needed — this is a static approximation of persistence-layer data flow.
 
 ### Through Service State
 
@@ -221,7 +221,7 @@ public ResponseEntity<String> getLastContent() {
 }
 ```
 
-We trace the data from `createMessage`'s `content` parameter through the `lastContent` field assignment and back out via `getLastContent()` — a cross-endpoint stored XSS that doesn't touch the database at all.
+The engine traces the data from `createMessage`'s `content` parameter through the `lastContent` field assignment and back out via `getLastContent()` — a cross-endpoint stored XSS that doesn't touch the database at all.
 
 ### Column-Level Precision
 
@@ -264,7 +264,7 @@ public Message(String title, String content, String author) {
 }
 ```
 
-The `author` field is HTML-escaped before it reaches the database. The `title` and `content` fields are stored raw. We track each column independently:
+The `author` field is HTML-escaped before it reaches the database. The `title` and `content` fields are stored raw. The engine tracks each column independently:
 
 - `GET /api/messages/{id}/content` → returns raw `content` → **XSS detected**
 - `GET /api/messages/{id}/title` → returns raw `title` → **XSS detected**
@@ -272,7 +272,7 @@ The `author` field is HTML-escaped before it reaches the database. The `title` a
 
 Without column-level tracking, the choice is between flagging all three endpoints (false positives on `author`) or suppressing the entire entity (missing real vulnerabilities on `content` and `title`). Per-column sensitivity avoids the trade-off.
 
-We also recognize sanitizers applied at read time. The `GET /api/messages/{id}/content/safe` endpoint passes content through `HtmlUtils.htmlEscape()` before returning it — the engine sees the sanitizer and suppresses the finding for that path as well.
+The engine also recognizes sanitizers applied at read time. The `GET /api/messages/{id}/content/safe` endpoint passes content through `HtmlUtils.htmlEscape()` before returning it — it sees the sanitizer and suppresses the finding for that path as well.
 
 ## Limitations
 

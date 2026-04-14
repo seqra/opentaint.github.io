@@ -267,7 +267,33 @@ public MessageContent(String text) {
 }
 ```
 
-All three tools detect this first constructor-based example. The next variant extends the field chain further:
+All three tools detect this first constructor-based example. Each version also has a secure variant that reads `secureText` instead of `text` — the `MessageContent` constructor escapes the value with `HtmlUtils.htmlEscape` before storing it:
+
+```java
+// Profile.java
+public class MessageContent {
+    public String text;
+    public String secureText;
+
+    public MessageContent(String text) {
+        this.text = "<h1>Notification: " + text + "</h1>";
+        this.secureText = "<h1>Notification: " + HtmlUtils.htmlEscape(text) + "</h1>";
+    }
+}
+```
+
+```java
+// NotificationController.java — secure version
+@GetMapping("/notifications/secureTemplate")
+@ResponseBody
+public String generateSecureTemplate(
+        @RequestParam(defaultValue = "New Message") String content) {
+    Profile.MessageTemplate template = new Profile.MessageTemplate(content);
+    return template.body.content.secureText;
+}
+```
+
+The next variant extends the field chain further:
 
 ```java
 // NotificationController.java
@@ -281,13 +307,27 @@ public String generateNotification(
 }
 ```
 
-Here the tools diverge. Semgrep Code and OpenTaint track the deeper field chain. CodeQL does not report the vulnerability — its taint-tracking model does not propagate through field stores and loads on heap objects beyond a limited depth, so the six-deep accessor chain exceeds what its default `java/xss` query tracks.
+And its secure counterpart:
+
+```java
+// NotificationController.java — secure version
+@GetMapping("/notifications/secureGenerate")
+@ResponseBody
+public String generateSecureNotification(
+        @RequestParam(defaultValue = "New Message") String content) {
+    Profile.UserProfile profile = new Profile.UserProfile(content);
+
+    return profile.settings.config.template.body.content.secureText;
+}
+```
+
+Here the tools diverge. Semgrep Code and OpenTaint track the deeper field chain. CodeQL does not report the vulnerability — its taint-tracking model does not propagate through field stores and loads on heap objects beyond a limited depth, so the six-deep accessor chain exceeds what its default `java/xss` query tracks. On the secure variants, Semgrep Code produces false positives — it flags the sanitized `secureText` field as vulnerable, unable to distinguish it from the tainted `text` field on the same object.
 
 Results:
 
-- ✅ **Semgrep Code**: Detects both simple and complex versions.
+- ⚠️ **Semgrep Code**: Detects both simple and complex vulnerable versions but produces false positives on secure variants.
 - ⚠️ **CodeQL**: Handles the simple version but misses the complex one.
-- ✅ **OpenTaint**: Correctly handles both versions, including secure variants.
+- ✅ **OpenTaint**: Correctly handles both versions, filtering out secure variants.
 
 ### Pointer analysis — builder pattern with virtual dispatch
 
@@ -394,7 +434,7 @@ This comparison has deliberate constraints worth naming.
 | 1. **Direct return**                 | ✅ Pattern<br/>✅ Taint | ✅ Pattern<br/>✅ Taint | ✅ Built-in | ✅ Pattern<br/>✅ Taint |
 | 2. **Local variable assignment**     | ❌ Pattern<br/>✅ Taint | ❌ Pattern<br/>✅ Taint | ✅ Built-in | ✅ Pattern<br/>✅ Taint |
 | 3. **Inter-procedural flow**         | ❌ Pattern<br/>⚠️ Taint | ❌ Pattern<br/>✅ Taint | ✅ Built-in  | ✅ Pattern<br/>✅ Taint |
-| 4. **Field sensitivity — constructor chains** | ❌ Pattern<br/>⚠️ Taint | ❌ Pattern<br/>✅ Taint | ⚠️ Built-in | ✅ Pattern<br/>✅ Taint |
+| 4. **Field sensitivity — constructor chains** | ❌ Pattern<br/>⚠️ Taint | ❌ Pattern<br/>⚠️ Taint | ⚠️ Built-in | ✅ Pattern<br/>✅ Taint |
 | 5. **Pointer analysis — builder pattern with virtual dispatch** | ❌ Pattern<br/>❌ Taint | ❌ Pattern<br/>❌ Taint | ⚠️ Built-in | ✅ Pattern<br/>✅ Taint |
 
 ### Legend
@@ -408,7 +448,7 @@ This comparison has deliberate constraints worth naming.
 Each tool plateaus at a different depth of analysis:
 
 - **Semgrep CE** handles syntax matching and local taint tracking but stops at function boundaries.
-- **Semgrep Code** extends through inter-procedural analysis and field sensitivity but does not follow builder patterns or virtual dispatch.
+- **Semgrep Code** extends through inter-procedural analysis and field sensitivity but produces false positives on secure field variants and does not follow builder patterns or virtual dispatch.
 - **CodeQL** covers most cases but its analysis limits surface at deep field chains and virtual calls.
 - **OpenTaint** tracks data through all five cases — including builder state, constructor chains, and interface dispatch — using the same pattern rules throughout.
 

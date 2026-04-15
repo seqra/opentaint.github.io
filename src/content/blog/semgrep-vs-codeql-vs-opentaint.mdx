@@ -416,4 +416,6 @@ The key design difference: in Semgrep, the rule author declares the dataflow mod
 
 Production codebases are never simple. Helpers, builders, persistence layers, and interface calls accumulate as code matures — and each one is a place where a scanner can lose the thread. The gap between what a tool sees and what's actually there widens with every layer of indirection. A tool that covers today's code may not cover tomorrow's, and rules that describe *what* to find — not *how* to track it — are the ones that keep up.
 
+For a deeper look at how OpenTaint models Spring-specific data flows — dependency injection, JPA persistence, and cross-endpoint tracking — see [Taint Analysis for Spring: Data Flow Beyond the Call Graph](/blog/spring-analyzer).
+
 To try OpenTaint on your own project, see the [quick start guide](https://github.com/seqra/opentaint#quick-start).

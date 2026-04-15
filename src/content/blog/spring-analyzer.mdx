@@ -295,6 +295,8 @@ On the demo project, these capabilities surface realistic vulnerabilities that c
 
 Each new service, persistence layer, and injection boundary is another place for the data trail to break. OpenTaint follows it through all of them.
 
+For a side-by-side comparison of how Semgrep, CodeQL, and OpenTaint handle progressively harder XSS cases — from direct returns to builder patterns with virtual dispatch — see [Semgrep vs. CodeQL vs. OpenTaint: XSS Detection Depth Compared](/blog/semgrep-vs-codeql-vs-opentaint).
+
 All examples in this post come from a [purpose-built Spring Boot demo](https://github.com/seqra/java-spring-demo) — clone it to reproduce every finding.
 
 Try it on your own project — see the [quick start guide](https://github.com/seqra/opentaint#quick-start).

@@ -14,6 +14,7 @@ export type Post = PostSummary & {
   canonicalUrl: string;
   keywords?: string[];
   author?: string;
+  updatedDate?: string;
   entry?: CollectionEntry<"blog">;
 };
 
@@ -52,6 +53,7 @@ async function getLocalPosts(): Promise<Post[]> {
       canonicalUrl: `${siteConfig.url}/blog/${entry.id}`,
       keywords: entry.data.keywords,
       author: entry.data.author,
+      updatedDate: entry.data.updatedDate,
       entry,
     } satisfies Post;
   });

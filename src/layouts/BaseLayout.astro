@@ -28,6 +28,8 @@ const {
   articleModifiedTime,
 } = Astro.props;
 
+const resolvedOgType = (articlePublishedTime || articleModifiedTime) ? "article" : ogType;
+
 const pageTitle = title === siteConfig.title || title.includes(siteConfig.title)
   ? title
   : `${title} | ${siteConfig.title}`;
@@ -50,7 +52,7 @@ const dataBlocks = Array.isArray(structuredData) ? structuredData : [structuredD
 
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content={ogType} />
+    <meta property="og:type" content={resolvedOgType} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:image" content={image} />
     <meta property="og:site_name" content={siteConfig.title} />

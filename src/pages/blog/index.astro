@@ -3,14 +3,35 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import SiteHeader from "@/components/astro/SiteHeader.astro";
 import LandingFooter from "@/components/astro/LandingFooter.astro";
 import { getPostSummaries } from "@/lib/content";
+import { siteConfig } from "@/lib/site";
 
 const posts = await getPostSummaries();
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: siteConfig.url,
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Blog",
+      item: `${siteConfig.url}/blog`,
+    },
+  ],
+};
 ---
 
 <BaseLayout
   title="OpenTaint Blog | Releases, Comparisons, and Technical Notes on Taint Data Flow Analysis"
   description="Releases, comparisons, and technical notes on taint data flow analysis."
   keywords={["opentaint blog", "taint analysis articles", "sast comparison", "java security blog", "static analysis guides"]}
+  structuredData={breadcrumbSchema}
 >
   <div class="min-h-screen bg-background flex flex-col">
     <SiteHeader />

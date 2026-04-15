@@ -1,5 +1,6 @@
 ---
 import type { Post } from "@/lib/content";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
 
 type TocItem = {
   id: string;
@@ -59,7 +60,13 @@ const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
 
 <article>
   <section class="page-section">
-    <h1 class="max-w-5xl break-words font-mono text-2xl font-semibold tracking-[-0.03em] text-foreground sm:text-3xl md:text-4xl lg:text-[2.5rem]">
+    <Breadcrumbs items={[
+      { label: "Home", href: "/" },
+      { label: "Blog", href: "/blog" },
+      { label: post.title },
+    ]} />
+
+    <h1 class="mt-4 max-w-5xl break-words font-mono text-2xl font-semibold tracking-[-0.03em] text-foreground sm:text-3xl md:text-4xl lg:text-[2.5rem]">
       {post.title}
     </h1>
 

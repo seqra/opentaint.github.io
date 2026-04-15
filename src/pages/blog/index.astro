@@ -2,6 +2,7 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import SiteHeader from "@/components/astro/SiteHeader.astro";
 import LandingFooter from "@/components/astro/LandingFooter.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
 import { getPostSummaries } from "@/lib/content";
 import { siteConfig } from "@/lib/site";
 
@@ -38,6 +39,10 @@ const breadcrumbSchema = {
     <main id="main" class="flex-1 pt-16">
       <div class="page-container">
         <section class="page-section">
+          <Breadcrumbs items={[
+            { label: "Home", href: "/" },
+            { label: "Blog" },
+          ]} />
           <h1 class="font-mono text-[26px] font-bold tracking-tight text-foreground sm:text-[30px] md:text-[38px] md:leading-[1.15] lg:text-[42px] mt-4">Blog</h1>
           <p class="section-subtitle">Releases, comparisons, and technical notes on taint data flow analysis.</p>
         </section>

@@ -3,6 +3,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import SiteHeader from "@/components/astro/SiteHeader.astro";
 import LandingFooter from "@/components/astro/LandingFooter.astro";
 import { AnimatedHero } from "@/components/AnimatedHero";
+import Demo from "@/components/astro/Demo.astro";
 import WhatIsOpenTaint from "@/components/astro/WhatIsOpenTaint.astro";
 import SupportedTechnology from "@/components/astro/SupportedTechnology.astro";
 import FAQ from "@/components/astro/FAQ.astro";
@@ -80,6 +81,8 @@ const structuredData = [
         <section class="page-section pt-8 pb-7 sm:pt-16 sm:pb-11 lg:pt-20 lg:pb-14">
           <AnimatedHero client:load />
         </section>
+
+        <Demo />
 
         <WhatIsOpenTaint />
 

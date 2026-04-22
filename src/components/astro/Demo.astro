@@ -1,0 +1,32 @@
+---
+import { DemoSection } from "@/components/DemoSection";
+---
+
+<link rel="prefetch" href="/demo/hero.cast" as="fetch" crossorigin="anonymous" />
+
+<section class="page-section demo-section pt-0 pb-2 sm:pt-2 sm:pb-3 lg:pt-4 lg:pb-4">
+  <DemoSection client:visible />
+</section>
+
+<style>
+  .demo-section.page-section {
+    border-top: none;
+    margin-top: 0;
+  }
+  .demo-section.page-section::before,
+  .demo-section.page-section::after {
+    display: none;
+  }
+  /* On mobile the demo is a single full-bleed scan cast — drop the
+     section's own horizontal padding AND pull it out of the parent
+     .page-container's padding with matching negative margins, so the
+     terminal reaches the viewport edges. Above sm (640px), both
+     return to the default. */
+  @media (max-width: 639px) {
+    .demo-section.page-section {
+      padding-left: 0;
+      padding-right: 0;
+      margin-inline: calc(-1 * clamp(1rem, 4vw, 6rem));
+    }
+  }
+</style>

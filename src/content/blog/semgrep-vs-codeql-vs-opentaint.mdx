@@ -15,18 +15,13 @@ keywords:
 author: "Seqra Team"
 ---
 
-Spring applications accumulate indirection fast — helper methods, builders, persistence layers, and interface calls add up long before anyone checks what the security tooling can still follow. Each layer is another place where an analyzer can lose track of tainted data. We tested Semgrep, CodeQL, and OpenTaint on five progressively harder XSS cases in the same Spring Boot application to measure where each engine stops following the data.
+A SAST tool's job is to follow data through the indirection a real codebase accumulates. The interesting question is not whether a tool finds XSS but how much code structure it can see through before losing the trail. We tested Semgrep, CodeQL, and OpenTaint on five Spring XSS cases of progressively deeper indirection. The pattern that emerges: each tool plateaus at a different depth, set by what the rule author has to declare versus what the engine can infer.
 
-Three tools, one test application — an [intentionally vulnerable Spring Boot project](https://github.com/seqra/java-spring-demo) designed to isolate different aspects of XSS detection. Each example measures two things:
+Each case measures two outcomes: false negatives (vulnerabilities the tool fails to detect) and false positives (secure code paths the tool incorrectly flags). The three tools under test:
 
-- XSS vulnerabilities that the tool fails to detect — false negatives.
-- Secure code incorrectly flagged as vulnerable — false positives.
-
-The three tools under test:
-
-- **Semgrep** matches patterns syntactically, with taint-analysis support and broader inter-procedural coverage in its commercial edition. Results below distinguish Semgrep CE and Semgrep Code where they diverge.
-- **CodeQL** runs semantic analysis through a dedicated query language; we use its default `java/xss` rule.
-- **OpenTaint** interprets Semgrep-style patterns as dataflow queries — metavariables are tracked as program values, not syntactic placeholders.
+- **Semgrep** matches patterns syntactically, with taint-analysis support and broader inter-procedural coverage in Semgrep Code, its paid commercial edition. Results below distinguish Semgrep CE and Semgrep Code where they diverge.
+- **CodeQL** runs semantic analysis through a dedicated query language; we use its default `java/xss` rule. Free for open-source repositories, requires GitHub Advanced Security for private repos.
+- **OpenTaint** interprets Semgrep-style patterns as dataflow queries — metavariables are tracked as program values, not syntactic placeholders. Runs whole-program analysis against a build artifact, which is what enables the deeper tracking shown in the later cases. Java and Kotlin today, Apache 2.0 / MIT licensed.
 
 ## Five test cases
 
@@ -46,7 +41,7 @@ Each case reflects patterns that are routine in production code. The question is
 
 ### Syntax matching — direct return
 
-Consider a controller that returns a request parameter directly.
+Consider a profile page that takes a greeting from the URL and echoes it back inside an HTML response — the simplest possible reflection: one endpoint, one parameter, no helpers. The controller below implements it.
 
 ```java
 // ProfileController.java
@@ -78,7 +73,7 @@ Results: ✅ **Semgrep**, ✅ **CodeQL**, ✅ **OpenTaint**
 
 ### Local dataflow — variable assignment
 
-Consider the same endpoint, but with the input assigned to a local variable before the return. That single step breaks syntax-only matching — the tool needs local dataflow tracking.
+The same endpoint, but with the input assigned to a local variable before the return. That single step breaks syntax-only matching: the tool now needs local dataflow tracking.
 
 ```java
 // ProfileController.java
@@ -191,7 +186,7 @@ From this point forward, Semgrep's taint rules are used — pattern rules are in
 
 ### Inter-procedural analysis — function call boundary
 
-Consider a controller that delegates to a helper method. The tool must follow data across function boundaries.
+Now move the concatenation into a private helper. The controller looks innocuous; the dangerous string is built one stack frame deeper. The tool must follow data across function boundaries.
 
 ```java
 // DashboardController.java
@@ -238,7 +233,7 @@ From this point, Semgrep Code is used for remaining examples since inter-procedu
 
 ### Field sensitivity — constructor chains
 
-Consider a controller that wraps user input in nested objects — constructor chains and field access. The tool must track a value through field stores and property reads.
+Imagine a notification system that wraps user-supplied content inside a structured template — a tree of objects (template → body → content → text) that the rendering layer reads selectively. The controller below builds that tree from a query parameter and returns the deepest field. Tracking the input through this construction requires field sensitivity: the analyzer has to know which field of which object holds the tainted value.
 
 ```java
 // NotificationController.java
@@ -331,7 +326,7 @@ Results:
 
 ### Pointer analysis — builder pattern with virtual dispatch
 
-Consider a builder pattern — method chaining, field assignment, and object state updates. These add three forms of indirection at once.
+The final case uses a builder pattern. Method chaining returns the same instance, and a field assigned in one call is read in the next — the analyzer must carry the field across the chained call to keep the value reachable at the sink.
 
 ```java
 // MessageController.java
@@ -359,7 +354,7 @@ public String buildPage() {
 }
 ```
 
-CodeQL and OpenTaint detect the vulnerability. Semgrep Code does not — builder patterns combine method chaining, field assignment, and object state, which its analysis model does not currently follow.
+CodeQL and OpenTaint detect the vulnerability. Semgrep Code does not — its analysis model doesn't carry the field assigned in `.message()` across the chained call to `.buildPage()`.
 
 The next variant adds an interface-based formatter:
 
@@ -375,7 +370,7 @@ public String formatMessage(
 }
 ```
 
-The formatter interface adds another analytical requirement — virtual dispatch resolution:
+The formatter interface adds another analytical requirement: the analyzer must continue dataflow through a function that takes an interface parameter and invokes a virtual method on it.
 
 ```java
 public HtmlPageBuilder format(IFormatter formatter) {
@@ -391,7 +386,7 @@ public class DefaultFormatter implements IFormatter {
 }
 ```
 
-The analyzer must resolve which implementation of `format()` executes at runtime and continue the dataflow through that call. This depends on pointer analysis: determining what concrete objects a reference may point to.
+Detecting the vulnerability does not require resolving which concrete implementation of `format()` runs — assuming any `IFormatter` implementation may pass the value through is enough. What the analyzer must do is follow `formatter.format(this.message)` instead of treating the virtual call as opaque.
 
 Semgrep Code and CodeQL miss the interface-based case. OpenTaint reports it.
 
@@ -409,7 +404,7 @@ public String escapeMessage(
 }
 ```
 
-This requires the analyzer to resolve the virtual method call to `EscapeFormatter.format()` and recognize it as a sanitizer. OpenTaint correctly identifies this as safe.
+Filtering this case is where pointer analysis earns its name. The analyzer has to know specifically that the formatter parameter holds an `EscapeFormatter` instance — not just *some* `IFormatter` — so the virtual call resolves to the sanitizer rather than to `DefaultFormatter`, which returns its input unchanged. Without that precision, the analyzer has to consider every `IFormatter` implementation as possible — including `DefaultFormatter` — and so flags the secure variant as a false positive. OpenTaint correctly identifies this as safe.
 
 Results:
 
@@ -417,15 +412,9 @@ Results:
 - ⚠️ **CodeQL**: Handles the simple builder but misses the interface-based version.
 - ✅ **OpenTaint**: Detects both patterns, resolves virtual dispatch, and correctly filters the secure `EscapeFormatter` variant.
 
-## Benchmark design
+## Scope
 
-This comparison has deliberate constraints worth naming.
-
-- **Five cases, one application, one vulnerability class.** XSS in a Spring Boot project isolates analytical depth but says nothing about language breadth, rule coverage, or performance at scale. A tool that handles all five cases here may still miss patterns in other frameworks or languages.
-- **Custom rules vs. defaults.** Semgrep and OpenTaint use hand-written rules targeting these specific cases. CodeQL uses its default `java/xss` query. A custom CodeQL query could narrow or close some gaps — the comparison measures out-of-the-box and minimal-rule behavior, not maximum capability.
-- **OpenTaint's language support is narrow.** Java and Kotlin today. Semgrep and CodeQL cover dozens of languages. Depth on one language does not substitute for breadth across a polyglot codebase.
-- **Whole-program analysis requires a build.** OpenTaint analyzes compiled programs, which enables deeper analysis but requires a build step. Pattern-only scans skip the build step and run faster, but cannot follow data across the boundaries tested here.
-- **Licensing and availability.** Semgrep Code results require a paid license. CodeQL is free for open-source repositories but requires GitHub Advanced Security for private repos. OpenTaint's full analysis is Apache 2.0 / MIT licensed.
+Five cases, one application, one vulnerability class. XSS in a Spring Boot project isolates analytical depth but says nothing about language breadth or performance at scale. A tool that handles all five cases here may still miss patterns in other frameworks.
 
 ## Results summary
 
@@ -456,6 +445,6 @@ The key design difference: in Semgrep, the rule author declares the dataflow mod
 
 Production codebases are never simple. Helpers, builders, persistence layers, and interface calls accumulate as code matures — and each one is a place where a scanner can lose the thread. The gap between what a tool sees and what's actually there widens with every layer of indirection. A tool that covers today's code may not cover tomorrow's, and rules that describe *what* to find — not *how* to track it — are the ones that keep up.
 
-For a deeper look at what Spring-specific data flows OpenTaint can model — dependency injection, JPA persistence, and cross-endpoint tracking — see [Taint Analysis for Spring: Data Flow Beyond the Call Graph](/blog/spring-analyzer).
+All five cases are runnable end-to-end in the [java-spring-demo project](https://github.com/seqra/java-spring-demo). For a deeper look at what Spring-specific data flows OpenTaint can model — dependency injection, JPA persistence, and cross-endpoint tracking — see [Taint Analysis for Spring: Data Flow Beyond the Call Graph](/blog/spring-analyzer).
 
 To try OpenTaint on your own project, see the [quick start guide](https://github.com/seqra/opentaint#quick-start).

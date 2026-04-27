@@ -1,6 +1,6 @@
 ---
 title: "Taint Analysis for Spring: Data Flow Beyond the Call Graph"
-description: "Conventional static analysis breaks where Spring's architecture begins — dependency injection, JPA persistence, framework configuration. OpenTaint traces tainted data through every layer, from injected services to database storage to dangerous API calls, distinguishing raw columns from sanitized ones."
+description: "AST-pattern analyzers break where Spring's architecture begins — dependency injection, JPA persistence, framework configuration. OpenTaint traces tainted data through every layer, from injected services to database storage to dangerous API calls, distinguishing raw columns from sanitized ones."
 date: "2026-03-25"
 updatedDate: "2026-03-25"
 keywords:
@@ -17,9 +17,9 @@ author: "Seqra Team"
 
 import Mermaid from "@/components/astro/Mermaid.astro";
 
-Spring Boot's annotation-driven architecture creates data flows that are invisible to conventional static analysis. The mechanism is everywhere: an `@Autowired` injection crosses class boundaries with no call site the parser can see; JPA persistence links two HTTP endpoints through a database row with no shared code path; a template engine's configuration decides — at runtime, from a flag set in some other file — whether the call to `template.process()` is exploitable or harmless. Three different invisibilities, three different framework features, the same blind spot.
+Spring Boot's annotation-driven architecture creates data flows that are invisible to AST-pattern analyzers. The mechanism is everywhere: an `@Autowired` injection crosses class boundaries with no call site the parser can see; JPA persistence links two HTTP endpoints through a database row with no shared code path; a template engine's configuration decides — at runtime, from a flag set in some other file — whether the call to `template.process()` is exploitable or harmless. Three different invisibilities, three different framework features, the same blind spot.
 
-These are not edge cases. They are the default architecture of most Java web applications. The post walks three progressively harder challenges — following data through dependency injection, connecting endpoints through persistence, and distinguishing dangerous fields from safe ones at per-column granularity — and shows what each demands of the engine. Generic SAST plateaus at the first; OpenTaint models all three.
+These are not edge cases. They are the default architecture of most Java web applications. The post walks three progressively harder challenges — following data through dependency injection, connecting endpoints through persistence, and distinguishing dangerous fields from safe ones at per-column granularity — and shows what each demands of the engine. AST-pattern analyzers plateau at the first; OpenTaint models all three.
 
 ## Single-Request Flows
 
@@ -271,7 +271,7 @@ The same logic applies to sanitizers at read time. The `GET /api/messages/{id}/c
 
 ## Conclusion
 
-The call graph is the wrong primitive for framework-driven Java. Annotations replace explicit calls; persistence connects endpoints with no shared code; configuration decides whether a sink is a sink. An analyzer built on the call graph plus pattern matching cannot see these flows — not because they are rare, but because the abstraction is wrong. OpenTaint commits to a richer abstraction: bean wiring, persistence boundaries, conditional sinks  per-column taint. The cost is whole-program analysis that needs a build. The payoff is the findings the call graph alone cannot reach.
+The call graph is the wrong primitive for framework-driven Java. Annotations replace explicit calls; persistence connects endpoints with no shared code; configuration decides whether a sink is a sink. An analyzer built on the call graph plus pattern matching cannot see these flows — not because they are rare, but because the abstraction is wrong. OpenTaint commits to a richer abstraction: bean wiring, persistence boundaries, conditional sinks, per-column taint. The cost is whole-program analysis that needs a build. The payoff is the findings the call graph alone cannot reach.
 
 Clone the [purpose-built Spring Boot demo](https://github.com/seqra/java-spring-demo) and reproduce every finding in this post.
 

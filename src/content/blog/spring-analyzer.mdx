@@ -17,19 +17,13 @@ author: "Seqra Team"
 
 import Mermaid from "@/components/astro/Mermaid.astro";
 
-Spring Boot's annotation-driven architecture creates data flows that are invisible to conventional static analysis. An `@Autowired` injection crosses class boundaries with no call site in the source. JPA persistence links two HTTP endpoints through the database with no shared code path. A template engine's configuration determines whether user input reaching `template.process()` is exploitable — or harmless.
+Spring Boot's annotation-driven architecture creates data flows that are invisible to conventional static analysis. The mechanism is everywhere: an `@Autowired` injection crosses class boundaries with no call site the parser can see; JPA persistence links two HTTP endpoints through a database row with no shared code path; a template engine's configuration decides — at runtime, from a flag set in some other file — whether the call to `template.process()` is exploitable or harmless. Three different invisibilities, three different framework features, the same blind spot.
 
-These are not edge cases. They are the default architecture of most Java web applications. And they create three progressively harder challenges for static analysis:
-
-1. **Following data through dependency injection** — where `@Autowired` wiring replaces explicit call sites and data crosses file, class, and service boundaries.
-2. **Connecting endpoints through persistence** — where the database or service state is the only link between the request that stores a payload and the request that renders it.
-3. **Distinguishing dangerous fields from safe ones** — at per-column granularity in persisted entities, and per-configuration granularity in template engines.
-
-Each level requires a deeper understanding of Spring's framework semantics. OpenTaint models all three.
+These are not edge cases. They are the default architecture of most Java web applications. The post walks three progressively harder challenges — following data through dependency injection, connecting endpoints through persistence, and distinguishing dangerous fields from safe ones at per-column granularity — and shows what each demands of the engine. Generic SAST plateaus at the first; OpenTaint models all three.
 
 ## Single-Request Flows
 
-Before tackling cross-endpoint flows, we start with what happens within a single HTTP request — following data through DI boundaries and recognizing when a sink is actually dangerous based on its configuration.
+Before tackling cross-endpoint flows, we start with what happens within a single HTTP request — following data through DI boundaries and recognizing when a sink is actually dangerous based on the receiver state the rule's condition names.
 
 For JVM languages, OpenTaint operates on bytecode rather than source text. This requires a successful build before scanning, but gives precise resolution of inheritance, generics, and library calls. That precision matters in Spring — runtime behavior depends on bean wiring, annotation metadata, and framework conventions that AST-only tools treat as opaque.
 
@@ -78,11 +72,13 @@ public class TemplateRenderingService {
 
 OpenTaint traces the complete path: `@RequestBody RenderRequest` → `renderFromRequest()` → `request.getTemplateContent()` → `renderFromContent()` → `templateEngine.process()`. The data crosses a class boundary, passes through DTO field access, and flows through an `@Autowired` service — all tracked as a single inter-procedural data flow.
 
-### Configuration-Aware Sinks
+Resolving the chain across DI boundaries is necessary but not sufficient. The next question is whether the call at the end of the chain is genuinely dangerous — and that depends on receiver state the chain itself doesn't carry, expressed as a condition the rule must encode.
 
-Not every call to a template engine is equally dangerous. Whether user input reaching `template.process()` constitutes an SSTI depends on how the template engine is configured. An analyzer that doesn't distinguish between hardened and default configurations either flags both (noise) or misses both.
+### Conditional Sinks
 
-Consider a controller that passes user-controlled template content to two different Freemarker services:
+Not every call to a template engine is equally dangerous. The rule for `template.process()` carries a condition: the call is a sink only when the receiver permits class loading. An analyzer with no way to express that condition either flags every call (noise) or none (missed RCE).
+
+The same controller exposes two parallel endpoints, each routing user-controlled template content to a different Freemarker service:
 
 ```java
 // CampaignController.java
@@ -108,7 +104,7 @@ this.templateConfig.setNewBuiltinClassResolver(TemplateClassResolver.UNRESTRICTE
 this.templateConfig.setNewBuiltinClassResolver(TemplateClassResolver.ALLOWS_NOTHING_RESOLVER);
 ```
 
-OpenTaint resolves `@Autowired` bean constructors and tracks configuration state. It flags the marketing service — `UNRESTRICTED_RESOLVER` allows class loading, enabling remote code execution — and suppresses the notification service, where `ALLOWS_NOTHING_RESOLVER` prevents class instantiation.
+OpenTaint resolves `@Autowired` bean constructors and tracks the receiver state the rule's condition names. It flags the marketing service — `UNRESTRICTED_RESOLVER` allows class loading, enabling remote code execution — and suppresses the notification service, where `ALLOWS_NOTHING_RESOLVER` prevents class instantiation.
 
 ## Cross-Endpoint Flows
 
@@ -118,7 +114,7 @@ Detecting these stored vulnerabilities requires modeling data flow across persis
 
 ### Through the Database
 
-A messaging feature shows this pattern. A POST endpoint accepts user content and stores it via JPA; a separate GET endpoint retrieves that content and serves it as HTML.
+Imagine a per-thread message board — a small collaboration feature where users post short notes that other users read on the thread page. A POST endpoint creates each note and stores it in the database; the thread page renders the stored notes as HTML so links and formatting come through. Two endpoints, no shared code path. The controller and service below implement this.
 
 <Mermaid chart={`sequenceDiagram
     actor Attacker
@@ -273,30 +269,10 @@ Without column-level tracking, the choice is between flagging all three endpoint
 
 The same logic applies to sanitizers at read time. The `GET /api/messages/{id}/content/safe` endpoint passes content through `HtmlUtils.htmlEscape()` before returning it — OpenTaint sees the sanitizer and suppresses the finding for that path as well.
 
-## Limitations
-
-We deliberately over-approximate in several areas to preserve coverage. False positives can appear from these deliberate trade-offs:
-
-1. **Path insensitivity** — the analyzer does not track conditional branches, so it may report findings for paths guarded by validation logic. This is a common trade-off in static analysis: tracking all branches is expensive and path explosion makes the naive analysis impractical at scale. The practical mitigation is to use recognized sanitizer functions — which the rules understand — instead of conditional checks.
-2. **Configuration insensitivity** — the analyzer currently does not model Spring bean profiles or `@Conditional` annotations, so it resolves all potential bean instances on `@Autowired` and may produce findings from configurations that aren't actually active. This over-approximation ensures no injection is missed through an unexpected bean, but can be noisy in projects with many profiles.
-
-Beyond these deliberate trade-offs, there are also straightforward gaps:
-
-1. **Missing rules** — a source, sink, sanitizer, or propagator is not covered in the rules. Fixed by adding more rules.
-2. **Analyzer bugs** are possible.
-
-If you see an uncaught issue you expect to be detected or vice-versa, report it via GitHub Issues or Discord.
-
 ## Conclusion
 
-Each section showed a harder problem: following data through dependency injection, connecting endpoints through persistence, and distinguishing dangerous fields from safe ones within those flows. Each required the engine to model a layer of Spring semantics that generic static analyzers ignore — bean wiring, JPA repository boundaries, template engine configuration, and per-column taint state.
+The call graph is the wrong primitive for framework-driven Java. Annotations replace explicit calls; persistence connects endpoints with no shared code; configuration decides whether a sink is a sink. An analyzer built on the call graph plus pattern matching cannot see these flows — not because they are rare, but because the abstraction is wrong. OpenTaint commits to a richer abstraction: bean wiring, persistence boundaries, conditional sinks  per-column taint. The cost is whole-program analysis that needs a build. The payoff is the findings the call graph alone cannot reach.
 
-On the demo project, these capabilities surface realistic vulnerabilities that conventional tools miss: cross-endpoint stored XSS through JPA and service fields, configuration-dependent SSTI in Freemarker, and deep DI-mediated injection paths — while suppressing sanitized columns and hardened configurations that would otherwise be false positives.
-
-Each new service, persistence layer, and injection boundary is another place for the data trail to break. OpenTaint follows it through all of them.
+Clone the [purpose-built Spring Boot demo](https://github.com/seqra/java-spring-demo) and reproduce every finding in this post.
 
 For a side-by-side comparison of how Semgrep, CodeQL, and OpenTaint handle progressively harder XSS cases — from direct returns to builder patterns with virtual dispatch — see [Semgrep vs. CodeQL vs. OpenTaint: XSS Detection Depth Compared](/blog/semgrep-vs-codeql-vs-opentaint).
-
-All examples in this post come from a [purpose-built Spring Boot demo](https://github.com/seqra/java-spring-demo) — clone it to reproduce every finding.
-
-Try it on your own project — see the [quick start guide](https://github.com/seqra/opentaint#quick-start).

@@ -49,6 +49,11 @@ const flushAsync = async () => {
   });
 };
 
+const lastCreateOptions = () => {
+  const call = createPlayerMock.mock.calls.at(-1);
+  return (call?.[2] ?? {}) as Record<string, unknown>;
+};
+
 describe("DemoSection", () => {
   it("mounts the hero player", async () => {
     render(<DemoSection />);
@@ -57,31 +62,39 @@ describe("DemoSection", () => {
     expect(createPlayerMock).toHaveBeenCalledTimes(1);
   });
 
-  it("applies the dark theme class when the document has .dark", async () => {
+  it("uses the dark cast theme on a light page", async () => {
+    render(<DemoSection />);
+    await flushAsync();
+    expect(lastCreateOptions().theme).toBe("opentaint-dark");
+  });
+
+  it("uses the light cast theme on a dark page", async () => {
     document.documentElement.classList.add("dark");
     render(<DemoSection />);
     await flushAsync();
-    const hero = screen.getByTestId("demo-hero-player");
-    expect(hero.className).toContain("ap-theme-opentaint-dark");
+    expect(lastCreateOptions().theme).toBe("opentaint-light");
   });
 
-  it("swaps the theme class when [data-theme-toggle] is clicked", async () => {
+  it("re-creates the player with the inverse theme when [data-theme-toggle] is clicked", async () => {
     const toggle = document.createElement("button");
     toggle.setAttribute("data-theme-toggle", "");
     document.body.appendChild(toggle);
 
     render(<DemoSection />);
     await flushAsync();
-    const hero = screen.getByTestId("demo-hero-player");
-    expect(hero.className).toContain("ap-theme-opentaint-light");
+    expect(lastCreateOptions().theme).toBe("opentaint-dark");
+    const firstHandle = playerInstances.at(-1);
 
     await act(async () => {
       document.documentElement.classList.add("dark");
       toggle.click();
       await Promise.resolve();
     });
+    await flushAsync();
 
-    expect(hero.className).toContain("ap-theme-opentaint-dark");
+    expect(firstHandle?.dispose).toHaveBeenCalled();
+    expect(createPlayerMock).toHaveBeenCalledTimes(2);
+    expect(lastCreateOptions().theme).toBe("opentaint-light");
     toggle.remove();
   });
 

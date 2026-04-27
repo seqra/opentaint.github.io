@@ -1,12 +1,15 @@
 /*
- * Custom asciinema-player themes that match the site's light/dark palette.
- * Applied via wrapper class: .ap-theme-opentaint-light or .ap-theme-opentaint-dark.
+ * Custom asciinema-player themes that intentionally contrast with the site
+ * theme: the dark cast is shown on the light page and vice versa.
+ *
+ * Asciinema-player applies `asciinema-player-theme-<name>` to its inner
+ * `.ap-player` element when `create(..., { theme: "<name>" })` is used.
  * See src/components/DemoSection.tsx for the selector logic.
  */
 
-.ap-theme-opentaint-light {
-  --term-color-background: hsl(var(--card));
-  --term-color-foreground: hsl(var(--foreground));
+.ap-player.asciinema-player-theme-opentaint-light {
+  --term-color-background: hsl(0 0% 100%);
+  --term-color-foreground: hsl(215 14% 8%);
   --term-color-0: #3f3f46;
   --term-color-1: #dc2626;
   --term-color-2: #16a34a;
@@ -25,9 +28,9 @@
   --term-color-15: #27272a;
 }
 
-.ap-theme-opentaint-dark {
-  --term-color-background: hsl(var(--card));
-  --term-color-foreground: hsl(var(--foreground));
+.ap-player.asciinema-player-theme-opentaint-dark {
+  --term-color-background: hsl(215 10% 7%);
+  --term-color-foreground: hsl(215 6% 92%);
   --term-color-0: #52525b;
   --term-color-1: #f87171;
   --term-color-2: #4ade80;

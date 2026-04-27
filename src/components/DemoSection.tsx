@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import "asciinema-player/dist/bundle/asciinema-player.css";
 
 type PlayerStatus = "loading" | "ready" | "error";
 type Theme = "light" | "dark";
+type DemoTheme = "opentaint-light" | "opentaint-dark";
 
 type PlayerHandle = { dispose: () => void };
 
@@ -16,8 +18,8 @@ type PlayerModule = {
 const HERO_SRC = "/demo/hero.cast";
 const HERO_FALLBACK_SRC = "/demo/hero.svg";
 
-const themeClass = (theme: Theme) =>
-  theme === "dark" ? "ap-theme-opentaint-dark" : "ap-theme-opentaint-light";
+const demoThemeFor = (pageTheme: Theme): DemoTheme =>
+  pageTheme === "dark" ? "opentaint-light" : "opentaint-dark";
 
 const readInitialTheme = (): Theme =>
   typeof document !== "undefined" && document.documentElement.classList.contains("dark")
@@ -37,6 +39,8 @@ export function DemoSection() {
   const heroRef = useRef<HTMLDivElement | null>(null);
   const heroHandleRef = useRef<PlayerHandle | null>(null);
 
+  const demoTheme = demoThemeFor(theme);
+
   useEffect(() => {
     if (reducedMotion) return;
 
@@ -44,14 +48,14 @@ export function DemoSection() {
     const load = async () => {
       try {
         const mod = (await import("asciinema-player")) as PlayerModule;
-        await import("asciinema-player/dist/bundle/asciinema-player.css");
-        if (cancelled || !heroRef.current || heroHandleRef.current) return;
+        if (cancelled || !heroRef.current) return;
         heroHandleRef.current = mod.create(HERO_SRC, heroRef.current, {
           autoPlay: true,
           loop: true,
           preload: true,
           controls: false,
           poster: "npt:0:0.1",
+          theme: demoTheme,
           terminalFontFamily: "'JetBrains Mono', monospace",
         });
         setStatus("ready");
@@ -66,7 +70,7 @@ export function DemoSection() {
       heroHandleRef.current?.dispose();
       heroHandleRef.current = null;
     };
-  }, [reducedMotion]);
+  }, [reducedMotion, demoTheme]);
 
   useEffect(() => {
     if (typeof document === "undefined") return;
@@ -85,10 +89,8 @@ export function DemoSection() {
     return () => mq.removeEventListener?.("change", onChange);
   }, []);
 
-  const wrapper = themeClass(theme);
-
   return (
-    <div className={`mx-auto max-w-[68.4rem] ${wrapper}`}>
+    <div className="mx-auto max-w-[68.4rem]">
       <div className="overflow-hidden sm:rounded-md sm:border sm:border-border sm:bg-secondary/50">
         {reducedMotion || status === "error" ? (
           <img
@@ -101,7 +103,6 @@ export function DemoSection() {
           <div
             ref={heroRef}
             data-testid="demo-hero-player"
-            className={wrapper}
             aria-label="OpenTaint scan demo, running continuously"
           />
         )}

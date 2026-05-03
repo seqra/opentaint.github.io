@@ -16,7 +16,7 @@ export const defaultKeywords = [
   "semgrep alternative",
   "codeql alternative",
   "cross-endpoint flow",
-  "code-native rules",
+  "AST-pattern rules",
   "AI agent security",
   "taint analysis engine",
   "open source sast",

@@ -15,7 +15,7 @@ export const faqItems: readonly FaqItem[] = [
   },
   {
     question: "What are AST-pattern rules?",
-    answer: "Rules that look like code. Readable, writable, and tunable by humans and AI agents alike. The engine translates each rule into a full taint configuration — sources, sinks, sanitizers, and propagators connected by typed taint marks. When a rule produces a false positive, you refine the rule directly. No query language to learn, no black box to work around.",
+    answer: "Two layers. AST-pattern rules describe the shape of vulnerable code — the same rule format ast-grep and Semgrep use, readable by humans and AI agents alike. Whole-program taint analysis is what reads them: the engine analyzes a build artifact, resolving inheritance, generics, and library calls precisely, and tracks each rule's metavariables as program values across function boundaries, fields, async code, and persistence layers. AST-pattern analyzers stop at syntactic match; OpenTaint follows the data through the compiled program. When a rule produces a false positive, refine it directly — no query language, no black box.",
   },
   {
     question: "Why not just use an LLM agent for security scanning?",

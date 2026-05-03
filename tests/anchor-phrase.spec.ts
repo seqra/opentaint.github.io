@@ -13,4 +13,12 @@ test.describe("anchor phrase distinction", () => {
     const eyebrow = page.getByText(ANCHOR, { exact: true }).first();
     await expect(eyebrow).toBeVisible();
   });
+
+  test("Why OpenTaint section shows the anchor eyebrow above the H2", async ({ page }) => {
+    await page.goto("/");
+    const section = page.locator("section[aria-labelledby='what-heading']");
+    await expect(section).toBeAttached();
+    const eyebrow = section.getByText(ANCHOR, { exact: true });
+    await expect(eyebrow).toHaveCount(1);
+  });
 });

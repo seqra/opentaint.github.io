@@ -35,6 +35,10 @@ export function AnimatedHero() {
 
   return (
     <div>
+      <p className="mb-3 font-mono text-xs uppercase tracking-[0.14em] text-primary/80 lg:mb-4 lg:text-[13px]">
+        AST-pattern rules. Whole-program taint analysis.
+      </p>
+
       <h1 className="font-mono text-[26px] font-bold tracking-tight text-foreground sm:text-[30px] md:text-[38px] md:leading-[1.15] lg:text-[42px]">
         The open source taint analysis engine for the AI era
       </h1>

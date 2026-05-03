@@ -434,7 +434,7 @@ Five cases, one application, one vulnerability class. XSS in a Spring Boot proje
 
 ### Takeaways
 
-Each tool plateaus at a different depth of analysis:
+**AST-pattern rules. Whole-program taint analysis.** Each tool plateaus at a different depth of analysis:
 
 - **Semgrep CE** handles syntax matching and local taint tracking but stops at function boundaries.
 - **Semgrep Code** extends through inter-procedural analysis and field sensitivity but produces false positives on secure field variants and does not follow builder patterns or virtual dispatch.

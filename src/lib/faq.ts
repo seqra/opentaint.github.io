@@ -7,7 +7,7 @@ export type FaqItem = {
 export const faqItems: readonly FaqItem[] = [
   {
     question: "What is OpenTaint?",
-    answer: "OpenTaint is an open source taint analysis engine built for the AI coding era. It performs inter-procedural dataflow analysis on Java and Kotlin bytecode — cross-endpoint flow tracking, persistence layer modelling, alias analysis, and asynchronous code analysis. Code-native rules find real vulnerabilities in web applications. Finds what pattern matching engines miss, enacts what LLM agents discover as permanent rules, scales where neither can alone.",
+    answer: "OpenTaint is an open source taint analysis engine built for the AI coding era. It performs inter-procedural dataflow analysis on Java and Kotlin bytecode — cross-endpoint flow tracking, persistence layer modelling, alias analysis, and asynchronous code analysis. Code-native rules find real vulnerabilities in web applications. Finds what AST-pattern analyzers miss, enacts what LLM agents discover as permanent rules, scales where neither can alone.",
   },
   {
     question: "What vulnerabilities does OpenTaint detect?",

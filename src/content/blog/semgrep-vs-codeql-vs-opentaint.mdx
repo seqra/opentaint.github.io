@@ -73,7 +73,7 @@ Results: ✅ **Semgrep**, ✅ **CodeQL**, ✅ **OpenTaint**
 
 ### Local dataflow — variable assignment
 
-The same endpoint, but with the input assigned to a local variable before the return. That single step breaks syntax-only matching: the tool now needs local dataflow tracking.
+The same endpoint, but with the input assigned to a local variable before the return. That single step breaks AST-pattern analyzers: the tool now needs local dataflow tracking.
 
 ```java
 // ProfileController.java
@@ -178,7 +178,7 @@ pattern-sanitizers:
 
 Results:
 
-- ❌ **Semgrep (pattern)**: Misses the vulnerability — syntax matching cannot follow the assignment.
+- ❌ **Semgrep (pattern)**: Misses the vulnerability — AST-pattern analyzers cannot follow the assignment.
 - ✅ **Semgrep (taint)**: Detects the vulnerability and can recognize sanitization.
 - ✅ **CodeQL** and ✅ **OpenTaint (pattern and taint)**: Correctly handle both vulnerable and secure code.
 

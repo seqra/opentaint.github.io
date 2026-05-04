@@ -35,7 +35,7 @@ export const faqItems: readonly FaqItem[] = [
   },
   {
     question: "How does OpenTaint compare to CodeQL?",
-    answer: "CodeQL requires learning QL — a specialized query language that AI agents can't easily write. OpenTaint delivers formal inter-procedural dataflow analysis with AST-pattern rules any developer or AI agent can read, write, and refine. No proprietary licensing, no paywall. Full taint analysis out of the box.",
+    answer: "CodeQL performs inter-procedural taint analysis, but rules are written in QL — a domain-specific query language with its own semantics. OpenTaint delivers formal inter-procedural dataflow analysis with AST-pattern rules any developer or AI agent can read, write, and refine. No proprietary licensing, no paywall. Full taint analysis out of the box.",
   },
   {
     question: "Is OpenTaint free to use?",

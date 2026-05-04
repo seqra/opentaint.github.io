@@ -20,8 +20,8 @@ describe("faq Q3 — AST-pattern rules answer", () => {
     expect(q3?.answer).toMatch(/Whole-program taint analysis/);
   });
 
-  it("contrasts with AST-pattern analyzers", () => {
-    expect(q3?.answer).toMatch(/AST-pattern analyzers/);
+  it("contrasts with AST-pattern matchers", () => {
+    expect(q3?.answer).toMatch(/AST-pattern matchers/);
   });
 
   it("mentions ast-grep and Semgrep as fellow rule-format users", () => {

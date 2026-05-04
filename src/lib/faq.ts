@@ -7,7 +7,7 @@ export type FaqItem = {
 export const faqItems: readonly FaqItem[] = [
   {
     question: "What is OpenTaint?",
-    answer: "OpenTaint is an open source taint analysis engine built for the AI coding era. It performs inter-procedural dataflow analysis on Java and Kotlin bytecode — cross-endpoint flow tracking, persistence layer modelling, alias analysis, and asynchronous code analysis. AST-pattern rules find real vulnerabilities in web applications. Finds what AST-pattern analyzers miss, enacts what LLM agents discover as permanent rules, scales where neither can alone.",
+    answer: "OpenTaint is an open source taint analysis engine built for the AI coding era. It performs inter-procedural dataflow analysis on Java and Kotlin bytecode — cross-endpoint flow tracking, persistence layer modelling, alias analysis, and asynchronous code analysis. AST-pattern rules find real vulnerabilities in web applications. Finds what AST-pattern matchers miss, enacts what LLM agents discover as permanent rules, scales where neither can alone.",
   },
   {
     question: "What vulnerabilities does OpenTaint detect?",
@@ -15,7 +15,7 @@ export const faqItems: readonly FaqItem[] = [
   },
   {
     question: "What are AST-pattern rules?",
-    answer: "Two layers. AST-pattern rules describe the shape of vulnerable code — the same rule format ast-grep and Semgrep use, readable by humans and AI agents alike. Whole-program taint analysis is what reads them: the engine analyzes a build artifact, resolving inheritance, generics, and library calls precisely, and tracks each rule's metavariables as program values across function boundaries, fields, async code, and persistence layers. AST-pattern analyzers stop at syntactic match; OpenTaint follows the data through the compiled program. When a rule produces a false positive, refine it directly — no query language, no black box.",
+    answer: "Two layers. AST-pattern rules describe the shape of vulnerable code — the same rule format ast-grep and Semgrep use, readable by humans and AI agents alike. Whole-program taint analysis is what reads them: the engine analyzes a build artifact, resolving inheritance, generics, and library calls precisely, and tracks each rule's metavariables as program values across function boundaries, fields, async code, and persistence layers. AST-pattern matchers stop at syntactic match; OpenTaint follows the data through the compiled program. When a rule produces a false positive, refine it directly — no query language, no black box.",
   },
   {
     question: "Why not just use an LLM agent for security scanning?",

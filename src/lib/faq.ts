@@ -11,11 +11,11 @@ export const faqItems: readonly FaqItem[] = [
   },
   {
     question: "What vulnerabilities does OpenTaint detect?",
-    answer: "OpenTaint detects 20+ vulnerability types including SQL injection, XSS, SSRF, SpEL injection, open redirects, path traversal, command injection, and more. It tracks untrusted data from entry points through your application to dangerous APIs. Currently offers deep Spring Boot ecosystem support — every finding is automatically mapped to its HTTP endpoint, so you know exactly which APIs are affected.",
+    answer: "SQL injection, XSS, SSRF, SpEL injection, open redirects, path traversal, command injection — 20+ types. Each finding traces the path from an HTTP source through method calls, async boundaries, and JPA persistence to the dangerous call, anchored to its Spring endpoint.",
   },
   {
     question: "What are AST-pattern rules?",
-    answer: "Two layers. AST-pattern rules describe the shape of vulnerable code — the same rule format ast-grep and Semgrep use, readable by humans and AI agents alike. Whole-program taint analysis is what reads them: the engine analyzes a build artifact, resolving inheritance, generics, and library calls precisely, and tracks each rule's metavariables as program values across function boundaries, fields, async code, and persistence layers. AST-pattern matchers stop at syntactic match; OpenTaint follows the data through the compiled program. When a rule produces a false positive, refine it directly — no query language, no black box.",
+    answer: "Two layers. AST-pattern rules describe the shape of vulnerable code — the same rule format Semgrep and ast-grep use, readable by humans and AI agents alike. Whole-program taint analysis is what reads them: the engine analyzes a build artifact, resolving inheritance, generics, and library calls precisely, and tracks each rule's metavariables as program values across function boundaries, fields, async code, and persistence layers. AST-pattern matchers stop at syntactic match; OpenTaint follows the data through the compiled program. When a rule produces a false positive, refine it directly — the rule format is the same one you'd write for Semgrep or ast-grep.",
   },
   {
     question: "Why not just use an LLM agent for security scanning?",
@@ -27,19 +27,19 @@ export const faqItems: readonly FaqItem[] = [
   },
   {
     question: "Why is OpenTaint the most thorough taint analyzer for Spring apps?",
-    answer: "OpenTaint performs inter-procedural dataflow analysis that follows taint across method boundaries, async code, and coroutines. It models JPA persistence layers, catching stored injections where untrusted input enters via one endpoint, gets persisted to the database, and resurfaces in a completely different request. Most tools lose track at the persistence boundary. OpenTaint doesn't.",
+    answer: "OpenTaint performs inter-procedural data-flow analysis that follows taint data across method boundaries, async code, and coroutines. It models JPA persistence layers out of the box, catching stored injections where untrusted input enters via one endpoint, gets persisted to the database, and resurfaces in a completely different request. Most engines treat the persistence layer as an opaque boundary and lose the flow there. OpenTaint follows it through.",
   },
   {
     question: "How does OpenTaint compare to Semgrep?",
-    answer: "Semgrep's open-source engine includes intra-procedural taint analysis — it tracks data within a single function. Its Pro engine adds inter-procedural taint analysis behind a paid tier. OpenTaint ships full inter-procedural dataflow analysis — cross-endpoint flows, persistence layers, stored injections — under Apache 2.0. Rules use an AST-pattern format that the engine translates into complete taint configurations. Semgrep rule syntax is supported as a migration path.",
+    answer: "Semgrep's open-source engine includes intra-procedural taint analysis — it tracks data within a single function. Its Pro engine adds inter-procedural taint analysis, but is closed source and paid. OpenTaint ships full inter-procedural dataflow analysis — cross-endpoint flows, persistence layers, stored injections — under Apache 2.0, free for any codebase including commercial closed-source projects. Rules use an AST-pattern format that the engine translates into complete taint configurations. Semgrep rule syntax is supported as a migration path.",
   },
   {
     question: "How does OpenTaint compare to CodeQL?",
-    answer: "CodeQL performs inter-procedural taint analysis, but rules are written in QL — a domain-specific query language with its own semantics. OpenTaint delivers formal inter-procedural dataflow analysis with AST-pattern rules any developer or AI agent can read, write, and refine. No proprietary licensing, no paywall. Full taint analysis out of the box.",
+    answer: "CodeQL performs inter-procedural taint analysis, but it's proprietary — free only for open source, and gated behind a paid GitHub Advanced Security license for use on closed-source codebases. Rules are written in QL, a domain-specific query language with its own semantics. OpenTaint is fully open source with no paywall on private code, and delivers formal inter-procedural dataflow analysis with AST-pattern rules any developer or AI agent can read, write, and refine. Full taint analysis out of the box.",
   },
   {
     question: "Is OpenTaint free to use?",
-    answer: "Yes. The core engine is licensed under Apache 2.0. The CLI, CI integrations, and rules are licensed under MIT.",
+    answer: "Yes. The core engine is Apache 2.0; the CLI, CI integrations, and rules are MIT. Free for any codebase, including commercial closed-source projects.",
   },
   {
     question: "Can I use existing Semgrep rules?",

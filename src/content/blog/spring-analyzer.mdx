@@ -23,7 +23,7 @@ These are not edge cases. They are the default architecture of most Java web app
 
 ## Single-Request Flows
 
-Before tackling cross-endpoint flows, we start with what happens within a single HTTP request — following data through DI boundaries and recognizing when a sink is actually dangerous based on the receiver state the rule's condition names.
+Before tackling cross-endpoint flows, we start with what happens within a single HTTP request — following data through DI boundaries and recognizing when a method call is actually dangerous based on the receiver state the rule's condition names.
 
 For JVM languages, OpenTaint operates on bytecode rather than source text. This requires a successful build before scanning, but gives precise resolution of inheritance, generics, and library calls. That precision matters in Spring — runtime behavior depends on bean wiring, annotation metadata, and framework conventions that AST-only tools treat as opaque.
 
@@ -76,7 +76,7 @@ Resolving the chain across DI boundaries is necessary but not sufficient. The ne
 
 ### When Autowired Constructors Matter
 
-`template.process()` is a conditionally dangerous method: it is a sink only when the receiver permits class loading. That permission is set inside the Freemarker engine's `@Autowired` constructor — not at the call site, not in the rule. An analyzer that cannot resolve which bean is wired in and walk its constructor either flags every call (noise) or none (missed RCE).
+`template.process()` is a conditionally dangerous method: it is exploitable only when the receiver permits class loading. That permission is set inside the Freemarker engine's `@Autowired` constructor — not at the call site, not in the rule. An analyzer that cannot resolve which bean is wired in and walk its constructor either flags every call (noise) or none (missed RCE).
 
 The same controller exposes two parallel endpoints, each routing user-controlled template content to a different Freemarker service:
 
@@ -108,7 +108,7 @@ OpenTaint resolves `@Autowired` bean constructors and tracks the receiver state 
 
 ## Cross-Endpoint Flows
 
-Single-request flows, however complex, have a property that makes them tractable: a call graph connects the source to the sink. Cross-endpoint vulnerabilities don't have this property. An attacker submits a payload through one endpoint; a different endpoint reads it and renders it. No code path connects the two — the database or service state is the only link.
+Single-request flows, however complex, have a property that makes them tractable: a call graph connects the user input to the dangerous call. Cross-endpoint vulnerabilities don't have this property. An attacker submits a payload through one endpoint; a different endpoint reads it and renders it. No code path connects the two — the database or service state is the only link.
 
 Detecting these stored vulnerabilities requires modeling data flow across persistence boundaries, not just within them.
 
@@ -271,7 +271,7 @@ The same logic applies to sanitizers at read time. The `GET /api/messages/{id}/c
 
 ## Conclusion
 
-The call graph is the wrong primitive for framework-driven Java. Annotations replace explicit calls; persistence connects endpoints with no shared code; configuration decides whether a sink is a sink. An analyzer built on the call graph plus pattern matching cannot see these flows — not because they are rare, but because the abstraction is wrong. OpenTaint commits to a richer abstraction: bean wiring, persistence boundaries, conditional sinks, per-column taint. The cost is whole-program analysis that needs a build. The payoff is the findings the call graph alone cannot reach.
+The call graph is the wrong primitive for framework-driven Java. Annotations replace explicit calls; persistence connects endpoints with no shared code; configuration decides whether a call is dangerous. An analyzer built on the call graph plus pattern matching cannot see these flows — not because they are rare, but because the abstraction is wrong. OpenTaint commits to a richer abstraction: bean wiring, persistence boundaries, conditionally dangerous APIs, per-column taint. The cost is whole-program analysis that needs a build. The payoff is the findings the call graph alone cannot reach.
 
 Clone the [purpose-built Spring Boot demo](https://github.com/seqra/java-spring-demo) and reproduce every finding in this post.
 

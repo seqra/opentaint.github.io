@@ -17,13 +17,13 @@ author: "Seqra Team"
 
 import Mermaid from "@/components/astro/Mermaid.astro";
 
-Spring Boot's annotation-driven architecture creates data flows that are invisible to AST-pattern matchers. The mechanism is everywhere: an `@Autowired` injection crosses class boundaries with no call site the parser can see; a template engine's configuration decides — at runtime, from a flag set in another class — whether the call to `template.process()` is exploitable or harmless; JPA persistence links two HTTP endpoints through a database row with no shared code path. Three different invisibilities, three different framework features, the same blind spot.
+Spring Boot's annotation-driven architecture creates data flows that are invisible to AST-pattern matchers. The mechanism is everywhere: dependency injection wires `@Autowired` beans together at startup with no call site the parser can see; a template engine's configuration decides — at runtime, from a flag set in another class — whether the call to `template.process()` is exploitable or harmless; JPA persistence links two HTTP endpoints through a database row with no shared code path. Three different invisibilities, three different framework features, the same blind spot.
 
 These are not edge cases. They are the default architecture of most Java web applications. The post walks three progressively harder challenges — following data across function and class boundaries, recognizing when an `@Autowired` constructor makes an otherwise-benign call dangerous, and connecting endpoints through persistence with per-column precision — and shows what each demands of the engine. AST-pattern matchers plateau at the first; OpenTaint models all three.
 
 ## Single-Request Flows
 
-Before tackling cross-endpoint flows, we start with what happens within a single HTTP request — following data through DI boundaries and recognizing when a method call is actually dangerous based on the receiver state the rule's condition names.
+Before tackling cross-endpoint flows, we start with what happens within a single HTTP request — following data across function and class boundaries and recognizing when an `@Autowired` constructor decides whether the call at the end of the chain is dangerous.
 
 For JVM languages, OpenTaint operates on bytecode rather than source text. This requires a successful build before scanning, but gives precise resolution of inheritance, generics, and library calls. That precision matters in Spring — runtime behavior depends on bean wiring, annotation metadata, and framework conventions that AST-only tools treat as opaque.
 
@@ -72,11 +72,13 @@ public class TemplateRenderingService {
 
 OpenTaint traces the complete path: `@RequestBody RenderRequest` → `renderFromRequest()` → `request.getTemplateContent()` → `renderFromContent()` → `templateEngine.process()`. The data crosses a class boundary, passes through DTO field access, and flows through an `@Autowired` service — all tracked as a single inter-procedural data flow.
 
-Resolving the chain across DI boundaries is necessary but not sufficient. The next question is whether the call at the end of the chain is genuinely dangerous — and for Spring, that often hinges on what the bean's `@Autowired` constructor did to the receiver.
+Tracing the chain across function and class boundaries is necessary but not sufficient. With Thymeleaf, once the trace reaches `templateEngine.process()` on a user-controlled body, the call is exploitable on its own — the API and the taint source are enough to confirm the finding. Other engines aren't so obliging. Freemarker's `template.process()`, for instance, is exploitable only when the engine was wired up with a permissive class resolver — and that choice is made inside the engine's `@Autowired` constructor.
 
 ### When Autowired Constructors Matter
 
-`template.process()` is a conditionally dangerous method: it is exploitable only when the receiver permits class loading. That permission is set inside the Freemarker engine's `@Autowired` constructor — not at the call site, not in the rule. An analyzer that cannot resolve which bean is wired in and walk its constructor either flags every call (noise) or none (missed RCE).
+Picture two endpoints in the same controller, both passing user-controlled template content into a Freemarker `template.process()`. The call sites are indistinguishable — same method, same argument shape, same surrounding code. Yet one is a remote-code-execution vulnerability and the other is harmless.
+
+The reason is that `template.process()` is a conditionally dangerous method: it is exploitable only when the receiver permits class loading. The permission flag is set at bean wiring time, in the bean's constructor — possibly in a class the call site never names. An analyzer that cannot resolve which bean is wired in and walk its constructor either flags every call (noise) or none (missed RCE).
 
 The same controller exposes two parallel endpoints, each routing user-controlled template content to a different Freemarker service:
 

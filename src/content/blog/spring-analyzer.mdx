@@ -1,5 +1,5 @@
 ---
-title: "Taint Analysis for Spring: Data Flow Beyond the Call Graph"
+title: "Taint Analysis for Spring: Beyond Syntax"
 description: "AST-pattern matchers break where Spring's architecture begins — interprocedural flow across class boundaries, conditionally dangerous APIs configured at bean wiring time, JPA persistence. OpenTaint traces tainted data through every layer, from injected services to database storage to dangerous API calls, distinguishing raw columns from sanitized ones."
 date: "2026-03-25"
 updatedDate: "2026-03-25"
@@ -25,7 +25,7 @@ These are not edge cases. They are the default architecture of most Java web app
 
 Before tackling cross-endpoint flows, we start with what happens within a single HTTP request — following data across function and class boundaries and recognizing when an `@Autowired` constructor decides whether the call at the end of the chain is dangerous.
 
-For JVM languages, OpenTaint operates on bytecode rather than source text. This requires a successful build before scanning, but gives precise resolution of inheritance, generics, and library calls. That precision matters in Spring — runtime behavior depends on bean wiring, annotation metadata, and framework conventions that AST-only tools treat as opaque.
+For JVM languages, OpenTaint operates on bytecode rather than source text. This requires a successful build before scanning, but gives precise resolution of inheritance, generics, and library calls. That precision matters in Spring — runtime behavior depends on bean wiring, annotation metadata, and framework conventions that AST-pattern matchers treat as opaque.
 
 ### Following Data Across Function and Class Boundaries
 
@@ -76,11 +76,11 @@ Tracing the chain across function and class boundaries is necessary but not suff
 
 ### When Autowired Constructors Matter
 
-Picture two endpoints in the same controller, both passing user-controlled template content into a Freemarker `template.process()`. The call sites are indistinguishable — same method, same argument shape, same surrounding code. Yet one is a remote-code-execution vulnerability and the other is harmless.
+Two endpoints in the same controller both pass user-controlled template content into a Freemarker `template.process()`. The call sites are indistinguishable — same method, same argument shape, same surrounding code. Yet one is a remote-code-execution vulnerability and the other is harmless.
 
 The reason is that `template.process()` is a conditionally dangerous method: it is exploitable only when the receiver permits class loading. The permission flag is set at bean wiring time, in the bean's constructor — possibly in a class the call site never names. An analyzer that cannot resolve which bean is wired in and walk its constructor either flags every call (noise) or none (missed RCE).
 
-The same controller exposes two parallel endpoints, each routing user-controlled template content to a different Freemarker service:
+The marketing endpoint:
 
 ```java
 // CampaignController.java
@@ -110,7 +110,7 @@ OpenTaint resolves `@Autowired` bean constructors and tracks the receiver state 
 
 ## Cross-Endpoint Flows
 
-Single-request flows, however complex, have a property that makes them tractable: a call graph connects the user input to the dangerous call. Cross-endpoint vulnerabilities don't have this property. An attacker submits a payload through one endpoint; a different endpoint reads it and renders it. No code path connects the two — the database or service state is the only link.
+Single-request flows, however complex, have a property that makes them tractable: a code path connects the user input to the dangerous call. Cross-endpoint vulnerabilities don't have this property. An attacker submits a payload through one endpoint; a different endpoint reads it and renders it. No code path connects the two — the database or service state is the only link.
 
 Detecting these stored vulnerabilities requires modeling data flow across persistence boundaries, not just within them.
 
@@ -273,7 +273,7 @@ The same logic applies to sanitizers at read time. The `GET /api/messages/{id}/c
 
 ## Conclusion
 
-The call graph is the wrong primitive for framework-driven Java. Annotations replace explicit calls; persistence connects endpoints with no shared code; configuration decides whether a call is dangerous. An analyzer built on the call graph plus pattern matching cannot see these flows — not because they are rare, but because the abstraction is wrong. OpenTaint commits to a richer abstraction: bean wiring, persistence boundaries, conditionally dangerous APIs, per-column taint. The cost is whole-program analysis that needs a build. The payoff is the findings the call graph alone cannot reach.
+In framework-driven Java, the program your code reads is not the program that runs. Spring stitches together connections at startup — `@Autowired` wiring with no call site to follow, JPA persistence joining endpoints with no shared code, constructor configuration that decides whether a call is dangerous — edges in the data-flow graph that the source doesn't show. An analyzer that scans syntax alone cannot see them. No amount of pattern depth fixes that — the abstraction itself is wrong. OpenTaint commits to a richer abstraction: bean wiring, persistence boundaries, conditionally dangerous APIs, per-column taint. The cost is a successful build before scanning, and whole-program analysis instead of file-by-file. The payoff is the findings that syntactic analysis alone cannot reach.
 
 Clone the [purpose-built Spring Boot demo](https://github.com/seqra/java-spring-demo) and reproduce every finding in this post.
 

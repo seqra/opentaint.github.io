@@ -1,6 +1,6 @@
 ---
 title: "Taint Analysis for Spring: Data Flow Beyond the Call Graph"
-description: "AST-pattern matchers break where Spring's architecture begins — dependency injection, JPA persistence, framework configuration. OpenTaint traces tainted data through every layer, from injected services to database storage to dangerous API calls, distinguishing raw columns from sanitized ones."
+description: "AST-pattern matchers break where Spring's architecture begins — interprocedural flow across class boundaries, conditionally dangerous APIs configured at bean wiring time, JPA persistence. OpenTaint traces tainted data through every layer, from injected services to database storage to dangerous API calls, distinguishing raw columns from sanitized ones."
 date: "2026-03-25"
 updatedDate: "2026-03-25"
 keywords:
@@ -17,9 +17,9 @@ author: "Seqra Team"
 
 import Mermaid from "@/components/astro/Mermaid.astro";
 
-Spring Boot's annotation-driven architecture creates data flows that are invisible to AST-pattern matchers. The mechanism is everywhere: an `@Autowired` injection crosses class boundaries with no call site the parser can see; JPA persistence links two HTTP endpoints through a database row with no shared code path; a template engine's configuration decides — at runtime, from a flag set in some other file — whether the call to `template.process()` is exploitable or harmless. Three different invisibilities, three different framework features, the same blind spot.
+Spring Boot's annotation-driven architecture creates data flows that are invisible to AST-pattern matchers. The mechanism is everywhere: an `@Autowired` injection crosses class boundaries with no call site the parser can see; a template engine's configuration decides — at runtime, from a flag set in another class — whether the call to `template.process()` is exploitable or harmless; JPA persistence links two HTTP endpoints through a database row with no shared code path. Three different invisibilities, three different framework features, the same blind spot.
 
-These are not edge cases. They are the default architecture of most Java web applications. The post walks three progressively harder challenges — following data through dependency injection, connecting endpoints through persistence, and distinguishing dangerous fields from safe ones at per-column granularity — and shows what each demands of the engine. AST-pattern matchers plateau at the first; OpenTaint models all three.
+These are not edge cases. They are the default architecture of most Java web applications. The post walks three progressively harder challenges — following data across function and class boundaries, recognizing when an `@Autowired` constructor makes an otherwise-benign call dangerous, and connecting endpoints through persistence with per-column precision — and shows what each demands of the engine. AST-pattern matchers plateau at the first; OpenTaint models all three.
 
 ## Single-Request Flows
 
@@ -27,7 +27,7 @@ Before tackling cross-endpoint flows, we start with what happens within a single
 
 For JVM languages, OpenTaint operates on bytecode rather than source text. This requires a successful build before scanning, but gives precise resolution of inheritance, generics, and library calls. That precision matters in Spring — runtime behavior depends on bean wiring, annotation metadata, and framework conventions that AST-only tools treat as opaque.
 
-### Following Data Across File and Class Boundaries
+### Following Data Across Function and Class Boundaries
 
 Consider a campaign management endpoint that lets users preview custom templates. The controller receives a JSON request body and delegates to an `@Autowired` service:
 
@@ -72,11 +72,11 @@ public class TemplateRenderingService {
 
 OpenTaint traces the complete path: `@RequestBody RenderRequest` → `renderFromRequest()` → `request.getTemplateContent()` → `renderFromContent()` → `templateEngine.process()`. The data crosses a class boundary, passes through DTO field access, and flows through an `@Autowired` service — all tracked as a single inter-procedural data flow.
 
-Resolving the chain across DI boundaries is necessary but not sufficient. The next question is whether the call at the end of the chain is genuinely dangerous — and that depends on receiver state the chain itself doesn't carry, expressed as a condition the rule must encode.
+Resolving the chain across DI boundaries is necessary but not sufficient. The next question is whether the call at the end of the chain is genuinely dangerous — and for Spring, that often hinges on what the bean's `@Autowired` constructor did to the receiver.
 
-### Conditional Sinks
+### When Autowired Constructors Matter
 
-Not every call to a template engine is equally dangerous. The rule for `template.process()` carries a condition: the call is a sink only when the receiver permits class loading. An analyzer with no way to express that condition either flags every call (noise) or none (missed RCE).
+`template.process()` is a conditionally dangerous method: it is a sink only when the receiver permits class loading. That permission is set inside the Freemarker engine's `@Autowired` constructor — not at the call site, not in the rule. An analyzer that cannot resolve which bean is wired in and walk its constructor either flags every call (noise) or none (missed RCE).
 
 The same controller exposes two parallel endpoints, each routing user-controlled template content to a different Freemarker service:
 

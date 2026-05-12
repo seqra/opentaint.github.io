@@ -76,7 +76,7 @@ Tracing the chain across function and class boundaries is necessary but not suff
 
 ### When Autowired Constructors Matter
 
-Two endpoints in the same controller both pass user-controlled template content into a Freemarker `template.process()`. The call sites are indistinguishable — same method, same argument shape, same surrounding code. Yet one is a remote-code-execution vulnerability and the other is harmless.
+Let's look at two endpoints in the same controller, both passing user-controlled template content into a Freemarker `template.process()`. The call sites are indistinguishable — same method, same argument shape, same surrounding code. Yet one is a remote-code-execution vulnerability and the other is harmless.
 
 The reason is that `template.process()` is a conditionally dangerous method: it is exploitable only when the receiver permits class loading. The permission flag is set at bean wiring time, in the bean's constructor — possibly in a class the call site never names. An analyzer that cannot resolve which bean is wired in and walk its constructor either flags every call (noise) or none (missed RCE).
 

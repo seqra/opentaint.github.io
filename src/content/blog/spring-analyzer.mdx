@@ -1,5 +1,5 @@
 ---
-title: "Taint Analysis for Spring: Beyond Syntax"
+title: "Taint Analysis for Spring: Security Beyond Syntax"
 description: "AST-pattern matchers break where Spring's architecture begins — interprocedural flow across class boundaries, conditionally dangerous APIs configured at bean wiring time, JPA persistence. OpenTaint traces tainted data through every layer, from injected services to database storage to dangerous API calls, distinguishing raw columns from sanitized ones."
 date: "2026-03-25"
 updatedDate: "2026-03-25"
@@ -273,7 +273,7 @@ The same logic applies to sanitizers at read time. The `GET /api/messages/{id}/c
 
 ## Conclusion
 
-In framework-driven Java, the program your code reads is not the program that runs. Spring stitches together connections at startup — `@Autowired` wiring with no call site to follow, JPA persistence joining endpoints with no shared code, constructor configuration that decides whether a call is dangerous — edges in the data-flow graph that the source doesn't show. An analyzer that scans syntax alone cannot see them. No amount of pattern depth fixes that — the abstraction itself is wrong. OpenTaint commits to a richer abstraction: bean wiring, persistence boundaries, conditionally dangerous APIs, per-column taint. The cost is a successful build before scanning, and whole-program analysis instead of file-by-file. The payoff is the findings that syntactic analysis alone cannot reach.
+In framework-driven Java, the data flow that matters spans the whole program — long call chains across class boundaries, `@Autowired` constructor configuration that decides whether a call is dangerous, JPA persistence joining endpoints with no shared code. Spring assembles these connections at startup; reading the source one file at a time can't follow them. No amount of pattern depth fixes that — the abstraction itself is wrong. OpenTaint commits to a richer abstraction: bean wiring, persistence boundaries, conditionally dangerous APIs, per-column taint. The cost is a successful build before scanning, and whole-program analysis instead of file-by-file. The payoff is the findings that syntactic analysis alone cannot reach.
 
 Clone the [purpose-built Spring Boot demo](https://github.com/seqra/java-spring-demo) and reproduce every finding in this post.
 

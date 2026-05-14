@@ -36,7 +36,7 @@ export function AnimatedHero() {
   return (
     <div>
       <p className="mb-3 font-mono text-xs uppercase tracking-[0.14em] text-primary/80 lg:mb-4 lg:text-[13px]">
-        AST-pattern rules. Whole-program taint analysis.
+        AST-pattern rules. Whole-program taint analysis. Formal substrate for AI application security.
       </p>
 
       <h1 className="font-mono text-[26px] font-bold tracking-tight text-foreground sm:text-[30px] md:text-[38px] md:leading-[1.15] lg:text-[42px]">
@@ -44,7 +44,7 @@ export function AnimatedHero() {
       </h1>
 
       <p className="mt-5 font-mono text-[15px] leading-[185%] text-muted-foreground sm:max-w-[82%] lg:text-base lg:mt-6">
-        Formal inter-procedural taint analysis — finds what AST-pattern matchers miss, enacts what LLM agents discover as rules, scales where neither can alone.
+        Formal taint analysis for AI application security — finds what AST-pattern matchers miss, enacts every vulnerability LLM agents discover as a rule, scales where neither can alone.
       </p>
 
       <div className="mt-8 flex justify-center gap-3 sm:hidden">

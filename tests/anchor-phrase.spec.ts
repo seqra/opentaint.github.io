@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const ANCHOR = "AST-pattern rules. Whole-program taint analysis.";
+const ANCHOR = "AST-pattern rules. Whole-program taint analysis. Formal substrate for AI application security.";
 
 test.describe("anchor phrase distinction", () => {
   test("hero shows the anchor eyebrow above the H1", async ({ page }) => {

@@ -44,7 +44,7 @@ export function AnimatedHero() {
       </h1>
 
       <p className="mt-5 font-mono text-[15px] leading-[185%] text-muted-foreground sm:max-w-[82%] lg:text-base lg:mt-6">
-        Formal taint analysis for AI application security — finds what AST-pattern matchers miss, lets LLM agents enact vulnerabilities as rules, scales where neither can alone.
+        Formal taint analysis for application security — finds what AST-pattern matchers miss, lets LLM agents enact vulnerabilities as rules, scales where neither can alone.
       </p>
 
       <div className="mt-8 flex justify-center gap-3 sm:hidden">

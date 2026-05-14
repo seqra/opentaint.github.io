@@ -8,10 +8,6 @@ describe("faq Q3 — AST-pattern rules answer", () => {
     expect(q3).toBeDefined();
   });
 
-  it("opens with the two-layer framing", () => {
-    expect(q3?.answer).toMatch(/^Two layers\./);
-  });
-
   it("names AST-pattern rules as one layer", () => {
     expect(q3?.answer).toMatch(/AST-pattern rules/);
   });

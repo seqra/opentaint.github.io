@@ -15,7 +15,7 @@ export const faqItems: readonly FaqItem[] = [
   },
   {
     question: "What are AST-pattern rules?",
-    answer: "Two layers. AST-pattern rules describe the shape of vulnerable code — the same rule format Semgrep and ast-grep use, readable by humans and AI agents alike. Whole-program taint analysis is what reads them: the engine models data flow across the entire program — through function boundaries, fields, async code, and persistence layers — and follows each rule's metavariables as values moving through that flow. AST-pattern matchers stop at the syntactic match; OpenTaint keeps tracing the data through them. When a rule fires on safe code, you refine it directly — the rule format is the same one you'd write for Semgrep or ast-grep.",
+    answer: "AST-pattern rules describe the shape of vulnerable code — the same rule format Semgrep and ast-grep use, readable by humans and AI agents alike. Whole-program taint analysis is what reads them: the engine models data flow across the entire program — through function boundaries, fields, async code, and persistence layers — and follows each rule's metavariables as values moving through that flow. AST-pattern matchers stop at the syntactic match; OpenTaint keeps tracing the data through them. When a rule fires on safe code, you refine it directly.",
   },
   {
     question: "Why not just use an LLM agent for security scanning?",

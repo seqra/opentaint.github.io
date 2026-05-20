@@ -231,11 +231,37 @@
     padding-inline: max(var(--page-pad), calc((100% - var(--page-max)) / 2));
   }
 
-  /* Alternating tinted band — full-bleed background with crisp top/bottom rules
-     to delineate the thematic block from the plain bands around it. */
+  /* Alternating tinted band — full-bleed background that delineates the
+     thematic block from the plain bands around it. */
   .band-tint {
     background-color: hsl(var(--band));
-    border-block: 1px solid hsl(var(--border));
+  }
+
+  /* Red bracket separator (as on opentaint.org): a thin brand-red rule with
+     short corner ticks, inset to the page content frame. Sits at the top of the
+     explainer, feature, and FAQ bands; the hero and demo stay un-separated. */
+  .band:not(:first-child):not(.demo-section)::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: max(var(--page-pad), calc((100% - var(--page-max)) / 2));
+    right: max(var(--page-pad), calc((100% - var(--page-max)) / 2));
+    height: 1px;
+    background: hsl(var(--brand));
+    pointer-events: none;
+  }
+
+  .band:not(:first-child):not(.demo-section)::after {
+    content: "";
+    position: absolute;
+    top: -16px;
+    left: max(var(--page-pad), calc((100% - var(--page-max)) / 2));
+    right: max(var(--page-pad), calc((100% - var(--page-max)) / 2));
+    height: 32px;
+    pointer-events: none;
+    background:
+      linear-gradient(hsl(var(--brand)), hsl(var(--brand))) right top / 1px 16px no-repeat,
+      linear-gradient(hsl(var(--brand)), hsl(var(--brand))) left bottom / 1px 16px no-repeat;
   }
 
   .section-title {

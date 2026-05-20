@@ -18,31 +18,35 @@ const features = [
 ];
 ---
 
-<section class="page-section" aria-labelledby="what-heading">
-  <p class="mb-3 text-center font-mono text-xs uppercase tracking-[0.14em] text-primary/80 lg:mb-4 lg:text-[13px]">
-    AST-pattern rules. Whole-program taint analysis. Formal substrate for AI application security.
-  </p>
-  <h2 id="what-heading" class="section-title text-center">Why OpenTaint?</h2>
-  <p class="section-subtitle">
-    AI generates production code faster than today's security tooling can keep up with.
-  </p>
-  <p class="section-subtitle">
-    LLM security agents find vulnerabilities humans miss, burn tokens on every file, and still can't guarantee they catch everything.
-  </p>
-  <p class="section-subtitle">
-    The more AI writes code, the more you need formal methods underneath.
-  </p>
+<section class="band band-tint" aria-labelledby="what-heading">
+  <div class="mx-auto max-w-4xl">
+    <h2 id="what-heading" class="section-title">What is OpenTaint?</h2>
+    <p class="subheadline">
+      Formal taint analysis for application security — finds what AST-pattern matchers miss, lets LLM agents enact vulnerabilities as rules, scales where neither can alone.
+    </p>
 
-  <ul class="mt-8 space-y-3 lg:mt-10 lg:space-y-4">
-    {features.map((feature) => (
-      <li class="flex gap-3 font-mono text-[15px] leading-[185%] lg:text-base lg:gap-4">
-        <span class="mt-[0.65em] h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true"></span>
-        <div>
-          <strong class="feature-title">{feature.title}</strong>
-          <span class="text-muted-foreground">{feature.description}</span>
-        </div>
-      </li>
-    ))}
-  </ul>
+    <h2 id="why-heading" class="section-title mt-12 lg:mt-14">Why is OpenTaint?</h2>
+    <p class="section-subtitle">
+      AI generates production code faster than today's security tooling can keep up with.
+    </p>
+    <p class="section-subtitle">
+      LLM security agents find vulnerabilities humans miss, burn tokens on every file, and still can't guarantee they catch everything.
+    </p>
+    <p class="section-subtitle">
+      The more AI writes code, the more you need formal methods underneath.
+    </p>
+
+    <ul class="mt-8 space-y-4 text-left lg:mt-10 lg:space-y-5">
+      {features.map((feature) => (
+        <li class="flex gap-3 font-mono text-[15px] leading-[185%] lg:text-base lg:gap-4">
+          <span class="mt-[0.65em] h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true"></span>
+          <div>
+            <strong class="feature-title">{feature.title}</strong>
+            <span class="text-muted-foreground">{feature.description}</span>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
 
 </section>

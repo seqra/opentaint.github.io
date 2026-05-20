@@ -46,6 +46,9 @@
     --code-taint-bg: 0 72% 46% / 0.1;
     --code-taint-text: #dc2626;
     --radius: 0.5rem;
+    --page-max: 1536px;
+    --page-pad: clamp(1rem, 4vw, 6rem);
+    --band: 215 16% 96.5%;
   }
 
   .dark {
@@ -85,6 +88,7 @@
     --code-yaml-key: #fda4af;
     --code-taint-bg: 0 72% 50% / 0.15;
     --code-taint-text: #fca5a5;
+    --band: 215 12% 7.5%;
   }
 
   * {
@@ -167,22 +171,18 @@
     display: none;
   }
 
+  /* Constrained reading frame used by blog + 404 (centered, capped width). */
   .page-container {
     @apply mx-auto w-full;
-    padding-inline: clamp(1rem, 4vw, 6rem);
+    max-width: var(--page-max);
+    padding-inline: var(--page-pad);
     min-height: 100vh;
   }
 
   .page-section {
     position: relative;
-    /* Fluid padding: scales smoothly from small to large viewports */
-    /* Horizontal: 1.5rem at 320px → 6rem at 1400px+ */
-    /* Vertical:   1.75rem at 320px → 3.5rem at 1400px+ */
     padding: clamp(1.75rem, 1rem + 1.5vw, 3.5rem) clamp(1.5rem, 0.5rem + 2vw, 3rem);
     margin-top: clamp(1rem, 0.5rem + 1vw, 2rem);
-  }
-
-  .page-section {
     border-top: 1px solid hsl(var(--brand));
   }
 
@@ -216,13 +216,48 @@
     display: none;
   }
 
+  /* Horizontal framing: centers content within --page-max on a full-bleed
+     element, falling back to --page-pad on narrower screens. Lets the landing
+     page paint full-width band backgrounds while holding content to the column. */
+  .frame-x {
+    padding-inline: max(var(--page-pad), calc((100% - var(--page-max)) / 2));
+  }
+
+  /* Landing-page thematic block: full-bleed section with generous vertical
+     rhythm and content held to the reading column via the frame-x model. */
+  .band {
+    position: relative;
+    padding-block: clamp(2rem, 1rem + 2.2vw, 3rem);
+    padding-inline: max(var(--page-pad), calc((100% - var(--page-max)) / 2));
+  }
+
+  /* Alternating tinted band — full-bleed background with crisp top/bottom rules
+     to delineate the thematic block from the plain bands around it. */
+  .band-tint {
+    background-color: hsl(var(--band));
+    border-block: 1px solid hsl(var(--border));
+  }
+
   .section-title {
     @apply font-mono text-base font-bold tracking-tight text-foreground lg:text-[17px];
   }
 
   .section-subtitle {
-    @apply mt-3 font-mono leading-[185%] text-muted-foreground lg:mt-4;
+    @apply mt-4 font-mono leading-[185%] text-muted-foreground lg:mt-5;
     font-size: 15px;
+    max-width: 72ch;
+  }
+
+  /* Secondary line under a headline — matches the muted body voice. */
+  .subheadline {
+    @apply mt-5 font-mono leading-[185%] text-muted-foreground lg:mt-6;
+    font-size: 15px;
+  }
+
+  @media (min-width: 1024px) {
+    .subheadline {
+      font-size: 1rem;
+    }
   }
 
   @media (min-width: 1024px) {

@@ -34,20 +34,16 @@ export function AnimatedHero() {
   };
 
   return (
-    <div>
-      <p className="mb-3 font-mono text-xs uppercase tracking-[0.14em] text-primary/80 lg:mb-4 lg:text-[13px]">
-        AST-pattern rules. Whole-program taint analysis. Formal substrate for AI application security.
-      </p>
-
-      <h1 className="font-mono text-[26px] font-bold tracking-tight text-foreground sm:text-[30px] md:text-[38px] md:leading-[1.15] lg:text-[42px]">
+    <div className="mx-auto max-w-4xl">
+      <h1 className="font-mono text-[28px] font-bold tracking-tight text-foreground sm:text-[34px] md:text-[40px] md:leading-[1.1] lg:text-[44px] lg:leading-[1.08]">
         The open source taint analysis engine for the AI era
       </h1>
 
-      <p className="mt-5 font-mono text-[15px] leading-[185%] text-muted-foreground sm:max-w-[82%] lg:text-base lg:mt-6">
-        Formal taint analysis for application security — finds what AST-pattern matchers miss, lets LLM agents enact vulnerabilities as rules, scales where neither can alone.
+      <p className="subheadline">
+        AST-pattern rules. Whole-program taint analysis. Formal substrate for AI application security.
       </p>
 
-      <div className="mt-8 flex justify-center gap-3 sm:hidden">
+      <div className="mt-8 flex justify-start gap-3 sm:hidden">
         <a
           href="https://github.com/seqra/opentaint"
           target="_blank"
@@ -72,7 +68,7 @@ export function AnimatedHero() {
         </a>
       </div>
 
-      <div className="mt-8 mx-auto hidden max-w-2xl sm:block lg:mt-10 lg:max-w-3xl">
+      <div className="mt-8 hidden max-w-2xl text-left sm:block lg:mt-10 lg:max-w-3xl">
         <div className="overflow-hidden rounded-md border border-border bg-secondary/50">
           <div className="flex items-center gap-1.5 overflow-x-auto border-b border-border px-3 py-2.5 scrollbar-thin lg:px-4 lg:py-3">
             {installMethods.map((method) => {

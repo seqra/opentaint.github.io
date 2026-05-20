@@ -60,7 +60,7 @@ export function AnimatedHero() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Star opentaint on GitHub"
-          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-secondary px-4 py-3 font-mono text-[15px] font-medium text-foreground transition-colors hover:bg-border"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 font-mono text-[15px] font-medium text-primary-foreground transition-colors hover:bg-primary/90"
         >
           <Star className="h-4 w-4" aria-hidden="true" />
           Star

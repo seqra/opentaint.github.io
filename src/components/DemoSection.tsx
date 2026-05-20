@@ -90,7 +90,7 @@ export function DemoSection() {
   }, []);
 
   return (
-    <div className="mx-auto max-w-[68.4rem]">
+    <div className="mx-auto max-w-[80rem]">
       <div className="overflow-hidden sm:rounded-md sm:border sm:border-border sm:bg-secondary/50">
         {reducedMotion || status === "error" ? (
           <img

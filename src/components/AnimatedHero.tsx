@@ -34,7 +34,7 @@ export function AnimatedHero() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto max-w-5xl">
       <h1 className="font-mono text-[28px] font-bold tracking-tight text-foreground sm:text-[34px] md:text-[40px] md:leading-[1.1] lg:text-[44px] lg:leading-[1.08]">
         The open source taint analysis engine for the AI era
       </h1>

@@ -46,7 +46,7 @@
     --code-taint-bg: 0 72% 46% / 0.1;
     --code-taint-text: #dc2626;
     --radius: 0.5rem;
-    --page-max: 1536px;
+    --page-max: 1760px;
     --page-pad: clamp(1rem, 4vw, 6rem);
     --band: 215 16% 96.5%;
   }

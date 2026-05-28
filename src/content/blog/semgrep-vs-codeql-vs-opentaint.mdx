@@ -22,12 +22,12 @@ To see where that limit falls, we tested three tools — Semgrep, CodeQL, and Op
 Each case measures two outcomes: false negatives (vulnerabilities the tool fails to detect) and false positives (secure code paths the tool incorrectly flags). The three tools under test:
 
 - **Semgrep** matches patterns syntactically, with taint-analysis support and broader inter-procedural coverage in Semgrep Code, its paid commercial edition. Results below distinguish Semgrep CE and Semgrep Code where they diverge.
-- **CodeQL** runs semantic analysis through a dedicated query language; we use its default `java/xss` rule. Free for open-source repositories, requires GitHub Advanced Security for private repos.
+- **CodeQL** runs semantic analysis through a dedicated query language. We use its default `java/xss` rule. Free for open-source repositories, requires GitHub Advanced Security for private repos.
 - **OpenTaint** interprets Semgrep-style patterns as dataflow queries — metavariables are tracked as program values, not syntactic placeholders. Runs whole-program analysis against a build artifact, which is what enables the deeper tracking shown in the later cases. Java and Kotlin today, Apache 2.0 / MIT licensed.
 
 ## Five test cases
 
-XSS is well-understood. What varies is how much code complexity a tool can see through to find it.
+XSS is well-understood. What varies is how much surrounding code a tool can work through and still find it.
 
 The five test cases form a progression of analytical capabilities, each demanding something the previous one did not:
 
@@ -39,11 +39,11 @@ The five test cases form a progression of analytical capabilities, each demandin
 | 4 | Field sensitivity | Value passes through constructor chains and nested objects |
 | 5 | Pointer analysis | Value flows through builder pattern with virtual dispatch |
 
-Each case reflects patterns that are routine in production code. The question is not whether XSS is dangerous — it is where these ordinary coding patterns cause a tool to lose track of the data.
+Each case reflects patterns that are routine in production code. We already know XSS is dangerous. What these cases test is where those ordinary patterns make a tool lose track of the data.
 
 ### Syntax matching — direct return
 
-Consider a profile page that takes a greeting from the URL and echoes it back inside an HTML response — the simplest possible reflection: one endpoint, one parameter, no helpers. The controller below implements it.
+Here a profile page takes a greeting from the URL and writes it back into an HTML response. This is the simplest case: one endpoint, one parameter, no helpers. The controller below implements it.
 
 ```java
 // ProfileController.java
@@ -69,7 +69,7 @@ patterns:
       }
 ```
 
-All three tools detect this case. No surprise — it is the minimal XSS shape.
+All three tools detect this case. No surprise — this is the simplest form of XSS.
 
 Results: ✅ **Semgrep**, ✅ **CodeQL**, ✅ **OpenTaint**
 
@@ -131,7 +131,7 @@ pattern-sinks:
           }
 ```
 
-Both approaches work. The difference is how much of the dataflow model has to be expressed in the rule itself. In OpenTaint, the engine infers the flow; in Semgrep, the rule author declares it.
+Both approaches work. The difference is how much of the dataflow model has to be expressed in the rule itself. In OpenTaint, the engine infers the flow. In Semgrep, the rule author declares it.
 
 #### Handling sanitization
 
@@ -188,7 +188,7 @@ From this point forward, Semgrep's taint rules are used — pattern rules are in
 
 ### Inter-procedural analysis — function call boundary
 
-Now move the concatenation into a private helper. The controller looks innocuous; the dangerous string is built one stack frame deeper. The tool must follow data across function boundaries.
+Now move the concatenation into a private helper. The controller looks clean, but the dangerous string is built inside the helper, one call deeper. To catch it, the tool has to follow data across function boundaries.
 
 ```java
 // DashboardController.java
@@ -235,7 +235,7 @@ From this point, Semgrep Code is used for remaining examples since inter-procedu
 
 ### Field sensitivity — constructor chains
 
-Imagine a notification system that wraps user-supplied content inside a structured template — a tree of objects (template → body → content → text) that the rendering layer reads selectively. The controller below builds that tree from a query parameter and returns the deepest field. Tracking the input through this construction requires field sensitivity: the analyzer has to know which field of which object holds the tainted value.
+Here a notification system wraps user-supplied content inside a structured template — a tree of objects (template → body → content → text). The controller below builds that tree from a query parameter and returns the deepest field. Tracking the input through this construction requires field sensitivity: the analyzer has to know which field of which object holds the tainted value.
 
 ```java
 // NotificationController.java
@@ -406,7 +406,7 @@ public String escapeMessage(
 }
 ```
 
-Filtering this case is where pointer analysis earns its name. The analyzer has to know specifically that the formatter parameter holds an `EscapeFormatter` instance — not just *some* `IFormatter` — so the virtual call resolves to the sanitizer rather than to `DefaultFormatter`, which returns its input unchanged. Without that precision, the analyzer has to consider every `IFormatter` implementation as possible — including `DefaultFormatter` — and so flags the secure variant as a false positive. OpenTaint correctly identifies this as safe.
+Filtering this case is where pointer analysis really matters. The analyzer has to know specifically that the formatter parameter holds an `EscapeFormatter` instance — not just *some* `IFormatter` — so the virtual call resolves to the sanitizer rather than to `DefaultFormatter`, which returns its input unchanged. Without that precision, the analyzer has to consider every `IFormatter` implementation as possible — including `DefaultFormatter` — and so flags the secure variant as a false positive. OpenTaint correctly identifies this as safe.
 
 Results:
 
@@ -445,7 +445,7 @@ Each tool plateaus at a different depth of analysis:
 
 The key design difference: in Semgrep, the rule author declares the dataflow model — sources, sinks, sanitizers. In OpenTaint, the engine infers it. A pattern that mentions a parameter and a return statement is enough for the engine to recover the full flow — across assignments, method calls, and object boundaries.
 
-Production codebases are never simple. Helpers, builders, persistence layers, and interface calls accumulate as code matures — and each one is a place where a scanner can lose the thread. The gap between what a tool sees and what's actually there widens with every layer of indirection. A tool that covers today's code may not cover tomorrow's, and rules that describe *what* to find — not *how* to track it — are the ones that keep up.
+Real codebases are full of these patterns. As code grows it adds helpers, builders, persistence layers, and interface calls, and each one is another place a scanner can lose the value it is tracking. The more layers there are, the more a tool misses. This is why, over time, the engine matters more than the rules. A rule that says *what* to look for and leaves the *how* of tracking to the engine is the one that keeps working as the code gets more complex.
 
 All five cases are runnable end-to-end in the [java-spring-demo project](https://github.com/seqra/java-spring-demo). For a deeper look at what Spring-specific data flows OpenTaint can model — dependency injection, JPA persistence, and cross-endpoint tracking — see [Taint Analysis for Spring: Data Flow Beyond the Call Graph](/blog/spring-analyzer).
 

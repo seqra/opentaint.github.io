@@ -1,6 +1,6 @@
 ---
 title: "Taint Analysis for Spring: Security Beyond Syntax"
-description: "AST-pattern matchers break where Spring's architecture begins — interprocedural flow across class boundaries, conditionally dangerous APIs configured at bean wiring time, JPA persistence. OpenTaint traces tainted data through every layer, from injected services to database storage to dangerous API calls, distinguishing raw columns from sanitized ones."
+description: "AST-pattern matchers miss the data flows Spring's architecture creates: interprocedural flow across class boundaries, conditionally dangerous APIs configured at bean wiring time, and JPA persistence. OpenTaint traces tainted data through every layer, from injected services to database storage to dangerous API calls, distinguishing raw columns from sanitized ones."
 date: "2026-03-25"
 updatedDate: "2026-05-13"
 keywords:
@@ -17,9 +17,9 @@ author: "Seqra Team"
 
 import Mermaid from "@/components/astro/Mermaid.astro";
 
-Spring Boot's annotation-driven architecture creates data flows that are invisible to AST-pattern matchers. The mechanism is everywhere: dependency injection wires `@Autowired` beans together at startup with no call site the parser can see; a template engine's configuration decides — at runtime, from a flag set in another class — whether the call to `template.process()` is exploitable or harmless; JPA persistence links two HTTP endpoints through a database row with no shared code path. Three different invisibilities, three different framework features, the same blind spot.
+Spring Boot wires an application together with annotations, and that creates data flows a pattern matcher reading one file at a time cannot see. `@Autowired` beans are connected at startup, with no call site in the source. A template call can be safe or exploitable depending on a flag set in another class. Two endpoints can be linked by nothing more than a row in the database. None of this is unusual — it is how most Java web applications are built.
 
-These are not edge cases. They are the default architecture of most Java web applications. The post walks three progressively harder challenges — following data across function and class boundaries, recognizing when an `@Autowired` constructor makes an otherwise-benign call dangerous, and connecting endpoints through persistence with per-column precision — and shows what each demands of the engine. AST-pattern matchers plateau at the first; OpenTaint models all three.
+This post works through three cases, each harder than the last. First, following data across function and class boundaries. Then, recognizing when an `@Autowired` constructor turns a harmless call dangerous. Finally, connecting two endpoints through stored data, with enough precision to tell a sanitized column from a raw one. A pattern matcher stops at the first. OpenTaint handles all three.
 
 ## Single-Request Flows
 
@@ -29,7 +29,7 @@ For JVM languages, OpenTaint operates on bytecode rather than source text. This 
 
 ### Following Data Across Function and Class Boundaries
 
-Consider a campaign management endpoint that lets users preview custom templates. The controller receives a JSON request body and delegates to an `@Autowired` service:
+A campaign management endpoint lets users preview custom templates. The controller receives a JSON request body and delegates to an `@Autowired` service:
 
 ```java
 // CampaignController.java
@@ -72,7 +72,7 @@ public class TemplateRenderingService {
 
 OpenTaint traces the complete path: `@RequestBody RenderRequest` → `renderFromRequest()` → `request.getTemplateContent()` → `renderFromContent()` → `templateEngine.process()`. The data crosses a class boundary, passes through DTO field access, and flows through an `@Autowired` service — all tracked as a single inter-procedural data flow.
 
-Tracing the chain across function and class boundaries is necessary but not sufficient. With Thymeleaf, once the trace reaches `templateEngine.process()` on a user-controlled body, the call is exploitable on its own — the API and the taint source are enough to confirm the finding. Other engines aren't so obliging. Freemarker's `template.process()`, for instance, is exploitable only when the engine was wired up with a permissive class resolver — and that choice is made inside the engine's `@Autowired` constructor.
+Tracing the chain across function and class boundaries is necessary but not sufficient. With Thymeleaf, once the trace reaches `templateEngine.process()` on a user-controlled body, the call is exploitable on its own — the API and the taint source are enough to confirm the finding. Not every template engine is this simple. Freemarker's `template.process()`, for instance, is exploitable only when the engine was wired up with a permissive class resolver — and that choice is made inside the engine's `@Autowired` constructor.
 
 ### When Autowired Constructors Matter
 
@@ -110,13 +110,13 @@ OpenTaint resolves `@Autowired` bean constructors and tracks the receiver state 
 
 ## Cross-Endpoint Flows
 
-Single-request flows, however complex, have a property that makes them tractable: a code path connects the user input to the dangerous call. Cross-endpoint vulnerabilities don't have this property. An attacker submits a payload through one endpoint; a different endpoint reads it and renders it. No code path connects the two — the database or service state is the only link.
+Single-request flows, however complex, have one thing in common: a single code path connects the user input to the dangerous call. Cross-endpoint vulnerabilities don't. An attacker submits a payload through one endpoint, and a different endpoint reads it back and renders it. No code path connects the two. The only link is the database, or some state the two endpoints share.
 
 Detecting these stored vulnerabilities requires modeling data flow across persistence boundaries, not just within them.
 
 ### Through the Database
 
-Imagine a per-thread message board — a small collaboration feature where users post short notes that other users read on the thread page. A POST endpoint creates each note and stores it in the database; the thread page renders the stored notes as HTML so links and formatting come through. Two endpoints, no shared code path. The controller and service below implement this.
+Take a per-thread message board, a small collaboration feature where users post short notes that others read on the thread page. A POST endpoint creates each note and stores it in the database. The thread page renders the stored notes as HTML, so links and formatting come through. Two endpoints, no shared code path. The controller and service below implement it.
 
 <Mermaid chart={`sequenceDiagram
     actor Attacker
@@ -273,7 +273,7 @@ The same logic applies to sanitizers at read time. The `GET /api/messages/{id}/c
 
 ## Conclusion
 
-In framework-driven Java, the data flow that matters spans the whole program — long call chains across class boundaries, `@Autowired` constructor configuration that decides whether a call is dangerous, JPA persistence joining endpoints with no shared code. Spring assembles these connections at startup; reading the source one file at a time can't follow them. No amount of pattern depth fixes that — the abstraction itself is wrong. OpenTaint commits to a richer abstraction: bean wiring, persistence boundaries, conditionally dangerous APIs, per-column taint. The cost is a successful build before scanning, and whole-program analysis instead of file-by-file. The payoff is the findings that syntactic analysis alone cannot reach.
+In framework-driven Java, the data flow that matters spans the whole program: long call chains across class boundaries, `@Autowired` constructor configuration that decides whether a call is dangerous, and JPA persistence that joins endpoints with no shared code. Spring assembles these connections at startup, so reading the source one file at a time cannot follow them. Making the rules deeper does not help, because the problem is not the rules. It is what the analyzer looks at. OpenTaint looks at more: bean wiring, persistence boundaries, conditionally dangerous APIs, and per-column taint. That costs a successful build before scanning, and whole-program analysis instead of file-by-file. In return, it finds the bugs that pattern matching alone cannot reach.
 
 Clone the [purpose-built Spring Boot demo](https://github.com/seqra/java-spring-demo) and reproduce every finding in this post.
 

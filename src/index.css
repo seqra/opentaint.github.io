@@ -150,15 +150,12 @@
   }
 
   .theme-button {
-    @apply inline-flex h-11 w-11 items-center justify-center rounded border transition-colors;
-    border-color: hsl(var(--border));
-    background-color: hsl(var(--card));
-    color: hsl(var(--foreground));
+    @apply inline-flex h-11 w-11 items-center justify-center rounded transition-colors;
+    color: hsl(var(--muted-foreground));
   }
 
   .theme-button:hover {
-    border-color: hsl(var(--border-strong));
-    background-color: hsl(var(--secondary));
+    color: hsl(var(--primary));
   }
 
   .theme-icon-sun,

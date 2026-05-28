@@ -27,9 +27,7 @@ Each case measures two outcomes: false negatives (vulnerabilities the tool fails
 
 ## Five test cases
 
-XSS is well-understood. What varies is how much surrounding code a tool can work through and still find it.
-
-The five test cases form a progression of analytical capabilities, each demanding something the previous one did not:
+All five cases are the same bug: user input reaching an HTML response without escaping. What changes from one to the next is how far that input travels and how much code a tool has to trace to follow it.
 
 | # | Capability required | What the code does |
 |---|---|---|
@@ -39,7 +37,7 @@ The five test cases form a progression of analytical capabilities, each demandin
 | 4 | Field sensitivity | Value passes through constructor chains and nested objects |
 | 5 | Pointer analysis | Value flows through builder pattern with virtual dispatch |
 
-Each case reflects patterns that are routine in production code. We already know XSS is dangerous. What these cases test is where those ordinary patterns make a tool lose track of the data.
+These are ordinary patterns — a variable, a helper method, a constructor, a builder. Each one adds a step where a tool can lose the thread between the input and the sink.
 
 ### Syntax matching — direct return
 
@@ -416,7 +414,7 @@ Results:
 
 ## Scope
 
-Five cases, one application, one vulnerability class. XSS in a Spring Boot project isolates analytical depth but says nothing about language breadth or performance at scale. A tool that handles all five cases here may still miss patterns in other frameworks.
+This is a narrow test: five cases in one Spring Boot application. It shows how deeply each tool can follow data flow, but it says nothing about how they handle other languages or how they perform on a large codebase. A tool that catches all five cases here could still miss things in a different framework.
 
 ## Results summary
 

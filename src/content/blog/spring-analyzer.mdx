@@ -19,15 +19,13 @@ import Mermaid from "@/components/astro/Mermaid.astro";
 
 Spring Boot wires an application together with annotations, and that creates data flows a pattern matcher reading one file at a time cannot see. `@Autowired` beans are connected at startup, with no call site in the source. A template call can be safe or exploitable depending on a flag set in another class. Two endpoints can be linked by nothing more than a row in the database. None of this is unusual — it is how most Java web applications are built.
 
-This post works through three cases, each harder than the last. First, following data across function and class boundaries. Then, recognizing when an `@Autowired` constructor turns a harmless call dangerous. Finally, connecting two endpoints through stored data, with enough precision to tell a sanitized column from a raw one. A pattern matcher stops at the first. OpenTaint handles all three.
+This post covers two things AST-pattern matchers cannot follow in Spring code. First, what the DI container does: which class is actually wired into an `@Autowired` field, what state its constructor establishes, and how long the bean lives. Second, the persistence layer: data that leaves the program through `repository.save()` and re-enters somewhere else through `repository.findById()`, with the storage row as the only link.
 
-## Single-Request Flows
+## Cross-class analysis with DI
 
-Before tackling cross-endpoint flows, we start with what happens within a single HTTP request — following data across function and class boundaries and recognizing when an `@Autowired` constructor decides whether the call at the end of the chain is dangerous.
+For JVM languages, OpenTaint operates on bytecode rather than source text. This requires a successful build before scanning, but gives precise resolution of inheritance, generics, and library calls. That precision is what lets the analyzer follow Spring's dependency injection — which bean is wired into an `@Autowired` field, what state its constructor leaves on it, and how long the bean lives. AST-pattern matchers treat those framework conventions as opaque.
 
-For JVM languages, OpenTaint operates on bytecode rather than source text. This requires a successful build before scanning, but gives precise resolution of inheritance, generics, and library calls. That precision matters in Spring — runtime behavior depends on bean wiring, annotation metadata, and framework conventions that AST-pattern matchers treat as opaque.
-
-### Following Data Across Function and Class Boundaries
+### Across function and class boundaries
 
 A campaign management endpoint lets users preview custom templates. The controller receives a JSON request body and delegates to an `@Autowired` service:
 
@@ -74,11 +72,11 @@ OpenTaint traces the complete path: `@RequestBody RenderRequest` → `renderFrom
 
 Tracing the chain across function and class boundaries is necessary but not sufficient. With Thymeleaf, once the trace reaches `templateEngine.process()` on a user-controlled body, the call is exploitable on its own — the API and the taint source are enough to confirm the finding. Not every template engine is this simple. Freemarker's `template.process()`, for instance, is exploitable only when the engine was wired up with a permissive class resolver — and that choice is made inside the engine's `@Autowired` constructor.
 
-### When Autowired Constructors Matter
+### Autowired constructor state
 
 Let's look at two endpoints in the same controller, both passing user-controlled template content into a Freemarker `template.process()`. The call sites are indistinguishable — same method, same argument shape, same surrounding code. Yet one is a remote-code-execution vulnerability and the other is harmless.
 
-The reason is that `template.process()` is a conditionally dangerous method: it is exploitable only when the receiver permits class loading. The permission flag is set at bean wiring time, in the bean's constructor — possibly in a class the call site never names. An analyzer that cannot resolve which bean is wired in and walk its constructor either flags every call (noise) or none (missed RCE).
+The reason is that `template.process()` is a conditionally dangerous method: it is exploitable only when the receiver permits class loading. The permission flag is set at bean wiring time, in the bean's constructor — possibly in a class the call site never names. An analyzer that cannot resolve which bean is wired in and walk its constructor either flags every call (a false positive on every safe one) or none (a false negative on the real RCE).
 
 The marketing endpoint:
 
@@ -108,15 +106,54 @@ this.templateConfig.setNewBuiltinClassResolver(TemplateClassResolver.ALLOWS_NOTH
 
 OpenTaint resolves `@Autowired` bean constructors and tracks the receiver state the rule's condition names. It flags the marketing service — `UNRESTRICTED_RESOLVER` allows class loading, enabling remote code execution — and suppresses the notification service, where `ALLOWS_NOTHING_RESOLVER` prevents class instantiation.
 
-## Cross-Endpoint Flows
+### Singleton @Service state
 
-Single-request flows, however complex, have one thing in common: a single code path connects the user input to the dangerous call. Cross-endpoint vulnerabilities don't. An attacker submits a payload through one endpoint, and a different endpoint reads it back and renders it. No code path connects the two. The only link is the database, or some state the two endpoints share.
+The DI container decides not just which bean is wired in but how long it lives. `@Service` beans are singletons by default — a single instance survives across requests, and any field written during one request is readable during the next. That turns a bean's field set into a piece of cross-request state with no call site connecting the writer and the reader.
 
-Detecting these stored vulnerabilities requires modeling data flow across persistence boundaries, not just within them.
+A per-thread message board illustrates this. Users POST short notes; other endpoints read them back. The service that handles writes also caches the last submitted content in a field:
 
-### Through the Database
+```java
+// MessageService.java
+@Service
+public class MessageService {
 
-Take a per-thread message board, a small collaboration feature where users post short notes that others read on the thread page. A POST endpoint creates each note and stores it in the database. The thread page renders the stored notes as HTML, so links and formatting come through. Two endpoints, no shared code path. The controller and service below implement it.
+    private String lastContent;
+    ...
+
+    public Message createMessage(String title, String content, String author) {
+        this.lastContent = content;
+        ...
+    }
+
+    public String getLastContent() {
+        return lastContent;
+    }
+}
+```
+
+A separate endpoint returns that field as HTML:
+
+```java
+// MessageController.java
+@GetMapping("/last-content")
+public ResponseEntity<String> getLastContent() {
+    String content = messageService.getLastContent();
+    ...
+    return ResponseEntity.ok()
+            .contentType(MediaType.TEXT_HTML)
+            .body(content);
+}
+```
+
+OpenTaint traces the data from `createMessage`'s `content` parameter through the `lastContent` field assignment and back out via `getLastContent()` — a cross-request stored XSS that doesn't touch the database at all. The DI container's singleton scope decision is what makes this possible. If `@Service` defaulted to request-scoped, the field would not survive the request boundary.
+
+## Persistence
+
+The other thing AST-pattern matchers can't follow is data that leaves the program and re-enters it later. When `repository.save()` writes a row in one endpoint and `repository.findById()` reads it in another, no code path connects the two — the link is the storage layer itself. To track flow across that gap, OpenTaint models JPA repository operations as taint boundaries: `save` records the state of each field against the entity type, `findById` propagates that state back out to the retrieved entity. No actual database connection is needed; this is a static approximation of persistence-layer data flow.
+
+### Across the database
+
+The `createMessage` method shown in the previous section had a second responsibility we elided: it also calls `messageRepository.save(message)`, persisting each note. A different endpoint reads them back as HTML.
 
 <Mermaid chart={`sequenceDiagram
     actor Attacker
@@ -154,7 +191,7 @@ public ResponseEntity<Long> createMessage(@RequestBody CreateMessageRequest requ
 }
 ```
 
-The service creates a JPA entity and persists it:
+The full service method builds a JPA entity and persists it:
 
 ```java
 // MessageService.java
@@ -165,7 +202,7 @@ public Message createMessage(String title, String content, String author) {
 }
 ```
 
-A separate GET endpoint retrieves that content and returns it as HTML:
+A separate GET endpoint retrieves the stored content and returns it as HTML:
 
 ```java
 // MessageController.java
@@ -179,50 +216,11 @@ public ResponseEntity<String> getMessageContent(@PathVariable Long id) {
 }
 ```
 
-The two endpoints share no direct method call. OpenTaint traces the full flow across both by modeling JPA repository operations as database read/write boundaries. When an entity is persisted via `repository.save()`, the taint state of each field is recorded against that entity type. When a different endpoint retrieves via `repository.findById()`, it looks up the stored state and propagates it per-column to the retrieved entity's fields. No actual database connection is needed — this is a static approximation of persistence-layer data flow.
+The two endpoints share no direct method call. OpenTaint traces the full flow across both by modeling JPA repository operations as database read/write boundaries. When an entity is persisted via `repository.save()`, the taint state of each field is recorded against that entity type. When a different endpoint retrieves via `repository.findById()`, it looks up the stored state and propagates it per-column to the retrieved entity's fields.
 
-### Through Service State
+### Column-level precision
 
-Databases are not the only state that survives between requests. Spring's `@Service` beans are singletons by default — any field written during one request is readable during the next. Notice the `this.lastContent = content` line in `createMessage` — the same method that persists to the database also stores raw content in a service field:
-
-```java
-// MessageService.java
-@Service
-public class MessageService {
-
-    private String lastContent;
-    ...
-
-    public Message createMessage(String title, String content, String author) {
-        this.lastContent = content;
-        ...
-    }
-
-    public String getLastContent() {
-        return lastContent;
-    }
-}
-```
-
-A separate endpoint returns that field as HTML:
-
-```java
-// MessageController.java
-@GetMapping("/last-content")
-public ResponseEntity<String> getLastContent() {
-    String content = messageService.getLastContent();
-    ...
-    return ResponseEntity.ok()
-            .contentType(MediaType.TEXT_HTML)
-            .body(content);
-}
-```
-
-OpenTaint traces the data from `createMessage`'s `content` parameter through the `lastContent` field assignment and back out via `getLastContent()` — a cross-endpoint stored XSS that doesn't touch the database at all.
-
-### Column-Level Precision
-
-Detecting cross-endpoint flows is only half the problem. The other half is precision: knowing which fields are actually dangerous. Treating every column of a persisted entity as equally tainted produces false positives that drown out real findings.
+Detecting cross-endpoint flow is one thing. The other is precision: knowing which fields are actually dangerous. Treating every column of a persisted entity as equally tainted produces false positives that drown out real findings.
 
 The `Message` entity stores three user-controlled fields, but they aren't all equal:
 
@@ -273,7 +271,7 @@ The same logic applies to sanitizers at read time. The `GET /api/messages/{id}/c
 
 ## Conclusion
 
-In framework-driven Java, the data flow that matters spans the whole program: long call chains across class boundaries, `@Autowired` constructor configuration that decides whether a call is dangerous, and JPA persistence that joins endpoints with no shared code. Spring assembles these connections at startup, so reading the source one file at a time cannot follow them. Making the rules deeper does not help, because the problem is not the rules. It is what the analyzer looks at. OpenTaint looks at more: bean wiring, persistence boundaries, conditionally dangerous APIs, and per-column taint. That costs a successful build before scanning, and whole-program analysis instead of file-by-file. In return, it finds the bugs that pattern matching alone cannot reach.
+In framework-driven Java, the data flow that matters spans the whole program. The DI container decides which class is actually invoked at a call site, what configuration its constructor leaves on it, and how long it lives. The persistence layer joins endpoints with no shared code, column by column. Spring assembles these connections at startup, so reading the source one file at a time cannot follow them. Making the rules deeper does not help, because the problem is not the rules. It is what the analyzer looks at. OpenTaint looks at more: bean wiring, constructor state, singleton lifetime, persistence boundaries, and per-column taint. That costs a successful build before scanning, and whole-program analysis instead of file-by-file. In return, it finds the bugs that pattern matching alone cannot reach.
 
 Clone the [purpose-built Spring Boot demo](https://github.com/seqra/java-spring-demo) and reproduce every finding in this post.
 

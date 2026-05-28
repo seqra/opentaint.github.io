@@ -15,7 +15,9 @@ keywords:
 author: "Seqra Team"
 ---
 
-A SAST tool's job is to follow data through the indirection a real codebase accumulates. The interesting question is not whether a tool finds XSS but how much code structure it can see through before losing the trail. We tested Semgrep, CodeQL, and OpenTaint on five Spring XSS cases of progressively deeper indirection. The pattern that emerges: each tool plateaus at a different depth, set by what the rule author has to declare versus what the engine can infer.
+Good rules are a big part of what makes a SAST tool accurate, and that isn't going to change. What has changed is how easy rules are to write. Encoding a known vulnerability pattern as a rule used to take real expertise. Now AI can handle most of that work. So rules aren't really where tools differ anymore. The harder problem — the one no amount of rule tuning can fix — is the engine itself: how far it can actually trace a value through the code. If the engine can't follow data through a constructor or a virtual call, even a perfect rule won't catch the bug.
+
+To see where that limit falls, we tested three tools — Semgrep, CodeQL, and OpenTaint — on five XSS examples in a Java Spring application. Every example is the same basic bug: a controller reads a request parameter and writes it straight into the HTML it returns. What changes is how the value gets from input to output. The first case returns it directly. After that it passes through a local variable, then a helper method, then a constructor chain, and finally a builder that uses virtual dispatch. Each step adds more code between the user input and where it's used, and makes the bug a little harder to trace.
 
 Each case measures two outcomes: false negatives (vulnerabilities the tool fails to detect) and false positives (secure code paths the tool incorrectly flags). The three tools under test:
 

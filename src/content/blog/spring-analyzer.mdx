@@ -147,7 +147,7 @@ public ResponseEntity<String> getLastContent() {
 
 OpenTaint traces the data from `createMessage`'s `content` parameter through the `lastContent` field assignment and back out via `getLastContent()` — a cross-request stored XSS that doesn't touch the database at all. The DI container's singleton scope decision is what makes this possible. If `@Service` defaulted to request-scoped, the field would not survive the request boundary.
 
-## Persistence
+## Cross-controller persistence
 
 The other thing AST-pattern matchers can't follow is data that leaves the program and re-enters it later. When `repository.save()` writes a row in one endpoint and `repository.findById()` reads it in another, no code path connects the two — the link is the storage layer itself. To track flow across that gap, OpenTaint models JPA repository operations as taint boundaries: `save` records the state of each field against the entity type, `findById` propagates that state back out to the retrieved entity. No actual database connection is needed; this is a static approximation of persistence-layer data flow.
 

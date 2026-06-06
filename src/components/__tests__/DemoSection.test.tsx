@@ -68,6 +68,12 @@ describe("DemoSection", () => {
     expect(lastCreateOptions().theme).toBe("opentaint-dark");
   });
 
+  it("enables the native control bar in hover-reveal mode", async () => {
+    render(<DemoSection />);
+    await flushAsync();
+    expect(lastCreateOptions().controls).toBe("auto");
+  });
+
   it("uses the light cast theme on a dark page", async () => {
     document.documentElement.classList.add("dark");
     render(<DemoSection />);

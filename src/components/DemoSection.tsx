@@ -53,7 +53,7 @@ export function DemoSection() {
           autoPlay: true,
           loop: true,
           preload: true,
-          controls: false,
+          controls: "auto",
           poster: "npt:0:0.1",
           theme: demoTheme,
           terminalFontFamily: "'JetBrains Mono', monospace",

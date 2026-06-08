@@ -68,7 +68,7 @@ function shell(
     flexDirection: "column",
     width: "100%",
     height: "100%",
-    backgroundColor: "#0a0c10",
+    backgroundColor: "#0f0303",
     padding: "60px",
     fontFamily: "JetBrains Mono",
     position: "relative",

@@ -1,50 +1,57 @@
 /*
- * Custom asciinema-player themes that intentionally contrast with the site
- * theme: the dark cast is shown on the light page and vice versa.
+ * Custom asciinema-player themes based on the "HaX0R R3D" palette
+ * (https://github.com/mbadolato/iTerm2-Color-Schemes). They intentionally
+ * contrast the site theme: the dark-red cast shows on the light page, and the
+ * inverted (white) cast shows on the dark page.
+ *
+ * Both themes share the HaX0R R3D ANSI palette; only the background and
+ * foreground are swapped between #1b0100 and #feffff.
  *
  * Asciinema-player applies `asciinema-player-theme-<name>` to its inner
  * `.ap-player` element when `create(..., { theme: "<name>" })` is used.
- * See src/components/DemoSection.tsx for the selector logic.
+ * See src/components/TerminalDemo.tsx for the selector logic.
  */
 
+/* Shown on the dark page — inverted (white background). */
 .ap-player.asciinema-player-theme-opentaint-light {
-  --term-color-background: hsl(0 0% 100%);
-  --term-color-foreground: hsl(215 14% 8%);
-  --term-color-0: #3f3f46;
-  --term-color-1: #dc2626;
-  --term-color-2: #16a34a;
-  --term-color-3: #d97706;
-  --term-color-4: #2563eb;
-  --term-color-5: #7c3aed;
-  --term-color-6: #0891b2;
-  --term-color-7: #71717a;
-  --term-color-8: #52525b;
-  --term-color-9: #ef4444;
-  --term-color-10: #22c55e;
-  --term-color-11: #f59e0b;
-  --term-color-12: #3b82f6;
-  --term-color-13: #a855f7;
-  --term-color-14: #06b6d4;
-  --term-color-15: #27272a;
+  --term-color-background: #feffff;
+  --term-color-foreground: #1b0100;
+  --term-color-0: #1f0000;
+  --term-color-1: #b00d0d;
+  --term-color-2: #b00d0d;
+  --term-color-3: #b00d0d;
+  --term-color-4: #b00d0d;
+  --term-color-5: #b00d0d;
+  --term-color-6: #b00d0d;
+  --term-color-7: #fafafa;
+  --term-color-8: #554040;
+  --term-color-9: #ff1111;
+  --term-color-10: #ff1010;
+  --term-color-11: #ff1010;
+  --term-color-12: #ff1010;
+  --term-color-13: #ff1010;
+  --term-color-14: #ff1010;
+  --term-color-15: #fefefe;
 }
 
+/* Shown on the light page — HaX0R R3D (dark-red background). */
 .ap-player.asciinema-player-theme-opentaint-dark {
-  --term-color-background: hsl(215 10% 7%);
-  --term-color-foreground: hsl(215 6% 92%);
-  --term-color-0: #52525b;
-  --term-color-1: #f87171;
-  --term-color-2: #4ade80;
-  --term-color-3: #fbbf24;
-  --term-color-4: #60a5fa;
-  --term-color-5: #c4b5fd;
-  --term-color-6: #67e8f9;
-  --term-color-7: #e4e4e7;
-  --term-color-8: #71717a;
-  --term-color-9: #fca5a5;
-  --term-color-10: #86efac;
-  --term-color-11: #fcd34d;
-  --term-color-12: #93c5fd;
-  --term-color-13: #ddd6fe;
-  --term-color-14: #a5f3fc;
-  --term-color-15: #fafafa;
+  --term-color-background: #1b0100;
+  --term-color-foreground: #feffff;
+  --term-color-0: #1f0000;
+  --term-color-1: #b00d0d;
+  --term-color-2: #b00d0d;
+  --term-color-3: #b00d0d;
+  --term-color-4: #b00d0d;
+  --term-color-5: #b00d0d;
+  --term-color-6: #b00d0d;
+  --term-color-7: #fafafa;
+  --term-color-8: #554040;
+  --term-color-9: #ff1111;
+  --term-color-10: #ff1010;
+  --term-color-11: #ff1010;
+  --term-color-12: #ff1010;
+  --term-color-13: #ff1010;
+  --term-color-14: #ff1010;
+  --term-color-15: #fefefe;
 }

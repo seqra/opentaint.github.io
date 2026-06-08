@@ -118,7 +118,7 @@ const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
     @apply px-3 py-2 align-top text-sm;
   }
   .blog-prose tr {
-    @apply border-b border-border/40 transition-colors hover:bg-card;
+    @apply border-b border-border/40 transition-colors hover:bg-secondary;
   }
   .blog-prose td:first-child {
     @apply font-medium text-foreground;
@@ -130,7 +130,7 @@ const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
     @apply relative overflow-x-auto rounded-lg border border-border mb-5;
   }
   .blog-prose a {
-    @apply text-primary underline transition-colors hover:text-foreground;
+    @apply text-link underline transition-colors hover:text-foreground;
   }
   .blog-prose ul {
     @apply mb-4 ml-5 list-disc space-y-1;

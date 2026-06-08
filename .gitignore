@@ -25,3 +25,6 @@ dist-ssr
 .vite/*
 /.astro
 /.sanity
+
+# Brainstorming visual companion
+.superpowers/

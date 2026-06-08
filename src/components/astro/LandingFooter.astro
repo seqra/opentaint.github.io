@@ -27,28 +27,8 @@ const links = [
 </footer>
 
 <style>
+  /* Divider styling is shared globally via `.footer-links` in index.css. */
   .footer-links {
     position: relative;
-    border-top: 1px solid hsl(var(--brand));
-  }
-
-  .footer-links::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 1px;
-    height: 16px;
-    background: hsl(var(--brand));
-  }
-
-  .footer-links::after {
-    content: "";
-    position: absolute;
-    top: -16px;
-    right: 0;
-    width: 1px;
-    height: 16px;
-    background: hsl(var(--brand));
   }
 </style>

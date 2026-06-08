@@ -61,6 +61,13 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        link: "hsl(var(--link))",
+        panel: {
+          DEFAULT: "hsl(var(--panel))",
+          foreground: "hsl(var(--panel-foreground))",
+          accent: "hsl(var(--panel-accent))",
+          border: "hsl(var(--panel-border))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

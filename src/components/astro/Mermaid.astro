@@ -94,6 +94,11 @@ const { chart } = Astro.props;
       startOnLoad: false,
       theme: "base",
       fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+      // Labels are measured outside the page's prose container but rendered
+      // inside it, so prose rules (e.g. `.blog-prose p { line-height }`) would
+      // resize them after measurement and clip multi-line nodes. themeCSS is
+      // compiled under the diagram's `#id`, outranking those rules.
+      themeCSS: "p { margin: 0; line-height: 1.5; }",
       themeVariables: isDark ? darkVars : lightVars,
       flowchart: { curve: "basis", padding: 20, nodeSpacing: 50, rankSpacing: 60, htmlLabels: true },
       sequence: { actorMargin: 80, messageFontSize: 13, noteMargin: 12, messageMargin: 40, mirrorActors: false, bottomMarginAdj: 2, useMaxWidth: true },

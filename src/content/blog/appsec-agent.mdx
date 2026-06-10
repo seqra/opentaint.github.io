@@ -1,0 +1,187 @@
+---
+title: "Distilling Frontier Model Security Reviews into a Cheap Deterministic Scan"
+description: "We're releasing open-source skills that pair an LLM agent with OpenTaint's taint engine. The agent maps the attack surface, models the missing library methods, writes project-specific rules, and can confirm each finding with a real exploit — then the deterministic engine re-scans for the price of CPU, on every future commit."
+date: "2026-06-10"
+keywords:
+  - "llm security agent"
+  - "ai appsec"
+  - "taint analysis"
+  - "sast automation"
+  - "opentaint"
+  - "deterministic sast"
+  - "proof of concept exploit"
+  - "agentic security analysis"
+author: "Seqra Team"
+---
+
+import Mermaid from "@/components/astro/Mermaid.astro";
+
+Frontier models can now genuinely review code for security. An LLM agent reads it like a human reviewer: it follows intent, recognizes patterns no rule anticipated, and reasons about whether a flow is actually dangerous in context. But you rent that judgment rather than own it — the agent burns tokens on every file, gives a different answer each time you run it, and can never promise it looked everywhere. A taint engine — a static analyzer that traces untrusted data through code — is the mirror image: it cannot invent anything, but whatever it is told it applies the same way every time, across the whole codebase, for the price of CPU. Treat them as alternatives and you inherit the weaknesses of whichever one you picked.
+
+Today we're releasing a set of [open-source skills](https://github.com/seqra/opentaint/tree/main/skills) that run them as one loop instead. The skills plus OpenTaint — our taint-analysis engine — form a harness for the model: the agent discovers, the engine enforces. The expensive, uncertain judgment happens once and is distilled into artifacts the engine reuses forever. A frontier-model security review becomes a deterministic scan that costs CPU, not tokens.
+
+## Division of labor
+
+The engine runs on one simple idea: you describe code with patterns, and it matches them — not against single lines, but against traces, the paths data takes through the program. A security rule is one specific pattern: untrusted data — an HTTP parameter, a header, a file name — flowing into a dangerous operation — a SQL query, a shell command, an outbound URL — with nothing on the way to neutralize it. A finding is a trace that matches.
+
+Classical SAST (static application security testing) fails in three distinct ways, and they are worth separating because they have different causes and different fixes:
+
+1. **Insensitivity.** To stay fast on large programs, conventional engines deliberately give up precision: *field-insensitivity* treats all fields of an object as one, *context-insensitivity* merges every call site, *alias-insensitivity* loses track of which references name the same object. Each shortcut buys speed by collapsing distinctions real code depends on, and the bill is paid twice — noise on safe code, silence on real flows.
+2. **Opaque externals.** The engine traces data by knowing how every method along the way moves it, and library code is opaque to it: dependencies could be analyzed like application code, but they usually dwarf it many times over and would multiply the cost of every scan, so a practical engine models them instead. Where a model is missing, the engine has to guess, and both guesses are wrong. Assume the method passes nothing through, and real flows silently die at the call — vulnerabilities the scan will never report. Assume it passes everything through, and phantom flows bloom — noise that buries the real findings. Without a model there is no third option.
+3. **Generic rules.** A built-in ruleset does not know that *your* application treats a particular header as untrusted, or that a particular helper already makes the data safe. The vulnerabilities specific to your code need patterns specific to your code — and those do not exist until someone writes them. Studies of SAST misses keep finding the same thing: most come from missing rules, not from a weak engine.
+
+The OpenTaint **engine** answers the first failure. It stays sensitive where conventional engines approximate — each field of an object tracked separately, call sites kept apart, references to the same object resolved as one — and it follows every flow to completion rather than to an arbitrary depth limit. Within the surface it can see, it is exhaustive: nothing sampled, nothing skipped.
+
+The AI **agent** answers the other two. It writes **approximations** — small models that teach the engine how an unmodeled method moves data, so an opaque call becomes a traced step — and **project rules** — the patterns specific to your code: where untrusted data enters it, which operations are dangerous, what makes the data safe. Both are plain, human-auditable text. Once written, the engine applies them deterministically, everywhere, on every future commit. The model's judgment is captured, not rented.
+
+Here is what a distilled judgment looks like. An approximation: Spring's `ResponseEntity.ok(body)` stores the body inside the entity it returns, and `getBody()` hands it back — so data that goes in one end must come out the other:
+
+```yaml
+passThrough:
+- function: org.springframework.http.ResponseEntity#ok
+  copy:
+  - from: arg(0)
+    to:
+    - this
+    - .org.springframework.http.HttpEntity#Body#java.lang.Object
+  - from: this
+    to: result
+- function: org.springframework.http.HttpEntity#getBody
+  copy:
+  - from:
+    - this
+    - .org.springframework.http.HttpEntity#Body#java.lang.Object
+    to: result
+```
+
+And part of a project rule: the OkHttp calls through which this particular codebase reaches the network, declared as the dangerous operations of its server-side request forgery (SSRF) pattern:
+
+```yaml
+patterns:
+    - pattern-either:
+        - pattern: (okhttp3.Request.Builder $B).url($UNTRUSTED)
+        - pattern: okhttp3.HttpUrl.get($UNTRUSTED)
+        - pattern: okhttp3.HttpUrl.parse($UNTRUSTED)
+        - pattern: (okhttp3.HttpUrl $U).newBuilder($UNTRUSTED)
+        - pattern: (okhttp3.OkHttpClient $C).newCall($UNTRUSTED)
+        - pattern: (okhttp3.OkHttpClient $C).newWebSocket($UNTRUSTED, $LISTENER)
+    - focus-metavariable: $UNTRUSTED
+```
+
+That is all an artifact is — a small, checkable claim about how data moves through your code, reviewed in a pull request like any other change.
+
+## Distilling the security review
+
+A security review is a chain of judgments about trust: where the attack surface is (the places outside data enters, the operations it can damage), where the trust boundaries run (the checks that make data safe, the library code data crosses unseen), and which of the flows between them are real vulnerabilities. Point the AppSec Agent skill at a project and it makes exactly those judgments, and each is written down — the attack surface model as a coverage record, the checks and dangerous operations as rules, the unseen library behavior as approximations, the decision on each flow as a verdict. The rules and approximations are the distillation: the part of the review the engine replays on every future scan. The pipeline:
+
+<Mermaid chart={`flowchart LR
+    surface["Map attack surface"]
+    rules["Author rules (test-first)"]
+    scan["Engine scans (deterministic)"]
+    approx["Write approximations"]
+    next(["Stage 2 — Triage"])
+
+    surface --> rules --> scan
+    scan -->|"new boundaries"| approx
+    approx -->|"re-scan"| scan
+    scan -.->|"saturated"| next
+
+    style surface fill:#fef3c7,stroke:#f59e0b,color:#92400e
+    style rules fill:#fef3c7,stroke:#f59e0b,color:#92400e
+    style approx fill:#fef3c7,stroke:#f59e0b,color:#92400e
+    style scan fill:#dbeafe,stroke:#3b82f6,color:#1e40af
+    style next fill:none,stroke:#78716c,stroke-dasharray:4 4,color:#78716c`} />
+
+*Stage 1 — **Scan**. The agent (amber) discovers and distills its judgment into artifacts. The engine (blue) applies them deterministically. The first cycle is approximation **saturation**: re-scan until no new boundaries appear.*
+
+- **Maps the attack surface** — the places where untrusted data enters and the operations where it can do damage.
+- **Authors rules, test-first** — the patterns your code is missing, accepted only on proof.
+- **Scans** — the engine traces every flow deterministically and returns each finding as the complete trace behind it.
+- **Saturates approximations** — teaches the engine the opaque methods until no new boundary appears.
+
+Mapping is what makes coverage arguable. The agent weighs every dependency the project pulls in: which libraries handle outside data, which expose dangerous operations, which are inert. Flagged packages get drilled down to the exact methods the project uses, dismissed ones are logged with a reason — the coverage record shows what was examined, what was set aside, and why. The scope is deliberate too: the whole application, one critical component, or a single suspected vulnerability.
+
+Rules are authored like code, tests first. The agent wires up built-in rules where they fit and writes a new pattern only where nothing does. Every new rule ships with a minimal example that *should* fire and a safe one that *should not*, and it is accepted only once it provably behaves on both. A rule that misfires, applied across a whole codebase, manufactures noise at scale. Test-first is how you stop that before it starts.
+
+Saturation is what unlocks the deep findings. The agent models the methods where traces were dying, re-scans, finds the next layer of unmodeled boundaries the new approximations exposed, and repeats until nothing new appears — only at that fixed point does the engine see flows that cross many library and framework layers. In one real case, the loop found and confirmed an unauthenticated remote-code-execution vulnerability in a widely used open-source server. The dangerous path ran from an HTTP request, through several layers of framework plumbing, into a scripting evaluator — and most of those layers were unmodeled methods where the trace had been silently dying. Saturating the approximations is what reconnected the request to the evaluator.
+
+You decide how much of the loop to run, and each level wraps the ones inside it:
+
+- **Lite** — the scan with the rules you already have (the built-in rules on day one, plus whatever earlier runs distilled), plus triage.
+- **Normal** — adds approximation saturation.
+- **Deep** — adds attack-surface mapping and test-first rules on top.
+
+Exploit confirmation is a separate switch, not the top of this ladder: you can ask for exploit-confirmed findings at any depth, including Lite.
+
+## Findings you can trust
+
+Once the scan completes, every finding goes to the agent for triage: it reads the complete trace and rules the finding real or false. But it does not stop at "looks real." With exploit confirmation on, the agent confirms each candidate by **generating a proof-of-concept (PoC) exploit and running it** against a throwaway local instance. A finding that can be exploited is real, by definition. One that resists every attempt at a PoC is treated as a likely false positive — failure to exploit is evidence, not proof, and the verdict stays in the report for a human to overrule.
+
+<Mermaid chart={`flowchart LR
+    triage["Triage candidates"]
+    poc{"Generate + run PoC"}
+    confirmed["Confirmed vulnerability"]
+    fix["Diagnose: tune rule / fix approximation"]
+
+    triage --> poc
+    poc -->|"exploit succeeds"| confirmed
+    poc -->|"no exploit found"| fix
+
+    style triage fill:#fef3c7,stroke:#f59e0b,color:#92400e
+    style poc fill:#fef3c7,stroke:#f59e0b,color:#92400e
+    style fix fill:#fef3c7,stroke:#f59e0b,color:#92400e
+    style confirmed fill:#fee2e2,stroke:#ef4444,color:#991b1b`} />
+
+*Stage 2 — **Triage**. Verdicts are earned, not asserted: a successful exploit confirms the finding, and a failed one sends the agent to diagnose what misled the engine.*
+
+The diagnosis is where the loop closes. When the agent can name *why* a finding is false — a neutralizing check it had overlooked, an approximation that propagates data the real method doesn't — that diagnosis is fed back into the artifacts: the check joins the rule, the approximation gets corrected. Because those artifacts are global, the fix lands at every matching site at once, and it stays fixed on every future scan. Saturation closed the first cycle in Stage 1. This feedback closes the second. Two cycles are what make this a loop rather than a pipeline — and they attack the two ways a model can be wrong: saturation fills in propagation that was missing, feedback trims propagation that was too broad.
+
+## The payoff
+
+You spend the model's discovery power exactly once per pattern, distill the result into an artifact, and let the engine amortize it across the entire codebase and every future commit. Re-runs are deterministic — the same scan over the same code produces the same findings, bit for bit — and they cost CPU, not tokens. The discovery is non-deterministic. Everything downstream of it is deterministic.
+
+Here is what that looks like in practice, on [Komga](https://github.com/gotson/komga) — an open-source media server, about 137,000 lines of Kotlin — starting cold, with the agent at Deep level:
+
+|      | Cold Deep agent run (once) | Scan (every commit) |
+| ---- | -------------------------- | ------------------- |
+| Cost | $112 in tokens             | $0 — CPU only       |
+| Time | 2 hours 51 minutes         | 1 minute 37 seconds |
+
+Across the projects we have tested so far, the one-time spend lands in the $100–$200 range. After that, every commit is just a scan — minutes of CPU, not hundreds of dollars.
+
+Only the first run is cold. Those three hours went into the gap between the engine's built-in knowledge and one specific stack — the unmodeled libraries, the project's own patterns. Once distilled, that knowledge does not expire. After that, a commit means one of two things:
+
+- **Nothing new crossed a boundary** — the usual case. The engine re-scans with the artifacts already in the repo, and a new finding in an old pattern costs nothing extra.
+- **The code crossed a boundary the artifacts do not cover** — a new library, a new kind of entry point. The agent comes back and models the delta, not the codebase.
+
+The two stages do not need the same model:
+
+- **Authoring rules and approximations** wants the strong model. Each artifact is a judgment the engine will apply everywhere, so quality there is amplified at scale — and so are mistakes.
+- **Triage and PoC writing** run on a much cheaper model without losing accuracy in our testing. The engine hands over the complete trace for every finding — from where the data entered to the dangerous call — so the model is judging one well-framed flow at a time, not hunting through a codebase.
+
+Put the strong model where its judgment gets distilled. The analyzer's reports carry the rest.
+
+## Get started
+
+OpenTaint is open source, Apache 2.0 / MIT licensed. It analyzes Java and Kotlin today, with Go and Python next on the roadmap. Add the skills to your coding agent — Claude Code, Codex, or any agent that supports the skills format:
+
+```bash
+npx skills add https://github.com/seqra/opentaint
+```
+
+That is the whole setup — the skill offers to install the engine itself if it is missing. The first run is a conversation, not a configuration file: open your coding agent in the project and ask it to find vulnerabilities. The skill asks two questions before touching anything, then works the pipeline on its own:
+
+- **Scan depth** — the Lite / Normal / Deep ladder from above.
+- **Exploit confirmation** — whether to confirm findings with PoCs. Dynamic triage launches throwaway local instances and tears them down at the end.
+
+Everything it produces lands in one `.opentaint/` directory at the project root:
+
+- the rules and approximations it wrote — the distilled review itself
+- the attack-surface coverage record — what was examined, what was dismissed, and why
+- a verdict with reasoning per finding
+- a PoC script per confirmed vulnerability
+- a `vulnerabilities.md` report on top
+
+Keep that directory in the repo. On every commit after, the engine replays it deterministically, no agent in the loop: that is the cheap scan in the title.
+
+The more of your code that AI writes, the more you need a formal layer underneath it — one that turns every discovery into coverage that lasts.

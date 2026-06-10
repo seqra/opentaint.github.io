@@ -1,0 +1,106 @@
+---
+title: "Spend the Model Once, Scan Forever: The OpenTaint AppSec Agent"
+description: "We're releasing open-source skills that pair an LLM agent with OpenTaint's taint engine. The agent maps the attack surface, models the missing library methods, writes project-specific rules, and confirms each finding with a real exploit — then the deterministic engine re-scans for the price of CPU, on every future commit."
+date: "2026-06-10"
+keywords:
+  - "llm security agent"
+  - "ai appsec"
+  - "taint analysis"
+  - "sast automation"
+  - "opentaint"
+  - "deterministic sast"
+  - "proof of concept exploit"
+  - "agentic security analysis"
+author: "Seqra Team"
+---
+
+import Mermaid from "@/components/astro/Mermaid.astro";
+
+Frontier models can now genuinely review code for security. An LLM agent reads it like a human reviewer: it follows intent, recognizes patterns no rule anticipated, and reasons about whether a flow is actually dangerous in context. But you rent that judgment rather than own it — the agent burns tokens on every file, gives a different answer each time you run it, and can never promise it looked everywhere. A taint engine is the mirror image: it cannot invent anything, but whatever it is told it applies the same way every time, across the whole codebase, for the price of CPU. Treat them as alternatives and you inherit the weaknesses of whichever one you picked.
+
+Today we're releasing a set of open-source skills that run them as one loop instead. The agent discovers; OpenTaint — our taint-analysis engine — enforces. The expensive, uncertain judgment happens once and freezes into artifacts the engine reuses forever. That is the whole pitch: spend the model once, scan for the price of CPU after that.
+
+## Division of labor
+
+Classical SAST fails in two ways the engine cannot fix on its own. It drops taint at every method it has no model for — a library call, a framework hook, code it cannot see — so real flows die silently at the boundary. And it only knows generic sources and sinks; it does not know that *your* application treats a particular header as untrusted, or that a particular helper is *your* sanitizer. Both gaps need code-specific knowledge that does not exist until someone writes it.
+
+That someone is the agent. It writes **approximations** — small models of how an unmodeled method moves data — and **project rules** — the sources, sinks, and sanitizers specific to your code. Both are plain, human-auditable text. Once written, the engine applies them deterministically, everywhere, on every future commit. The model's judgment is captured, not rented.
+
+## What the agent does
+
+Point the AppSec Agent skill at a project and it works through one pipeline:
+
+- **Maps the attack surface** — the entry points where untrusted data enters and the sinks where it becomes dangerous. The scope is deliberate: the whole application, one critical component, or a single suspected vulnerability.
+- **Authors rules, test-first** — every rule ships with a minimal example that *should* fire and a safe one that *should not*, and is accepted only once it provably behaves on both. A rule that misfires, applied across a whole codebase, manufactures noise at scale; test-first is how you stop that before it starts.
+- **Saturates approximations** — it models the methods where taint was dropping, re-scans, finds the next layer of dropped boundaries the new approximations exposed, and repeats until nothing new appears. Only at that fixed point does the engine see flows that cross many library and framework layers.
+- **Scans and triages** — with the rules and approximations in place, the engine does the deterministic tracing, and the agent adjudicates what comes back.
+
+Saturation is what unlocks the deep findings. In one real case, the loop found and confirmed an unauthenticated remote-code-execution vulnerability in a widely used open-source server. The dangerous path ran from an HTTP request, through several layers of framework plumbing, into a scripting evaluator — and most of those layers were unmodeled methods where taint had been silently dying. Saturating the approximations is what reconnected the source to the sink.
+
+<Mermaid chart={`flowchart TD
+    surface["Map attack surface"]
+    rules["Author rules (test-first)"]
+    approx["Write approximations"]
+    scan["Engine scans (deterministic)"]
+    dropped{"Dropped boundaries?"}
+    triage["Triage candidates"]
+    poc{"Generate + run PoC"}
+    fix["Diagnose: add sanitizer / fix approximation"]
+    confirmed["Confirmed vulnerability"]
+
+    surface --> rules --> scan
+    scan --> dropped
+    dropped -->|"new boundaries"| approx
+    approx --> scan
+    dropped -->|"saturated"| triage
+    triage --> poc
+    poc -->|"exploit succeeds"| confirmed
+    poc -->|"no exploit found"| fix
+    fix --> scan
+
+    style surface fill:#fef3c7,stroke:#f59e0b,color:#92400e
+    style rules fill:#fef3c7,stroke:#f59e0b,color:#92400e
+    style approx fill:#fef3c7,stroke:#f59e0b,color:#92400e
+    style triage fill:#fef3c7,stroke:#f59e0b,color:#92400e
+    style poc fill:#fef3c7,stroke:#f59e0b,color:#92400e
+    style fix fill:#fef3c7,stroke:#f59e0b,color:#92400e
+    style scan fill:#dbeafe,stroke:#3b82f6,color:#1e40af
+    style dropped fill:#dbeafe,stroke:#3b82f6,color:#1e40af
+    style confirmed fill:#fee2e2,stroke:#ef4444,color:#991b1b`} />
+
+*The loop. The agent (amber) discovers and freezes its judgment into artifacts; the engine (blue) applies them deterministically. Two cycles make it a loop rather than a pipeline: approximation **saturation** — re-scan until no new boundaries appear — and PoC-driven **feedback** — a diagnosed false positive becomes a global fix, then a re-scan.*
+
+You decide how much of the loop to run. **Lite** is the scan with the rules you already have, plus triage. **Normal** adds approximation saturation. **Deep** adds attack-surface mapping and test-first rules on top. Each level wraps the ones inside it. Exploit confirmation is a separate switch, not the top of this ladder: you can ask for PoC-confirmed findings at any depth, including Lite.
+
+## Findings you can trust
+
+Triage does not stop at "looks real." With exploit confirmation on, the agent confirms each candidate by **generating a proof-of-concept exploit and running it** against a throwaway local instance. A finding that can be exploited is real, by definition. One that resists every attempt at a PoC is treated as a likely false positive — failure to exploit is evidence, not proof, and the verdict stays in the report for a human to overrule. And when the agent can name *why* a finding is false — a sanitizer it had overlooked, an approximation that propagates taint the real method doesn't — that diagnosis is fed back into the artifacts: the sanitizer joins the rule, the approximation gets corrected. Because those artifacts are global, the fix lands at every matching site at once, and it stays fixed on every future scan.
+
+## The payoff
+
+You spend the model's discovery power exactly once per pattern, freeze the result into an artifact, and let the engine amortize it across the entire codebase and every future commit. Re-runs are deterministic — the same scan over the same code produces the same findings, bit for bit — and they cost CPU, not tokens. The discovery is non-deterministic; everything downstream of it is deterministic.
+
+There is a surprising consequence, and our testing so far bears it out. The engine supplies exactly what smaller models lack — exhaustive, consistent coverage of the whole codebase — so the model inside the loop only ever needs local judgment: this method, this rule, this finding. That is why a cheap model *inside the loop* can rival a flagship model working alone. Spend the model once — and even that once doesn't need the most expensive model available.
+
+## Get started
+
+OpenTaint is open source, Apache 2.0 / MIT licensed. It analyzes Java and Kotlin today, with Go and Python next on the roadmap. Install the engine:
+
+```bash
+# macOS or any platform with Homebrew
+brew install --cask seqra/tap/opentaint
+
+# Linux without Homebrew
+curl -fsSL https://opentaint.org/install.sh | bash
+
+# Windows (PowerShell)
+irm https://opentaint.org/install.ps1 | iex
+```
+
+Then add the skills to your coding agent — Claude Code, or any agent that supports the skills format:
+
+```bash
+npx skills add https://github.com/seqra/opentaint
+```
+
+Run `opentaint health` to confirm everything resolves, then point the AppSec Agent skill at your project and pick a depth. The more of your code that AI writes, the more you need a formal layer underneath it — one that turns every discovery into coverage that lasts.

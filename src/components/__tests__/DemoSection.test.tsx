@@ -48,12 +48,14 @@ describe("DemoSection", () => {
     expect(media.closest("a")).toHaveAttribute("href", "https://viewer.opentaint.org/");
   });
 
-  it("switches to the agent slide and shows the agent media", () => {
+  it("switches to the agent slide and plays the agent video with a stop control", () => {
     render(<DemoSection />);
     fireEvent.click(screen.getByRole("tab", { name: "Agent" }));
-    expect(screen.getByTestId("demo-agent-media")).toBeInTheDocument();
+    const video = screen.getByTestId("demo-agent-media");
+    expect(video).toBeInTheDocument();
     // Direct mapping: a light page shows the light-named asset.
-    expect(screen.getByTestId("demo-agent-media")).toHaveAttribute("src", "/animation-light-1.gif");
+    expect(video).toHaveAttribute("src", "/agent-video-light.mp4");
+    expect(screen.getByRole("button", { name: /pause demo/i })).toBeInTheDocument();
   });
 
   it("moves between tabs with the right arrow key", () => {

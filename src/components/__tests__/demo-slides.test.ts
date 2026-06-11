@@ -22,9 +22,10 @@ describe("DEMO_SLIDES", () => {
     });
   });
 
-  it("maps the agent gif and its screenshot fallback by page theme", () => {
+  it("maps the agent video and its screenshot poster by page theme", () => {
     const agent = DEMO_SLIDES.find((s) => s.id === "agent");
-    expect(agent?.sources).toEqual({ light: "/animation-light-1.gif", dark: "/animation-dark-1.gif" });
+    expect(agent?.kind).toBe("video");
+    expect(agent?.sources).toEqual({ light: "/agent-video-light.mp4", dark: "/agent-video-dark.mp4" });
     expect(agent?.fallback).toEqual({ light: "/screen-light-3.png", dark: "/screen-dark-3.png" });
   });
 });

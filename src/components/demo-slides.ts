@@ -5,7 +5,7 @@ export type MediaSources = { light: string; dark: string };
 export type DemoSlide = {
   id: DemoSlideId;
   label: string;
-  kind: "terminal" | "media";
+  kind: "terminal" | "media" | "video";
   // When true, the inner box uses the site background instead of the inverted
   // cast background. Set for media that carries its own (page-coloured) chrome,
   // e.g. the browser screenshot, so the box blends with the page at its corners.
@@ -41,8 +41,10 @@ export const DEMO_SLIDES: DemoSlide[] = [
   {
     id: "agent",
     label: "Agent",
-    kind: "media",
-    sources: { light: "/animation-light-1.gif", dark: "/animation-dark-1.gif" },
+    kind: "video",
+    // The video plays inline; `fallback` doubles as the poster frame and the
+    // static image shown under prefers-reduced-motion.
+    sources: { light: "/agent-video-light.mp4", dark: "/agent-video-dark.mp4" },
     fallback: { light: "/screen-light-3.png", dark: "/screen-dark-3.png" },
     alt: "A coding agent running OpenTaint via the skill",
     testId: "demo-agent-media",

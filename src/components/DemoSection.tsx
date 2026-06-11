@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type TouchEvent } from "react";
 import { TerminalDemo } from "./TerminalDemo";
 import { MediaDemo } from "./MediaDemo";
+import { VideoDemo } from "./VideoDemo";
 import { DEMO_SLIDES, type DemoSlideId } from "./demo-slides";
 
 const SWIPE_THRESHOLD_PX = 48;
@@ -106,6 +107,13 @@ export function DemoSection() {
                 >
                   {slide.kind === "terminal" ? (
                     <TerminalDemo />
+                  ) : slide.kind === "video" ? (
+                    <VideoDemo
+                      sources={slide.sources!}
+                      poster={slide.fallback!}
+                      alt={slide.alt!}
+                      testId={slide.testId!}
+                    />
                   ) : (
                     <MediaDemo
                       sources={slide.sources!}

@@ -138,7 +138,7 @@ When the agent can name *why* a finding is false — a neutralizing check it had
 
 ## The payoff
 
-You spend the model's discovery power exactly once per pattern, distill the result into an artifact, and let the engine amortize it across the entire codebase and every future commit. Re-runs are deterministic — the same scan over the same code produces the same findings, bit for bit — and they cost CPU, not tokens. The discovery is non-deterministic. Everything downstream of it is deterministic.
+You spend the model's discovery power exactly once per pattern, distill the result into an artifact, and let the engine amortize it across the entire codebase and every future commit. Re-runs are deterministic — the same scan over the same code produces the same findings — and they cost CPU, not tokens. The non-determinism is confined to discovery, and everything downstream is deterministic.
 
 Here is what that looks like in practice, on [Komga](https://github.com/gotson/komga) — an open-source media server, about 137,000 lines of Kotlin — starting cold, with the agent at Deep level:
 

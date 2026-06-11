@@ -6,6 +6,12 @@ import { readFile } from "node:fs/promises";
 export const OG_WIDTH = 1200;
 export const OG_HEIGHT = 630;
 
+// Near-black red ground, taken straight from the site's dark theme: the
+// resolved RGB of `--background: 0 70% 3.5%` (src/index.css) as painted by the
+// browser. Kept as hex rather than hsl() so it matches the live dark site
+// exactly — resvg truncates hsl(0,70%,3.5%) to rgb(15,2,2) instead of (15,3,3).
+export const OG_BACKGROUND = "#0f0303";
+
 const HEADER_SVG = `<svg width="211" height="39" viewBox="0 0 211 39" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M24.2644 38.64V9.44H29.1444V13.64H30.2644L29.1444 14.8C29.1444 13.0133 29.6777 11.6133 30.7444 10.6C31.811 9.56001 33.251 9.04 35.0644 9.04C37.2777 9.04 39.051 9.80001 40.3844 11.32C41.7177 12.84 42.3844 14.88 42.3844 17.44V23.4C42.3844 25.1067 42.0777 26.6 41.4644 27.88C40.8777 29.1334 40.0377 30.1067 38.9444 30.8C37.851 31.4934 36.5577 31.84 35.0644 31.84C33.251 31.84 31.811 31.3333 30.7444 30.32C29.6777 29.28 29.1444 27.8667 29.1444 26.08L30.2644 27.24H29.1044L29.2644 32.48V38.64H24.2644ZM33.3044 27.52C34.5844 27.52 35.5844 27.1467 36.3044 26.4C37.0244 25.6533 37.3844 24.5867 37.3844 23.2V17.68C37.3844 16.2933 37.0244 15.2267 36.3044 14.48C35.5844 13.7333 34.5844 13.36 33.3044 13.36C32.051 13.36 31.0644 13.7467 30.3444 14.52C29.6244 15.2667 29.2644 16.32 29.2644 17.68V23.2C29.2644 24.56 29.6244 25.6267 30.3444 26.4C31.0644 27.1467 32.051 27.52 33.3044 27.52Z" fill="white"/>
 <path d="M57.2088 31.84C55.3421 31.84 53.7154 31.48 52.3288 30.76C50.9421 30.04 49.8621 29.04 49.0887 27.76C48.3421 26.4534 47.9688 24.9334 47.9688 23.2V17.68C47.9688 15.9467 48.3421 14.44 49.0887 13.16C49.8621 11.8533 50.9421 10.84 52.3288 10.12C53.7154 9.4 55.3421 9.04 57.2088 9.04C59.0488 9.04 60.6488 9.4 62.0088 10.12C63.3954 10.84 64.4621 11.8533 65.2088 13.16C65.9821 14.44 66.3687 15.9467 66.3687 17.68V21.64H52.8088V23.2C52.8088 24.7467 53.1821 25.92 53.9287 26.72C54.6754 27.4934 55.7821 27.88 57.2487 27.88C58.3687 27.88 59.2754 27.6933 59.9688 27.32C60.6621 26.92 61.1021 26.3467 61.2887 25.6H66.2087C65.8354 27.4933 64.8221 29.0133 63.1688 30.16C61.5421 31.28 59.5554 31.84 57.2088 31.84ZM61.5288 18.84V17.64C61.5288 16.12 61.1687 14.96 60.4487 14.16C59.7287 13.3333 58.6488 12.92 57.2088 12.92C55.7688 12.92 54.6754 13.3333 53.9287 14.16C53.1821 14.9867 52.8088 16.16 52.8088 17.68V18.52L61.8888 18.44L61.5288 18.84Z" fill="white"/>
@@ -61,6 +67,7 @@ function img(src: string, width: number, height: number): ReactNode {
 }
 
 function shell(
+  background: string,
   ...contentChildren: (ReactNode | string)[]
 ): ReactNode {
   return h("div", {
@@ -68,7 +75,7 @@ function shell(
     flexDirection: "column",
     width: "100%",
     height: "100%",
-    backgroundColor: "#0f0303",
+    backgroundColor: background,
     padding: "60px",
     fontFamily: "JetBrains Mono",
     position: "relative",
@@ -110,7 +117,11 @@ function shell(
   );
 }
 
-export function buildPostImage(title: string, date: string): ReactNode {
+export function buildPostImage(
+  title: string,
+  date: string,
+  background: string = OG_BACKGROUND,
+): ReactNode {
   const formattedDate = new Date(date).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
@@ -118,6 +129,7 @@ export function buildPostImage(title: string, date: string): ReactNode {
   });
 
   return shell(
+    background,
     h("div", {
       display: "flex",
       fontSize: "46px",
@@ -156,8 +168,12 @@ export function buildPostImage(title: string, date: string): ReactNode {
   );
 }
 
-export function buildSiteImage(tagline: string): ReactNode {
+export function buildSiteImage(
+  tagline: string,
+  background: string = OG_BACKGROUND,
+): ReactNode {
   return shell(
+    background,
     h("div", {
       display: "flex",
       fontSize: "46px",

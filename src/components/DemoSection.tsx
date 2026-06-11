@@ -101,8 +101,15 @@ export function DemoSection() {
                     the box height, and the leftover space lives in box 1. */}
                 <div
                   className={[
-                    "demo-glow w-full overflow-hidden rounded-xl",
-                    slide.pageBackground ? "bg-background" : "bg-[#1b0100] dark:bg-[#feffff]",
+                    "demo-glow w-full overflow-hidden",
+                    // The viewer screenshot is a browser window with its own
+                    // ~17px rounded corners; its box must clip at a larger radius
+                    // or the window corner pokes out and reveals the box bg as a
+                    // white (light) / black (dark) arc. The other slides fill
+                    // opaque to the edge, so they keep the sharper rounded-xl.
+                    slide.pageBackground
+                      ? "rounded-[22px] bg-background"
+                      : "rounded-xl bg-[#1b0100] dark:bg-[#feffff]",
                   ].join(" ")}
                 >
                   {slide.kind === "terminal" ? (

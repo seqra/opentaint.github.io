@@ -147,6 +147,8 @@ Here is what that looks like in practice, on [Komga](https://github.com/gotson/k
 | Cost | $112 in tokens             | $0 — CPU only       |
 | Time | 2 hours 51 minutes         | 1 minute 37 seconds |
 
+*Token costs are measured with Claude Opus 4.8 ($5 / $25 per million input / output tokens).*
+
 Across the projects we have tested so far, the one-time spend lands in the $100–$200 range. After that, every commit is just a scan — minutes of CPU, not hundreds of dollars.
 
 Only the first run is cold. Those three hours went into the gap between the engine's built-in knowledge and one specific stack — the unmodeled libraries, the project's own patterns. Once distilled, that knowledge does not expire. After that, a commit means one of two things:
@@ -154,12 +156,7 @@ Only the first run is cold. Those three hours went into the gap between the engi
 - **Nothing new crossed a boundary** — the usual case. The engine re-scans with the artifacts already in the repo, and a new finding in an old pattern costs nothing extra.
 - **The code crossed a boundary the artifacts do not cover** — a new library, a new kind of entry point. The agent comes back and models the delta, not the codebase.
 
-Scan and triage do not need the same model:
-
-- **Authoring rules and approximations** wants the strong model. Each artifact is a judgment the engine will apply everywhere, so quality there is amplified at scale — and so are mistakes.
-- **Triage and PoC writing** work with a much cheaper model without losing accuracy in our testing. The engine hands over the complete trace for every finding — from where the data entered to the dangerous call — so the model is judging one well-framed flow at a time, not hunting through a codebase.
-
-Put the strong model where its judgment gets distilled. The analyzer's reports carry the rest.
+Either way, tokens are spent only on what the artifacts do not yet cover. Everything else is a scan.
 
 ## Get started
 
@@ -172,7 +169,7 @@ npx skills add https://github.com/seqra/opentaint
 The skill offers to install the engine itself if it is missing. To run the workflow, open your coding agent in the project and ask it to find vulnerabilities. The skill asks two questions before touching anything, then works the pipeline on its own:
 
 - **Scan depth** — the Lite / Normal / Deep ladder from above.
-- **Exploit confirmation** — whether to confirm findings with PoCs. Dynamic triage launches throwaway local instances and tears them down at the end.
+- **Exploit confirmation** — whether to confirm findings with PoCs. Dynamic triage launches throwaway local instances of the application under test and tears them down at the end.
 
 Everything it produces lands in one `.opentaint/` directory at the project root:
 
@@ -182,6 +179,6 @@ Everything it produces lands in one `.opentaint/` directory at the project root:
 - a PoC script per confirmed vulnerability
 - a `vulnerabilities.md` report on top
 
-Keep that directory in the repo. On every commit after, the engine replays it deterministically, no agent in the loop: that is the cheap scan in the title.
+Keep that directory in the repo. On every commit after, you can run the engine scan with those artifacts deterministically — the agent is no longer needed.
 
 The more of your code that AI writes, the more you need a formal layer underneath it — one that turns every discovery into coverage that lasts.

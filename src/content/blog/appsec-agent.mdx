@@ -18,7 +18,7 @@ import Mermaid from "@/components/astro/Mermaid.astro";
 
 Frontier models can now genuinely review code for security. An LLM agent reads it like a human reviewer: it follows intent, recognizes patterns no rule anticipated, and reasons about whether a flow is actually dangerous in context. But you rent that judgment rather than own it — the agent burns tokens on every file, gives a different answer each time you run it, and can never promise it looked everywhere. A taint engine — a static analyzer that traces untrusted data through code — is the mirror image: it cannot invent anything, but whatever it is told it applies the same way every time, across the whole codebase, for the price of CPU. Treat them as alternatives and you inherit the weaknesses of whichever one you picked.
 
-Today we're releasing a set of [open-source skills](https://github.com/seqra/opentaint/tree/main/skills) that run them as one loop instead. The skills plus OpenTaint — our taint-analysis engine — form a harness for the model: the agent discovers, the engine enforces. The expensive, uncertain judgment happens once and is distilled into artifacts the engine reuses forever. A frontier-model security review becomes a deterministic scan that costs CPU, not tokens.
+Today we're releasing a set of [open-source skills](https://github.com/seqra/opentaint/tree/main/skills) that run them as one loop instead. The skills plus OpenTaint — our taint-analysis engine — form a harness for the model: the agent discovers, the engine enforces. The expensive, probabilistic judgment happens once and is distilled into artifacts the engine reuses forever. A frontier-model security review becomes a deterministic scan that costs CPU, not tokens.
 
 ## Division of labor
 

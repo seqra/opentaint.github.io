@@ -132,9 +132,9 @@ Once the scan completes, every finding goes to the agent for triage: it reads th
     style fix fill:#fef3c7,stroke:#f59e0b,color:#92400e
     style confirmed fill:#fee2e2,stroke:#ef4444,color:#991b1b`} />
 
-*Stage 2 — **Triage**. Verdicts are earned, not asserted: a successful exploit confirms the finding, and a failed one sends the agent to diagnose what misled the engine.*
+*Stage 2 — **Triage**. A successful exploit confirms the finding, and a failed one sends the agent to diagnose what misled the engine.*
 
-The diagnosis is where the loop closes. When the agent can name *why* a finding is false — a neutralizing check it had overlooked, an approximation that propagates data the real method doesn't — that diagnosis is fed back into the artifacts: the check joins the rule, the approximation gets corrected. Because those artifacts are global, the fix lands at every matching site at once, and it stays fixed on every future scan. Saturation closed the first cycle in Stage 1. This feedback closes the second. Two cycles are what make this a loop rather than a pipeline — and they attack the two ways a model can be wrong: saturation fills in propagation that was missing, feedback trims propagation that was too broad.
+When the agent can name *why* a finding is false — a neutralizing check it had overlooked, an approximation that propagates data the real method doesn't — that diagnosis is applied back into the artifacts: the overfiring rules get tuned, the approximation gets corrected. Because those artifacts are global, the fix holds on every future scan. Saturation closed the underapproximation gap in Stage 1. This triage closes the overapproximation one. They attack the two ways a model can be wrong: saturation fills in propagation that was missing, triage trims propagations and rules that were too broad.
 
 ## The payoff
 
@@ -154,22 +154,22 @@ Only the first run is cold. Those three hours went into the gap between the engi
 - **Nothing new crossed a boundary** — the usual case. The engine re-scans with the artifacts already in the repo, and a new finding in an old pattern costs nothing extra.
 - **The code crossed a boundary the artifacts do not cover** — a new library, a new kind of entry point. The agent comes back and models the delta, not the codebase.
 
-The two stages do not need the same model:
+Scan and triage do not need the same model:
 
 - **Authoring rules and approximations** wants the strong model. Each artifact is a judgment the engine will apply everywhere, so quality there is amplified at scale — and so are mistakes.
-- **Triage and PoC writing** run on a much cheaper model without losing accuracy in our testing. The engine hands over the complete trace for every finding — from where the data entered to the dangerous call — so the model is judging one well-framed flow at a time, not hunting through a codebase.
+- **Triage and PoC writing** work with a much cheaper model without losing accuracy in our testing. The engine hands over the complete trace for every finding — from where the data entered to the dangerous call — so the model is judging one well-framed flow at a time, not hunting through a codebase.
 
 Put the strong model where its judgment gets distilled. The analyzer's reports carry the rest.
 
 ## Get started
 
-OpenTaint is open source, Apache 2.0 / MIT licensed. It analyzes Java and Kotlin today, with Go and Python next on the roadmap. Add the skills to your coding agent — Claude Code, Codex, or any agent that supports the skills format:
+OpenTaint is open source, Apache 2.0 licensed. It analyzes Java and Kotlin today, with Go and Python next on the roadmap. Add the skills to your coding agent — Claude Code, Codex, or any agent that supports the skills format:
 
 ```bash
 npx skills add https://github.com/seqra/opentaint
 ```
 
-That is the whole setup — the skill offers to install the engine itself if it is missing. The first run is a conversation, not a configuration file: open your coding agent in the project and ask it to find vulnerabilities. The skill asks two questions before touching anything, then works the pipeline on its own:
+The skill offers to install the engine itself if it is missing. To run the workflow, open your coding agent in the project and ask it to find vulnerabilities. The skill asks two questions before touching anything, then works the pipeline on its own:
 
 - **Scan depth** — the Lite / Normal / Deep ladder from above.
 - **Exploit confirmation** — whether to confirm findings with PoCs. Dynamic triage launches throwaway local instances and tears them down at the end.

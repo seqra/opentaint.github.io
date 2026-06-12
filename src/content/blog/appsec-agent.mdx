@@ -1,6 +1,6 @@
 ---
 title: "Distilling Frontier Model Security Reviews into a Cheap Deterministic Scan"
-description: "We're releasing open-source skills that pair an LLM agent with OpenTaint's taint engine. The agent maps the attack surface, models the missing library methods, writes project-specific rules, and can confirm each finding with a real exploit — then the deterministic engine re-scans for the price of CPU, on every future commit."
+description: "We're releasing skills that pair an LLM agent with OpenTaint's taint engine. The agent maps the attack surface, models the missing library methods, writes project-specific rules, and can confirm each finding with a real exploit — then the deterministic engine re-scans for the price of CPU, on every future commit."
 date: "2026-06-10"
 keywords:
   - "llm security agent"
@@ -18,7 +18,7 @@ import Mermaid from "@/components/astro/Mermaid.astro";
 
 Frontier models can now genuinely review code for security. An LLM agent reads it like a human reviewer: it follows intent, recognizes patterns no rule anticipated, and reasons about whether a flow is actually dangerous in context. But you rent that judgment rather than own it — the agent burns tokens on every file, gives a different answer each time you run it, and can never promise it looked everywhere. A taint engine — a static analyzer that traces untrusted data through code — is the mirror image: it cannot invent anything, but whatever it is told it applies the same way every time, across the whole codebase, for the price of CPU. Treat them as alternatives and you inherit the weaknesses of whichever one you picked.
 
-Today we're releasing a set of [open-source skills](https://github.com/seqra/opentaint/tree/main/skills) that run them as one loop instead. The skills plus OpenTaint — our taint-analysis engine — form a harness for the model: the agent discovers, the engine enforces. The expensive, probabilistic judgment happens once and is distilled into artifacts the engine reuses forever. A frontier-model security review becomes a deterministic scan that costs CPU, not tokens.
+Today we're releasing a set of [skills](https://github.com/seqra/opentaint/tree/main/skills) that run them as one loop instead. The skills plus OpenTaint — our taint-analysis engine — form a harness for the model: the agent discovers, the engine enforces. The expensive, probabilistic judgment happens once and is distilled into artifacts the engine reuses forever. A frontier-model security review becomes a deterministic scan that costs CPU, not tokens.
 
 ## Division of labor
 
@@ -121,20 +121,31 @@ Once the scan completes, every finding goes to the agent for triage: it reads th
     triage["Triage candidates"]
     poc{"Generate + run PoC"}
     confirmed["Confirmed vulnerability"]
-    fix["Diagnose: tune rule / fix approximation"]
+    diag["Diagnose + document"]
+    rule["Rule issue"]
+    approx["Approximation issue"]
+    engine["Engine issue"]
 
     triage --> poc
     poc -->|"exploit succeeds"| confirmed
-    poc -->|"no exploit found"| fix
+    poc -->|"no exploit found"| diag
+    diag --> rule
+    diag --> approx
+    diag --> engine
 
     style triage fill:#fef3c7,stroke:#f59e0b,color:#92400e
     style poc fill:#fef3c7,stroke:#f59e0b,color:#92400e
-    style fix fill:#fef3c7,stroke:#f59e0b,color:#92400e
+    style diag fill:#fef3c7,stroke:#f59e0b,color:#92400e
+    style rule fill:#fef3c7,stroke:#f59e0b,color:#92400e
+    style approx fill:#fef3c7,stroke:#f59e0b,color:#92400e
+    style engine fill:#dbeafe,stroke:#3b82f6,color:#1e40af
     style confirmed fill:#fee2e2,stroke:#ef4444,color:#991b1b`} />
 
-*Stage 2 — **Triage**. A successful exploit confirms the finding, and a failed one sends the agent to diagnose what misled the engine.*
+*Stage 2 — **Triage**. A successful exploit confirms the finding. A failed one sends the agent to diagnose what misled the engine and document the cause.*
 
-When the agent can name *why* a finding is false — a neutralizing check it had overlooked, an approximation that propagates data the real method doesn't — that diagnosis is applied back into the artifacts: the overfiring rules get tuned, the approximation gets corrected. Because those artifacts are global, the fix holds on every future scan. Saturation closed the underapproximation gap in Stage 1. This triage closes the overapproximation one. They attack the two ways a model can be wrong: saturation fills in propagation that was missing, triage trims propagations and rules that were too broad.
+A false positive is not just discarded. The agent diagnoses *why* the engine was misled and documents the cause alongside the verdict, in one of three categories. A **rule issue**: the pattern is too broad — it treats data as untrusted that never was, or misses the check that neutralizes it. An **approximation issue**: a model propagates data the real method does not. An **engine issue**: the trace is wrong and no artifact caused it — the agent writes that up as a reproducible report for the engine maintainers.
+
+The rule and approximation diagnoses can be picked up later, and each can be expressed as a minimal reproducible test: the false positive distilled into a small example the artifact must not match. The same skills that author rules and approximations also tune them — write that example as a should-not-fire test, then adjust the rule or correct the approximation until it passes and the should-fire tests still do. Because a rule or approximation applies to the whole codebase on every scan, the fix removes the entire class of false positives, not just the finding that exposed it. Together with Stage 1's saturation, which filled in propagation the engine was missing, this closes the other direction a model can be wrong: rules and propagations that were too broad.
 
 ## The payoff
 
@@ -166,7 +177,18 @@ OpenTaint is open source, Apache 2.0 licensed. It analyzes Java and Kotlin today
 npx skills add https://github.com/seqra/opentaint
 ```
 
-The skill offers to install the engine itself if it is missing. To run the workflow, open your coding agent in the project and ask it to find vulnerabilities. The skill asks two questions before touching anything, then works the pipeline on its own:
+That installs fifteen skills. One is the workflow itself, and the rest are the steps it drives — each usable on its own:
+
+- **Pipeline** — `appsec-agent` runs the whole loop end to end, from build to confirmed findings.
+- **Build and scan** — `build-project` builds the project into the model the engine analyzes. `run-scan` runs the deterministic scan and produces the report.
+- **Attack surface** — `triage-dependencies` marks which dependencies could introduce sources or sinks. `discover-attack-surface` drills into a flagged package for the exact methods the project uses.
+- **Rules** — `create-rule` authors a detection rule test-first, and fixes one that misfires or misses. `assemble-lib-rules` merges the per-package rules with the built-ins into the project-level patterns.
+- **Approximations** — `analyze-external-methods` sorts the methods where traces died and decides what to approximate. `create-pass-through-approximation` models a method whose propagation is plain copying. `create-dataflow-approximation` models one a copy cannot express.
+- **Artifact tests** — `create-test-project` builds the annotated should-fire / should-not-fire samples that rules and approximations are verified against. `debug-rule` traces where taint is dropped when one misbehaves.
+- **Triage** — `analyze-findings` splits a rule's findings into distinct vulnerabilities and rules each true or false. `generate-poc` reproduces a finding against the running application.
+- **Engine feedback** — `report-analyzer-issue` turns a confirmed engine-side diagnosis into a reproducible report, optionally a GitHub issue.
+
+`appsec-agent` offers to install the engine itself if it is missing. To run the workflow, open your coding agent in the project and ask it to find vulnerabilities. The skill asks two questions before touching anything, then works the pipeline on its own:
 
 - **Scan depth** — the Lite / Normal / Deep ladder from above.
 - **Exploit confirmation** — whether to confirm findings with PoCs. Dynamic triage launches throwaway local instances of the application under test and tears them down at the end.

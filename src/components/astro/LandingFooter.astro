@@ -1,4 +1,13 @@
 ---
+interface Props {
+  /* Mirror the red separator's hooks so the footer continues a page's
+     alternating zigzag. Set true on pages where an even number of separators
+     precede the footer (e.g. the blog index and blog posts). */
+  mirror?: boolean;
+}
+
+const { mirror = false } = Astro.props;
+
 const links = [
   { href: "https://github.com/seqra/opentaint", label: "GitHub", external: true },
   { href: "https://discord.gg/6BXDfbP4p9", label: "Discord", external: true },
@@ -8,7 +17,7 @@ const links = [
 ---
 
 <footer>
-  <div class="footer-links grid grid-cols-2 sm:grid-cols-4">
+  <div class:list={["footer-links grid grid-cols-2 sm:grid-cols-4", mirror && "footer-alt"]}>
     {links.map((link) => (
       <a
         href={link.href}

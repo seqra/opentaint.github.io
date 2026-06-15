@@ -97,7 +97,7 @@ const breadcrumbSchema = {
             <BlogPostView post={post} headings={headings}>
               {Content ? <Content /> : <Fragment set:html={post.body} />}
             </BlogPostView>
-            <LandingFooter />
+            <LandingFooter mirror />
           </div>
 
           {toc.length > 0 && (

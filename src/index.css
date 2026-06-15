@@ -273,6 +273,37 @@
     pointer-events: none;
   }
 
+  /* Alternating separators: every other divider mirrors the hooks so the
+     raised (upward) end flips sides down the page (-1 1 -1 1 …), while the
+     other end stays pinned low. The default rule above raises the left end;
+     these odd-of-type sections raise the right end instead. `.footer-alt`
+     opts the footer rule in so it keeps the page's zigzag going — set per
+     page (see LandingFooter `mirror` prop) whenever an even number of
+     separators precedes the footer. */
+  .band:nth-of-type(odd):not(:first-child)::before,
+  .page-section:nth-of-type(odd):not(:first-child)::before,
+  .footer-links.footer-alt::before {
+    /* Rule + left-hand hook curving down. */
+    left: var(--rule-inset);
+    right: calc(var(--rule-inset) + 23px);
+    border-right: none;
+    border-left: 1px solid hsl(var(--brand));
+    border-top-right-radius: 0;
+    border-top-left-radius: 24px;
+  }
+
+  .band:nth-of-type(odd):not(:first-child)::after,
+  .page-section:nth-of-type(odd):not(:first-child)::after,
+  .footer-links.footer-alt::after {
+    /* Right-hand hook curving up, meeting the rule flush. */
+    left: auto;
+    right: var(--rule-inset);
+    border-left: none;
+    border-right: 1px solid hsl(var(--brand));
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 24px;
+  }
+
   .section-title {
     @apply font-mono text-base font-bold tracking-tight text-foreground lg:text-[17px];
   }

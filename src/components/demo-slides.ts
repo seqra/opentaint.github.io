@@ -23,9 +23,15 @@ export type DemoSlide = {
 // picks the source by page theme, so there is no inversion here.
 export const DEMO_SLIDES: DemoSlide[] = [
   {
-    id: "terminal",
-    label: "CLI",
-    kind: "terminal",
+    id: "agent",
+    label: "Agent",
+    kind: "video",
+    // The video plays inline; `fallback` doubles as the poster frame and the
+    // static image shown under prefers-reduced-motion.
+    sources: { light: "/agent-video-light.mp4", dark: "/agent-video-dark.mp4" },
+    fallback: { light: "/screen-light-3.png", dark: "/screen-dark-3.png" },
+    alt: "A coding agent running OpenTaint via the skill",
+    testId: "demo-agent-media",
   },
   {
     id: "viewer",
@@ -39,14 +45,8 @@ export const DEMO_SLIDES: DemoSlide[] = [
     href: "https://viewer.opentaint.org/",
   },
   {
-    id: "agent",
-    label: "Agent",
-    kind: "video",
-    // The video plays inline; `fallback` doubles as the poster frame and the
-    // static image shown under prefers-reduced-motion.
-    sources: { light: "/agent-video-light.mp4", dark: "/agent-video-dark.mp4" },
-    fallback: { light: "/screen-light-3.png", dark: "/screen-dark-3.png" },
-    alt: "A coding agent running OpenTaint via the skill",
-    testId: "demo-agent-media",
+    id: "terminal",
+    label: "CLI",
+    kind: "terminal",
   },
 ];

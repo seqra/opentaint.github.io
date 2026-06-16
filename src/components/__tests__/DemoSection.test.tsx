@@ -26,16 +26,20 @@ afterEach(() => {
 });
 
 describe("DemoSection", () => {
-  it("renders three tabs with CLI selected by default", () => {
+  it("renders three tabs with Agent selected by default", () => {
     render(<DemoSection />);
     const tabs = screen.getAllByRole("tab");
-    expect(tabs.map((t) => t.textContent)).toEqual(["CLI", "Viewer", "Agent"]);
-    expect(screen.getByRole("tab", { name: "CLI" })).toHaveAttribute("aria-selected", "true");
+    expect(tabs.map((t) => t.textContent)).toEqual(["Agent", "Viewer", "CLI"]);
+    expect(screen.getByRole("tab", { name: "Agent" })).toHaveAttribute("aria-selected", "true");
   });
 
-  it("shows the terminal player on the default tab", () => {
+  it("plays the agent video with a stop control on the default tab", () => {
     render(<DemoSection />);
-    expect(screen.getByTestId("demo-hero-player")).toBeInTheDocument();
+    const video = screen.getByTestId("demo-agent-media");
+    expect(video).toBeInTheDocument();
+    // Direct mapping: a light page shows the light-named asset.
+    expect(video).toHaveAttribute("src", "/agent-video-light.mp4");
+    expect(screen.getByRole("button", { name: /pause demo/i })).toBeInTheDocument();
     expect(screen.queryByTestId("demo-viewer-media")).not.toBeInTheDocument();
   });
 
@@ -48,37 +52,35 @@ describe("DemoSection", () => {
     expect(media.closest("a")).toHaveAttribute("href", "https://viewer.opentaint.org/");
   });
 
-  it("switches to the agent slide and plays the agent video with a stop control", () => {
+  it("switches to the CLI slide and shows the terminal player", () => {
     render(<DemoSection />);
-    fireEvent.click(screen.getByRole("tab", { name: "Agent" }));
-    const video = screen.getByTestId("demo-agent-media");
-    expect(video).toBeInTheDocument();
-    // Direct mapping: a light page shows the light-named asset.
-    expect(video).toHaveAttribute("src", "/agent-video-light.mp4");
-    expect(screen.getByRole("button", { name: /pause demo/i })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("tab", { name: "CLI" }));
+    expect(screen.getByRole("tab", { name: "CLI" })).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByTestId("demo-hero-player")).toBeInTheDocument();
+    expect(screen.queryByTestId("demo-agent-media")).not.toBeInTheDocument();
   });
 
   it("moves between tabs with the right arrow key", () => {
     render(<DemoSection />);
-    const cliTab = screen.getByRole("tab", { name: "CLI" });
-    cliTab.focus();
-    fireEvent.keyDown(cliTab, { key: "ArrowRight" });
+    const agentTab = screen.getByRole("tab", { name: "Agent" });
+    agentTab.focus();
+    fireEvent.keyDown(agentTab, { key: "ArrowRight" });
     expect(screen.getByRole("tab", { name: "Viewer" })).toHaveAttribute("aria-selected", "true");
   });
 
   it("wraps to the last tab when ArrowLeft is pressed on the first tab", () => {
     render(<DemoSection />);
-    const cliTab = screen.getByRole("tab", { name: "CLI" });
-    cliTab.focus();
-    fireEvent.keyDown(cliTab, { key: "ArrowLeft" });
-    expect(screen.getByRole("tab", { name: "Agent" })).toHaveAttribute("aria-selected", "true");
+    const agentTab = screen.getByRole("tab", { name: "Agent" });
+    agentTab.focus();
+    fireEvent.keyDown(agentTab, { key: "ArrowLeft" });
+    expect(screen.getByRole("tab", { name: "CLI" })).toHaveAttribute("aria-selected", "true");
   });
 
   it("moves DOM focus to the newly active tab on arrow navigation", () => {
     render(<DemoSection />);
-    const cliTab = screen.getByRole("tab", { name: "CLI" });
-    cliTab.focus();
-    fireEvent.keyDown(cliTab, { key: "ArrowRight" });
+    const agentTab = screen.getByRole("tab", { name: "Agent" });
+    agentTab.focus();
+    fireEvent.keyDown(agentTab, { key: "ArrowRight" });
     expect(screen.getByRole("tab", { name: "Viewer" })).toHaveFocus();
   });
 
@@ -136,11 +138,11 @@ describe("DemoSection", () => {
     vi.useFakeTimers();
     try {
       render(<DemoSection />);
-      fireEvent.click(screen.getByRole("tab", { name: "Agent" }));
+      fireEvent.click(screen.getByRole("tab", { name: "CLI" }));
       act(() => {
         vi.advanceTimersByTime(21000);
       });
-      expect(screen.getByRole("tab", { name: "Agent" })).toHaveAttribute("aria-selected", "true");
+      expect(screen.getByRole("tab", { name: "CLI" })).toHaveAttribute("aria-selected", "true");
     } finally {
       vi.useRealTimers();
     }

@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { DEMO_SLIDES } from "../demo-slides";
 
 describe("DEMO_SLIDES", () => {
-  it("lists terminal, viewer, agent in order", () => {
-    expect(DEMO_SLIDES.map((s) => s.id)).toEqual(["terminal", "viewer", "agent"]);
+  it("lists agent, viewer, terminal in order", () => {
+    expect(DEMO_SLIDES.map((s) => s.id)).toEqual(["agent", "viewer", "terminal"]);
   });
 
   it("gives the terminal slide the cast kind and no media sources", () => {

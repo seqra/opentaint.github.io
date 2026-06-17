@@ -82,7 +82,7 @@ A security review is really a chain of judgments about trust. Where's the attack
     next(["Stage 2 — Triage"])
 
     surface --> rules --> scan
-    scan -->|"new boundaries"| approx
+    scan -->|"new opaque methods"| approx
     approx -->|"re-scan"| scan
     scan -.->|"saturated"| next
 
@@ -92,18 +92,18 @@ A security review is really a chain of judgments about trust. Where's the attack
     style scan fill:#dbeafe,stroke:#3b82f6,color:#1e40af
     style next fill:none,stroke:#78716c,stroke-dasharray:4 4,color:#78716c`} />
 
-*Stage 1 — **Scan**. The agent does the discovering and turns what it finds into artifacts. The engine applies them, deterministically. The cycle is approximation **saturation** — re-scan until no new boundaries turn up.*
+*Stage 1 — **Scan**. The agent does the discovering and turns what it finds into artifacts. The engine applies them, deterministically. The cycle is approximation **saturation** — re-scan until no new opaque methods turn up.*
 
 - **Maps the attack surface** — the places untrusted data enters, and the operations where it can do real damage.
 - **Authors rules, test-first** — the patterns your code is missing, each accepted only once it's tested.
 - **Scans** — the engine traces every flow and hands back each finding as the full trace behind it.
-- **Saturates approximations** — models the opaque methods, over and over, until no new boundary shows up.
+- **Saturates approximations** — models the opaque methods, over and over, until no new ones show up.
 
 Mapping is what makes coverage defensible. The agent works through every dependency the project pulls in and sorts them: which ones handle outside data, which expose dangerous operations, and which are just inert. The packages it flags get drilled into, down to the exact methods the project calls. The ones it dismisses get logged with a reason. What's left is a coverage record showing what got examined, what got set aside, and why. You also set the scope up front — the whole application, one component you're worried about, or a single bug you already suspect.
 
 Rules get written the way code does, tests first. Where a built-in rule already fits, the agent just wires it in. It only writes a new pattern when nothing existing covers the case. Each new rule comes with two examples — a vulnerable snippet it *should* flag and a safe one it *shouldn't* — and it isn't accepted until it gets both right. A rule that misfires manufactures noise at scale, across the whole codebase at once. Writing the tests first heads that off.
 
-The deep findings only surface after saturation. The agent models the methods where traces were dying, then re-scans — and that scan usually turns up a fresh layer of unmodeled boundaries the new approximations just exposed. So it models those too and scans again. This keeps going until a scan finds nothing new. Only at that point does the engine start seeing flows that thread through many layers of library and framework code at once. In one real case, this workflow found and confirmed an unauthenticated remote-code-execution bug in a widely used open-source server. The path ran from an HTTP request, through several layers of framework plumbing, into a scripting evaluator — and most of those layers were the unmodeled methods where the trace had been quietly dying. Only once the approximations were saturated did it connect the request all the way to the evaluator.
+The deep findings only surface after saturation. The agent models the methods where traces were dying, then re-scans — and that scan usually turns up a fresh layer of unmodeled methods the new approximations just exposed. So it models those too and scans again. This keeps going until a scan finds nothing new. Only at that point does the engine start seeing flows that thread through many layers of library and framework code at once. In one real case, this workflow found and confirmed an unauthenticated remote-code-execution bug in a widely used open-source server. The path ran from an HTTP request, through several layers of framework plumbing, into a scripting evaluator — and most of those layers were the unmodeled methods where the trace had been quietly dying. Only once the approximations were saturated did it connect the request all the way to the evaluator.
 
 You choose how much of this workflow to actually run, and each level includes everything in the one below it:
 

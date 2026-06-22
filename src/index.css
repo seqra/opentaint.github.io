@@ -416,11 +416,11 @@
 /* CRT accents: the terminal panel glows red; dark-mode section rules are lit
    phosphor; the hero cursor blinks unless the user prefers reduced motion. */
 .terminal-glow {
-  box-shadow: 0 0 26px hsl(var(--brand) / 0.55);
+  box-shadow: 0 0 10px hsl(var(--brand) / 0.22);
 }
 
 .dark .terminal-glow {
-  box-shadow: 0 0 10px hsl(var(--link) / 0.35), 0 0 32px hsl(var(--link) / 0.45);
+  box-shadow: 0 0 8px hsl(var(--link) / 0.18);
 }
 
 .crt-cursor {
@@ -444,7 +444,7 @@
 .dark .page-section:not(:first-child)::after,
 .dark .footer-links::before,
 .dark .footer-links::after {
-  filter: drop-shadow(0 0 6px hsl(var(--brand) / 0.55));
+  filter: drop-shadow(0 0 3px hsl(var(--brand) / 0.25));
 }
 
 /* Taint-flow headline: pure glyph glow, no background shapes. On load a glow
@@ -501,14 +501,14 @@
   }
 }
 
-/* Demo frame: bright glow on paper, red line + softer glow on the machine. */
+/* Demo frame: soft glow on paper, red line + softer glow on the machine. */
 .demo-glow {
-  box-shadow: 0 0 26px hsl(var(--brand) / 0.55);
+  box-shadow: 0 0 10px hsl(var(--brand) / 0.22);
 }
 
 .dark .demo-glow {
   border: 2px solid hsl(var(--panel-border));
-  box-shadow: 0 0 10px hsl(var(--link) / 0.35), 0 0 32px hsl(var(--link) / 0.45);
+  box-shadow: 0 0 8px hsl(var(--link) / 0.18);
 }
 
 /* Demo carousel: the incoming panel slides in from the travel direction. */
@@ -532,64 +532,14 @@
   to { opacity: 1; transform: translateX(0); }
 }
 
-/* Phosphor breathing: the panel and demo glows swell and settle around their
-   resting values. Desynced periods keep the two machines from pulsing in
-   lockstep. Static glows above remain the reduced-motion fallback. */
-@media (prefers-reduced-motion: no-preference) {
-  .terminal-glow {
-    animation: glow-breathe 3.6s ease-in-out infinite;
-  }
-
-  .demo-glow {
-    animation: glow-breathe 4.6s ease-in-out infinite;
-  }
-
-  .dark .terminal-glow {
-    animation-name: glow-breathe-dark;
-  }
-
-  .dark .demo-glow {
-    animation-name: glow-breathe-dark;
-  }
-}
-
-@keyframes glow-breathe {
-  0%, 100% { box-shadow: 0 0 20px hsl(var(--brand) / 0.45); }
-  50% { box-shadow: 0 0 32px hsl(var(--brand) / 0.65); }
-}
-
-@keyframes glow-breathe-dark {
-  0%, 100% { box-shadow: 0 0 8px hsl(var(--link) / 0.3), 0 0 24px hsl(var(--link) / 0.35); }
-  50% { box-shadow: 0 0 12px hsl(var(--link) / 0.45), 0 0 40px hsl(var(--link) / 0.6); }
-}
-
-/* Headline phosphor aura: a breathing text glow, desynced from the panel
-   (3.6s) and demo (4.6s) cycles. Subtle on paper so the ink stays crisp;
-   fuller bloom on the machine. Static aura is the reduced-motion fallback. */
+/* Headline phosphor aura: a static, subtle text glow. The panel, demo and
+   headline glows are intentionally non-animated — no breathing loop — so the
+   page reads as a tool rather than a neon UI. Subtle on paper so the ink stays
+   crisp; a touch fuller on the machine. */
 .crt-headline {
-  text-shadow: 0 0 14px hsl(var(--brand) / 0.25);
+  text-shadow: 0 0 6px hsl(var(--brand) / 0.12);
 }
 
 .dark .crt-headline {
-  text-shadow: 0 0 14px hsl(var(--link) / 0.4);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .crt-headline {
-    animation: headline-breathe 5.2s ease-in-out infinite;
-  }
-
-  .dark .crt-headline {
-    animation-name: headline-breathe-dark;
-  }
-}
-
-@keyframes headline-breathe {
-  0%, 100% { text-shadow: 0 0 10px hsl(var(--brand) / 0.18); }
-  50% { text-shadow: 0 0 20px hsl(var(--brand) / 0.35); }
-}
-
-@keyframes headline-breathe-dark {
-  0%, 100% { text-shadow: 0 0 10px hsl(var(--link) / 0.3); }
-  50% { text-shadow: 0 0 24px hsl(var(--link) / 0.55); }
+  text-shadow: 0 0 6px hsl(var(--link) / 0.18);
 }

@@ -109,7 +109,7 @@ export function DemoSection() {
                     // opaque to the edge, so they keep the sharper rounded-xl.
                     slide.pageBackground
                       ? "rounded-[22px] bg-background"
-                      : "rounded-xl bg-[#1b0100] dark:bg-[#feffff]",
+                      : "rounded-xl bg-[#feffff] dark:bg-[#1b0100]",
                   ].join(" ")}
                 >
                   {slide.kind === "terminal" ? (

@@ -58,10 +58,10 @@ describe("TerminalDemo", () => {
     expect(createPlayerMock).toHaveBeenCalledTimes(1);
   });
 
-  it("uses the dark cast theme on a light page", async () => {
+  it("uses the light cast theme on a light page", async () => {
     render(<TerminalDemo />);
     await flushAsync();
-    expect(lastCreateOptions().theme).toBe("opentaint-dark");
+    expect(lastCreateOptions().theme).toBe("opentaint-light");
   });
 
   it("enables the native control bar in hover-reveal mode", async () => {
@@ -70,11 +70,11 @@ describe("TerminalDemo", () => {
     expect(lastCreateOptions().controls).toBe("auto");
   });
 
-  it("uses the light cast theme on a dark page", async () => {
+  it("uses the dark cast theme on a dark page", async () => {
     document.documentElement.classList.add("dark");
     render(<TerminalDemo />);
     await flushAsync();
-    expect(lastCreateOptions().theme).toBe("opentaint-light");
+    expect(lastCreateOptions().theme).toBe("opentaint-dark");
   });
 
   it("re-creates the player with the inverse theme when [data-theme-toggle] is clicked", async () => {
@@ -84,7 +84,7 @@ describe("TerminalDemo", () => {
 
     render(<TerminalDemo />);
     await flushAsync();
-    expect(lastCreateOptions().theme).toBe("opentaint-dark");
+    expect(lastCreateOptions().theme).toBe("opentaint-light");
     const firstHandle = playerInstances.at(-1);
 
     await act(async () => {
@@ -96,7 +96,7 @@ describe("TerminalDemo", () => {
 
     expect(firstHandle?.dispose).toHaveBeenCalled();
     expect(createPlayerMock).toHaveBeenCalledTimes(2);
-    expect(lastCreateOptions().theme).toBe("opentaint-light");
+    expect(lastCreateOptions().theme).toBe("opentaint-dark");
     toggle.remove();
   });
 

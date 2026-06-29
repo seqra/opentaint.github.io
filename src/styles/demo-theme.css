@@ -1,18 +1,18 @@
 /*
  * Custom asciinema-player themes based on the "HaX0R R3D" palette
- * (https://github.com/mbadolato/iTerm2-Color-Schemes). They intentionally
- * contrast the site theme: the dark-red cast shows on the light page, and the
- * inverted (white) cast shows on the dark page.
+ * (https://github.com/mbadolato/iTerm2-Color-Schemes). They match the site
+ * theme: the white cast shows on the light page, and the dark-red cast shows
+ * on the dark page.
  *
  * Both themes share the HaX0R R3D ANSI palette; only the background and
- * foreground are swapped between #1b0100 and #feffff.
+ * foreground are swapped between #feffff and #1b0100.
  *
  * Asciinema-player applies `asciinema-player-theme-<name>` to its inner
  * `.ap-player` element when `create(..., { theme: "<name>" })` is used.
  * See src/components/TerminalDemo.tsx for the selector logic.
  */
 
-/* Shown on the dark page — inverted (white background). */
+/* Shown on the light page — white background. */
 .ap-player.asciinema-player-theme-opentaint-light {
   --term-color-background: #feffff;
   --term-color-foreground: #1b0100;
@@ -34,7 +34,7 @@
   --term-color-15: #fefefe;
 }
 
-/* Shown on the light page — HaX0R R3D (dark-red background). */
+/* Shown on the dark page — HaX0R R3D (dark-red background). */
 .ap-player.asciinema-player-theme-opentaint-dark {
   --term-color-background: #1b0100;
   --term-color-foreground: #feffff;

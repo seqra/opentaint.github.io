@@ -36,10 +36,10 @@
     --logo-red: 0 72% 46%; /* logo ink — constant across modes, used by the headline taint */
     --border-strong: 24 12% 72%;
     --link: 0 72% 46%;
-    --panel: 0 70% 9%;
+    --panel: 36 50% 99%;
     --panel-border: 0 85% 40%;
-    --panel-foreground: 0 30% 92%;
-    --panel-accent: 0 90% 62%;
+    --panel-foreground: 12 65% 7%;
+    --panel-accent: 0 72% 46%;
     --code-bg: 30 25% 97%;
     --code-header: 28 20% 95%;
     --code-border: 26 15% 88%;
@@ -88,10 +88,10 @@
     --brand: 0 80% 48%;
     --border-strong: 0 35% 26%;
     --link: 0 90% 62%;
-    --panel: 36 50% 99%;
+    --panel: 0 70% 9%;
     --panel-border: 0 85% 40%;
-    --panel-foreground: 12 65% 7%;
-    --panel-accent: 0 72% 46%;
+    --panel-foreground: 0 30% 92%;
+    --panel-accent: 0 90% 62%;
     --code-bg: 0 60% 5%;
     --code-header: 0 65% 4%;
     --code-border: 0 45% 16%;

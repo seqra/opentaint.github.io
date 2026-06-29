@@ -6,8 +6,8 @@ export type DemoSlide = {
   id: DemoSlideId;
   label: string;
   kind: "terminal" | "media" | "video";
-  // When true, the inner box uses the site background instead of the inverted
-  // cast background. Set for media that carries its own (page-coloured) chrome,
+  // When true, the inner box uses the site background instead of the cast
+  // background. Set for media that carries its own (page-coloured) chrome,
   // e.g. the browser screenshot, so the box blends with the page at its corners.
   pageBackground?: boolean;
   sources?: MediaSources;
@@ -17,10 +17,10 @@ export type DemoSlide = {
   href?: string;
 };
 
-// Asset files are named by the page theme they are shown on — the contrasting
-// UI is baked into each file (`*-light` shows on the light page and contains a
-// dark UI; `*-dark` shows on the dark page and contains a light UI). MediaDemo
-// picks the source by page theme, so there is no inversion here.
+// Asset files are named by the page theme they are shown on, and the baked-in
+// UI matches it (`*-light` shows on the light page and contains a light UI;
+// `*-dark` shows on the dark page and contains a dark UI). MediaDemo picks the
+// source by page theme, so there is no inversion here.
 export const DEMO_SLIDES: DemoSlide[] = [
   {
     id: "agent",

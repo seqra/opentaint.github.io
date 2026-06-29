@@ -17,7 +17,7 @@ const HERO_SRC = "/demo/hero.cast";
 const HERO_FALLBACK_SRC = "/demo/hero.svg";
 
 const demoThemeFor = (pageTheme: Theme): DemoTheme =>
-  pageTheme === "dark" ? "opentaint-light" : "opentaint-dark";
+  pageTheme === "dark" ? "opentaint-dark" : "opentaint-light";
 
 export function TerminalDemo() {
   const { theme, reducedMotion } = useThemeSync();

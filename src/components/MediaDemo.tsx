@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useThemeSync, type Theme } from "./useThemeSync";
+import { useThemeSync } from "./useThemeSync";
+import { ThemedImage } from "./ThemedImage";
 import type { MediaSources } from "./demo-slides";
 
 type MediaDemoProps = {
@@ -10,23 +11,15 @@ type MediaDemoProps = {
   href?: string;
 };
 
-const pick = (s: MediaSources, theme: Theme): string => (theme === "dark" ? s.dark : s.light);
-
 export function MediaDemo({ sources, fallback, alt, testId, href }: MediaDemoProps) {
-  const { theme, reducedMotion } = useThemeSync();
+  // Theme is handled by CSS in ThemedImage; JS only chooses the primary set vs
+  // the static fallback (reduced motion, or a load error).
+  const { reducedMotion } = useThemeSync();
   const [errored, setErrored] = useState(false);
-  const useFallback = reducedMotion || errored;
-  const src = pick(useFallback ? fallback : sources, theme);
+  const active = reducedMotion || errored ? fallback : sources;
 
   const img = (
-    <img
-      data-testid={testId}
-      src={src}
-      alt={alt}
-      loading="lazy"
-      onError={() => setErrored(true)}
-      className="block h-auto w-full"
-    />
+    <ThemedImage sources={active} alt={alt} testId={testId} onError={() => setErrored(true)} />
   );
 
   if (href) {

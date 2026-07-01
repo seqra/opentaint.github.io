@@ -28,31 +28,34 @@ afterEach(() => {
 });
 
 describe("MediaDemo", () => {
-  it("shows the light primary source on a light page", () => {
+  // Theme is chosen by CSS off the `.dark` class, not JS, so both variants are
+  // always rendered and the correct one shows before the island hydrates.
+  it("renders both the light and dark primary sources for a CSS theme swap", () => {
     render(<MediaDemo sources={sources} fallback={fallback} alt="x" testId="m" />);
-    expect(screen.getByTestId("m")).toHaveAttribute("src", "/a-light.gif");
+    const light = screen.getByTestId("m");
+    const dark = screen.getByTestId("m-dark");
+    expect(light).toHaveAttribute("src", "/a-light.gif");
+    expect(dark).toHaveAttribute("src", "/a-dark.gif");
+    // The light image hides and the dark image shows once `.dark` is present.
+    expect(light.className).toContain("dark:hidden");
+    expect(dark.className).toContain("dark:block");
   });
 
-  it("shows the dark primary source on a dark page", () => {
-    document.documentElement.classList.add("dark");
-    render(<MediaDemo sources={sources} fallback={fallback} alt="x" testId="m" />);
-    expect(screen.getByTestId("m")).toHaveAttribute("src", "/a-dark.gif");
-  });
-
-  it("uses the fallback source under reduced motion", () => {
+  it("uses the fallback sources under reduced motion", () => {
     setMatchMedia(true);
     render(<MediaDemo sources={sources} fallback={fallback} alt="x" testId="m" />);
     expect(screen.getByTestId("m")).toHaveAttribute("src", "/a-light.png");
+    expect(screen.getByTestId("m-dark")).toHaveAttribute("src", "/a-dark.png");
   });
 
-  it("swaps to the fallback source when the primary image errors", () => {
+  it("swaps to the fallback sources when the primary image errors", () => {
     render(<MediaDemo sources={sources} fallback={fallback} alt="x" testId="m" />);
-    const img = screen.getByTestId("m");
-    fireEvent.error(img);
+    fireEvent.error(screen.getByTestId("m"));
     expect(screen.getByTestId("m")).toHaveAttribute("src", "/a-light.png");
+    expect(screen.getByTestId("m-dark")).toHaveAttribute("src", "/a-dark.png");
   });
 
-  it("wraps the image in an external link when href is given", () => {
+  it("wraps the images in an external link when href is given", () => {
     render(
       <MediaDemo sources={sources} fallback={fallback} alt="open" testId="m" href="https://viewer.opentaint.org/" />,
     );
@@ -60,5 +63,8 @@ describe("MediaDemo", () => {
     expect(link).toHaveAttribute("href", "https://viewer.opentaint.org/");
     expect(link).toHaveAttribute("target", "_blank");
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
+    // Both themed images live inside the single link.
+    expect(screen.getByTestId("m").closest("a")).toBe(link);
+    expect(screen.getByTestId("m-dark").closest("a")).toBe(link);
   });
 });

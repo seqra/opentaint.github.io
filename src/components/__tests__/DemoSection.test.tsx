@@ -7,6 +7,11 @@ import { DemoSection } from "../DemoSection";
 vi.mock("asciinema-player", () => ({ create: () => ({ dispose: vi.fn() }) }));
 vi.mock("asciinema-player/dist/bundle/asciinema-player.css", () => ({}));
 
+// The agent slide's video plays via an effect on mount; jsdom has no media
+// playback, so stub it to keep the console clean.
+vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
+vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(() => {});
+
 beforeEach(() => {
   document.documentElement.classList.remove("dark");
   window.matchMedia = vi.fn().mockImplementation((query: string) => ({

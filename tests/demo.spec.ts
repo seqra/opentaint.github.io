@@ -37,6 +37,29 @@ test.describe("landing page demo section", () => {
       );
   });
 
+  // The default (Agent) slide is a theme-swapped video. It used to bake the
+  // light asset into the SSR HTML and only correct it once the `client:visible`
+  // island hydrated, flashing a light demo on the dark page. CSS now shows the
+  // theme-matching variant immediately, so the visible source must match the
+  // page theme with no dependence on hydration.
+  for (const theme of ["dark", "light"] as const) {
+    test(`agent demo shows the ${theme} variant matching the page theme`, async ({ page }) => {
+      await page.addInitScript((t) => localStorage.setItem("theme", t), theme);
+      await page.goto("/");
+      const html = page.locator("html");
+      if (theme === "dark") await expect(html).toHaveClass(/dark/);
+      else await expect(html).not.toHaveClass(/dark/);
+
+      const light = page.getByTestId("demo-agent-media");
+      const dark = page.getByTestId("demo-agent-media-dark");
+      const [visible, hidden] = theme === "dark" ? [dark, light] : [light, dark];
+
+      await expect(visible).toBeVisible();
+      await expect(hidden).toBeHidden();
+      await expect(visible).toHaveAttribute("src", new RegExp(`agent-video-${theme}\\.mp4`));
+    });
+  }
+
   test("mobile layout fits the scan cast within the page without overflow", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
     await page.goto("/");

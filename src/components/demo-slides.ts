@@ -19,8 +19,8 @@ export type DemoSlide = {
 
 // Asset files are named by the page theme they are shown on, and the baked-in
 // UI matches it (`*-light` shows on the light page and contains a light UI;
-// `*-dark` shows on the dark page and contains a dark UI). MediaDemo picks the
-// source by page theme, so there is no inversion here.
+// `*-dark` shows on the dark page and contains a dark UI). Both variants render
+// and CSS shows the one matching the `.dark` class, so there is no inversion.
 export const DEMO_SLIDES: DemoSlide[] = [
   {
     id: "agent",

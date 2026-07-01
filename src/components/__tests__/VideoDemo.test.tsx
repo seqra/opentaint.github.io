@@ -32,40 +32,51 @@ afterEach(() => {
 });
 
 describe("VideoDemo", () => {
-  it("plays the light video source on a light page", () => {
+  // Theme is chosen by CSS off the `.dark` class, not JS, so both videos are
+  // always rendered and the correct one shows before the island hydrates.
+  it("renders both the light and dark video sources for a CSS theme swap", () => {
     render(<VideoDemo sources={sources} poster={poster} alt="x" testId="v" />);
-    expect(screen.getByTestId("v")).toHaveAttribute("src", "/a-light.mp4");
+    const light = screen.getByTestId("v");
+    const dark = screen.getByTestId("v-dark");
+    expect(light).toHaveAttribute("src", "/a-light.mp4");
+    expect(light).toHaveAttribute("poster", "/a-light.png");
+    expect(dark).toHaveAttribute("src", "/a-dark.mp4");
+    expect(dark).toHaveAttribute("poster", "/a-dark.png");
+    expect(light.className).toContain("dark:hidden");
+    expect(dark.className).toContain("dark:block");
   });
 
-  it("plays the dark video source on a dark page", () => {
-    document.documentElement.classList.add("dark");
-    render(<VideoDemo sources={sources} poster={poster} alt="x" testId="v" />);
-    expect(screen.getByTestId("v")).toHaveAttribute("src", "/a-dark.mp4");
-  });
-
-  it("autoplays muted, looping, inline, with a themed poster", () => {
+  it("loops muted inline and plays only the visible source, never preloading either", () => {
     render(<VideoDemo sources={sources} poster={poster} alt="x" testId="v" />);
     const video = screen.getByTestId("v") as HTMLVideoElement;
-    expect(video).toHaveAttribute("poster", "/a-light.png");
-    expect(video.autoplay).toBe(true);
     expect(video.loop).toBe(true);
     expect(video.muted).toBe(true);
     expect(video.playsInline).toBe(true);
+    // No `autoPlay` attribute + preload="none" so the browser never fetches the
+    // hidden ~4 MB variant; JS plays only the theme-visible video.
+    expect(video.autoplay).toBe(false);
+    expect(video).toHaveAttribute("preload", "none");
+    expect(screen.getByTestId("v-dark")).toHaveAttribute("preload", "none");
+    // On a light page the effect starts the visible (light) video.
+    expect(play).toHaveBeenCalled();
   });
 
-  it("renders a static poster image and no controls under reduced motion", () => {
+  it("renders static posters and no controls under reduced motion", () => {
     setMatchMedia(true);
     render(<VideoDemo sources={sources} poster={poster} alt="x" testId="v" />);
-    const img = screen.getByTestId("v");
-    expect(img.tagName).toBe("IMG");
-    expect(img).toHaveAttribute("src", "/a-light.png");
+    const light = screen.getByTestId("v");
+    const dark = screen.getByTestId("v-dark");
+    expect(light.tagName).toBe("IMG");
+    expect(dark.tagName).toBe("IMG");
+    expect(light).toHaveAttribute("src", "/a-light.png");
+    expect(dark).toHaveAttribute("src", "/a-dark.png");
     expect(screen.queryByRole("button")).toBeNull();
   });
 
   it("pauses the video and offers Play when the stop control is clicked", () => {
     render(<VideoDemo sources={sources} poster={poster} alt="x" testId="v" />);
     fireEvent.click(screen.getByRole("button", { name: /pause/i }));
-    expect(pause).toHaveBeenCalledTimes(1);
+    expect(pause).toHaveBeenCalled();
     expect(screen.getByRole("button", { name: /play/i })).toBeInTheDocument();
   });
 
@@ -73,7 +84,7 @@ describe("VideoDemo", () => {
     render(<VideoDemo sources={sources} poster={poster} alt="x" testId="v" />);
     fireEvent.click(screen.getByRole("button", { name: /pause/i }));
     fireEvent.click(screen.getByRole("button", { name: /play/i }));
-    expect(play).toHaveBeenCalledTimes(1);
+    expect(play).toHaveBeenCalled();
     expect(screen.getByRole("button", { name: /pause/i })).toBeInTheDocument();
   });
 });

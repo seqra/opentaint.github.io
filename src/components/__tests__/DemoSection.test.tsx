@@ -107,9 +107,12 @@ describe("DemoSection", () => {
 
   it("keeps the red frame on every slide including the viewer", () => {
     const { container } = render(<DemoSection />);
-    expect(container.querySelector(".border-panel-border")?.className.split(/\s+/)).toContain("border");
+    const frameClasses = () => container.querySelector(".border-panel-border")?.className.split(/\s+/);
+    expect(frameClasses()).toContain("border");
+    expect(frameClasses()).toContain("rounded-xl");
     fireEvent.click(screen.getByRole("tab", { name: /viewer/i }));
-    expect(container.querySelector(".border-panel-border")?.className.split(/\s+/)).toContain("border");
+    expect(frameClasses()).toContain("border");
+    expect(frameClasses()).toContain("rounded-xl");
   });
 
   it("advances on swipe left", () => {

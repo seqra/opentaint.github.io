@@ -96,12 +96,12 @@ export function DemoSection() {
                 ].join(" ")}
               >
                 {/* Box 2 — wraps its demo exactly (full width, height driven by
-                    the content), glowing frame, rounded. There is no empty
+                    the content), framed and rounded. There is no empty
                     inverted slack: the cast player and the media images each set
                     the box height, and the leftover space lives in box 1. */}
                 <div
                   className={[
-                    "demo-glow w-full overflow-hidden",
+                    "w-full overflow-hidden border border-panel-border",
                     // The viewer screenshot is a browser window with its own
                     // ~17px rounded corners; its box must clip at a larger radius
                     // or the window corner pokes out and reveals the box bg as a

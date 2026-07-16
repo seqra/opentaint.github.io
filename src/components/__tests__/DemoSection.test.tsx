@@ -100,15 +100,16 @@ describe("DemoSection", () => {
     expect(screen.getByTestId("demo-agent-media").closest("a")).toBeNull();
   });
 
-  it("applies the demo glow to the inverted demo box", () => {
+  it("does not apply a glow to the demo box", () => {
     const { container } = render(<DemoSection />);
-    expect(container.querySelector(".demo-glow")).not.toBeNull();
+    expect(container.querySelector(".demo-glow")).toBeNull();
   });
 
-  it("applies the demo glow to every slide including the viewer", () => {
+  it("keeps the red frame on every slide including the viewer", () => {
     const { container } = render(<DemoSection />);
+    expect(container.querySelector(".border-panel-border")?.className.split(/\s+/)).toContain("border");
     fireEvent.click(screen.getByRole("tab", { name: /viewer/i }));
-    expect(container.querySelector(".demo-glow")).not.toBeNull();
+    expect(container.querySelector(".border-panel-border")?.className.split(/\s+/)).toContain("border");
   });
 
   it("advances on swipe left", () => {

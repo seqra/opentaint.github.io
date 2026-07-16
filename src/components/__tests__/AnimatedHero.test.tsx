@@ -23,33 +23,24 @@ describe("AnimatedHero", () => {
     }
   });
 
-  it("wraps the install panel in the terminal glow", () => {
+  it("renders the headline without a cursor", () => {
     const { container } = render(<AnimatedHero />);
-    expect(container.querySelector(".terminal-glow.bg-panel")).not.toBeNull();
-  });
-
-  it("renders the blinking cursor in the headline", () => {
-    const { container } = render(<AnimatedHero />);
-    const cursor = container.querySelector("h1 .crt-cursor");
-    expect(cursor).not.toBeNull();
-    expect(cursor?.textContent).toBe(".");
-    expect(cursor?.getAttribute("aria-hidden")).toBe("true");
-  });
-
-  it("splits the headline into taint-flow word spans", () => {
-    const { container } = render(<AnimatedHero />);
-    const words = container.querySelectorAll("h1 .taint-word");
-    expect(words.length).toBe(10);
-    const heading = container.querySelector("h1");
-    expect(heading?.textContent?.replace(/\s+/g, " ").trim()).toBe(
-      "The open source taint analysis engine for the AI era.",
+    expect(container.querySelector("h1 .crt-cursor")).toBeNull();
+    expect(container.querySelector("h1")?.textContent).toBe(
+      "The open source taint analysis engine for the AI era",
     );
-    expect(heading?.className).toContain("crt-headline");
+  });
+
+  it("renders the headline without glow effects", () => {
+    const { container } = render(<AnimatedHero />);
+    const heading = container.querySelector("h1");
+    expect(heading?.querySelector(".taint-word")).toBeNull();
+    expect(heading?.className).not.toContain("crt-headline");
   });
 
   it("uses the solid panel border", () => {
     const { container } = render(<AnimatedHero />);
-    expect(container.querySelector(".terminal-glow.bg-panel")?.className).toContain(
+    expect(container.querySelector(".bg-panel")?.className).toContain(
       "border-panel-border",
     );
   });

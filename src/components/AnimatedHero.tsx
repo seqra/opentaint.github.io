@@ -1,5 +1,5 @@
 import { Check, Copy } from "lucide-react";
-import { Fragment, useMemo, useState, type CSSProperties } from "react";
+import { useMemo, useState } from "react";
 
 type InstallMethod = {
   id: string;
@@ -14,10 +14,6 @@ const installMethods: InstallMethod[] = [
   { id: "brew", label: "brew", command: "brew install --cask seqra/tap/opentaint" },
   { id: "windows", label: "powershell", command: "irm https://opentaint.org/install.ps1 | iex" },
   { id: "docker", label: "docker", command: "docker pull ghcr.io/seqra/opentaint:latest" },
-];
-
-const headlineWords = [
-  "The", "open", "source", "taint", "analysis", "engine", "for", "the", "AI", "era",
 ];
 
 export function AnimatedHero() {
@@ -41,19 +37,8 @@ export function AnimatedHero() {
 
   return (
     <div className="mx-auto max-w-5xl">
-      <h1 className="crt-headline font-mono text-[28px] font-bold tracking-tight text-foreground sm:text-[34px] md:text-[40px] md:leading-[1.2] lg:text-[44px] lg:leading-[1.18]">
-        {headlineWords.map((word, index) => (
-          <Fragment key={word + index}>
-            {index > 0 && " "}
-            <span
-              className="taint-word"
-              style={{ "--taint-i": index } as CSSProperties}
-            >
-              {word}
-            </span>
-          </Fragment>
-        ))}
-        <span className="crt-cursor" aria-hidden="true">.</span>
+      <h1 className="font-mono text-[28px] font-bold tracking-tight text-foreground sm:text-[34px] md:text-[40px] md:leading-[1.2] lg:text-[44px] lg:leading-[1.18]">
+        The open source taint analysis engine for the AI era
       </h1>
 
       <p className="subheadline">
@@ -80,7 +65,7 @@ export function AnimatedHero() {
       </div>
 
       <div className="mt-8 hidden text-left sm:block lg:mt-10">
-        <div className="terminal-glow overflow-hidden rounded-xl border border-panel-border bg-panel">
+        <div className="overflow-hidden rounded-xl border border-panel-border bg-panel">
           <div className="flex items-center gap-6 overflow-x-auto border-b border-panel-border px-4 py-3 scrollbar-thin lg:gap-8 lg:px-5 lg:py-4">
             {installMethods.map((method) => {
               const isActive = method.id === activeInstallMethod?.id;

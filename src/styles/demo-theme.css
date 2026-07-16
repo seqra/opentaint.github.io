@@ -1,7 +1,6 @@
 /*
  * Custom asciinema-player themes using the landing page's Red Phosphor
- * tokens. The terminal therefore stays in lockstep with future palette
- * changes in both light and dark modes.
+ * values. Explicit colors keep ANSI rendering reliable inside the player.
  *
  * Asciinema-player applies `asciinema-player-theme-<name>` to its inner
  * `.ap-player` element when `create(..., { theme: "<name>" })` is used.
@@ -10,44 +9,44 @@
 
 /* Shown on the light page. */
 .ap-player.asciinema-player-theme-opentaint-light {
-  --term-color-background: hsl(var(--panel));
-  --term-color-foreground: hsl(var(--panel-foreground));
-  --term-color-0: hsl(var(--foreground));
-  --term-color-1: hsl(var(--brand));
-  --term-color-2: hsl(var(--brand));
-  --term-color-3: hsl(var(--brand));
-  --term-color-4: hsl(var(--brand));
-  --term-color-5: hsl(var(--brand));
-  --term-color-6: hsl(var(--brand));
-  --term-color-7: hsl(var(--background));
-  --term-color-8: hsl(var(--muted-foreground));
-  --term-color-9: hsl(var(--link));
-  --term-color-10: hsl(var(--link));
-  --term-color-11: hsl(var(--link));
-  --term-color-12: hsl(var(--link));
-  --term-color-13: hsl(var(--link));
-  --term-color-14: hsl(var(--link));
-  --term-color-15: hsl(var(--primary-foreground));
+  --term-color-background: #fefdfb;
+  --term-color-foreground: #1d0a06;
+  --term-color-0: #1d0a06;
+  --term-color-1: #ca2121;
+  --term-color-2: #ca2121;
+  --term-color-3: #ca2121;
+  --term-color-4: #ca2121;
+  --term-color-5: #ca2121;
+  --term-color-6: #ca2121;
+  --term-color-7: #fefdfb;
+  --term-color-8: #65534c;
+  --term-color-9: #ca2121;
+  --term-color-10: #ca2121;
+  --term-color-11: #ca2121;
+  --term-color-12: #ca2121;
+  --term-color-13: #ca2121;
+  --term-color-14: #ca2121;
+  --term-color-15: #ffffff;
 }
 
 /* Shown on the dark page. */
 .ap-player.asciinema-player-theme-opentaint-dark {
-  --term-color-background: hsl(var(--panel));
-  --term-color-foreground: hsl(var(--panel-foreground));
-  --term-color-0: hsl(var(--background));
-  --term-color-1: hsl(var(--brand));
-  --term-color-2: hsl(var(--brand));
-  --term-color-3: hsl(var(--brand));
-  --term-color-4: hsl(var(--brand));
-  --term-color-5: hsl(var(--brand));
-  --term-color-6: hsl(var(--brand));
-  --term-color-7: hsl(var(--foreground));
-  --term-color-8: hsl(var(--muted-foreground));
-  --term-color-9: hsl(var(--link));
-  --term-color-10: hsl(var(--link));
-  --term-color-11: hsl(var(--link));
-  --term-color-12: hsl(var(--link));
-  --term-color-13: hsl(var(--link));
-  --term-color-14: hsl(var(--link));
-  --term-color-15: hsl(var(--primary-foreground));
+  --term-color-background: #270707;
+  --term-color-foreground: #f0e5e5;
+  --term-color-0: #090303;
+  --term-color-1: #fa4242;
+  --term-color-2: #fa4242;
+  --term-color-3: #fa4242;
+  --term-color-4: #fa4242;
+  --term-color-5: #fa4242;
+  --term-color-6: #fa4242;
+  --term-color-7: #f0e5e5;
+  --term-color-8: #b2a0a0;
+  --term-color-9: #fa4242;
+  --term-color-10: #fa4242;
+  --term-color-11: #fa4242;
+  --term-color-12: #fa4242;
+  --term-color-13: #fa4242;
+  --term-color-14: #fa4242;
+  --term-color-15: #ffffff;
 }

@@ -5,14 +5,22 @@ import { expect, test } from "@playwright/test";
 const THEME_CLASS = /asciinema-player-theme-opentaint-(light|dark)/;
 
 test.describe("landing page demo section", () => {
-  test("hero cast renders with a theme class", async ({ page }) => {
+  test("hero cast renders with the landing red theme", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("tab", { name: "CLI" }).click();
     const hero = page.getByTestId("demo-hero-player");
     await hero.scrollIntoViewIfNeeded();
     await expect(hero).toBeVisible();
     // asciinema mounts inside the container and stamps the theme onto its player.
-    await expect(hero.locator(".ap-player")).toHaveClass(THEME_CLASS);
+    const player = hero.locator(".ap-player");
+    await expect(player).toHaveClass(THEME_CLASS);
+    const classes = (await player.getAttribute("class")) ?? "";
+    const expectedRed = classes.includes("asciinema-player-theme-opentaint-dark")
+      ? "#fa4242"
+      : "#ca2121";
+    await expect
+      .poll(() => player.evaluate((el) => getComputedStyle(el).getPropertyValue("--term-color-12").trim()))
+      .toBe(expectedRed);
   });
 
   test("theme toggle swaps the scan panel wrapper class", async ({ page }) => {

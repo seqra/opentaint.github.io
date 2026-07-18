@@ -1,57 +1,52 @@
 /*
- * Custom asciinema-player themes based on the "HaX0R R3D" palette
- * (https://github.com/mbadolato/iTerm2-Color-Schemes). They match the site
- * theme: the white cast shows on the light page, and the dark-red cast shows
- * on the dark page.
- *
- * Both themes share the HaX0R R3D ANSI palette; only the background and
- * foreground are swapped between #feffff and #1b0100.
+ * Custom asciinema-player themes using the landing page's Red Phosphor
+ * values. Explicit colors keep ANSI rendering reliable inside the player.
  *
  * Asciinema-player applies `asciinema-player-theme-<name>` to its inner
  * `.ap-player` element when `create(..., { theme: "<name>" })` is used.
  * See src/components/TerminalDemo.tsx for the selector logic.
  */
 
-/* Shown on the light page — white background. */
+/* Shown on the light page. */
 .ap-player.asciinema-player-theme-opentaint-light {
-  --term-color-background: #feffff;
-  --term-color-foreground: #1b0100;
-  --term-color-0: #1f0000;
-  --term-color-1: #b00d0d;
-  --term-color-2: #b00d0d;
-  --term-color-3: #b00d0d;
-  --term-color-4: #b00d0d;
-  --term-color-5: #b00d0d;
-  --term-color-6: #b00d0d;
-  --term-color-7: #fafafa;
-  --term-color-8: #554040;
-  --term-color-9: #ff1111;
-  --term-color-10: #ff1010;
-  --term-color-11: #ff1010;
-  --term-color-12: #ff1010;
-  --term-color-13: #ff1010;
-  --term-color-14: #ff1010;
-  --term-color-15: #fefefe;
+  --term-color-background: #fefdfb;
+  --term-color-foreground: #1d0a06;
+  --term-color-0: #1d0a06;
+  --term-color-1: #ca2121;
+  --term-color-2: #ca2121;
+  --term-color-3: #ca2121;
+  --term-color-4: #ca2121;
+  --term-color-5: #ca2121;
+  --term-color-6: #ca2121;
+  --term-color-7: #fefdfb;
+  --term-color-8: #65534c;
+  --term-color-9: #ca2121;
+  --term-color-10: #ca2121;
+  --term-color-11: #ca2121;
+  --term-color-12: #ca2121;
+  --term-color-13: #ca2121;
+  --term-color-14: #ca2121;
+  --term-color-15: #ffffff;
 }
 
-/* Shown on the dark page — HaX0R R3D (dark-red background). */
+/* Shown on the dark page. */
 .ap-player.asciinema-player-theme-opentaint-dark {
-  --term-color-background: #1b0100;
-  --term-color-foreground: #feffff;
-  --term-color-0: #1f0000;
-  --term-color-1: #b00d0d;
-  --term-color-2: #b00d0d;
-  --term-color-3: #b00d0d;
-  --term-color-4: #b00d0d;
-  --term-color-5: #b00d0d;
-  --term-color-6: #b00d0d;
-  --term-color-7: #fafafa;
-  --term-color-8: #554040;
-  --term-color-9: #ff1111;
-  --term-color-10: #ff1010;
-  --term-color-11: #ff1010;
-  --term-color-12: #ff1010;
-  --term-color-13: #ff1010;
-  --term-color-14: #ff1010;
-  --term-color-15: #fefefe;
+  --term-color-background: #270707;
+  --term-color-foreground: #f0e5e5;
+  --term-color-0: #090303;
+  --term-color-1: #fa4242;
+  --term-color-2: #fa4242;
+  --term-color-3: #fa4242;
+  --term-color-4: #fa4242;
+  --term-color-5: #fa4242;
+  --term-color-6: #fa4242;
+  --term-color-7: #f0e5e5;
+  --term-color-8: #b2a0a0;
+  --term-color-9: #fa4242;
+  --term-color-10: #fa4242;
+  --term-color-11: #fa4242;
+  --term-color-12: #fa4242;
+  --term-color-13: #fa4242;
+  --term-color-14: #fa4242;
+  --term-color-15: #ffffff;
 }

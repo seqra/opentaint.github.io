@@ -1,19 +1,24 @@
 ---
 const features = [
   {
-    title: "Find what AST-pattern matchers miss.",
+    title: "Learn on demand. Search on every scan.",
     description:
-      "The inter-procedural dataflow engine tracks untrusted data across function boundaries, persistence layers, aliases, and async code. 100+ rules across 20+ vulnerability classes.",
+      "Learning is expensive and unpredictable, searching cheap and deterministic — so the agent learns the code on demand, the engine searches it on every scan, and the security review becomes lean and continuous.",
   },
   {
-    title: "One finding becomes total coverage.",
+    title: "Enact what the agent learns.",
     description:
-      "AST-pattern rules let you enact a rule from every vulnerability you uncover, and the engine applies it across the entire codebase, deterministically, in minutes of CPU.",
+      "Vulnerability patterns become readable AST-pattern taint rules that define forbidden dataflow traces. Code behavior becomes dataflow summaries that let the engine trace through code it never analyzed.",
   },
   {
-    title: "Open source, batteries included.",
+    title: "Fast scans. Fewer false alarms. Fewer missed findings.",
     description:
-      "Engine, rules, CI integrations — the entire stack ships under Apache 2.0 and MIT. No paid tier to unlock taint tracking, no gates on writing your own rules.",
+      "OpenTaint is built to hold all three corners of the classic static-analysis trilemma. Its formal inter-procedural dataflow analysis tracks tainted values across procedures, fields, aliases, async code, and persistence layers at scale.",
+  },
+  {
+    title: "Open source, customizable, and self-hosted.",
+    description:
+      "Engine, AST-pattern rules, agent skills, and CI integrations ship under Apache 2.0 and MIT — an AI-ready open source alternative to Semgrep Pro and CodeQL.",
   },
 ];
 ---
@@ -22,18 +27,12 @@ const features = [
   <div class="mx-auto max-w-5xl">
     <h2 id="what-heading" class="section-title text-center">What is OpenTaint?</h2>
     <p class="subheadline">
-      Formal taint analysis for application security — finds what AST-pattern matchers miss, lets LLM agents enact rules from vulnerabilities, scales where neither can alone.
+      The open source taint analysis engine for the AI era. A formal dataflow analysis tool you can customize and self-host, built so AI agents drive your application security analysis without burning tokens on every scan. AI-ready open source alternative to Semgrep Pro and CodeQL.
     </p>
 
     <h2 id="why-heading" class="section-title mt-12 lg:mt-14 text-center">Why is OpenTaint?</h2>
     <p class="subheadline">
-      AI generates production code faster than today's security tooling can keep up with.
-    </p>
-    <p class="subheadline">
-      LLM security agents find vulnerabilities humans miss, burn tokens on every file, and still can't guarantee they catch everything.
-    </p>
-    <p class="subheadline">
-      The more AI writes code, the more you need formal methods underneath.
+      During a security review, the agent turns what it learns into reusable analysis artifacts. OpenTaint applies them deterministically across the whole codebase and every future commit.
     </p>
 
     <ul class="mt-8 space-y-4 text-left lg:mt-10 lg:space-y-5">

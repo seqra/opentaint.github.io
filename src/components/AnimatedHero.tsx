@@ -42,7 +42,7 @@ export function AnimatedHero() {
       </h1>
 
       <p className="subheadline">
-        AST-pattern rules. Whole-program taint analysis. Formal substrate for AI application security.
+        Formal program analysis for security agents.
       </p>
 
       <div className="mt-8 flex w-full flex-col gap-3 sm:hidden">

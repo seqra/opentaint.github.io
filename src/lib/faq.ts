@@ -19,7 +19,7 @@ export const faqItems: readonly FaqItem[] = [
   },
   {
     question: "Why not just use an LLM agent for security scanning?",
-    answer: "Learning is expensive and unpredictable, searching cheap and deterministic — so the agent learns the code on demand, the engine searches it on every scan, and the security review becomes lean and continuous. The agent enacts what it learns as AST-pattern taint rules and dataflow summaries. OpenTaint reuses those artifacts to search the entire codebase in minutes of CPU without asking the model to reread every file or burning tokens on every commit.",
+    answer: "Learning an application's attack surface, trust boundaries, vulnerability patterns, and opaque code behavior is expensive and unpredictable. An LLM agent does that work on demand and records what it learns in AST-pattern taint rules and dataflow summaries. Searching for those patterns is cheap and deterministic. OpenTaint applies them across the entire codebase on every scan in minutes of CPU without asking the model to reread every file or burning tokens on every commit. A deep security review becomes lean, continuous application security coverage.",
   },
   {
     question: "What languages and frameworks are supported?",

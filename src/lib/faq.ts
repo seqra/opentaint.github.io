@@ -7,7 +7,7 @@ export type FaqItem = {
 export const faqItems: readonly FaqItem[] = [
   {
     question: "What is OpenTaint?",
-    answer: "OpenTaint is the open source taint analysis engine for the AI era: formal program analysis for security agents. During a review, an agent turns vulnerability patterns into reusable AST-pattern taint rules and captures code behavior as dataflow summaries. The deterministic engine then searches for those forbidden dataflow traces across procedures, fields, aliases, async code, and persistence layers on every scan. It is customizable, self-hosted, and an AI-ready open source alternative to Semgrep Pro and CodeQL.",
+    answer: "OpenTaint is the open source taint analysis engine for the AI era: formal program analysis for security agents. During a review, AppSec engineers, developers, and agents turn vulnerability patterns into reusable AST-pattern taint rules and capture code behavior as dataflow summaries. The deterministic engine then searches for those forbidden dataflow traces across procedures, fields, aliases, async code, and persistence layers on every scan. It is customizable, self-hosted, and an AI-ready open source alternative to Semgrep Pro and CodeQL.",
   },
   {
     question: "What vulnerabilities does OpenTaint detect?",
@@ -20,6 +20,14 @@ export const faqItems: readonly FaqItem[] = [
   {
     question: "Why not just use an LLM agent for security scanning?",
     answer: "Learning an application's attack surface, trust boundaries, vulnerability patterns, and opaque code behavior is expensive and unpredictable. An LLM agent does that work on demand and records what it learns in AST-pattern taint rules and dataflow summaries. Searching for those patterns is cheap and deterministic. OpenTaint applies them across the entire codebase on every scan in minutes of CPU without asking the model to reread every file or burning tokens on every commit. A deep security review becomes lean, continuous application security coverage.",
+  },
+  {
+    question: "Does OpenTaint require an AI agent?",
+    answer: "No. The engine runs deterministic taint analysis with or without an agent. AppSec engineers and developers can write, review, and refine AST-pattern taint rules and dataflow summaries directly. An agent helps learn a codebase and produce those artifacts on demand, but the knowledge remains readable, versioned, and reusable by people and the engine.",
+  },
+  {
+    question: "Why is application security the new tech debt?",
+    answer: "AI helps teams create code faster than anyone can review it. The security work moves downstream into review queues, remediation backlogs, and incident response. Every unmodeled trust boundary and missed dataflow becomes invisible debt that compounds across releases. Attackers automate discovery too. They will probe the paths your team misses whether or not your backlog is ready. Security debt is tech debt an attacker can force you to repay. OpenTaint captures security knowledge as taint rules and dataflow summaries, then checks every commit while the code is still fresh and the fix is still cheap.",
   },
   {
     question: "What languages and frameworks are supported?",

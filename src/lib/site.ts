@@ -1,6 +1,6 @@
 export const siteConfig = {
   title: "OpenTaint",
-  description: "Formal program analysis for security agents. The open source taint analysis engine for the AI era.",
+  description: "Formal program analysis for security agents. Make every security review protect every future commit.",
   url: "https://opentaint.org",
   author: "Seqra Team",
   twitter: "@seqradev",
@@ -23,6 +23,9 @@ export const defaultKeywords = [
   "security agents",
   "taint analysis engine",
   "open source sast",
+  "application security debt",
+  "continuous application security",
+  "devsecops security scanner",
   "Semgrep Pro alternative",
   "CodeQL alternative",
 ];

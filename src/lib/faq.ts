@@ -7,7 +7,7 @@ export type FaqItem = {
 export const faqItems: readonly FaqItem[] = [
   {
     question: "What is OpenTaint?",
-    answer: "OpenTaint is the open source taint analysis engine for the AI era: formal program analysis for security agents. During a review, AppSec engineers, developers, and agents turn vulnerability patterns into reusable AST-pattern taint rules and capture code behavior as dataflow summaries. The deterministic engine then searches for those forbidden dataflow traces across procedures, fields, aliases, async code, and persistence layers on every scan. It is customizable, self-hosted, and an AI-ready open source alternative to Semgrep Pro and CodeQL.",
+    answer: "OpenTaint is the open source taint analysis engine for the AI era: formal program analysis for security agents. During a review, the agent turns vulnerability patterns into reusable AST-pattern taint rules and captures code behavior as dataflow summaries. The deterministic engine then searches for those forbidden dataflow traces across procedures, fields, aliases, async code, and persistence layers on every scan. It is customizable, self-hosted, and an AI-ready open source alternative to Semgrep Pro and CodeQL.",
   },
   {
     question: "What vulnerabilities does OpenTaint detect?",
@@ -23,7 +23,11 @@ export const faqItems: readonly FaqItem[] = [
   },
   {
     question: "Does OpenTaint require an AI agent?",
-    answer: "No. The engine runs deterministic taint analysis with or without an agent. AppSec engineers and developers can write, review, and refine AST-pattern taint rules and dataflow summaries directly. An agent helps learn a codebase and produce those artifacts on demand, but the knowledge remains readable, versioned, and reusable by people and the engine.",
+    answer: "No. The engine runs deterministic taint analysis with built-in or existing rules whether or not an agent is present. The agent is what learns a codebase during a security review and turns that knowledge into new AST-pattern taint rules and dataflow summaries. People can inspect and refine the resulting artifacts, and the engine can reuse them on every scan.",
+  },
+  {
+    question: "How does OpenTaint secure agent-generated code?",
+    answer: "A coding agent can introduce a vulnerability before a developer notices the code path. OpenTaint does not need to distinguish AI-generated code from human-written code. The engine applies the same deterministic taint analysis to every change, tracing untrusted input through helpers, fields, aliases, libraries, and persistence layers before it reaches a dangerous operation.",
   },
   {
     question: "Why is application security the new tech debt?",

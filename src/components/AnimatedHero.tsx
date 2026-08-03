@@ -42,7 +42,7 @@ export function AnimatedHero() {
       </h1>
 
       <p className="subheadline">
-        Formal program analysis for security agents. Runs standalone. Agents teach it your application.
+        Formal program analysis for security agents. AI agents learn your application on demand. OpenTaint scans it on every change.
       </p>
 
       <div className="mt-8 flex w-full flex-col gap-3 sm:hidden">

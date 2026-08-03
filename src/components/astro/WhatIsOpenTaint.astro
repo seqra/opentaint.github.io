@@ -3,17 +3,17 @@ const features = [
   {
     title: "Learn on demand. Search on every scan.",
     description:
-      "The agent learns the attack surface, trust boundaries, vulnerability patterns, and opaque code behavior when that context is needed. OpenTaint reuses the resulting rules and summaries on every scan without spending model tokens again.",
+      "The agent learns the attack surface, trust boundaries, vulnerability patterns, and opaque code behavior when new context is needed. The engine reuses that knowledge on every scan without spending model tokens again.",
   },
   {
     title: "Make every security review executable.",
     description:
-      "The agent enacts what it learns. Vulnerability patterns become AST-pattern taint rules, while opaque code behavior becomes dataflow summaries the engine can search deterministically.",
+      "The agent turns vulnerability patterns into AST-pattern taint rules and opaque code behavior into dataflow summaries. Both become versioned, reviewable analysis artifacts.",
   },
   {
     title: "Fast scans. Fewer false alarms. Fewer missed findings.",
     description:
-      "OpenTaint is built to hold all three corners of the classic static-analysis trilemma. Its formal inter-procedural dataflow analysis tracks tainted values across procedures, fields, aliases, async code, and persistence layers at scale.",
+      "The engine applies those artifacts with formal inter-procedural dataflow analysis, tracking tainted values across procedures, fields, aliases, async code, and persistence layers at scale.",
   },
   {
     title: "Open source, customizable, and self-hosted.",
@@ -22,30 +22,30 @@ const features = [
   },
 ];
 
-const audiences = [
+const pressures = [
   {
-    title: "For AppSec: make expert judgment outlive the review.",
+    title: "Did the agent write a vulnerability into code you never reviewed?",
     description:
-      "You are accountable for what reaches production, not for how many alerts a scanner found. Capture project-specific attack surfaces, trust boundaries, and vulnerability patterns as coverage the whole team can inspect and rerun.",
-    value: "Stop reviewing the same risk twice. Make expertise compound, not the review queue.",
-  },
-  {
-    title: "For DevSecOps: keep the security gate on.",
-    description:
-      "A slow or noisy gate gets suppressed or moved out of the blocking path. OpenTaint runs deterministically on CPU with explainable traces and self-hosted control, without waiting for a model to reread the repository.",
-    value: "Keep security fast enough to stay in CI and dependable enough to enforce.",
-  },
-  {
-    title: "For developers: fix security while you still remember the code.",
-    description:
-      "A late finding steals time from the work in front of you. OpenTaint shows which untrusted input reaches which dangerous operation and the full path through the program, so you can fix the flow in the pull request.",
-    value: "Pay down security debt while the code is still fresh.",
-  },
-  {
-    title: "For vibe coders: the agent can write the vulnerability before you notice the code path.",
-    description:
-      "The output can look finished and pass its tests while an unsafe flow crosses helpers, fields, or libraries you never read. OpenTaint traces that dataflow deterministically before the change becomes invisible security debt.",
+      "The output can look finished and pass its tests while an unsafe flow crosses helpers, fields, or libraries you never read. OpenTaint traces that dataflow before the change becomes invisible security debt.",
     value: "Generate fast. Verify before merge.",
+  },
+  {
+    title: "Is the feature done if a vulnerability ships with it?",
+    description:
+      "A feature that passes its tests can still carry security debt into production, where the fix competes with roadmap work and incident response. OpenTaint traces risky dataflow in the pull request, before that debt becomes an emergency.",
+    value: "Make secure part of done.",
+  },
+  {
+    title: "Will your security agent find tomorrow what it found today?",
+    description:
+      "An agent can discover a vulnerability pattern once, then miss it on the next nondeterministic review. OpenTaint turns what the agent learns into versioned AST-pattern taint rules and dataflow summaries the engine searches on every scan.",
+    value: "Turn every discovery into deterministic coverage.",
+  },
+  {
+    title: "How many times will you pay an agent to review the same risk?",
+    description:
+      "Your last security review already paid to uncover the application’s trust boundaries and dangerous flows. Every scan that starts from zero spends tokens rebuilding security context you already owned. OpenTaint preserves that knowledge as reusable rules and summaries, then searches them deterministically on CPU.",
+    value: "Spend tokens only when new context must be learned. Keep every scan fast enough to enforce.",
   },
 ];
 
@@ -69,22 +69,22 @@ const proofs = [
   <div class="mx-auto max-w-5xl">
     <h2 id="what-heading" class="section-title text-center">What is OpenTaint?</h2>
     <p class="subheadline">
-      The open source taint analysis engine for the AI era. A formal dataflow analysis tool you can customize and self-host, built so AI agents drive your application security analysis without burning tokens on every scan. AI-ready open source alternative to Semgrep Pro and CodeQL.
+      The open source taint analysis engine for the AI era. OpenTaint is a formal dataflow analysis tool you can customize and self-host. AI agents drive the application security analysis, while the engine reuses what they learn without burning tokens on every scan. It is an AI-ready open source alternative to Semgrep Pro and CodeQL.
     </p>
 
     <h2 id="security-debt-heading" class="section-title mt-12 lg:mt-14 text-center">Application security is the new tech debt.</h2>
     <p class="subheadline">
-      AI makes code cheaper to produce, but moves security work downstream into review queues, remediation backlogs, and incident response. Attackers automate discovery too. Security debt is tech debt an attacker can force you to repay. OpenTaint turns each review into versioned checks that protect future commits.
+      AI makes code cheaper to produce and harder to fully review. Security work moves downstream into review queues, remediation backlogs, and incident response, while attackers automate discovery too. Application security becomes tech debt an attacker can force you to repay. You start paying for that debt long before an incident.
     </p>
 
     <ul class="mt-8 space-y-4 text-left lg:mt-10 lg:space-y-5" aria-labelledby="security-debt-heading">
-      {audiences.map((audience) => (
+      {pressures.map((pressure) => (
         <li class="flex gap-3 font-mono text-[15px] leading-[185%] lg:text-base lg:gap-4">
           <span class="mt-[0.65em] h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true"></span>
           <div>
-            <strong class="feature-title">{audience.title}</strong>
-            <span class="text-muted-foreground">{audience.description}</span>
-            <span class="mt-2 block font-medium text-foreground">{audience.value}</span>
+            <strong class="feature-title">{pressure.title}</strong>
+            <span class="text-muted-foreground">{pressure.description}</span>
+            <span class="mt-2 block font-medium text-foreground">{pressure.value}</span>
           </div>
         </li>
       ))}
@@ -92,7 +92,7 @@ const proofs = [
 
     <h2 id="how-heading" class="section-title mt-12 lg:mt-14 text-center">How OpenTaint changes the economics</h2>
     <p class="subheadline">
-      Learning application context is expensive and unpredictable. Searching for known dataflow patterns is cheap and deterministic.
+      OpenTaint breaks that cycle by separating learning from searching. Learning application context is expensive and unpredictable. Once the agent turns that context into rules and summaries, the engine can search for known dataflow patterns cheaply and deterministically.
     </p>
 
     <ul class="mt-8 space-y-4 text-left lg:mt-10 lg:space-y-5" aria-labelledby="how-heading">

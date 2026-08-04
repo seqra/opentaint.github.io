@@ -68,9 +68,9 @@ export function AnimatedHero() {
         </a>
       </div>
 
-      <div className="mx-auto mt-10 hidden max-w-2xl text-left sm:block lg:mt-14">
+      <div className="mx-auto mt-10 hidden max-w-2xl text-left sm:block lg:mt-16">
         <div className="overflow-hidden rounded-xl border border-panel-border bg-panel">
-          <div className="flex items-center gap-6 overflow-x-auto border-b border-panel-border px-4 py-3 scrollbar-thin lg:gap-8 lg:px-5 lg:py-4">
+          <div className="flex items-center gap-6 overflow-x-auto border-b border-panel-border px-4 py-3 scrollbar-thin lg:gap-8 lg:px-6 lg:py-4">
             {installMethods.map((method) => {
               const isActive = method.id === activeInstallMethod?.id;
               return (
@@ -88,7 +88,7 @@ export function AnimatedHero() {
               );
             })}
           </div>
-          <div className="flex items-center gap-3 px-4 py-3 lg:px-5 lg:py-4">
+          <div className="flex items-center gap-3 px-4 py-3 lg:px-6 lg:py-4">
             <code
               role="button"
               tabIndex={0}
@@ -101,7 +101,7 @@ export function AnimatedHero() {
             <button
               type="button"
               onClick={copyCommand}
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-panel-foreground/15 px-3 py-1.5 font-mono text-xs text-panel-foreground/70 transition-colors hover:border-panel-foreground/35 hover:text-panel-foreground lg:px-3.5 lg:py-2 lg:text-[13px]"
+              className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-panel-foreground/15 px-3 py-2 font-mono text-xs text-panel-foreground/70 transition-colors hover:border-panel-foreground/35 hover:text-panel-foreground lg:px-4 lg:py-2 lg:text-[13px]"
             >
               {copied ? <Check className="h-3 w-3 text-panel-accent" /> : <Copy className="h-3 w-3" />}
             </button>

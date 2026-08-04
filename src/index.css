@@ -219,11 +219,19 @@
     padding-inline: max(var(--page-pad), calc((100% - var(--page-max)) / 2));
   }
 
+  /* Spacing ladder — the 8-point grid as IBM Carbon publishes it:
+     2 4 8 12 16 24 32 40 48 64 80 96 160px, i.e. Tailwind
+     0.5 1 2 3 4 6 8 10 12 16 20 24 40. Every margin, padding, and gap on the
+     page picks a step from it; nothing sits between steps.
+
+     Roles: 16 label to value · 24 heading to paragraph · 32 item to item ·
+     48 header block to content · 64 block to block · 64-96 section padding. */
+
   /* Landing-page thematic block: full-bleed section with generous vertical
      rhythm and content held to the reading column via the frame-x model. */
   .band {
     position: relative;
-    padding-block: clamp(4.5rem, 2.5rem + 5.5vw, 9rem);
+    padding-block: clamp(4rem, 2rem + 5vw, 6rem);
     padding-inline: max(var(--page-pad), calc((100% - var(--page-max)) / 2));
   }
 

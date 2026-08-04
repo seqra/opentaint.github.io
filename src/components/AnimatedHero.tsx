@@ -68,7 +68,7 @@ export function AnimatedHero() {
         </a>
       </div>
 
-      <div className="mt-10 hidden max-w-2xl text-left sm:block lg:mt-14">
+      <div className="mx-auto mt-10 hidden max-w-2xl text-left sm:block lg:mt-14">
         <div className="overflow-hidden rounded-xl border border-panel-border bg-panel">
           <div className="flex items-center gap-6 overflow-x-auto border-b border-panel-border px-4 py-3 scrollbar-thin lg:gap-8 lg:px-5 lg:py-4">
             {installMethods.map((method) => {

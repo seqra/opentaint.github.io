@@ -70,9 +70,11 @@ const traceSteps = [
 
 <section class="band" aria-labelledby="what-heading">
   <div class="mx-auto max-w-6xl">
-    <div class="mx-auto max-w-3xl text-center">
+    <div class="text-center">
       <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">What OpenTaint does</p>
-      <h2 id="what-heading" class="section-heading mt-5">From discovery to deterministic coverage</h2>
+      {/* Sized to hold one line on the full column: at the section scale this
+          title is half again too long for it. */}
+      <h2 id="what-heading" class="section-heading mt-5 lg:text-[2.375rem]">From security review to continuous security testing</h2>
       <p class="section-subtitle mx-auto max-w-[62ch]">
         Agents write down what they learn as taint rules and dependency models. The engine applies both on every scan, without spending tokens again.
       </p>

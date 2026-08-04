@@ -1,6 +1,7 @@
 ---
 import { Code } from "astro-expressive-code/components";
 import { VideoDemo } from "@/components/VideoDemo";
+import AgentPipeline from "@/components/astro/AgentPipeline.astro";
 
 const discoveries = [
   { label: "Trust boundary", text: "Unauthenticated workflow input reaches the script evaluators" },
@@ -62,13 +63,6 @@ const skills = {
   title: "The agent that writes the rules",
   description:
     "Skills that pair an LLM agent with the engine. It maps your attack surface, models the library methods the engine cannot see, writes rules specific to your code, and confirms a finding by exploiting it. The engine takes it from there.",
-  /* Stage 1 of the workflow diagram in the post, redrawn in the page's own
-     language: map, author, scan — then the saturation loop under it. */
-  steps: [
-    { title: "Map the attack surface", skill: "discover-attack-surface" },
-    { title: "Author tested rules", skill: "create-rule" },
-    { title: "Scan deterministically", skill: "run-scan" },
-  ],
 };
 
 /* Coverage matrix. Columns pair each tool with the analysis mode it was run in,
@@ -187,15 +181,6 @@ const economics = [
       </p>
     </div>
 
-    <ul class="mt-9 grid gap-x-14 gap-y-8 border-t border-border-strong pt-8 md:grid-cols-2 lg:mt-12">
-      {features.map((feature, index) => (
-        <li class="reveal">
-          <p class="font-mono text-[11px] font-semibold tracking-[0.14em] text-primary">0{index + 1}</p>
-          <h3 class="mt-4 font-mono text-[15px] font-semibold leading-6 text-foreground lg:text-base">{feature.title}</h3>
-          <p class="mt-3 max-w-[52ch] font-mono text-sm leading-7 text-muted-foreground lg:text-[15px]">{feature.description}</p>
-        </li>
-      ))}
-    </ul>
 
     <figure class="mt-10 overflow-hidden border-y border-border-strong bg-background lg:mt-14" aria-labelledby="workflow-caption">
       <figcaption id="workflow-caption" class="flex flex-col gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
@@ -235,7 +220,7 @@ const economics = [
           <p class="font-mono text-[11px] leading-5 text-muted-foreground">Committed to your repo, versioned, reviewed, and tested like code</p>
         </div>
 
-        <div class="mt-7 grid gap-6 lg:grid-cols-2 lg:items-start">
+        <div class="mt-7 grid gap-6 lg:grid-cols-2">
           {artifacts.map((artifact) => (
             <article class="reveal flex min-w-0 flex-col overflow-hidden border border-border-strong transition-colors duration-300 hover:border-primary/60 motion-reduce:transition-none">
               <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-border bg-code-header px-4 py-3">
@@ -277,13 +262,13 @@ const economics = [
 
             <ol class="trace flex-1 px-4 py-5 font-mono">
               {traceSteps.map((step, index) => (
-                <li class="trace-step relative pl-7" style={`--step-index:${index}`}>
+                <li class="trace-step relative pl-7">
                   <span class:list={[
                     "absolute left-0 top-[7px] h-2.5 w-2.5 border",
                     step.role === "Source" || step.role === "Sink" ? "border-primary bg-primary" : "border-border-strong bg-background",
                   ]} aria-hidden="true"></span>
                   {index < traceSteps.length - 1 && (
-                    <span class="trace-rail absolute bottom-0 left-[4.5px] top-[19px] w-px bg-border-strong" aria-hidden="true"></span>
+                    <span class="trace-rail absolute -bottom-5 left-[4.5px] top-[17px] w-px bg-border-strong" aria-hidden="true"></span>
                   )}
                   <span class:list={[
                     "block text-[10px] uppercase tracking-[0.14em]",
@@ -300,6 +285,16 @@ const economics = [
             </p>
           </div>
         </div>
+
+        <ul class="mt-8 grid gap-x-14 gap-y-8 border-t border-border pt-7 md:grid-cols-2 lg:mt-10">
+          {features.map((feature, index) => (
+            <li class="reveal">
+              <p class="font-mono text-[11px] font-semibold tracking-[0.14em] text-primary">0{index + 1}</p>
+              <h3 class="mt-3 font-mono text-[15px] font-semibold leading-6 text-foreground lg:text-base">{feature.title}</h3>
+              <p class="mt-2 max-w-[56ch] font-mono text-sm leading-7 text-muted-foreground">{feature.description}</p>
+            </li>
+          ))}
+        </ul>
       </div>
     </figure>
   </div>
@@ -456,43 +451,21 @@ const economics = [
         </div>
       </div>
 
-      <div class="reveal mt-14 grid gap-8 border-t border-border pt-14 lg:mt-20 lg:grid-cols-[0.72fr_1.28fr] lg:gap-16 lg:pt-20">
-        <div>
-          <p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">The agent skills</p>
-          <h3 class="mt-4 font-mono text-xl font-semibold leading-8 text-foreground">{skills.title}</h3>
-          <p class="mt-4 max-w-[52ch] font-mono text-sm leading-7 text-muted-foreground lg:text-[15px]">{skills.description}</p>
-          <a href={skills.href} class="mt-6 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Read the release post</a>
+      <div class="reveal mt-14 border-t border-border pt-14 lg:mt-20 lg:pt-20">
+        <div class="grid gap-6 lg:grid-cols-[0.72fr_1.28fr] lg:gap-16">
+          <div>
+            <p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">The agent skills</p>
+            <h3 class="mt-4 font-mono text-xl font-semibold leading-8 text-foreground">{skills.title}</h3>
+          </div>
+          <div>
+            <p class="max-w-[64ch] font-mono text-sm leading-7 text-muted-foreground lg:text-[15px]">{skills.description}</p>
+            <a href={skills.href} class="mt-5 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Read the release post</a>
+          </div>
         </div>
 
-        <figure class="flow reveal min-w-0 border border-border-strong bg-background p-5 sm:p-6 lg:p-7">
-          <figcaption class="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">
-            Stage 1, scan
-          </figcaption>
-
-          <ol class="mt-6 grid gap-3 sm:grid-cols-3 sm:gap-0">
-            {skills.steps.map((step, index) => (
-              <li class:list={["flow-node relative flex flex-col bg-background", index > 0 && "sm:pl-7"]} style={`--node-index:${index}`}>
-                {index > 0 && (
-                  <span class="flow-link absolute left-0 top-[13px] hidden h-px w-7 bg-border-strong sm:block" aria-hidden="true"></span>
-                )}
-                <span class="block font-mono text-[13px] font-semibold leading-5 text-foreground">{step.title}</span>
-                <code class="mt-2 block font-mono text-[11px] leading-5 text-muted-foreground sm:mt-auto sm:pt-2">{step.skill}</code>
-              </li>
-            ))}
-          </ol>
-
-          <div class="mt-6 border-t border-border pt-5">
-            <p class="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">Repeat until nothing new turns up</p>
-            <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
-              <span class="border border-border-strong px-3 py-2 font-mono text-[12px] font-semibold text-foreground">Model the opaque methods</span>
-              <span class="flow-loop h-px w-8 bg-primary" aria-hidden="true"></span>
-              <span class="border border-primary/60 bg-primary/[0.06] px-3 py-2 font-mono text-[12px] font-semibold text-foreground">Scan again</span>
-            </div>
-            <p class="mt-3 max-w-[46ch] font-mono text-[11px] leading-5 text-muted-foreground">
-              Each pass exposes the next layer of unmodeled library code. When a scan finds no new opaque methods, the deep flows are visible and triage begins.
-            </p>
-          </div>
-        </figure>
+        <div class="mt-9 lg:mt-12">
+          <AgentPipeline />
+        </div>
       </div>
 
     </div>

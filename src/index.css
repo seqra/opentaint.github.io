@@ -59,6 +59,9 @@
     --page-pad: clamp(1rem, 4vw, 6rem);
     /* Reading column shared by the landing bands and the blog/404 pages. */
     --content-max: 72rem;
+    /* The agent's layer in the pipeline graph — term-blue from the console
+       palette, cooled against the warm paper so the hue does not grey out. */
+    --agent: 205 68% 30%;
     --band: 28 25% 96.5%;
   }
 
@@ -109,6 +112,7 @@
     --code-taint-bg: 0 90% 50% / 0.18;
     --code-taint-text: #ffb3b3;
     --band: 0 55% 5.5%;
+    --agent: 205 84% 70%;
   }
 
   * {
@@ -337,60 +341,10 @@
     transform: none;
   }
 
-  /* The taint trace draws itself in step order once the rail is on screen: each
-     step fades up, then the rail segment below it grows down to the next. */
-  .js .trace-step {
-    opacity: 0;
-    transform: translate3d(-6px, 0, 0);
-    transition:
-      opacity 0.45s ease-out,
-      transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-    transition-delay: calc(var(--step-index) * 150ms + 120ms);
-  }
-
-  .js .trace-rail {
-    transform: scaleY(0);
-    transform-origin: top center;
-    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-    transition-delay: calc(var(--step-index) * 150ms + 260ms);
-  }
-
-  .is-revealed .trace-step,
-  .is-revealed .trace-rail {
-    opacity: 1;
-    transform: none;
-  }
-
-  /* Once drawn, a slow pulse runs source-to-sink down the finished rail — the
-     flow the trace describes, at a rate that stays background texture. */
-  .is-revealed .trace-rail::after {
-    content: "";
-    position: absolute;
-    inset-inline: 0;
-    top: 0;
-    height: 40%;
-    background: hsl(var(--brand));
-    animation: trace-flow 3.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    animation-delay: calc(var(--step-index) * 220ms + 1s);
-  }
-
-  @keyframes trace-flow {
-    0%,
-    12% {
-      transform: translateY(-120%);
-      opacity: 0;
-    }
-    30% {
-      opacity: 1;
-    }
-    70% {
-      transform: translateY(320%);
-      opacity: 0;
-    }
-    100% {
-      transform: translateY(320%);
-      opacity: 0;
-    }
+  /* The taint trace holds still: the rail runs unbroken from the source dot to
+     the sink dot, so the path reads as one connected flow. */
+  .trace-step:last-child > span:last-child {
+    margin-bottom: 0;
   }
 
   /* Cadence rail: stages draw left to right, then dim to spotlight the phase
@@ -433,6 +387,95 @@
     border-color: hsl(var(--brand));
     background-color: hsl(var(--brand));
   }
+
+  /* Pipeline graph. Every mark reads a token, so one SVG serves both themes:
+     ink is the engine spine, brand red is taint, and --agent (the console's
+     term-blue) is the agent's skills layer. */
+  .pipeline .lbl {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    fill: hsl(var(--foreground));
+  }
+
+  .pipeline .mono {
+    font-family: var(--font-mono);
+    fill: var(--code-text);
+  }
+
+  .pipeline .note-text {
+    fill: hsl(var(--brand));
+  }
+
+  .pipeline .gtitle {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    fill: hsl(var(--agent));
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .pipeline .n-step { fill: hsl(var(--card)); stroke: hsl(var(--border-strong)); stroke-width: 1.5; }
+  .pipeline .n-agent { fill: hsl(var(--card)); stroke: hsl(var(--agent)); stroke-width: 1.8; }
+  .pipeline .n-taint { fill: hsl(var(--brand) / 0.08); stroke: hsl(var(--brand)); stroke-width: 2; }
+  .pipeline .n-sub { fill: hsl(var(--card)); stroke: hsl(var(--agent)); stroke-width: 1.4; }
+  .pipeline .n-out { fill: hsl(var(--muted)); stroke: hsl(var(--border)); stroke-width: 1.4; }
+  .pipeline .n-file { fill: hsl(var(--code-bg)); stroke: hsl(var(--border-strong)); stroke-width: 1.5; }
+  .pipeline .n-note { fill: hsl(var(--code-bg)); stroke: hsl(var(--border-strong)); stroke-width: 1.1; }
+  .pipeline .n-chip { fill: hsl(var(--card)); stroke: hsl(var(--border-strong)); stroke-width: 1.1; }
+
+  .pipeline .g-box { fill: hsl(var(--agent) / 0.08); stroke: hsl(var(--agent)); stroke-width: 1.4; }
+  .pipeline .g-box.dash { stroke-dasharray: 3 7; }
+
+  .pipeline .e-flow { fill: none; stroke: hsl(var(--foreground)); stroke-width: 1.8; }
+  .pipeline .e-feed { fill: none; stroke: hsl(var(--agent)); stroke-width: 1.6; }
+  .pipeline .e-taint { fill: none; stroke: hsl(var(--brand)); stroke-width: 1.8; }
+  .pipeline .e-loop { fill: none; stroke: hsl(var(--brand)); stroke-width: 2.4; }
+  .pipeline .e-debug { fill: none; stroke: hsl(var(--agent)); stroke-width: 1.5; }
+  .pipeline .e-detail { fill: none; stroke: hsl(var(--agent)); stroke-width: 1.8; }
+
+  .pipeline .m-ink { fill: hsl(var(--foreground)); }
+  .pipeline .m-mut { fill: hsl(var(--muted-foreground)); }
+  .pipeline .m-red { fill: hsl(var(--brand)); }
+  .pipeline .m-blu { fill: hsl(var(--agent)); }
+
+  /* Legend keys mirror the stroke vocabulary above. */
+  .pipeline-key {
+    position: relative;
+    display: inline-block;
+    flex: none;
+  }
+
+  .pipeline-key.ln {
+    width: 22px;
+    border-top: 2px solid currentColor;
+    color: hsl(var(--foreground));
+  }
+
+  .pipeline-key.red { color: hsl(var(--brand)); }
+  .pipeline-key.mut,
+  .pipeline-key.det,
+  .pipeline-key.dbg { color: hsl(var(--agent)); }
+  .pipeline-key.dbg { border-top-style: dashed; }
+
+  .pipeline-key.arr::after {
+    content: "";
+    position: absolute;
+    right: -2px;
+    top: -5px;
+    border-left: 6px solid currentColor;
+    border-top: 3.5px solid transparent;
+    border-bottom: 3.5px solid transparent;
+  }
+
+  .pipeline-key.sw {
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid;
+    border-radius: 3px;
+  }
+
+  .pipeline-key.sw.taint { border-color: hsl(var(--brand)); background: hsl(var(--brand) / 0.08); }
+  .pipeline-key.sw.agent { border-color: hsl(var(--agent)); background: hsl(var(--card)); }
 
   /* Workflow diagram: the connectors between the three moves draw left to
      right, and the loop back into a re-scan draws last. */
@@ -492,8 +535,6 @@
 
   @media (prefers-reduced-motion: reduce) {
     .reveal,
-    .trace-step,
-    .trace-rail,
     .cadence-stage,
     .matrix-row {
       opacity: 1;
@@ -501,14 +542,9 @@
       transition: none;
     }
 
-    .is-revealed .trace-rail::after,
     .js .cadence.is-revealed .cadence-node,
     .js .cadence.is-revealed .cadence-line {
       animation: none;
-    }
-
-    .is-revealed .trace-rail::after {
-      display: none;
     }
   }
 

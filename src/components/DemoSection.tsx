@@ -67,7 +67,7 @@ export function DemoSection() {
   }, [autoAdvance, activeId]);
 
   return (
-    <div className="mx-auto max-w-[80rem]">
+    <div className="mx-auto max-w-[68rem]">
       <div
         className="relative"
         data-testid="demo-stage"

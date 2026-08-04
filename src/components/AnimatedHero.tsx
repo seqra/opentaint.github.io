@@ -8,16 +8,16 @@ type InstallMethod = {
 };
 
 const installMethods: InstallMethod[] = [
+  { id: "npm", label: "npm", command: "npm install -g @seqra/opentaint" },
   { id: "curl", label: "curl", command: "curl -fsSL https://opentaint.org/install.sh | bash" },
   { id: "skills", label: "skills", command: "npx skills add https://github.com/seqra/opentaint" },
-  { id: "npm", label: "npm", command: "npm install -g @seqra/opentaint" },
   { id: "brew", label: "brew", command: "brew install --cask seqra/tap/opentaint" },
   { id: "windows", label: "powershell", command: "irm https://opentaint.org/install.ps1 | iex" },
   { id: "docker", label: "docker", command: "docker pull ghcr.io/seqra/opentaint:latest" },
 ];
 
 export function AnimatedHero() {
-  const [activeMethod, setActiveMethod] = useState(installMethods[0]?.id ?? "curl");
+  const [activeMethod, setActiveMethod] = useState(installMethods[0]?.id ?? "npm");
   const [copied, setCopied] = useState(false);
 
   const activeInstallMethod = useMemo(
@@ -37,12 +37,14 @@ export function AnimatedHero() {
 
   return (
     <div className="mx-auto max-w-5xl">
-      <h1 className="font-mono text-[28px] font-bold tracking-tight text-foreground sm:text-[34px] md:text-[40px] md:leading-[1.2] lg:text-[44px] lg:leading-[1.18]">
+      <h1 className="font-mono text-[24px] font-bold tracking-tight text-foreground sm:text-[28px] md:text-[32px] md:leading-[1.22] lg:text-[36px] lg:leading-[1.2]">
         The open source taint analysis engine for the AI era
       </h1>
 
-      <p className="subheadline">
-        Formal program analysis for security agents. AI agents learn your application on demand. OpenTaint scans it on every change.
+      <p className="subheadline max-w-[62ch]">
+        <span className="text-foreground">Formal program analysis for security agents.</span>{" "}
+        AI agents learn your application <span className="hero-mark">on demand</span>. OpenTaint scans it{" "}
+        <span className="hero-mark">on every change</span>.
       </p>
 
       <div className="mt-8 flex w-full flex-col gap-3 sm:hidden">

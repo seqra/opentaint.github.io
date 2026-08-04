@@ -22,10 +22,11 @@ export function VideoDemo({ sources, poster, alt, testId, href }: VideoDemoProps
   const [playing, setPlaying] = useState(true);
 
   // Both videos render so CSS can show the theme-correct one (with its themed
-  // poster) before the island hydrates — no wrong-theme flash. But only the
-  // visible one is played: `preload="none"` plus no `autoPlay` keeps the hidden
-  // ~4 MB source from ever being fetched. play() here loads and starts just the
-  // active one; toggling theme moves playback (and the download) with it.
+  // poster) before the island hydrates — no wrong-theme flash. Only the visible
+  // one plays: `preload="metadata"` fetches enough for a first frame, so
+  // arriving on this tab does not pop from poster to playback, while the body of
+  // the hidden source stays unfetched. play() starts just the active one;
+  // toggling theme moves playback (and the download) with it.
   useEffect(() => {
     if (reducedMotion) return;
     const active = theme === "dark" ? darkRef.current : lightRef.current;
@@ -63,7 +64,7 @@ export function VideoDemo({ sources, poster, alt, testId, href }: VideoDemoProps
         loop
         muted
         playsInline
-        preload="none"
+        preload="metadata"
         className="block h-auto w-full dark:hidden"
       />
       <video
@@ -75,7 +76,7 @@ export function VideoDemo({ sources, poster, alt, testId, href }: VideoDemoProps
         loop
         muted
         playsInline
-        preload="none"
+        preload="metadata"
         className="hidden h-auto w-full dark:block"
       />
     </>

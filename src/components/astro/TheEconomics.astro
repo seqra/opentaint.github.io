@@ -80,7 +80,7 @@ const economics = {
         <h2 id="how-heading" class="section-heading mt-5">Learn on demand, search on every scan</h2>
       </div>
       <p class="section-subtitle mt-0 max-w-[68ch]">
-        Use model reasoning only when the application reveals new security context. Everything already learned becomes deterministic analysis that runs on CPU for every change.
+        Spend model reasoning only on context the application has not revealed yet. Everything already learned runs on CPU, on every change.
       </p>
     </div>
 
@@ -107,7 +107,7 @@ const economics = {
 
     <div class="reveal mt-12 lg:mt-16">
       <div class="overflow-x-auto">
-        <table id="economics" class="economics w-full border-collapse border-b border-border-strong font-mono sm:min-w-[560px] sm:border-t" data-economics data-mobile-phase="learn">
+        <table id="economics" class="economics w-full border-collapse font-mono sm:min-w-[560px]" data-economics data-mobile-phase="learn">
           <caption class="sr-only">What each phase costs and what it leaves behind</caption>
           <thead class="hidden sm:table-header-group">
             <tr>
@@ -118,7 +118,7 @@ const economics = {
           </thead>
           <tbody>
             {economics.rows.map((row) => (
-              <tr class="economics-row">
+              <tr class="economics-row border-t border-border">
                 <td class="px-5 py-3.5 text-right text-xs font-medium text-foreground sm:text-sm" data-phase="learn">{row.learn}</td>
                 <th scope="row" class="px-4 py-3.5 text-center text-xs font-normal uppercase tracking-[0.12em] text-muted-foreground sm:text-[13px]">{row.label}</th>
                 <td class="px-5 py-3.5 text-left text-xs font-medium text-foreground sm:text-sm" data-phase="search">{row.search}</td>
@@ -135,7 +135,7 @@ const economics = {
       <div class="mx-auto max-w-3xl text-center">
         <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Show, don't tell</p>
         <h2 id="proof-heading" class="section-heading mt-5">See what the engine catches</h2>
-        <p class="section-subtitle mx-auto max-w-[56ch]">Claims about detection depth need traces and results you can inspect.</p>
+        <p class="section-subtitle mx-auto max-w-[56ch]">Traces and results you can open yourself.</p>
       </div>
 
       <div class="mt-10 grid gap-8 lg:mt-14 lg:grid-cols-[0.72fr_1.28fr] lg:items-center lg:gap-16">

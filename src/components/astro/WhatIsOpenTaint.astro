@@ -26,7 +26,7 @@ const artifacts = [
   {
     label: "Taint rule",
     file: ".opentaint/rules/graalvm-polyglot-sinks.yaml",
-    caption: "The vulnerability pattern the agent found: attacker-controlled script text evaluated on a context with full host access.",
+    caption: "Fires only when the context was built with full host access.",
     code: `id: graalvm-polyglot-eval
 languages: [java]
 mode: taint
@@ -43,7 +43,7 @@ pattern-sinks:
   {
     label: "Dependency model",
     file: ".opentaint/config/org.graalvm.polyglot.yaml",
-    caption: "The library behavior the engine cannot see: a fluent builder that mutates and returns the same instance, so taint survives the chain.",
+    caption: "The builder mutates and returns itself, so taint survives the chain.",
     code: `language: java
 passThrough:
   - function: Context$Builder#option
@@ -72,9 +72,9 @@ const traceSteps = [
   <div class="mx-auto max-w-6xl">
     <div class="mx-auto max-w-3xl text-center">
       <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">What OpenTaint does</p>
-      <h2 id="what-heading" class="section-heading mt-5">Taint analysis that turns agent discoveries into deterministic coverage</h2>
+      <h2 id="what-heading" class="section-heading mt-5">From discovery to deterministic coverage</h2>
       <p class="section-subtitle mx-auto max-w-[62ch]">
-        Agents capture new vulnerability patterns as AST-pattern taint rules, and opaque library behavior as dependency models. The engine applies both on every scan, without burning model tokens again.
+        Agents write down what they learn as taint rules and dependency models. The engine applies both on every scan, without spending tokens again.
       </p>
     </div>
 
@@ -114,7 +114,7 @@ const traceSteps = [
             <span class="text-primary">02</span>
             <span class="text-foreground">Agent writes</span>
           </p>
-          <p class="font-mono text-[11px] leading-5 text-muted-foreground">Committed to your repo, versioned, reviewed, and tested like code</p>
+          <p class="font-mono text-[11px] leading-5 text-muted-foreground">Committed to your repo, reviewed like code</p>
         </div>
 
         <div class="mt-7 grid gap-6 lg:grid-cols-2">
@@ -156,7 +156,7 @@ const traceSteps = [
             </a>
 
             <p class="border-t border-border px-4 py-3 font-mono text-[11px] leading-5 text-muted-foreground">
-              Every finding opens to the flow that produced it, step by step.
+              Every finding opens to the flow that produced it.
             </p>
           </figure>
 
@@ -186,7 +186,7 @@ const traceSteps = [
             </ol>
 
             <p class="border-t border-border px-4 py-3 font-mono text-[10px] leading-[1.6] text-muted-foreground">
-              182 steps in full, reported on the pull request that introduces the flow.
+              182 steps in full, on the pull request that introduces the flow.
             </p>
           </div>
         </div>

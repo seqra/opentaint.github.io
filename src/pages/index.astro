@@ -5,6 +5,8 @@ import LandingFooter from "@/components/astro/LandingFooter.astro";
 import { AnimatedHero } from "@/components/AnimatedHero";
 import Demo from "@/components/astro/Demo.astro";
 import WhatIsOpenTaint from "@/components/astro/WhatIsOpenTaint.astro";
+import SecurityDebt from "@/components/astro/SecurityDebt.astro";
+import TheEconomics from "@/components/astro/TheEconomics.astro";
 import SupportedTechnology from "@/components/astro/SupportedTechnology.astro";
 import FAQ from "@/components/astro/FAQ.astro";
 import { defaultKeywords, siteConfig } from "@/lib/site";
@@ -81,9 +83,13 @@ const structuredData = [
         <AnimatedHero client:load />
       </section>
 
+      <WhatIsOpenTaint />
+
+      <SecurityDebt />
+
       <Demo />
 
-      <WhatIsOpenTaint />
+      <TheEconomics />
 
       <SupportedTechnology />
       <FAQ />

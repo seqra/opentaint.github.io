@@ -94,15 +94,15 @@ const traceSteps = [
           <p class="font-mono text-[11px] leading-5 text-muted-foreground">Model reasoning, on demand</p>
         </div>
 
-        <div class="mt-7 grid gap-6 md:grid-cols-3 md:gap-0">
+        <div class="mt-5 grid md:mt-7 md:grid-cols-3">
           {discoveries.map((item, index) => (
             <div class:list={[
-              "reveal",
-              index > 0 && "border-t border-border pt-6 md:border-l md:border-t-0 md:pl-8 md:pt-0",
+              "reveal py-3 md:py-0",
+              index > 0 && "border-t border-border md:border-l md:border-t-0 md:pl-8",
               index < discoveries.length - 1 && "md:pr-8",
             ]}>
-              <p class="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">{item.label}</p>
-              <p class="mt-3 max-w-[36ch] font-mono text-[15px] font-semibold leading-7 text-foreground" set:html={item.text}></p>
+              <p class="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground md:text-[11px]">{item.label}</p>
+              <p class="mt-1.5 max-w-[36ch] font-mono text-[13px] font-semibold leading-[1.5] text-foreground md:mt-3 md:text-[15px] md:leading-7" set:html={item.text}></p>
             </div>
           ))}
         </div>

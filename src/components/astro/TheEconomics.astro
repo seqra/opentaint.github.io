@@ -72,7 +72,7 @@ const economics = {
 };
 ---
 
-<section class="band band-tint" aria-labelledby="how-heading">
+<section class="band" aria-labelledby="how-heading">
   <div class="mx-auto max-w-6xl">
     <div class="grid gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
       <div>
@@ -98,7 +98,7 @@ const economics = {
             aria-pressed="false"
             aria-controls="economics"
           >
-            <span class="block font-mono text-[15px] font-semibold leading-6 text-foreground">{item.label}</span>
+            <span class="cadence-label block font-mono text-[15px] font-semibold leading-6 text-foreground">{item.label}</span>
             <span class:list={["mt-2 block max-w-[42ch] font-mono text-xs leading-5 text-muted-foreground", index === 1 && "sm:ml-auto"]}>{item.detail}</span>
           </button>
         ))}
@@ -197,15 +197,15 @@ const economics = {
         </div>
       </div>
 
-      <div class="reveal mt-14 grid gap-8 border-t border-border pt-14 lg:mt-20 lg:grid-cols-[1.32fr_0.68fr] lg:items-center lg:gap-14 lg:pt-20">
-        <AgentPipeline />
-
-        <div>
+      <div class="reveal mt-14 grid gap-7 border-t border-border pt-14 lg:mt-20 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:gap-12 lg:pt-20">
+        <div class="lg:order-2">
           <p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">The agent skills</p>
           <h3 class="mt-4 font-mono text-xl font-semibold leading-8 text-foreground">{skills.title}</h3>
           <p class="mt-4 max-w-[52ch] font-mono text-sm leading-7 text-muted-foreground lg:text-[15px]">{skills.description}</p>
           <a href={skills.href} class="mt-6 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Read the release post</a>
         </div>
+
+        <AgentPipeline />
       </div>
 
     </div>

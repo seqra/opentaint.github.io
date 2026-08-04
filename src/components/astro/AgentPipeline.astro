@@ -312,10 +312,10 @@ const scene = render();
 {/* The frame wraps the drawing rather than the column, so no empty margin opens
     up inside the border. On a phone the graph scales down to the column the way
     the demos do. */}
-<div class="pipeline mx-auto w-fit max-w-full min-w-0 border border-border-strong bg-background p-3 sm:p-5">
+<div class="pipeline mx-auto w-full min-w-0 max-w-[38rem] border border-border-strong bg-background p-3 sm:p-4">
   <svg
     viewBox="0 0 1440 856"
-    class="block h-auto w-full sm:w-[46rem] sm:max-w-none"
+    class="block h-auto w-full"
     role="img"
     aria-label="The appsec-agent pipeline: build, discover sources, scan, model approximations until the loop saturates, then triage findings into a vulnerabilities report"
     set:html={scene}

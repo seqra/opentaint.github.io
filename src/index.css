@@ -360,11 +360,21 @@
       display: none;
     }
 
-    /* The label leads every row, in both phases, and the answer follows. */
+    /* Source order puts the Learn cell before the label, so lay each row out as
+       a flex line and pull the label to the front — otherwise the label lands
+       after the answer in the Learn phase and the two run together. */
+    .economics tbody tr {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1.25rem;
+    }
+
     .economics tbody th[scope="row"] {
-      width: 8rem;
+      order: -1;
       padding-left: 0;
       text-align: left;
+      white-space: nowrap;
     }
 
     .economics tbody td[data-phase] {
@@ -372,21 +382,13 @@
       text-align: right;
     }
 
-    /* Pressed reads as selected, not merely hovered. */
-    .cadence-stage[aria-pressed="true"] .block {
+    /* Pressed reads as selected, on the stage label only. */
+    .cadence-stage[aria-pressed="true"] .cadence-label {
       color: hsl(var(--brand));
     }
 
     .cadence-stage[aria-pressed="false"] {
       opacity: 0.5;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .cadence-stage,
-    .economics tbody tr,
-    .economics [data-phase] {
-      transition: none;
     }
   }
 

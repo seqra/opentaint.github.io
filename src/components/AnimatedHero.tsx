@@ -36,12 +36,12 @@ export function AnimatedHero() {
   };
 
   return (
-    <div className="mx-auto max-w-5xl">
-      <h1 className="font-mono text-[24px] font-bold tracking-tight text-foreground sm:text-[27px] md:text-[30px] md:leading-[1.22] lg:text-[32px] lg:leading-[1.2]">
+    <div className="mx-auto max-w-6xl">
+      <h1 className="font-mono text-[28px] font-bold tracking-tight text-foreground sm:text-[32px] md:text-[36px] md:leading-[1.2] lg:text-[38px] lg:leading-[1.15]">
         The open source taint analysis engine for the AI era
       </h1>
 
-      <p className="subheadline max-w-[62ch]">
+      <p className="subheadline mt-6 max-w-[62ch] lg:mt-8">
         <span className="block text-foreground">Formal program analysis for security agents.</span>
         <span className="block">
           AI agents learn your application <span className="hero-mark">on demand</span>. OpenTaint scans it{" "}
@@ -68,7 +68,7 @@ export function AnimatedHero() {
         </a>
       </div>
 
-      <div className="mt-8 hidden text-left sm:block lg:mt-10">
+      <div className="mt-10 hidden text-left sm:block lg:mt-14">
         <div className="overflow-hidden rounded-xl border border-panel-border bg-panel">
           <div className="flex items-center gap-6 overflow-x-auto border-b border-panel-border px-4 py-3 scrollbar-thin lg:gap-8 lg:px-5 lg:py-4">
             {installMethods.map((method) => {

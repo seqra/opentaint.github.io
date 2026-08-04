@@ -242,15 +242,23 @@ const economics = {
         </div>
 
         <div class="mt-7 grid items-stretch gap-8 lg:grid-cols-[1.5fr_0.5fr] lg:gap-10">
-          <figure class="reveal flex min-w-0 flex-col">
-            <a href="/reports/conductor-cve-2026-58138.html" class="group relative block flex-1 overflow-hidden border border-border-strong bg-background transition-colors duration-300 hover:border-primary/60 focus-visible:border-primary motion-reduce:transition-none">
+          {/* Both panels are the same box: header strip, body, footer strip —
+              so their borders, tops, and bottoms line up whatever the content
+              inside them costs. */}
+          <figure class="reveal flex min-w-0 flex-col border border-border-strong">
+            <figcaption class="border-b border-border bg-code-header px-4 py-3 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">
+              Reported finding
+            </figcaption>
+
+            <a href="/reports/conductor-cve-2026-58138.html" class="group relative block flex-1 overflow-hidden bg-background">
               <span class="pointer-events-none absolute bottom-0 right-0 z-10 translate-y-full bg-primary px-3 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary-foreground transition-transform duration-300 ease-out group-hover:translate-y-0 group-focus-visible:translate-y-0 motion-reduce:transition-none">Open the report</span>
               <img src="/pictures/report/trace-light.webp" alt="OpenTaint report with the tainted script flow selected and its steps listed below the source" class="h-full w-full object-cover object-top transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.01] dark:hidden" loading="lazy" width="1600" height="1000" />
               <img src="/pictures/report/trace-dark.webp" alt="OpenTaint report with the tainted script flow selected and its steps listed below the source" class="hidden h-full w-full object-cover object-top transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.01] dark:block" loading="lazy" width="1600" height="1000" />
             </a>
-            <figcaption class="mt-3 font-mono text-[11px] leading-5 text-muted-foreground">
+
+            <p class="border-t border-border px-4 py-3 font-mono text-[11px] leading-5 text-muted-foreground">
               Every finding opens to the flow that produced it, step by step.
-            </figcaption>
+            </p>
           </figure>
 
           <div class="reveal flex min-w-0 flex-col border border-border-strong">

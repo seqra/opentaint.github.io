@@ -21,7 +21,7 @@ const pressures = [
   {
     title: "How much money will you waste on everything your security agent forgot it reviewed?",
     description:
-      "Your last review already paid to learn the trust boundaries, vulnerability patterns, and opaque library behavior. Every scan that starts from zero buys that context again. OpenTaint records it as taint rules and dependency models, then applies both on every change.",
+      "Your last review already paid to learn the trust boundaries, the vulnerability patterns, and the opaque library behavior. Every scan that starts from zero buys all of it again.",
     value: "Spend tokens only when new context must be learned.",
   },
 ];
@@ -29,33 +29,40 @@ const pressures = [
 
 <section class="band" aria-labelledby="security-debt-heading">
   <div class="mx-auto max-w-6xl">
-    {/* The argument sits on one column: heading, then the paragraph it opens,
-        at a measure short enough to read. The questions carry the width. */}
-    <div class="max-w-[62ch]">
-      <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Why now</p>
-      <h2 id="security-debt-heading" class="section-heading mt-5">Application security is the new tech debt</h2>
-      <p class="section-subtitle">
-        AI makes code cheaper to produce and harder to fully review, so security work piles up in review queues and remediation backlogs. On the other side, autonomous agents now hunt for vulnerabilities at machine speed and at no meaningful cost: what used to take a skilled researcher a week takes a fleet of agents an afternoon, on every repository at once.
-      </p>
-      <p class="mt-4 max-w-[58ch] font-mono text-[15px] font-medium leading-[185%] text-foreground lg:mt-5">
-        Both curves point the same way. Four questions follow, worth answering before someone else answers them for you.
-      </p>
+    {/* Heading left, the argument right — the same split the economics section
+        uses, so the two read as parts of one page. */}
+    <div class="grid gap-5 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+      <div>
+        <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Why now</p>
+        <h2 id="security-debt-heading" class="section-heading mt-5">Application security is the new tech debt</h2>
+      </div>
+
+      <div>
+        <p class="section-subtitle mt-0 max-w-[64ch]">
+          AI makes code cheaper to produce and harder to fully review, so security work piles up in review queues and remediation backlogs. On the other side, autonomous agents now hunt for vulnerabilities at machine speed and at no meaningful cost: what used to take a skilled researcher a week takes a fleet of agents an afternoon, on every repository at once.
+        </p>
+        <p class="mt-4 max-w-[60ch] font-mono text-[15px] font-medium leading-[185%] text-foreground lg:mt-5">
+          Both curves point the same way. Four questions follow, worth answering before someone else answers them for you.
+        </p>
+      </div>
     </div>
 
-    <ul class="mt-9 grid border-y border-border-strong md:grid-cols-2 lg:mt-12" aria-labelledby="security-debt-heading">
+    {/* One text edge per question: the number sits in a gutter, the body runs
+        in a single column, and only the conclusion breaks back out to the left. */}
+    <ul class="mt-10 grid border-y border-border-strong md:grid-cols-2 lg:mt-14" aria-labelledby="security-debt-heading">
       {pressures.map((pressure, index) => (
         <li class:list={[
-          "reveal flex flex-col py-6 md:py-8",
+          "reveal grid grid-cols-[2.25rem_1fr] gap-y-3 py-7 md:py-9",
           index !== pressures.length - 1 && "border-b border-border",
           index === 2 && "md:border-b-0",
           index % 2 === 0 ? "md:pr-10" : "md:border-l md:border-border md:pl-10",
         ]}>
-          <div class="flex items-baseline gap-4">
-            <span class="font-mono text-[11px] font-semibold tracking-[0.14em] text-primary">0{index + 1}</span>
-            <h3 class="max-w-[34ch] font-mono text-base font-semibold leading-7 text-foreground lg:text-[17px] lg:leading-[1.7]">{pressure.title}</h3>
-          </div>
-          <p class="ml-8 mt-3 max-w-[56ch] font-mono text-sm leading-7 text-muted-foreground">{pressure.description}</p>
-          <p class="ml-8 mt-5 border-l-2 border-primary pl-3 font-mono text-xs font-semibold leading-5 text-foreground md:mt-auto md:pt-5 lg:text-sm lg:leading-6">{pressure.value}</p>
+          <span class="pt-1 font-mono text-[11px] font-semibold tracking-[0.14em] text-primary">0{index + 1}</span>
+          <h3 class="font-mono text-base font-semibold leading-7 text-foreground lg:text-[17px] lg:leading-[1.65]">{pressure.title}</h3>
+
+          <p class="col-start-2 max-w-[54ch] font-mono text-sm leading-7 text-muted-foreground">{pressure.description}</p>
+
+          <p class="col-span-2 mt-2 self-end border-l-2 border-primary pl-3 font-mono text-xs font-semibold leading-5 text-foreground lg:text-sm lg:leading-6">{pressure.value}</p>
         </li>
       ))}
     </ul>

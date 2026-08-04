@@ -434,6 +434,26 @@
     background-color: hsl(var(--brand));
   }
 
+  /* Workflow diagram: the connectors between the three moves draw left to
+     right, and the loop back into a re-scan draws last. */
+  .js .flow.is-revealed .flow-link {
+    transform-origin: left center;
+    animation: cadence-line 0.45s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(var(--node-index) * 140ms + 200ms);
+  }
+
+  .js .flow.is-revealed .flow-loop {
+    transform-origin: left center;
+    animation: cadence-line 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.7s backwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .js .flow.is-revealed .flow-link,
+    .js .flow.is-revealed .flow-loop {
+      animation: none;
+    }
+  }
+
   /* Coverage matrix rows land one after another, top to bottom, so the eye
      reads the depth ladder in order rather than meeting all five at once. */
   .js .reveal .matrix-row {

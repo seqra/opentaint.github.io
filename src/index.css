@@ -242,49 +242,79 @@
   .page-section:not(:first-child),
   .footer-links {
     --rule-inset: 0px;
-    --hook: 24px;
+    --dot: 7px;
   }
 
   .band:not(:first-child) {
     --rule-inset: max(var(--page-pad), calc((100% - var(--content-max)) / 2));
   }
 
-  /* The rule itself, plus the right-hand hook curving down. The rule is painted
-     as a background so it can carry the red-to-hairline handoff; the hook is a
-     border, which inherits the hairline colour. */
+  /* The rule: a brand-red hairline across the section, terminated at both ends
+     by a filled dot — the mark reads as a measured span with endpoints rather
+     than a line that runs off the edge. The dots are drawn as background
+     circles on the same element, so they stay locked to the ends of the rule at
+     every width. */
   .band:not(:first-child)::before,
   .page-section:not(:first-child)::before,
   .footer-links::before {
     content: "";
     position: absolute;
     top: 0;
-    left: calc(var(--rule-inset) + var(--hook) - 1px);
+    left: var(--rule-inset);
     right: var(--rule-inset);
-    height: var(--hook);
-    border-top: 1px solid transparent;
-    border-right: 1px solid hsl(var(--border));
-    border-top-right-radius: var(--hook);
+    height: var(--dot);
+    transform: translateY(calc(var(--dot) / -2));
     background:
-      linear-gradient(to right, hsl(var(--brand)) 0 8rem, hsl(var(--border)) 8rem)
-      border-box 0 0 / 100% 1px no-repeat;
+      /* the rule */
+      linear-gradient(hsl(var(--brand)) 0 0) center / 100% 1px no-repeat,
+      /* left terminal */
+      radial-gradient(circle at center, hsl(var(--brand)) 0 calc(var(--dot) / 2), transparent calc(var(--dot) / 2))
+        left center / var(--dot) var(--dot) no-repeat,
+      /* right terminal */
+      radial-gradient(circle at center, hsl(var(--brand)) 0 calc(var(--dot) / 2), transparent calc(var(--dot) / 2))
+        right center / var(--dot) var(--dot) no-repeat;
     pointer-events: none;
   }
 
-  /* The left-hand hook, curving up to meet the rule — drawn in brand red so the
-     corner reads as the start of the bracket. */
-  .band:not(:first-child)::after,
-  .page-section:not(:first-child)::after,
-  .footer-links::after {
+  /* A second, hollow ring sits on the left terminal and breathes once the
+     section scrolls in — the only motion in the chrome, so it reads as a mark
+     being set rather than decoration. */
+  .js .band:not(:first-child)::after,
+  .js .page-section:not(:first-child)::after {
     content: "";
     position: absolute;
-    top: calc(var(--hook) * -1 + 1px);
+    top: 0;
     left: var(--rule-inset);
-    width: var(--hook);
-    height: var(--hook);
-    border-left: 1px solid hsl(var(--brand));
-    border-bottom: 1px solid hsl(var(--brand));
-    border-bottom-left-radius: var(--hook);
+    width: var(--dot);
+    height: var(--dot);
+    transform: translateY(calc(var(--dot) / -2));
+    border: 1px solid hsl(var(--brand));
+    border-radius: 50%;
+    opacity: 0;
     pointer-events: none;
+  }
+
+  .js .band.is-marked:not(:first-child)::after,
+  .js .page-section.is-marked:not(:first-child)::after {
+    animation: rule-mark 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.1s;
+  }
+
+  @keyframes rule-mark {
+    0% {
+      opacity: 0.9;
+      transform: translateY(calc(var(--dot) / -2)) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(calc(var(--dot) / -2)) scale(3.4);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .js .band.is-marked:not(:first-child)::after,
+    .js .page-section.is-marked:not(:first-child)::after {
+      animation: none;
+    }
   }
 
   /* Scroll reveal. Elements marked `.reveal` start slightly lowered and

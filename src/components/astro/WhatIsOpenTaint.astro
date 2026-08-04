@@ -55,6 +55,32 @@ const proof = {
     "See Semgrep, CodeQL, and OpenTaint run against five progressively harder Java XSS cases, from direct returns to builders with virtual dispatch.",
 };
 
+/* The three moves the appsec-agent skill makes, named by the skills that do
+   them. Titles and skill names track the engine README. */
+const skills = {
+  href: "/blog/appsec-agent",
+  title: "The agent that writes the rules",
+  description:
+    "Skills that pair an LLM agent with the engine. It maps your attack surface, models the library methods the engine cannot see, writes rules specific to your code, and confirms a finding by exploiting it. The engine takes it from there.",
+  steps: [
+    {
+      title: "Map the attack surface",
+      detail: "Find the entry points and trust boundaries this application actually has.",
+      skill: "discover-attack-surface",
+    },
+    {
+      title: "Write and test the rule",
+      detail: "Turn the pattern into a taint rule with positive and negative samples that prove it.",
+      skill: "create-rule",
+    },
+    {
+      title: "Confirm by exploiting",
+      detail: "Build a proof-of-concept against the running app before anyone is asked to fix it.",
+      skill: "generate-poc",
+    },
+  ],
+};
+
 /* Coverage matrix. Columns pair each tool with the analysis mode it was run in,
    so a miss is attributed to a mode rather than hidden behind a slashed pair.
    State is encoded by fill (solid / half / empty), never by color alone. */
@@ -90,26 +116,22 @@ const artifacts = [
     code: `id: graalvm-polyglot-eval
 languages: [java]
 mode: taint
-
-# A Source built from untrusted text stays untrusted.
-pattern-propagators:
-  - pattern: $S = Source.create($L, $SRC)
-    from: $SRC
-    to: $S
-  - pattern: $S = (Source.Builder $B).build()
-    from: $B
-    to: $S
-
-# Evaluating it is only RCE when the context has host access.
 pattern-sinks:
   - patterns:
       - pattern-either:
           - pattern: (Context $CTX).eval($SOURCE)
           - pattern: (Context $CTX).eval($LANG, $SOURCE)
       - focus-metavariable: $SOURCE
-      - pattern-inside: |
-          Context $CTX = $B.allowAllAccess(true).build();
-          ...`,
+      # Only a context with full host access is RCE.
+      - pattern-either:
+          - pattern-inside: |
+              Context $CTX = $B
+                .allowAllAccess(true).build();
+              ...
+          - pattern-inside: |
+              Context $CTX = $B
+                .allowHostAccess(HostAccess.ALL).build();
+              ...`,
   },
   {
     label: "Dependency model",
@@ -129,12 +151,13 @@ passThrough:
   },
 ];
 
-/* The reported flow, source first. `where` names the code the step lands in. */
+/* The reported flow, source first. `where` says what the value crosses, not
+   where it lives — file and line belong in the report, not on a landing page. */
 const traceSteps = [
   { role: "Source", label: "HTTP request", where: "Unauthenticated workflow input" },
-  { role: "Step", label: "Task scheduling", where: "WorkflowExecutor" },
-  { role: "Step", label: "Executor lambda", where: "ScriptEvaluator:202" },
-  { role: "Sink", label: "Context.eval", where: "ScriptEvaluator:203" },
+  { role: "Step", label: "Task scheduling", where: "Across the workflow executor" },
+  { role: "Step", label: "Executor lambda", where: "Captured, then run on another thread" },
+  { role: "Sink", label: "Context.eval", where: "Evaluated with full host access" },
 ];
 
 /* Cadence rail: which step runs the model and which steps run on CPU. The
@@ -241,18 +264,13 @@ const economics = [
 
         <div class="mt-7 grid gap-8 lg:grid-cols-[1.5fr_0.5fr] lg:gap-10">
           <figure class="reveal min-w-0">
-            <div class="overflow-hidden border border-border-strong bg-background">
-              <VideoDemo
-                client:visible
-                sources={{ light: "/video/viewer-light.mp4", dark: "/video/viewer-dark.mp4" }}
-                poster={{ light: "/video/viewer-poster-light.webp", dark: "/video/viewer-poster-dark.webp" }}
-                alt="The OpenTaint viewer: selecting a finding, stepping through its taint trace, and moving between flows"
-                testId="viewer-demo"
-              />
-            </div>
-            <figcaption class="mt-3 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 font-mono text-[11px] leading-5 text-muted-foreground">
-              <span>Every finding opens to the flow that produced it.</span>
-              <a href="https://viewer.opentaint.org/" target="_blank" rel="noopener noreferrer" class="font-semibold text-foreground underline decoration-primary/30 underline-offset-4 transition-colors hover:text-primary">Open the live viewer</a>
+            <a href="/reports/conductor-cve-2026-58138.html" class="group relative block overflow-hidden border border-border-strong bg-background transition-colors duration-300 hover:border-primary/60 focus-visible:border-primary motion-reduce:transition-none">
+              <span class="pointer-events-none absolute bottom-0 right-0 z-10 translate-y-full bg-primary px-3 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary-foreground transition-transform duration-300 ease-out group-hover:translate-y-0 group-focus-visible:translate-y-0 motion-reduce:transition-none">Open the report</span>
+              <img src="/pictures/report/trace-light.webp" alt="OpenTaint report with the tainted script flow selected and its steps listed below the source" class="w-full transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.01] dark:hidden" loading="lazy" width="1600" height="1000" />
+              <img src="/pictures/report/trace-dark.webp" alt="OpenTaint report with the tainted script flow selected and its steps listed below the source" class="hidden w-full transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.01] dark:block" loading="lazy" width="1600" height="1000" />
+            </a>
+            <figcaption class="mt-3 font-mono text-[11px] leading-5 text-muted-foreground">
+              Every finding opens to the flow that produced it, step by step.
             </figcaption>
           </figure>
 
@@ -458,21 +476,25 @@ const economics = [
         </div>
       </div>
 
-      <figure class="reveal mt-14 grid gap-8 border-t border-border pt-14 lg:mt-20 lg:grid-cols-[1.3fr_0.7fr] lg:items-center lg:gap-16 lg:pt-20">
-        <a href="/reports/conductor-cve-2026-58138.html" class="group relative block overflow-hidden border border-border-strong bg-background transition-colors duration-300 hover:border-primary/60 focus-visible:border-primary motion-reduce:transition-none">
-          <span class="pointer-events-none absolute bottom-0 right-0 z-10 translate-y-full bg-primary px-3 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary-foreground transition-transform duration-300 ease-out group-hover:translate-y-0 group-focus-visible:translate-y-0 motion-reduce:transition-none">Open the report</span>
-          <img src="/pictures/report/finding-light.webp" alt="OpenTaint report with the Conductor findings tree, the vulnerable Context.eval call highlighted in source, and the rule message below it" class="aspect-[8/5] w-full object-cover object-top transition-transform duration-500 motion-reduce:transition-none group-hover:scale-[1.01] dark:hidden" loading="lazy" width="1600" height="1000" />
-          <img src="/pictures/report/finding-dark.webp" alt="OpenTaint report with the Conductor findings tree, the vulnerable Context.eval call highlighted in source, and the rule message below it" class="hidden aspect-[8/5] w-full object-cover object-top transition-transform duration-500 motion-reduce:transition-none group-hover:scale-[1.01] dark:block" loading="lazy" width="1600" height="1000" />
-        </a>
-        <figcaption>
-          <p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">Interactive report</p>
-          <h3 class="mt-4 font-mono text-xl font-semibold leading-8 text-foreground">Every finding opens to its source</h3>
-          <p class="mt-4 max-w-[52ch] font-mono text-sm leading-7 text-muted-foreground lg:text-[15px]">
-            The two Conductor findings, the exact call that ends each flow, and the rule that reported it. Open the report and walk all 182 steps of the trace yourself.
-          </p>
-          <a href="/reports/conductor-cve-2026-58138.html" class="mt-6 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Open the Conductor report</a>
-        </figcaption>
-      </figure>
+      <div class="reveal mt-14 grid gap-8 border-t border-border pt-14 lg:mt-20 lg:grid-cols-[0.72fr_1.28fr] lg:gap-16 lg:pt-20">
+        <div>
+          <p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">The agent skills</p>
+          <h3 class="mt-4 font-mono text-xl font-semibold leading-8 text-foreground">{skills.title}</h3>
+          <p class="mt-4 max-w-[52ch] font-mono text-sm leading-7 text-muted-foreground lg:text-[15px]">{skills.description}</p>
+          <a href={skills.href} class="mt-6 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Read the release post</a>
+        </div>
+
+        <ol class="grid gap-px border border-border-strong bg-border sm:grid-cols-3">
+          {skills.steps.map((step, index) => (
+            <li class="reveal flex flex-col bg-background p-5 lg:p-6">
+              <span class="font-mono text-[11px] font-semibold tracking-[0.14em] text-primary">0{index + 1}</span>
+              <span class="mt-4 font-mono text-[13px] font-semibold leading-5 text-foreground">{step.title}</span>
+              <span class="mt-2 font-mono text-[11px] leading-5 text-muted-foreground">{step.detail}</span>
+              <code class="mt-4 font-mono text-[11px] text-muted-foreground">{step.skill}</code>
+            </li>
+          ))}
+        </ol>
+      </div>
 
     </div>
   </div>

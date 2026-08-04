@@ -9,9 +9,13 @@ type VideoDemoProps = {
   poster: MediaSources;
   alt: string;
   testId: string;
+  /* Optional destination for the footage itself. The play control stays a
+     sibling of the link rather than a child of it: a button nested inside an
+     anchor is invalid, and every click on it would also navigate. */
+  href?: string;
 };
 
-export function VideoDemo({ sources, poster, alt, testId }: VideoDemoProps) {
+export function VideoDemo({ sources, poster, alt, testId, href }: VideoDemoProps) {
   const { theme, reducedMotion } = useThemeSync();
   const lightRef = useRef<HTMLVideoElement | null>(null);
   const darkRef = useRef<HTMLVideoElement | null>(null);
@@ -38,11 +42,18 @@ export function VideoDemo({ sources, poster, alt, testId }: VideoDemoProps) {
   // Honour the user's motion preference: show the static poster, no autoplay,
   // no control. Mirrors MediaDemo's reduced-motion fallback.
   if (reducedMotion) {
-    return <ThemedImage sources={poster} alt={alt} testId={testId} />;
+    const still = <ThemedImage sources={poster} alt={alt} testId={testId} />;
+    return href ? (
+      <a href={href} target="_blank" rel="noopener noreferrer" aria-label={alt} className="block w-full">
+        {still}
+      </a>
+    ) : (
+      still
+    );
   }
 
-  return (
-    <div className="group relative w-full">
+  const frames = (
+    <>
       <video
         ref={lightRef}
         data-testid={testId}
@@ -67,6 +78,18 @@ export function VideoDemo({ sources, poster, alt, testId }: VideoDemoProps) {
         preload="none"
         className="hidden h-auto w-full dark:block"
       />
+    </>
+  );
+
+  return (
+    <div className="group relative w-full">
+      {href ? (
+        <a href={href} target="_blank" rel="noopener noreferrer" aria-label={alt} className="block w-full">
+          {frames}
+        </a>
+      ) : (
+        frames
+      )}
       <button
         type="button"
         onClick={() => setPlaying((p) => !p)}

@@ -115,6 +115,7 @@ export function DemoSection() {
                       poster={slide.fallback!}
                       alt={slide.alt!}
                       testId={slide.testId!}
+                      href={slide.href}
                     />
                   ) : (
                     <MediaDemo

@@ -131,16 +131,6 @@ const EDGES = [
 
 const NOTES = [{ text: "while len(dropped - skipped) > 0" }];
 
-const LEGEND = [
-  { cls: "ln arr", label: "main flow" },
-  { cls: "ln red arr", label: "taint re-scan loop" },
-  { cls: "ln mut arr", label: "agent skills" },
-  { cls: "ln det", label: "expands a stage" },
-  { cls: "ln dbg arr", label: "debug, on failure" },
-  { cls: "sw taint", label: "sources / sinks" },
-  { cls: "sw agent", label: "agent-run stage" },
-];
-
 /* ── ENGINE ─────────────────────────────────────────────────────────────── */
 
 const STUB = 24, RADIUS = 12;
@@ -319,23 +309,12 @@ function render() {
 const scene = render();
 ---
 
-<figure class="pipeline min-w-0">
-  <div class="overflow-x-auto border border-border-strong bg-background p-4 scrollbar-thin sm:p-6">
-    <svg
-      viewBox="0 0 1440 856"
-      class="block h-auto w-full min-w-[720px]"
-      role="img"
-      aria-label="The appsec-agent pipeline: build, discover sources, scan, model approximations until the loop saturates, then triage findings into a vulnerabilities report"
-      set:html={scene}
-    />
-  </div>
-
-  <figcaption class="mt-4 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[11px] leading-5 text-muted-foreground">
-    {LEGEND.map((item) => (
-      <span class="flex items-center gap-2">
-        <i class:list={["pipeline-key", item.cls]} aria-hidden="true"></i>
-        {item.label}
-      </span>
-    ))}
-  </figcaption>
-</figure>
+<div class="pipeline min-w-0 overflow-x-auto border border-border-strong bg-background p-4 scrollbar-thin sm:p-5">
+  <svg
+    viewBox="0 0 1440 856"
+    class="mx-auto block h-auto w-full min-w-[640px] max-w-[52rem]"
+    role="img"
+    aria-label="The appsec-agent pipeline: build, discover sources, scan, model approximations until the loop saturates, then triage findings into a vulnerabilities report"
+    set:html={scene}
+  />
+</div>

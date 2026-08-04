@@ -306,30 +306,16 @@
     margin-bottom: 0;
   }
 
-  /* Cadence rail: stages draw left to right, then dim to spotlight the phase
-     the pointer (or keyboard focus) is on. The linked panel lights with them. */
-  .js .cadence.is-revealed .cadence-node {
-    animation: cadence-node 0.45s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-    animation-delay: calc(var(--stage-index) * 130ms + 150ms);
-  }
-
-  .js .cadence.is-revealed .cadence-line {
-    transform-origin: left center;
-    animation: cadence-line 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-    animation-delay: calc(var(--stage-index) * 130ms + 260ms);
-  }
-
-  @keyframes cadence-node {
-    from {
-      transform: scale(0.2);
-      opacity: 0;
-    }
-  }
-
-  @keyframes cadence-line {
-    from {
-      transform: scaleX(0);
-    }
+  /* Cadence rail: a single measured span — a red terminal at each end of one
+     line, matching the section rules — with the two stages labelled beneath it. */
+  .cadence-rail {
+    height: 7px;
+    background:
+      linear-gradient(hsl(var(--brand)) 0 0) center / 100% 1px no-repeat,
+      radial-gradient(circle at center, hsl(var(--brand)) 0 3.5px, transparent 3.5px)
+        left center / 7px 7px no-repeat,
+      radial-gradient(circle at center, hsl(var(--brand)) 0 3.5px, transparent 3.5px)
+        right center / 7px 7px no-repeat;
   }
 
   .cadence-stage {
@@ -341,10 +327,38 @@
     opacity: 0.35;
   }
 
-  .cadence-stage:hover .cadence-node,
-  .cadence-stage:focus-visible .cadence-node {
-    border-color: hsl(var(--brand));
-    background-color: hsl(var(--brand));
+  /* Economics table: shared row labels, one column per phase, and a row-wide
+     hover so a single question can be read across both answers. */
+  .economics tbody tr {
+    transition: background-color 0.2s ease-out;
+  }
+
+  .economics tbody tr:hover {
+    background-color: hsl(var(--brand) / 0.04);
+  }
+
+  .economics [data-phase] {
+    transition:
+      background-color 0.3s ease-out,
+      color 0.3s ease-out;
+  }
+
+  .economics[data-active="learn"] [data-phase="learn"],
+  .economics[data-active="search"] [data-phase="search"] {
+    background-color: hsl(var(--brand) / 0.05);
+  }
+
+  .economics[data-active="learn"] th[data-phase="learn"],
+  .economics[data-active="search"] th[data-phase="search"] {
+    color: hsl(var(--brand));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cadence-stage,
+    .economics tbody tr,
+    .economics [data-phase] {
+      transition: none;
+    }
   }
 
   /* Pipeline graph. Every mark reads a token, so one SVG serves both themes:
@@ -397,65 +411,6 @@
   .pipeline .m-red { fill: hsl(var(--brand)); }
   .pipeline .m-blu { fill: hsl(var(--agent)); }
 
-  /* Legend keys mirror the stroke vocabulary above. */
-  .pipeline-key {
-    position: relative;
-    display: inline-block;
-    flex: none;
-  }
-
-  .pipeline-key.ln {
-    width: 22px;
-    border-top: 2px solid currentColor;
-    color: hsl(var(--foreground));
-  }
-
-  .pipeline-key.red { color: hsl(var(--brand)); }
-  .pipeline-key.mut,
-  .pipeline-key.det,
-  .pipeline-key.dbg { color: hsl(var(--agent)); }
-  .pipeline-key.dbg { border-top-style: dashed; }
-
-  .pipeline-key.arr::after {
-    content: "";
-    position: absolute;
-    right: -2px;
-    top: -5px;
-    border-left: 6px solid currentColor;
-    border-top: 3.5px solid transparent;
-    border-bottom: 3.5px solid transparent;
-  }
-
-  .pipeline-key.sw {
-    width: 12px;
-    height: 12px;
-    border: 1.5px solid;
-    border-radius: 3px;
-  }
-
-  .pipeline-key.sw.taint { border-color: hsl(var(--brand)); background: hsl(var(--brand) / 0.08); }
-  .pipeline-key.sw.agent { border-color: hsl(var(--agent)); background: hsl(var(--card)); }
-
-  /* Workflow diagram: the connectors between the three moves draw left to
-     right, and the loop back into a re-scan draws last. */
-  .js .flow.is-revealed .flow-link {
-    transform-origin: left center;
-    animation: cadence-line 0.45s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-    animation-delay: calc(var(--node-index) * 140ms + 200ms);
-  }
-
-  .js .flow.is-revealed .flow-loop {
-    transform-origin: left center;
-    animation: cadence-line 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.7s backwards;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .js .flow.is-revealed .flow-link,
-    .js .flow.is-revealed .flow-loop {
-      animation: none;
-    }
-  }
-
   /* Coverage matrix rows land one after another, top to bottom, so the eye
      reads the depth ladder in order rather than meeting all five at once. */
   .js .reveal .matrix-row {
@@ -473,25 +428,6 @@
     transform: none;
   }
 
-  .economics-panel {
-    transition:
-      background-color 0.3s ease-out,
-      box-shadow 0.3s ease-out;
-  }
-
-  .economics-panel[data-active="true"] {
-    background-color: hsl(var(--brand) / 0.05);
-    box-shadow: inset 0 2px 0 hsl(var(--brand));
-  }
-
-  .economics-panel h3 {
-    transition: color 0.3s ease-out;
-  }
-
-  .economics-panel[data-active="true"] h3 {
-    color: hsl(var(--brand));
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .reveal,
     .cadence-stage,
@@ -501,10 +437,6 @@
       transition: none;
     }
 
-    .js .cadence.is-revealed .cadence-node,
-    .js .cadence.is-revealed .cadence-line {
-      animation: none;
-    }
   }
 
   /* Expressive Code inside a hand-built card: drop the block's own frame so the

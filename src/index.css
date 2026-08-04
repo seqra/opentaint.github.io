@@ -229,36 +229,61 @@
     background-color: hsl(var(--band));
   }
 
-  /* Section separator: a hairline across the top of the section, opening with
-     a short brand-red segment so the accent reads as a mark rather than a
-     full-width red stroke. Shared by the landing bands and the blog/404
-     page-sections. `--rule-inset` pushes the rule in from the section edges:
-     full-bleed bands inset it to the content column; page-sections sit flush.
-     Only the hero band (first child) stays un-separated. */
+  /* Section separator (the site's signature mark): a rule across the top of the
+     section that turns a rounded corner up on the left and down on the right,
+     bracketing the section between the one before it. The bracket — the hooks
+     and the leading run of the rule — is brand red; the rest of the span is a
+     hairline, so the mark stays a mark instead of a full-width red stroke.
+     Shared by the landing bands and the blog/404 page-sections. `--rule-inset`
+     pushes it in from the section edges: full-bleed bands inset it to the
+     content column; page-sections sit flush. Only the hero band (first child)
+     stays un-separated. */
   .band:not(:first-child),
   .page-section:not(:first-child),
   .footer-links {
     --rule-inset: 0px;
+    --hook: 24px;
   }
 
   .band:not(:first-child) {
     --rule-inset: max(var(--page-pad), calc((100% - var(--content-max)) / 2));
   }
 
+  /* The rule itself, plus the right-hand hook curving down. The rule is painted
+     as a background so it can carry the red-to-hairline handoff; the hook is a
+     border, which inherits the hairline colour. */
   .band:not(:first-child)::before,
   .page-section:not(:first-child)::before,
   .footer-links::before {
     content: "";
     position: absolute;
     top: 0;
-    left: var(--rule-inset);
+    left: calc(var(--rule-inset) + var(--hook) - 1px);
     right: var(--rule-inset);
-    height: 1px;
-    background: linear-gradient(
-      to right,
-      hsl(var(--brand)) 0 4.5rem,
-      hsl(var(--border)) 4.5rem
-    );
+    height: var(--hook);
+    border-top: 1px solid transparent;
+    border-right: 1px solid hsl(var(--border));
+    border-top-right-radius: var(--hook);
+    background:
+      linear-gradient(to right, hsl(var(--brand)) 0 8rem, hsl(var(--border)) 8rem)
+      border-box 0 0 / 100% 1px no-repeat;
+    pointer-events: none;
+  }
+
+  /* The left-hand hook, curving up to meet the rule — drawn in brand red so the
+     corner reads as the start of the bracket. */
+  .band:not(:first-child)::after,
+  .page-section:not(:first-child)::after,
+  .footer-links::after {
+    content: "";
+    position: absolute;
+    top: calc(var(--hook) * -1 + 1px);
+    left: var(--rule-inset);
+    width: var(--hook);
+    height: var(--hook);
+    border-left: 1px solid hsl(var(--brand));
+    border-bottom: 1px solid hsl(var(--brand));
+    border-bottom-left-radius: var(--hook);
     pointer-events: none;
   }
 
@@ -282,41 +307,158 @@
     transform: none;
   }
 
-  /* The taint trace draws itself in step order once the rail is on screen. */
+  /* The taint trace draws itself in step order once the rail is on screen: each
+     step fades up, then the rail segment below it grows down to the next. */
   .js .trace-step {
     opacity: 0;
     transform: translate3d(-6px, 0, 0);
     transition:
       opacity 0.45s ease-out,
       transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-    transition-delay: calc(var(--step-index) * 110ms + 120ms);
+    transition-delay: calc(var(--step-index) * 150ms + 120ms);
   }
 
-  .js .trace-tick {
-    transform: scaleX(0.2);
-    transform-origin: left center;
-    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-    transition-delay: calc(var(--step-index) * 110ms + 200ms);
+  .js .trace-rail {
+    transform: scaleY(0);
+    transform-origin: top center;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--step-index) * 150ms + 260ms);
   }
 
   .is-revealed .trace-step,
-  .trace.is-revealed .trace-step {
+  .is-revealed .trace-rail {
     opacity: 1;
     transform: none;
   }
 
-  .is-revealed .trace-tick,
-  .trace.is-revealed .trace-tick {
+  /* Once drawn, a slow pulse runs source-to-sink down the finished rail — the
+     flow the trace describes, at a rate that stays background texture. */
+  .is-revealed .trace-rail::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 40%;
+    background: hsl(var(--brand));
+    animation: trace-flow 3.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    animation-delay: calc(var(--step-index) * 220ms + 1s);
+  }
+
+  @keyframes trace-flow {
+    0%,
+    12% {
+      transform: translateY(-120%);
+      opacity: 0;
+    }
+    30% {
+      opacity: 1;
+    }
+    70% {
+      transform: translateY(320%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(320%);
+      opacity: 0;
+    }
+  }
+
+  /* Cadence rail: stages draw left to right, then dim to spotlight the phase
+     the pointer (or keyboard focus) is on. The linked panel lights with them. */
+  .js .cadence.is-revealed .cadence-node {
+    animation: cadence-node 0.45s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(var(--stage-index) * 130ms + 150ms);
+  }
+
+  .js .cadence.is-revealed .cadence-line {
+    transform-origin: left center;
+    animation: cadence-line 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: calc(var(--stage-index) * 130ms + 260ms);
+  }
+
+  @keyframes cadence-node {
+    from {
+      transform: scale(0.2);
+      opacity: 0;
+    }
+  }
+
+  @keyframes cadence-line {
+    from {
+      transform: scaleX(0);
+    }
+  }
+
+  .cadence-stage {
+    outline-offset: 4px;
+    transition: opacity 0.3s ease-out;
+  }
+
+  .cadence-stage[data-dimmed="true"] {
+    opacity: 0.35;
+  }
+
+  .cadence-stage:hover .cadence-node,
+  .cadence-stage:focus-visible .cadence-node {
+    border-color: hsl(var(--brand));
+    background-color: hsl(var(--brand));
+  }
+
+  /* Coverage matrix rows land one after another, top to bottom, so the eye
+     reads the depth ladder in order rather than meeting all five at once. */
+  .js .reveal .matrix-row {
+    opacity: 0;
+    transform: translate3d(0, 6px, 0);
+    transition:
+      opacity 0.4s ease-out,
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.2s ease-out;
+    transition-delay: calc(var(--row-index) * 90ms + 150ms);
+  }
+
+  .js .reveal.is-revealed .matrix-row {
+    opacity: 1;
     transform: none;
+  }
+
+  .economics-panel {
+    transition:
+      background-color 0.3s ease-out,
+      box-shadow 0.3s ease-out;
+  }
+
+  .economics-panel[data-active="true"] {
+    background-color: hsl(var(--brand) / 0.05);
+    box-shadow: inset 0 2px 0 hsl(var(--brand));
+  }
+
+  .economics-panel h3 {
+    transition: color 0.3s ease-out;
+  }
+
+  .economics-panel[data-active="true"] h3 {
+    color: hsl(var(--brand));
   }
 
   @media (prefers-reduced-motion: reduce) {
     .reveal,
     .trace-step,
-    .trace-tick {
+    .trace-rail,
+    .cadence-stage,
+    .matrix-row {
       opacity: 1;
       transform: none;
       transition: none;
+    }
+
+    .is-revealed .trace-rail::after,
+    .js .cadence.is-revealed .cadence-node,
+    .js .cadence.is-revealed .cadence-line {
+      animation: none;
+    }
+
+    .is-revealed .trace-rail::after {
+      display: none;
     }
   }
 
@@ -337,6 +479,14 @@
 
   .expressive-code.artifact-code .frame pre {
     height: 100%;
+  }
+
+  /* Small screens: step the code down so a rule line fits the card before the
+     block has to scroll sideways. */
+  @media (max-width: 480px) {
+    .expressive-code.artifact-code .frame pre code {
+      font-size: 11.5px;
+    }
   }
 
   .section-title {

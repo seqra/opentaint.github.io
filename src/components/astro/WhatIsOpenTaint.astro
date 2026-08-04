@@ -1,5 +1,6 @@
 ---
 import { Code } from "astro-expressive-code/components";
+import { VideoDemo } from "@/components/VideoDemo";
 
 const discoveries = [
   { label: "Trust boundary", text: "Unauthenticated workflow input reaches the script evaluators" },
@@ -11,7 +12,7 @@ const features = [
   {
     title: "Fast scans, fewer false alarms, fewer missed findings",
     description:
-      "The engine runs formal inter-procedural dataflow analysis, applying taint rules and consulting dataflow summaries as it tracks tainted values across procedures, fields, aliases, async code, and persistence layers at scale.",
+      "Formal inter-procedural dataflow analysis tracks tainted values across procedures, fields, aliases, async code, and persistence layers at scale.",
   },
   {
     title: "Open source, customizable, and self-hosted",
@@ -24,25 +25,25 @@ const pressures = [
   {
     title: "Did the agent write a vulnerability into code you never reviewed?",
     description:
-      "The output can look finished and pass its tests while an untrusted value crosses helpers, fields, or libraries you never read before reaching a dangerous operation. OpenTaint reports the complete source-to-sink taint trace before the change becomes invisible security debt.",
+      "It can look finished and pass its tests while an untrusted value crosses helpers, fields, and libraries nobody read. OpenTaint reports the whole source-to-sink trace before that becomes invisible security debt.",
     value: "Generate fast. Verify before merge.",
   },
   {
     title: "Is the feature done if a vulnerability ships with it?",
     description:
-      "A feature that passes its tests can still carry security debt into production, where the fix competes with roadmap work and incident response. OpenTaint finds forbidden source-to-sink flows in the pull request and reports the taint trace before that debt becomes an emergency.",
+      "A feature that passes its tests can still carry security debt into production, where the fix competes with roadmap work. OpenTaint catches forbidden flows in the pull request, not in the incident.",
     value: "Make secure part of done.",
   },
   {
     title: "Will your security agent find tomorrow what it found today?",
     description:
-      "An agent can discover a vulnerability pattern once, then miss it on the next nondeterministic review. OpenTaint records that pattern as a versioned AST-pattern taint rule that the engine applies on every scan.",
+      "An agent can find a pattern once, then miss it on the next nondeterministic review. OpenTaint records it as a versioned taint rule the engine applies on every scan.",
     value: "Turn every discovery into deterministic coverage.",
   },
   {
     title: "How many times will you pay an agent to review the same risk?",
     description:
-      "Your last security review already paid to understand the application’s trust boundaries, vulnerability patterns, and opaque code behavior. Every scan that starts from zero spends tokens rebuilding security context you already owned. OpenTaint records that context as taint rules and dataflow summaries, then applies the rules and consults the summaries on every change.",
+      "Your last review already paid to learn the trust boundaries, vulnerability patterns, and opaque library behavior. Every scan that starts from zero buys that context again. OpenTaint records it as taint rules and dependency models, then applies both on every change.",
     value: "Spend tokens only when new context must be learned. Keep every scan fast enough to enforce.",
   },
 ];
@@ -89,18 +90,29 @@ const artifacts = [
     code: `id: graalvm-polyglot-eval
 languages: [java]
 mode: taint
+
+# A Source built from untrusted text stays untrusted.
+pattern-propagators:
+  - pattern: $S = Source.create($L, $SRC)
+    from: $SRC
+    to: $S
+  - pattern: $S = (Source.Builder $B).build()
+    from: $B
+    to: $S
+
+# Evaluating it is only RCE when the context has host access.
 pattern-sinks:
   - patterns:
-      - pattern: $CTX.eval($LANG, $SOURCE)
+      - pattern-either:
+          - pattern: (Context $CTX).eval($SOURCE)
+          - pattern: (Context $CTX).eval($LANG, $SOURCE)
       - focus-metavariable: $SOURCE
       - pattern-inside: |
-          Context $CTX = $B
-            .allowAllAccess(true)
-            .build();
+          Context $CTX = $B.allowAllAccess(true).build();
           ...`,
   },
   {
-    label: "Dataflow summary",
+    label: "Dependency model",
     file: ".opentaint/config/org.graalvm.polyglot.yaml",
     caption: "The library behavior the engine cannot see: a fluent builder that mutates and returns the same instance, so taint survives the chain.",
     code: `language: java
@@ -117,15 +129,22 @@ passThrough:
   },
 ];
 
-const traceSteps = ["HTTP request", "task scheduling", "executor lambda", "Context.eval"];
+/* The reported flow, source first. `where` names the code the step lands in. */
+const traceSteps = [
+  { role: "Source", label: "HTTP request", where: "Unauthenticated workflow input" },
+  { role: "Step", label: "Task scheduling", where: "WorkflowExecutor" },
+  { role: "Step", label: "Executor lambda", where: "ScriptEvaluator:202" },
+  { role: "Sink", label: "Context.eval", where: "ScriptEvaluator:203" },
+];
 
 /* Cadence rail: which step runs the model and which steps run on CPU. The
-   markers encode kind, not cost — nothing here is a magnitude. */
+   markers encode kind, not cost — nothing here is a magnitude. `phase` links a
+   stage to the panel below it, which lights up together on hover or focus. */
 const cadence = [
-  { label: "Security review", detail: "The agent learns the application and commits taint rules and dataflow summaries." },
-  { label: "Next commit", detail: "Engine scan, no model." },
-  { label: "Commit after that", detail: "Engine scan, no model." },
-  { label: "Every commit after", detail: "Engine scan, no model." },
+  { phase: "learn", label: "Security review", detail: "The agent learns the application, then commits taint rules and dependency models." },
+  { phase: "search", label: "Next commit", detail: "Engine scan, no model." },
+  { phase: "search", label: "Commit after that", detail: "Engine scan, no model." },
+  { phase: "search", label: "Every commit after", detail: "Engine scan, no model." },
 ];
 
 const economics = [
@@ -134,7 +153,7 @@ const economics = [
     owner: "Security agent",
     cadence: "When new context appears",
     compute: "Model reasoning",
-    output: "Taint rules and dataflow summaries",
+    output: "Taint rules and dependency models",
   },
   {
     phase: "Search",
@@ -152,7 +171,7 @@ const economics = [
       <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">What OpenTaint does</p>
       <h2 id="what-heading" class="section-heading mt-5">Taint analysis that turns agent discoveries into deterministic coverage</h2>
       <p class="section-subtitle max-w-[68ch]">
-        The open source taint analysis engine for the AI era. Agents capture new vulnerability patterns as AST-pattern taint rules and opaque code behavior as dataflow summaries. Formal inter-procedural dataflow analysis applies that knowledge on every scan without burning model tokens again.
+        Agents capture new vulnerability patterns as AST-pattern taint rules, and opaque library behavior as dependency models. The engine applies both on every scan, without burning model tokens again.
       </p>
       <p class="mt-5 max-w-[68ch] font-mono text-sm font-medium leading-7 text-foreground lg:text-[15px]">
         An AI-ready open source alternative to Semgrep Pro and CodeQL.
@@ -197,9 +216,9 @@ const economics = [
           <p class="font-mono text-[11px] leading-5 text-muted-foreground">Committed to your repo, versioned, reviewed, and tested like code</p>
         </div>
 
-        <div class="mt-7 grid gap-6 lg:grid-cols-2">
+        <div class="mt-7 grid gap-6 lg:grid-cols-2 lg:items-start">
           {artifacts.map((artifact) => (
-            <article class="reveal flex flex-col border border-border-strong transition-colors duration-300 hover:border-primary/60 motion-reduce:transition-none">
+            <article class="reveal flex min-w-0 flex-col overflow-hidden border border-border-strong transition-colors duration-300 hover:border-primary/60 motion-reduce:transition-none">
               <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-border bg-code-header px-4 py-3">
                 <span class="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">{artifact.label}</span>
                 <span class="font-mono text-[11px] text-muted-foreground">{artifact.file.split("/").pop()}</span>
@@ -220,24 +239,51 @@ const economics = [
           <p class="font-mono text-[11px] leading-5 text-muted-foreground">Deterministic CPU analysis, on every scan</p>
         </div>
 
-        <div class="mt-7 grid gap-8 lg:grid-cols-[1.55fr_0.45fr] lg:gap-12">
-          <a href="/reports/conductor-cve-2026-58138.html" class="reveal group relative block overflow-hidden border border-border-strong bg-background transition-colors duration-300 hover:border-primary/60 focus-visible:border-primary motion-reduce:transition-none">
-            <span class="pointer-events-none absolute bottom-0 right-0 z-10 translate-y-full bg-primary px-3 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary-foreground transition-transform duration-300 ease-out group-hover:translate-y-0 group-focus-visible:translate-y-0 motion-reduce:transition-none">Open the report</span>
-            <img src="/pictures/report/trace-light.webp" alt="OpenTaint trace showing tainted script data crossing an executor lambda before reaching GraalVM Context.eval" class="w-full transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.01] dark:hidden" loading="lazy" width="1600" height="1000" />
-            <img src="/pictures/report/trace-dark.webp" alt="OpenTaint trace showing tainted script data crossing an executor lambda before reaching GraalVM Context.eval" class="hidden w-full transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.01] dark:block" loading="lazy" width="1600" height="1000" />
-          </a>
+        <div class="mt-7 grid gap-8 lg:grid-cols-[1.5fr_0.5fr] lg:gap-10">
+          <figure class="reveal min-w-0">
+            <div class="overflow-hidden border border-border-strong bg-background">
+              <VideoDemo
+                client:visible
+                sources={{ light: "/video/viewer-light.mp4", dark: "/video/viewer-dark.mp4" }}
+                poster={{ light: "/video/viewer-poster-light.webp", dark: "/video/viewer-poster-dark.webp" }}
+                alt="The OpenTaint viewer: selecting a finding, stepping through its taint trace, and moving between flows"
+                testId="viewer-demo"
+              />
+            </div>
+            <figcaption class="mt-3 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 font-mono text-[11px] leading-5 text-muted-foreground">
+              <span>Every finding opens to the flow that produced it.</span>
+              <a href="https://viewer.opentaint.org/" target="_blank" rel="noopener noreferrer" class="font-semibold text-foreground underline decoration-primary/30 underline-offset-4 transition-colors hover:text-primary">Open the live viewer</a>
+            </figcaption>
+          </figure>
 
-          <div class="reveal">
-            <p class="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">Reported taint trace</p>
-            <ol class="trace mt-4 border-l border-border-strong font-mono text-xs font-medium text-foreground">
+          <div class="reveal flex min-w-0 flex-col border border-border-strong">
+            <p class="border-b border-border bg-code-header px-4 py-3 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">
+              Reported taint trace
+            </p>
+
+            <ol class="trace flex-1 px-4 py-5 font-mono">
               {traceSteps.map((step, index) => (
-                <li class="trace-step flex items-center gap-3 py-2" style={`--step-index:${index}`}>
-                  <span class="trace-tick h-px w-5 bg-primary" aria-hidden="true"></span>
-                  <span>{step}</span>
+                <li class="trace-step relative pl-7" style={`--step-index:${index}`}>
+                  <span class:list={[
+                    "absolute left-0 top-[7px] h-2.5 w-2.5 border",
+                    step.role === "Source" || step.role === "Sink" ? "border-primary bg-primary" : "border-border-strong bg-background",
+                  ]} aria-hidden="true"></span>
+                  {index < traceSteps.length - 1 && (
+                    <span class="trace-rail absolute bottom-0 left-[4.5px] top-[19px] w-px bg-border-strong" aria-hidden="true"></span>
+                  )}
+                  <span class:list={[
+                    "block text-[10px] uppercase tracking-[0.14em]",
+                    step.role === "Step" ? "text-muted-foreground" : "text-primary",
+                  ]}>{step.role}</span>
+                  <span class="mt-1 block text-[13px] font-semibold leading-5 text-foreground">{step.label}</span>
+                  <span class="mb-5 mt-1 block text-[11px] leading-5 text-muted-foreground">{step.where}</span>
                 </li>
               ))}
             </ol>
-            <p class="mt-5 font-mono text-[11px] leading-5 text-muted-foreground">Reported in the pull request, with all 182 steps.</p>
+
+            <p class="border-t border-border px-4 py-3 font-mono text-[11px] leading-5 text-muted-foreground">
+              182 steps in full, reported on the pull request that introduces the flow.
+            </p>
           </div>
         </div>
       </div>
@@ -253,7 +299,7 @@ const economics = [
         <h2 id="security-debt-heading" class="section-heading mt-5">Application security is the new tech debt</h2>
       </div>
       <p class="section-subtitle mt-0 max-w-[68ch]">
-        AI makes code cheaper to produce and harder to fully review. Security work moves downstream into review queues, remediation backlogs, and incident response, while attackers automate discovery too. Application security becomes tech debt an attacker can force you to repay. You start paying for that debt long before an incident.
+        AI makes code cheaper to produce and harder to fully review. Security work piles up in review queues and remediation backlogs while attackers automate discovery too — tech debt an attacker can force you to repay, long before an incident.
       </p>
     </div>
 
@@ -287,20 +333,25 @@ const economics = [
       </p>
     </div>
 
-    <figure class="reveal mt-10 lg:mt-14">
+    <figure class="cadence reveal mt-10 lg:mt-14" data-cadence>
       <figcaption class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">One review, then every commit after it</figcaption>
       <ol class="mt-6 flex items-start gap-0 overflow-x-auto border-b border-border-strong pb-6 scrollbar-thin">
         {cadence.map((item, index) => (
-          <li class:list={[
-            "relative flex shrink-0 flex-col gap-3 sm:shrink",
-            index === 0 ? "w-[14rem] sm:flex-[1.5]" : "w-[9rem] sm:flex-1",
-          ]}>
+          <li
+            class:list={[
+              "cadence-stage relative flex shrink-0 flex-col gap-3 sm:shrink",
+              index === 0 ? "w-[14rem] sm:flex-[1.5]" : "w-[9rem] sm:flex-1",
+            ]}
+            style={`--stage-index:${index}`}
+            data-phase={item.phase}
+            tabindex="0"
+          >
             <span class="flex items-center">
               <span class:list={[
-                "h-3 w-3 shrink-0 border",
+                "cadence-node h-3 w-3 shrink-0 border transition-colors duration-300 motion-reduce:transition-none",
                 index === 0 ? "border-primary bg-primary" : "border-border-strong bg-background",
               ]} aria-hidden="true"></span>
-              {index < cadence.length - 1 && <span class="h-px w-full bg-border" aria-hidden="true"></span>}
+              {index < cadence.length - 1 && <span class="cadence-line h-px w-full bg-border" aria-hidden="true"></span>}
             </span>
             <span class="pr-5">
               <span class:list={["block font-mono text-xs font-semibold leading-5", index === 0 ? "text-foreground" : "text-muted-foreground"]}>{item.label}</span>
@@ -313,7 +364,10 @@ const economics = [
 
     <div class="mt-12 grid border-y border-border-strong md:grid-cols-2 lg:mt-16" aria-label="Learning and scanning economics">
       {economics.map((item, index) => (
-        <article class:list={["reveal py-7 md:py-9", index === 0 ? "border-b border-border md:border-b-0 md:border-r md:pr-10" : "md:pl-10"]}>
+        <article
+          class:list={["economics-panel reveal py-7 md:py-9", index === 0 ? "border-b border-border md:border-b-0 md:border-r md:pr-10" : "md:pl-10"]}
+          data-phase={index === 0 ? "learn" : "search"}
+        >
           <div class="flex items-baseline justify-between gap-5">
             <h3 class="font-mono text-xl font-semibold text-foreground">{item.phase}</h3>
             <p class="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">0{index + 1}</p>
@@ -373,8 +427,8 @@ const economics = [
               </tr>
             </thead>
             <tbody>
-              {coverageRows.map((row) => (
-                <tr class="border-b border-border transition-colors duration-200 last:border-b-0 hover:bg-primary/[0.04] motion-reduce:transition-none">
+              {coverageRows.map((row, rowIndex) => (
+                <tr class="matrix-row border-b border-border transition-colors duration-200 last:border-b-0 hover:bg-primary/[0.04] motion-reduce:transition-none" style={`--row-index:${rowIndex}`}>
                   <th scope="row" class="px-3 py-3 font-medium text-foreground sm:px-4">{row.depth}</th>
                   {row.cells.map((state, index) => (
                     <td class:list={[
@@ -423,3 +477,34 @@ const economics = [
     </div>
   </div>
 </section>
+
+<script>
+  /* Links the cadence rail to the two panels under it: pointing at (or focusing)
+     a stage dims the stages of the other phase and lights the matching panel, so
+     "one review, then every commit" reads as one connected idea. Pure
+     enhancement — without it, every stage and panel simply stays at rest. */
+  const rail = document.querySelector<HTMLElement>("[data-cadence]");
+  const panels = [...document.querySelectorAll<HTMLElement>(".economics-panel")];
+
+  if (rail && panels.length) {
+    const stages = [...rail.querySelectorAll<HTMLElement>(".cadence-stage")];
+
+    const setPhase = (phase: string | null) => {
+      stages.forEach((stage) => {
+        stage.dataset.dimmed = String(Boolean(phase) && stage.dataset.phase !== phase);
+      });
+      panels.forEach((panel) => {
+        panel.dataset.active = String(Boolean(phase) && panel.dataset.phase === phase);
+      });
+    };
+
+    stages.forEach((stage) => {
+      const activate = () => setPhase(stage.dataset.phase ?? null);
+      const clear = () => setPhase(null);
+      stage.addEventListener("pointerenter", activate);
+      stage.addEventListener("focus", activate);
+      stage.addEventListener("pointerleave", clear);
+      stage.addEventListener("blur", clear);
+    });
+  }
+</script>

@@ -7,7 +7,7 @@ export type FaqItem = {
 export const faqItems: readonly FaqItem[] = [
   {
     question: "What is OpenTaint?",
-    answer: "OpenTaint is the open source taint analysis engine for the AI era: formal program analysis for security agents. During a review, the agent records vulnerability patterns as reusable AST-pattern taint rules and opaque code behavior as dataflow summaries. On every scan, the deterministic engine applies those rules and consults those summaries while formal inter-procedural dataflow analysis tracks tainted values across procedures, fields, aliases, async code, and persistence layers. It is customizable, self-hosted, and an AI-ready open source alternative to Semgrep Pro and CodeQL.",
+    answer: "OpenTaint is the open source taint analysis engine for the AI era: formal program analysis for security agents. During a review, the agent records vulnerability patterns as reusable AST-pattern taint rules and opaque code behavior as dependency models. On every scan, the deterministic engine applies those rules and applies those models while formal inter-procedural dataflow analysis tracks tainted values across procedures, fields, aliases, async code, and persistence layers. It is customizable, self-hosted, and an AI-ready open source alternative to Semgrep Pro and CodeQL.",
   },
   {
     question: "What vulnerabilities does OpenTaint detect?",
@@ -19,11 +19,11 @@ export const faqItems: readonly FaqItem[] = [
   },
   {
     question: "Why not just use an LLM agent for security scanning?",
-    answer: "Learning an application's attack surface, trust boundaries, vulnerability patterns, and opaque code behavior is expensive and unpredictable. An LLM agent does that work on demand and records vulnerability patterns as AST-pattern taint rules and opaque code behavior as dataflow summaries. Applying those rules and consulting those summaries is cheap and deterministic. OpenTaint does that across the entire codebase on every scan in minutes of CPU without asking the model to reread every file or burning tokens on every commit. A deep security review becomes lean, continuous application security coverage.",
+    answer: "Learning an application's attack surface, trust boundaries, vulnerability patterns, and opaque code behavior is expensive and unpredictable. An LLM agent does that work on demand and records vulnerability patterns as AST-pattern taint rules and opaque code behavior as dependency models. Applying those rules and applying those models is cheap and deterministic. OpenTaint does that across the entire codebase on every scan in minutes of CPU without asking the model to reread every file or burning tokens on every commit. A deep security review becomes lean, continuous application security coverage.",
   },
   {
     question: "Does OpenTaint require an AI agent?",
-    answer: "No. The engine runs deterministic taint analysis with built-in or existing rules whether or not an agent is present. During a security review, the agent learns the codebase, records vulnerability patterns as new AST-pattern taint rules, and captures opaque code behavior as dataflow summaries. People can inspect and refine both artifacts. The engine applies the rules and consults the summaries on every scan.",
+    answer: "No. The engine runs deterministic taint analysis with built-in or existing rules whether or not an agent is present. During a security review, the agent learns the codebase, records vulnerability patterns as new AST-pattern taint rules, and captures opaque code behavior as dependency models. People can inspect and refine both artifacts. The engine applies the rules and applies the models on every scan.",
   },
   {
     question: "How does OpenTaint secure agent-generated code?",
@@ -31,7 +31,7 @@ export const faqItems: readonly FaqItem[] = [
   },
   {
     question: "Why is application security the new tech debt?",
-    answer: "AI helps teams create code faster than anyone can review it. The security work moves downstream into review queues, remediation backlogs, and incident response. Every unmodeled trust boundary and missed source-to-sink path becomes invisible debt that compounds across releases. Attackers automate discovery too. They will probe the paths your team misses whether or not your backlog is ready. Security debt is tech debt an attacker can force you to repay. OpenTaint captures vulnerability patterns as taint rules and opaque code behavior as dataflow summaries, then runs taint analysis on every commit while the code is still fresh and the fix is still cheap.",
+    answer: "AI helps teams create code faster than anyone can review it. The security work moves downstream into review queues, remediation backlogs, and incident response. Every unmodeled trust boundary and missed source-to-sink path becomes invisible debt that compounds across releases. Attackers automate discovery too. They will probe the paths your team misses whether or not your backlog is ready. Security debt is tech debt an attacker can force you to repay. OpenTaint captures vulnerability patterns as taint rules and opaque code behavior as dependency models, then runs taint analysis on every commit while the code is still fresh and the fix is still cheap.",
   },
   {
     question: "What languages and frameworks are supported?",
@@ -39,7 +39,7 @@ export const faqItems: readonly FaqItem[] = [
   },
   {
     question: "Why is OpenTaint the most thorough taint analyzer for Spring apps?",
-    answer: "It uses formal inter-procedural dataflow analysis to track tainted values across method boundaries. Dataflow summaries describe how values pass through async constructs such as Reactor, Spring WebFlux, and Kotlin coroutines. Out of the box, OpenTaint also models JPA persistence layers, so it catches stored injections where untrusted input arrives at one endpoint, gets saved to the database, and reappears in a completely different request later. Most engines treat the persistence layer as an opaque boundary. OpenTaint tracks tainted values through it, linking writes in one request to reads in another.",
+    answer: "It uses formal inter-procedural dataflow analysis to track tainted values across method boundaries. Dependency models describe how values pass through async constructs such as Reactor, Spring WebFlux, and Kotlin coroutines. Out of the box, OpenTaint also models JPA persistence layers, so it catches stored injections where untrusted input arrives at one endpoint, gets saved to the database, and reappears in a completely different request later. Most engines treat the persistence layer as an opaque boundary. OpenTaint tracks tainted values through it, linking writes in one request to reads in another.",
   },
   {
     question: "How does OpenTaint compare to Semgrep?",

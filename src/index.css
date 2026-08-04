@@ -353,38 +353,37 @@
     color: hsl(var(--brand));
   }
 
-  /* Narrow screens show one phase; the toggle above the table picks it. */
-  .economics-toggle {
-    transition:
-      background-color 0.2s ease-out,
-      color 0.2s ease-out;
-  }
-
-  .economics-toggle[aria-pressed="true"] {
-    background-color: hsl(var(--brand) / 0.06);
-    color: hsl(var(--brand));
-  }
-
   @media (max-width: 639px) {
+    /* One phase at a time; the rail stage above the table picks which. */
     .economics[data-mobile-phase="learn"] [data-phase="search"],
     .economics[data-mobile-phase="search"] [data-phase="learn"] {
       display: none;
     }
 
-    /* With one answer per row the label leads and the answer follows. */
+    /* The label leads every row, in both phases, and the answer follows. */
     .economics tbody th[scope="row"] {
+      width: 8rem;
+      padding-left: 0;
       text-align: left;
-      padding-left: 1rem;
     }
 
     .economics tbody td[data-phase] {
+      padding-right: 0;
       text-align: right;
+    }
+
+    /* Pressed reads as selected, not merely hovered. */
+    .cadence-stage[aria-pressed="true"] .block {
+      color: hsl(var(--brand));
+    }
+
+    .cadence-stage[aria-pressed="false"] {
+      opacity: 0.5;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .cadence-stage,
-    .economics-toggle,
     .economics tbody tr,
     .economics [data-phase] {
       transition: none;

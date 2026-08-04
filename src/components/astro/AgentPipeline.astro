@@ -131,17 +131,6 @@ const EDGES = [
 
 const NOTES = [{ text: "saturation loop" }];
 
-/* The same spine, read top to bottom, for screens too narrow for the graph. */
-const STAGES = [
-  { name: "build", kind: "step", runner: "Engine", detail: "Compile the project into the model the analysis runs on." },
-  { name: "sources", kind: "taint", runner: "Agent", detail: "Triage dependencies and discover the attack surface." },
-  { name: "scan", kind: "step", runner: "Engine", detail: "Trace every flow from source to sink, deterministically." },
-  { name: "approximation", kind: "agent", runner: "Agent", detail: "Model the opaque methods, then re-scan, until nothing new turns up." },
-  { name: "sinks", kind: "taint", runner: "Agent", detail: "Turn the dangerous operations into tested rules." },
-  { name: "triage", kind: "agent", runner: "Agent", detail: "Read each finding, and confirm it by writing a working exploit." },
-  { name: "vulnerabilities.md", kind: "file", runner: "Output", detail: "The findings that survived, with the reasoning behind each verdict." },
-];
-
 /* ── ENGINE ─────────────────────────────────────────────────────────────── */
 
 const STUB = 24, RADIUS = 12;
@@ -320,34 +309,15 @@ function render() {
 const scene = render();
 ---
 
-{/* Two readings of one pipeline. Past sm the frame wraps the drawing rather
-    than the column, so no empty margin opens up inside the border; below it a
-    graph this wide is unreadable at any zoom, so the spine becomes a list and
-    each stage says who runs it. */}
-<div class="pipeline mx-auto hidden w-fit max-w-full min-w-0 overflow-x-auto border border-border-strong bg-background p-4 scrollbar-thin sm:block sm:p-5">
+{/* The frame wraps the drawing rather than the column, so no empty margin opens
+    up inside the border. On a phone the graph scales down to the column the way
+    the demos do. */}
+<div class="pipeline mx-auto w-fit max-w-full min-w-0 border border-border-strong bg-background p-3 sm:p-5">
   <svg
     viewBox="0 0 1440 856"
-    class="block h-auto w-[52rem] max-w-none"
+    class="block h-auto w-full sm:w-[46rem] sm:max-w-none"
     role="img"
     aria-label="The appsec-agent pipeline: build, discover sources, scan, model approximations until the loop saturates, then triage findings into a vulnerabilities report"
     set:html={scene}
   />
 </div>
-
-<ol class="border border-border-strong bg-background sm:hidden">
-  {STAGES.map((stage, index) => (
-    <li class:list={["relative px-4 py-4", index > 0 && "border-t border-border"]}>
-      <p class="flex items-center gap-2.5">
-        <span class:list={[
-          "h-2.5 w-2.5 shrink-0 border",
-          stage.kind === "taint" ? "border-primary bg-primary/15"
-            : stage.kind === "agent" ? "border-[hsl(var(--agent))] bg-background"
-            : "border-border-strong bg-background",
-        ]} aria-hidden="true"></span>
-        <span class="font-mono text-[13px] font-semibold text-foreground">{stage.name}</span>
-        <span class="ml-auto font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{stage.runner}</span>
-      </p>
-      <p class="mt-2 pl-[1.3rem] font-mono text-[11px] leading-5 text-muted-foreground">{stage.detail}</p>
-    </li>
-  ))}
-</ol>

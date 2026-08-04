@@ -42,9 +42,11 @@ export function AnimatedHero() {
       </h1>
 
       <p className="subheadline max-w-[62ch]">
-        <span className="text-foreground">Formal program analysis for security agents.</span>{" "}
-        AI agents learn your application <span className="hero-mark">on demand</span>. OpenTaint scans it{" "}
-        <span className="hero-mark">on every change</span>.
+        <span className="block text-foreground">Formal program analysis for security agents.</span>
+        <span className="block">
+          AI agents learn your application <span className="hero-mark">on demand</span>. OpenTaint scans it{" "}
+          <span className="hero-mark">on every change</span>.
+        </span>
       </p>
 
       <div className="mt-8 flex w-full flex-col gap-3 sm:hidden">

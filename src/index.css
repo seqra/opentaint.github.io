@@ -280,47 +280,6 @@
     pointer-events: none;
   }
 
-  /* A second, hollow ring sits on the left terminal and breathes once the
-     section scrolls in — the only motion in the chrome, so it reads as a mark
-     being set rather than decoration. */
-  .js .band:not(:first-child)::after,
-  .js .page-section:not(:first-child)::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: var(--rule-inset);
-    width: var(--dot);
-    height: var(--dot);
-    transform: translateY(calc(var(--dot) / -2));
-    border: 1px solid hsl(var(--brand));
-    border-radius: 50%;
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .js .band.is-marked:not(:first-child)::after,
-  .js .page-section.is-marked:not(:first-child)::after {
-    animation: rule-mark 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.1s;
-  }
-
-  @keyframes rule-mark {
-    0% {
-      opacity: 0.9;
-      transform: translateY(calc(var(--dot) / -2)) scale(1);
-    }
-    100% {
-      opacity: 0;
-      transform: translateY(calc(var(--dot) / -2)) scale(3.4);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .js .band.is-marked:not(:first-child)::after,
-    .js .page-section.is-marked:not(:first-child)::after {
-      animation: none;
-    }
-  }
-
   /* Scroll reveal. Elements marked `.reveal` start slightly lowered and
      transparent, then settle once they enter the viewport (`.is-revealed`,
      set by the observer in BaseLayout). Siblings inside one container stagger

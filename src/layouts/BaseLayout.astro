@@ -144,20 +144,6 @@ const dataBlocks = Array.isArray(structuredData) ? structuredData : [structuredD
         );
 
         targets.forEach((el) => observer.observe(el));
-
-        /* Section rules set their mark once, as the section arrives. */
-        const marks = document.querySelectorAll(".band:not(:first-child), .page-section:not(:first-child)");
-        const markObserver = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (!entry.isIntersecting) return;
-              entry.target.classList.add("is-marked");
-              markObserver.unobserve(entry.target);
-            });
-          },
-          { rootMargin: "0px 0px -20% 0px", threshold: 0 },
-        );
-        marks.forEach((el) => markObserver.observe(el));
       })();
     </script>
   </body>

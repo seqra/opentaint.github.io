@@ -57,6 +57,8 @@
     --radius: 0.5rem;
     --page-max: 1760px;
     --page-pad: clamp(1rem, 4vw, 6rem);
+    /* Reading column shared by the landing bands and the blog/404 pages. */
+    --content-max: 72rem;
     --band: 28 25% 96.5%;
   }
 
@@ -186,17 +188,19 @@
     display: none;
   }
 
-  /* Constrained reading frame used by blog + 404 (centered, capped width). */
+  /* Constrained reading frame used by blog + 404. Holds text to the same
+     column the landing bands use, so a post and the landing page share one
+     measure and one separator width. */
   .page-container {
     @apply mx-auto w-full;
-    max-width: var(--page-max);
+    max-width: calc(var(--content-max) + 2 * var(--page-pad));
     padding-inline: var(--page-pad);
     min-height: 100vh;
   }
 
   .page-section {
     position: relative;
-    padding: clamp(1.75rem, 1rem + 1.5vw, 3.5rem) clamp(1.5rem, 0.5rem + 2vw, 3rem);
+    padding-block: clamp(1.75rem, 1rem + 1.5vw, 3.5rem);
     margin-top: clamp(1rem, 0.5rem + 1vw, 2rem);
   }
 
@@ -225,9 +229,9 @@
     background-color: hsl(var(--band));
   }
 
-  /* Red bracket separator (as on opentaint.org): a thin brand-red rule across
-     the top of a section, with rounded hooks turning the corner up on the left
-     and down on the right. Shared by the landing bands and the blog/404
+  /* Section separator: a hairline across the top of the section, opening with
+     a short brand-red segment so the accent reads as a mark rather than a
+     full-width red stroke. Shared by the landing bands and the blog/404
      page-sections. `--rule-inset` pushes the rule in from the section edges:
      full-bleed bands inset it to the content column; page-sections sit flush.
      Only the hero band (first child) stays un-separated. */
@@ -238,70 +242,101 @@
   }
 
   .band:not(:first-child) {
-    --rule-inset: max(var(--page-pad), calc((100% - var(--page-max)) / 2));
+    --rule-inset: max(var(--page-pad), calc((100% - var(--content-max)) / 2));
   }
 
-  /* Horizontal rule + right-hand hook curving down. */
   .band:not(:first-child)::before,
   .page-section:not(:first-child)::before,
   .footer-links::before {
     content: "";
     position: absolute;
     top: 0;
-    left: calc(var(--rule-inset) + 23px);
+    left: var(--rule-inset);
     right: var(--rule-inset);
-    height: 24px;
-    border-top: 1px solid hsl(var(--brand));
-    border-right: 1px solid hsl(var(--brand));
-    border-top-right-radius: 24px;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      hsl(var(--brand)) 0 4.5rem,
+      hsl(var(--border)) 4.5rem
+    );
     pointer-events: none;
   }
 
-  /* Left-hand hook curving up, meeting the rule flush. */
-  .band:not(:first-child)::after,
-  .page-section:not(:first-child)::after,
-  .footer-links::after {
-    content: "";
-    position: absolute;
-    top: -23px;
-    left: var(--rule-inset);
-    width: 24px;
-    height: 24px;
-    border-left: 1px solid hsl(var(--brand));
-    border-bottom: 1px solid hsl(var(--brand));
-    border-bottom-left-radius: 24px;
-    pointer-events: none;
+  /* Scroll reveal. Elements marked `.reveal` start slightly lowered and
+     transparent, then settle once they enter the viewport (`.is-revealed`,
+     set by the observer in BaseLayout). Siblings inside one container stagger
+     off `--reveal-index`, which the same script assigns. Anything without JS
+     — or with reduced motion — renders in its final state. */
+  .js .reveal {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+    transition:
+      opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--reveal-index, 0) * 70ms);
+    will-change: opacity, transform;
   }
 
-  /* Alternating separators: every other divider mirrors the hooks so the
-     raised (upward) end flips sides down the page (-1 1 -1 1 …), while the
-     other end stays pinned low. The default rule above raises the left end;
-     these odd-of-type sections raise the right end instead. `.footer-alt`
-     opts the footer rule in so it keeps the page's zigzag going — set per
-     page (see LandingFooter `mirror` prop) whenever an even number of
-     separators precedes the footer. */
-  .band:nth-of-type(odd):not(:first-child)::before,
-  .page-section:nth-of-type(odd):not(:first-child)::before,
-  .footer-links.footer-alt::before {
-    /* Rule + left-hand hook curving down. */
-    left: var(--rule-inset);
-    right: calc(var(--rule-inset) + 23px);
-    border-right: none;
-    border-left: 1px solid hsl(var(--brand));
-    border-top-right-radius: 0;
-    border-top-left-radius: 24px;
+  .reveal.is-revealed {
+    opacity: 1;
+    transform: none;
   }
 
-  .band:nth-of-type(odd):not(:first-child)::after,
-  .page-section:nth-of-type(odd):not(:first-child)::after,
-  .footer-links.footer-alt::after {
-    /* Right-hand hook curving up, meeting the rule flush. */
-    left: auto;
-    right: var(--rule-inset);
-    border-left: none;
-    border-right: 1px solid hsl(var(--brand));
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 24px;
+  /* The taint trace draws itself in step order once the rail is on screen. */
+  .js .trace-step {
+    opacity: 0;
+    transform: translate3d(-6px, 0, 0);
+    transition:
+      opacity 0.45s ease-out,
+      transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--step-index) * 110ms + 120ms);
+  }
+
+  .js .trace-tick {
+    transform: scaleX(0.2);
+    transform-origin: left center;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--step-index) * 110ms + 200ms);
+  }
+
+  .is-revealed .trace-step,
+  .trace.is-revealed .trace-step {
+    opacity: 1;
+    transform: none;
+  }
+
+  .is-revealed .trace-tick,
+  .trace.is-revealed .trace-tick {
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal,
+    .trace-step,
+    .trace-tick {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /* Expressive Code inside a hand-built card: drop the block's own frame so the
+     card border, header, and caption own the edges. */
+  .expressive-code.artifact-code {
+    margin: 0;
+    flex: 1;
+  }
+
+  .expressive-code.artifact-code .frame,
+  .expressive-code.artifact-code .frame pre,
+  .expressive-code.artifact-code .frame .header {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .expressive-code.artifact-code .frame pre {
+    height: 100%;
   }
 
   .section-title {

@@ -1,22 +1,20 @@
 ---
+import { Code } from "astro-expressive-code/components";
+
+const discoveries = [
+  { label: "Trust boundary", text: "Unauthenticated workflow input reaches the script evaluators" },
+  { label: "Vulnerability pattern", text: "Untrusted script text on a full-host-access context is RCE" },
+  { label: "Opaque behavior", text: "<code>Builder.option()</code> returns the same builder" },
+];
+
 const features = [
   {
-    title: "Learn on demand, search on every scan",
-    description:
-      "The agent learns the attack surface, trust boundaries, vulnerability patterns, and opaque code behavior when new context is needed. The engine applies the resulting taint rules and consults the resulting dataflow summaries on every scan without spending model tokens again.",
-  },
-  {
-    title: "Make every security review executable.",
-    description:
-      "The agent turns vulnerability patterns into AST-pattern taint rules and opaque code behavior into dataflow summaries. Both become versioned, reviewable analysis artifacts.",
-  },
-  {
-    title: "Fast scans. Fewer false alarms. Fewer missed findings.",
+    title: "Fast scans, fewer false alarms, fewer missed findings",
     description:
       "The engine runs formal inter-procedural dataflow analysis, applying taint rules and consulting dataflow summaries as it tracks tainted values across procedures, fields, aliases, async code, and persistence layers at scale.",
   },
   {
-    title: "Open source, customizable, and self-hosted.",
+    title: "Open source, customizable, and self-hosted",
     description:
       "Engine, AST-pattern rules, agent skills, and CI integrations ship under Apache 2.0 and MIT — an AI-ready open source alternative to Semgrep Pro and CodeQL.",
   },
@@ -49,27 +47,102 @@ const pressures = [
   },
 ];
 
-const proofs = [
+const proof = {
+  href: "/blog/semgrep-vs-codeql-vs-opentaint",
+  title: "Detection depth, compared",
+  description:
+    "See Semgrep, CodeQL, and OpenTaint run against five progressively harder Java XSS cases, from direct returns to builders with virtual dispatch.",
+};
+
+/* Coverage matrix. Columns pair each tool with the analysis mode it was run in,
+   so a miss is attributed to a mode rather than hidden behind a slashed pair.
+   State is encoded by fill (solid / half / empty), never by color alone. */
+const coverageColumns = [
+  { tool: "Semgrep Code", mode: "patterns" },
+  { tool: "Semgrep Code", mode: "taint rules" },
+  { tool: "CodeQL", mode: "taint rules" },
+  { tool: "OpenTaint", mode: "patterns", accent: true },
+  { tool: "OpenTaint", mode: "taint rules", accent: true },
+];
+
+const coverageRows = [
+  { depth: "Direct return", cells: ["full", "full", "full", "full", "full"] },
+  { depth: "Local dataflow", cells: ["miss", "full", "full", "full", "full"] },
+  { depth: "Inter-procedural", cells: ["miss", "full", "full", "full", "full"] },
+  { depth: "Field sensitivity", cells: ["miss", "partial", "partial", "full", "full"] },
+  { depth: "Virtual dispatch", cells: ["miss", "miss", "partial", "full", "full"] },
+];
+
+const coverageStates = {
+  full: { label: "Detected", fill: "bg-current" },
+  partial: { label: "Partial", fill: "bg-[linear-gradient(to_right,currentColor_50%,transparent_50%)]" },
+  miss: { label: "Missed", fill: "bg-transparent" },
+};
+
+/* Both artifacts come from the CVE-2026-58138 reproduction kit. Fully-qualified
+   names are shortened to keep the lines readable; everything else is verbatim. */
+const artifacts = [
   {
-    href: "/blog/semgrep-vs-codeql-vs-opentaint",
-    title: "Detection depth, compared.",
-    description:
-      "See Semgrep, CodeQL, and OpenTaint run against five progressively harder Java XSS cases, from direct returns to builders with virtual dispatch.",
+    label: "Taint rule",
+    file: ".opentaint/rules/graalvm-polyglot-sinks.yaml",
+    caption: "The vulnerability pattern the agent found: attacker-controlled script text evaluated on a context with full host access.",
+    code: `id: graalvm-polyglot-eval
+languages: [java]
+mode: taint
+pattern-sinks:
+  - patterns:
+      - pattern: $CTX.eval($LANG, $SOURCE)
+      - focus-metavariable: $SOURCE
+      - pattern-inside: |
+          Context $CTX = $B
+            .allowAllAccess(true)
+            .build();
+          ...`,
   },
   {
-    href: "/blog/conductor-rce-cve-2026-58138",
-    title: "A real unauthenticated RCE, from endpoint to exploit.",
-    description:
-      "Follow CVE-2026-58138 through Conductor and GraalVM, see why four stock scans missed it, and how the agent turned the review into a tested taint rule and reusable dataflow summary.",
+    label: "Dataflow summary",
+    file: ".opentaint/config/org.graalvm.polyglot.yaml",
+    caption: "The library behavior the engine cannot see: a fluent builder that mutates and returns the same instance, so taint survives the chain.",
+    code: `language: java
+passThrough:
+  - function: Context$Builder#option
+    copy:
+      - from: this
+        to: result
+
+  - function: Source$Builder#cached
+    copy:
+      - from: this
+        to: result`,
   },
 ];
 
-const comparisonRows = [
-  { depth: "Direct return", semgrep: "✓ / ✓", codeql: "✓", opentaint: "✓ / ✓" },
-  { depth: "Local dataflow", semgrep: "× / ✓", codeql: "✓", opentaint: "✓ / ✓" },
-  { depth: "Inter-procedural", semgrep: "× / ✓", codeql: "✓", opentaint: "✓ / ✓" },
-  { depth: "Field sensitivity", semgrep: "× / ◐", codeql: "◐", opentaint: "✓ / ✓" },
-  { depth: "Virtual dispatch", semgrep: "× / ×", codeql: "◐", opentaint: "✓ / ✓" },
+const traceSteps = ["HTTP request", "task scheduling", "executor lambda", "Context.eval"];
+
+/* Cadence rail: which step runs the model and which steps run on CPU. The
+   markers encode kind, not cost — nothing here is a magnitude. */
+const cadence = [
+  { label: "Security review", detail: "The agent learns the application and commits taint rules and dataflow summaries." },
+  { label: "Next commit", detail: "Engine scan, no model." },
+  { label: "Commit after that", detail: "Engine scan, no model." },
+  { label: "Every commit after", detail: "Engine scan, no model." },
+];
+
+const economics = [
+  {
+    phase: "Learn",
+    owner: "Security agent",
+    cadence: "When new context appears",
+    compute: "Model reasoning",
+    output: "Taint rules and dataflow summaries",
+  },
+  {
+    phase: "Search",
+    owner: "OpenTaint engine",
+    cadence: "On every change",
+    compute: "Deterministic CPU analysis",
+    output: "Source-to-sink taint traces",
+  },
 ];
 ---
 
@@ -79,43 +152,93 @@ const comparisonRows = [
       <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">What OpenTaint does</p>
       <h2 id="what-heading" class="section-heading mt-5">Taint analysis that turns agent discoveries into deterministic coverage</h2>
       <p class="section-subtitle max-w-[68ch]">
-        The open source taint analysis engine for the AI era. Formal inter-procedural dataflow analysis tracks tainted values across your application. AI agents add project-specific AST-pattern taint rules and dataflow summaries. The customizable, self-hosted engine applies those rules and consults those summaries on every scan without burning model tokens again.
+        The open source taint analysis engine for the AI era. Agents capture new vulnerability patterns as AST-pattern taint rules and opaque code behavior as dataflow summaries. Formal inter-procedural dataflow analysis applies that knowledge on every scan without burning model tokens again.
       </p>
       <p class="mt-5 max-w-[68ch] font-mono text-sm font-medium leading-7 text-foreground lg:text-[15px]">
         An AI-ready open source alternative to Semgrep Pro and CodeQL.
       </p>
     </div>
 
-    <figure class="mt-10 border-y border-border-strong lg:mt-14" aria-labelledby="workflow-caption">
-      <figcaption id="workflow-caption" class="sr-only">The agent records vulnerability patterns as taint rules and opaque code behavior as dataflow summaries. The OpenTaint engine applies the rules and consults the summaries on every change.</figcaption>
-      <div class="grid lg:grid-cols-[1fr_1.35fr_1fr]">
-        <div class="py-7 lg:pr-10 lg:py-10">
-          <p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">01 · Learn when needed</p>
-          <h3 class="mt-4 font-mono text-lg font-semibold text-foreground">Security agent</h3>
-          <p class="mt-3 max-w-[40ch] font-mono text-sm leading-7 text-muted-foreground">Understands application context and investigates new vulnerability patterns.</p>
-          <p class="mt-5 font-mono text-xs text-muted-foreground">Expensive and adaptive</p>
+    <figure class="mt-10 overflow-hidden border-y border-border-strong bg-background lg:mt-14" aria-labelledby="workflow-caption">
+      <figcaption id="workflow-caption" class="flex flex-col gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <span class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">One review becomes continuous coverage</span>
+        <a href="/blog/conductor-rce-cve-2026-58138" class="font-mono text-xs font-semibold text-foreground underline decoration-primary/30 underline-offset-4 transition-colors hover:text-primary">Real artifacts from CVE-2026-58138</a>
+      </figcaption>
+
+      <div class="p-5 sm:p-6 lg:p-8">
+        <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+          <p class="flex items-baseline gap-3 font-mono text-[11px] font-semibold uppercase tracking-[0.16em]">
+            <span class="text-primary">01</span>
+            <span class="text-foreground">Agent discovers</span>
+          </p>
+          <p class="font-mono text-[11px] leading-5 text-muted-foreground">Model reasoning, on demand</p>
         </div>
 
-        <div class="border-y border-border bg-background py-7 lg:border-x lg:border-y-0 lg:px-10 lg:py-10">
-          <p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">Durable output</p>
-          <div class="mt-5 font-mono text-sm">
-            <div class="grid grid-cols-[1fr_auto] gap-4 border-b border-border pb-4">
-              <span class="font-medium text-foreground">rules/xss-builder.yaml</span>
-              <span class="text-right text-xs text-muted-foreground">AST-pattern taint rule</span>
+        <div class="mt-7 grid gap-6 md:grid-cols-3 md:gap-0">
+          {discoveries.map((item, index) => (
+            <div class:list={[
+              "reveal",
+              index > 0 && "border-t border-border pt-6 md:border-l md:border-t-0 md:pl-8 md:pt-0",
+              index < discoveries.length - 1 && "md:pr-8",
+            ]}>
+              <p class="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">{item.label}</p>
+              <p class="mt-3 max-w-[36ch] font-mono text-[15px] font-semibold leading-7 text-foreground" set:html={item.text}></p>
             </div>
-            <div class="grid grid-cols-[1fr_auto] gap-4 pt-4">
-              <span class="font-medium text-foreground">summaries/graalvm.yaml</span>
-              <span class="text-right text-xs text-muted-foreground">Dataflow summary</span>
-            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="border-t border-border p-5 sm:p-6 lg:p-8">
+        <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+          <p class="flex items-baseline gap-3 font-mono text-[11px] font-semibold uppercase tracking-[0.16em]">
+            <span class="text-primary">02</span>
+            <span class="text-foreground">Agent writes</span>
+          </p>
+          <p class="font-mono text-[11px] leading-5 text-muted-foreground">Committed to your repo, versioned, reviewed, and tested like code</p>
+        </div>
+
+        <div class="mt-7 grid gap-6 lg:grid-cols-2">
+          {artifacts.map((artifact) => (
+            <article class="reveal flex flex-col border border-border-strong transition-colors duration-300 hover:border-primary/60 motion-reduce:transition-none">
+              <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-border bg-code-header px-4 py-3">
+                <span class="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">{artifact.label}</span>
+                <span class="font-mono text-[11px] text-muted-foreground">{artifact.file.split("/").pop()}</span>
+              </div>
+              <Code code={artifact.code} lang="yaml" class="artifact-code" />
+              <p class="border-t border-border px-4 py-3 font-mono text-[11px] leading-5 text-muted-foreground">{artifact.caption}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <div class="border-t border-border p-5 sm:p-6 lg:p-8">
+        <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+          <p class="flex items-baseline gap-3 font-mono text-[11px] font-semibold uppercase tracking-[0.16em]">
+            <span class="text-primary">03</span>
+            <span class="text-foreground">OpenTaint scans every change</span>
+          </p>
+          <p class="font-mono text-[11px] leading-5 text-muted-foreground">Deterministic CPU analysis, on every scan</p>
+        </div>
+
+        <div class="mt-7 grid gap-8 lg:grid-cols-[1.55fr_0.45fr] lg:gap-12">
+          <a href="/reports/conductor-cve-2026-58138.html" class="reveal group relative block overflow-hidden border border-border-strong bg-background transition-colors duration-300 hover:border-primary/60 focus-visible:border-primary motion-reduce:transition-none">
+            <span class="pointer-events-none absolute bottom-0 right-0 z-10 translate-y-full bg-primary px-3 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary-foreground transition-transform duration-300 ease-out group-hover:translate-y-0 group-focus-visible:translate-y-0 motion-reduce:transition-none">Open the report</span>
+            <img src="/pictures/report/trace-light.webp" alt="OpenTaint trace showing tainted script data crossing an executor lambda before reaching GraalVM Context.eval" class="w-full transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.01] dark:hidden" loading="lazy" width="1600" height="1000" />
+            <img src="/pictures/report/trace-dark.webp" alt="OpenTaint trace showing tainted script data crossing an executor lambda before reaching GraalVM Context.eval" class="hidden w-full transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.01] dark:block" loading="lazy" width="1600" height="1000" />
+          </a>
+
+          <div class="reveal">
+            <p class="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">Reported taint trace</p>
+            <ol class="trace mt-4 border-l border-border-strong font-mono text-xs font-medium text-foreground">
+              {traceSteps.map((step, index) => (
+                <li class="trace-step flex items-center gap-3 py-2" style={`--step-index:${index}`}>
+                  <span class="trace-tick h-px w-5 bg-primary" aria-hidden="true"></span>
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ol>
+            <p class="mt-5 font-mono text-[11px] leading-5 text-muted-foreground">Reported in the pull request, with all 182 steps.</p>
           </div>
-          <p class="mt-5 font-mono text-xs text-muted-foreground">Versioned, reviewable, reusable</p>
-        </div>
-
-        <div class="py-7 lg:pl-10 lg:py-10">
-          <p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">02 · Search every change</p>
-          <h3 class="mt-4 font-mono text-lg font-semibold text-foreground">OpenTaint engine</h3>
-          <p class="mt-3 max-w-[40ch] font-mono text-sm leading-7 text-muted-foreground">Applies taint rules and consults dataflow summaries while tracking tainted values across the application.</p>
-          <p class="mt-5 font-mono text-xs text-muted-foreground">Cheap and deterministic</p>
         </div>
       </div>
     </figure>
@@ -134,17 +257,18 @@ const comparisonRows = [
       </p>
     </div>
 
-    <ul class="mt-10 border-t border-border-strong lg:mt-14" aria-labelledby="security-debt-heading">
+    <ul class="mt-10 grid border-y border-border-strong md:grid-cols-2 lg:mt-14" aria-labelledby="security-debt-heading">
       {pressures.map((pressure, index) => (
-        <li class="grid gap-4 border-b border-border py-7 md:grid-cols-[0.85fr_1.15fr] md:gap-10 lg:py-9">
-          <div class="flex gap-4">
-            <span class="mt-1 font-mono text-[11px] font-semibold tracking-[0.14em] text-primary">0{index + 1}</span>
-            <h3 class="max-w-[34ch] font-mono text-base font-semibold leading-7 text-foreground lg:text-lg lg:leading-8">{pressure.title}</h3>
-          </div>
-          <div class="md:pl-4">
-            <p class="max-w-[68ch] font-mono text-sm leading-7 text-muted-foreground lg:text-[15px]">{pressure.description}</p>
-            <p class="mt-3 font-mono text-sm font-semibold leading-6 text-foreground lg:text-[15px]">{pressure.value}</p>
-          </div>
+        <li class:list={[
+          "reveal py-7 md:py-9",
+          index !== pressures.length - 1 && "border-b border-border",
+          index === 2 && "md:border-b-0",
+          index % 2 === 0 ? "md:pr-10" : "md:border-l md:border-border md:pl-10",
+        ]}>
+          <span class="font-mono text-[11px] font-semibold tracking-[0.14em] text-primary">0{index + 1}</span>
+          <h3 class="mt-5 max-w-[36ch] font-mono text-base font-semibold leading-7 text-foreground lg:text-lg lg:leading-8">{pressure.title}</h3>
+          <p class="mt-4 max-w-[58ch] font-mono text-sm leading-7 text-muted-foreground">{pressure.description}</p>
+          <p class="mt-5 border-l-2 border-primary pl-3 font-mono text-xs font-semibold leading-5 text-foreground lg:text-sm lg:leading-6">{pressure.value}</p>
         </li>
       ))}
     </ul>
@@ -159,13 +283,54 @@ const comparisonRows = [
         <h2 id="how-heading" class="section-heading mt-5">Learn on demand, search on every scan</h2>
       </div>
       <p class="section-subtitle mt-0 max-w-[68ch]">
-        Learning application context is expensive and unpredictable. Once the agent records vulnerability patterns as taint rules and opaque code behavior as dataflow summaries, the engine can apply that knowledge cheaply and deterministically.
+        Use model reasoning only when the application reveals new security context. Everything already learned becomes deterministic analysis that runs on CPU for every change.
       </p>
     </div>
 
-    <ul class="mt-10 grid gap-x-8 gap-y-10 md:grid-cols-2 lg:mt-14 lg:grid-cols-4" aria-labelledby="how-heading">
+    <figure class="reveal mt-10 lg:mt-14">
+      <figcaption class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">One review, then every commit after it</figcaption>
+      <ol class="mt-6 flex items-start gap-0 overflow-x-auto border-b border-border-strong pb-6 scrollbar-thin">
+        {cadence.map((item, index) => (
+          <li class:list={[
+            "relative flex shrink-0 flex-col gap-3 sm:shrink",
+            index === 0 ? "w-[14rem] sm:flex-[1.5]" : "w-[9rem] sm:flex-1",
+          ]}>
+            <span class="flex items-center">
+              <span class:list={[
+                "h-3 w-3 shrink-0 border",
+                index === 0 ? "border-primary bg-primary" : "border-border-strong bg-background",
+              ]} aria-hidden="true"></span>
+              {index < cadence.length - 1 && <span class="h-px w-full bg-border" aria-hidden="true"></span>}
+            </span>
+            <span class="pr-5">
+              <span class:list={["block font-mono text-xs font-semibold leading-5", index === 0 ? "text-foreground" : "text-muted-foreground"]}>{item.label}</span>
+              <span class="mt-1 block font-mono text-[11px] leading-5 text-muted-foreground">{item.detail}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
+    </figure>
+
+    <div class="mt-12 grid border-y border-border-strong md:grid-cols-2 lg:mt-16" aria-label="Learning and scanning economics">
+      {economics.map((item, index) => (
+        <article class:list={["reveal py-7 md:py-9", index === 0 ? "border-b border-border md:border-b-0 md:border-r md:pr-10" : "md:pl-10"]}>
+          <div class="flex items-baseline justify-between gap-5">
+            <h3 class="font-mono text-xl font-semibold text-foreground">{item.phase}</h3>
+            <p class="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">0{index + 1}</p>
+          </div>
+          <dl class="mt-6 grid grid-cols-[7.5rem_1fr] gap-x-5 gap-y-3 font-mono text-xs leading-5 sm:text-sm sm:leading-6">
+            <dt class="text-muted-foreground">Who</dt><dd class="font-medium text-foreground">{item.owner}</dd>
+            <dt class="text-muted-foreground">When</dt><dd class="font-medium text-foreground">{item.cadence}</dd>
+            <dt class="text-muted-foreground">Compute</dt><dd class="font-medium text-foreground">{item.compute}</dd>
+            <dt class="text-muted-foreground">Leaves behind</dt><dd class="font-medium text-foreground">{item.output}</dd>
+          </dl>
+        </article>
+      ))}
+    </div>
+
+    <ul class="mt-12 grid gap-x-14 gap-y-10 md:grid-cols-2 lg:mt-16" aria-labelledby="how-heading">
       {features.map((feature, index) => (
-        <li class="border-t border-border-strong pt-5">
+        <li class="reveal border-t border-border-strong pt-5">
           <p class="font-mono text-[11px] font-semibold tracking-[0.14em] text-primary">0{index + 1}</p>
           <h3 class="mt-4 font-mono text-[15px] font-semibold leading-6 text-foreground lg:text-base">{feature.title}</h3>
           <p class="mt-3 font-mono text-sm leading-7 text-muted-foreground lg:text-[15px]">{feature.description}</p>
@@ -183,47 +348,78 @@ const comparisonRows = [
       <div class="mt-10 grid gap-8 lg:mt-14 lg:grid-cols-[0.72fr_1.28fr] lg:items-center lg:gap-16">
         <div>
           <p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">Five-case comparison</p>
-          <h3 class="mt-4 font-mono text-xl font-semibold leading-8 text-foreground">{proofs[0].title}</h3>
-          <p class="mt-4 max-w-[52ch] font-mono text-sm leading-7 text-muted-foreground lg:text-[15px]">{proofs[0].description}</p>
-          <a href={proofs[0].href} class="mt-6 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Read the comparison →</a>
+          <h3 class="mt-4 font-mono text-xl font-semibold leading-8 text-foreground">{proof.title}</h3>
+          <p class="mt-4 max-w-[52ch] font-mono text-sm leading-7 text-muted-foreground lg:text-[15px]">{proof.description}</p>
+          <a href={proof.href} class="mt-6 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Read the comparison</a>
         </div>
 
-        <div class="overflow-x-auto border border-border-strong bg-background scrollbar-thin">
-          <table class="w-full table-fixed border-collapse font-mono text-left text-[10px] sm:min-w-[600px] sm:table-auto sm:text-xs">
+        <div class="reveal min-w-0 overflow-x-auto border border-border-strong bg-background scrollbar-thin">
+          <table class="w-full min-w-[420px] border-collapse font-mono text-left text-[11px] sm:min-w-[560px] sm:text-xs">
+            <caption class="sr-only">XSS detection depth by tool and analysis mode across five Java test cases</caption>
             <thead>
+              <tr class="text-muted-foreground">
+                <th scope="col" rowspan="2" class="px-3 py-3 align-bottom font-medium sm:px-4">Analysis depth</th>
+                <th scope="colgroup" colspan="2" class="border-l border-border px-3 py-2.5 text-center font-medium sm:px-4">Semgrep Code</th>
+                <th scope="colgroup" class="border-l border-border px-3 py-2.5 text-center font-medium sm:px-4">CodeQL</th>
+                <th scope="colgroup" colspan="2" class="border-l border-border bg-primary/5 px-3 py-2.5 text-center font-semibold text-primary sm:px-4">OpenTaint</th>
+              </tr>
               <tr class="border-b border-border-strong text-muted-foreground">
-                <th scope="col" class="w-[40%] px-2 py-3 font-medium sm:w-auto sm:px-4">Analysis depth</th>
-                <th scope="col" class="w-[20%] px-2 py-3 font-medium sm:w-auto sm:px-4"><span class="sm:hidden">SG Code</span><span class="hidden sm:inline">Semgrep Code</span></th>
-                <th scope="col" class="w-[18%] px-2 py-3 font-medium sm:w-auto sm:px-4">CodeQL</th>
-                <th scope="col" class="w-[22%] bg-primary/5 px-2 py-3 font-semibold text-primary sm:w-auto sm:px-4">OpenTaint</th>
+                {coverageColumns.map((column) => (
+                  <th scope="col" class:list={[
+                    "border-l border-border px-3 py-2.5 text-center text-[11px] font-normal sm:px-4",
+                    column.accent && "bg-primary/5",
+                  ]}>{column.mode}</th>
+                ))}
               </tr>
             </thead>
             <tbody>
-              {comparisonRows.map((row) => (
-                <tr class="border-b border-border last:border-b-0">
-                  <th scope="row" class="px-2 py-3 font-medium text-foreground sm:px-4">{row.depth}</th>
-                  <td class="whitespace-nowrap px-2 py-3 text-muted-foreground sm:px-4">{row.semgrep}</td>
-                  <td class="whitespace-nowrap px-2 py-3 text-muted-foreground sm:px-4">{row.codeql}</td>
-                  <td class="whitespace-nowrap bg-primary/5 px-2 py-3 font-semibold text-primary sm:px-4">{row.opentaint}</td>
+              {coverageRows.map((row) => (
+                <tr class="border-b border-border transition-colors duration-200 last:border-b-0 hover:bg-primary/[0.04] motion-reduce:transition-none">
+                  <th scope="row" class="px-3 py-3 font-medium text-foreground sm:px-4">{row.depth}</th>
+                  {row.cells.map((state, index) => (
+                    <td class:list={[
+                      "border-l border-border px-3 py-3 text-center sm:px-4",
+                      coverageColumns[index].accent ? "bg-primary/5 text-primary" : "text-foreground",
+                    ]}>
+                      <span class="sr-only">{coverageStates[state].label}</span>
+                      <span aria-hidden="true" class:list={[
+                        "inline-block h-[11px] w-[11px] border border-current align-middle",
+                        state === "miss" && "opacity-40",
+                        coverageStates[state].fill,
+                      ]}></span>
+                    </td>
+                  ))}
                 </tr>
               ))}
             </tbody>
           </table>
-          <p class="border-t border-border px-4 py-3 font-mono text-[10px] leading-5 text-muted-foreground">✓ correct · ◐ partial · × missed · paired results show pattern / taint rules</p>
+          <p class="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-border px-3 py-3 font-mono text-[11px] leading-5 text-muted-foreground sm:px-4">
+            {Object.values(coverageStates).map((state) => (
+              <span class="flex items-center gap-2">
+                <span aria-hidden="true" class:list={["inline-block h-[10px] w-[10px] border border-current", state.fill]}></span>
+                {state.label}
+              </span>
+            ))}
+          </p>
         </div>
       </div>
 
-      <div class="mt-14 grid gap-8 border-t border-border pt-14 lg:mt-20 lg:grid-cols-[1.28fr_0.72fr] lg:items-center lg:gap-16 lg:pt-20">
-        <a href={proofs[1].href} class="group block overflow-hidden border border-border-strong bg-background">
-          <img src="/pictures/blog/conductor-rce/report-overview.png" alt="OpenTaint report showing two Conductor RCE findings and their source-to-sink taint traces" class="aspect-[36/25] w-full object-cover object-top transition-transform duration-500 motion-reduce:transition-none group-hover:scale-[1.01]" loading="lazy" width="1440" height="1000" />
+      <figure class="reveal mt-14 grid gap-8 border-t border-border pt-14 lg:mt-20 lg:grid-cols-[1.3fr_0.7fr] lg:items-center lg:gap-16 lg:pt-20">
+        <a href="/reports/conductor-cve-2026-58138.html" class="group relative block overflow-hidden border border-border-strong bg-background transition-colors duration-300 hover:border-primary/60 focus-visible:border-primary motion-reduce:transition-none">
+          <span class="pointer-events-none absolute bottom-0 right-0 z-10 translate-y-full bg-primary px-3 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary-foreground transition-transform duration-300 ease-out group-hover:translate-y-0 group-focus-visible:translate-y-0 motion-reduce:transition-none">Open the report</span>
+          <img src="/pictures/report/finding-light.webp" alt="OpenTaint report with the Conductor findings tree, the vulnerable Context.eval call highlighted in source, and the rule message below it" class="aspect-[8/5] w-full object-cover object-top transition-transform duration-500 motion-reduce:transition-none group-hover:scale-[1.01] dark:hidden" loading="lazy" width="1600" height="1000" />
+          <img src="/pictures/report/finding-dark.webp" alt="OpenTaint report with the Conductor findings tree, the vulnerable Context.eval call highlighted in source, and the rule message below it" class="hidden aspect-[8/5] w-full object-cover object-top transition-transform duration-500 motion-reduce:transition-none group-hover:scale-[1.01] dark:block" loading="lazy" width="1600" height="1000" />
         </a>
-        <div>
-          <p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">CVE-2026-58138 · Case study</p>
-          <h3 class="mt-4 font-mono text-xl font-semibold leading-8 text-foreground">{proofs[1].title}</h3>
-          <p class="mt-4 max-w-[52ch] font-mono text-sm leading-7 text-muted-foreground lg:text-[15px]">{proofs[1].description}</p>
-          <a href={proofs[1].href} class="mt-6 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Read the case study →</a>
-        </div>
-      </div>
+        <figcaption>
+          <p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">Interactive report</p>
+          <h3 class="mt-4 font-mono text-xl font-semibold leading-8 text-foreground">Every finding opens to its source</h3>
+          <p class="mt-4 max-w-[52ch] font-mono text-sm leading-7 text-muted-foreground lg:text-[15px]">
+            The two Conductor findings, the exact call that ends each flow, and the rule that reported it. Open the report and walk all 182 steps of the trace yourself.
+          </p>
+          <a href="/reports/conductor-cve-2026-58138.html" class="mt-6 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Open the Conductor report</a>
+        </figcaption>
+      </figure>
+
     </div>
   </div>
 </section>

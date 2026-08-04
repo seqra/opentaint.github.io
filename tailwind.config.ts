@@ -62,6 +62,11 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         link: "hsl(var(--link))",
+        code: {
+          DEFAULT: "hsl(var(--code-bg))",
+          header: "hsl(var(--code-header))",
+          border: "hsl(var(--code-border))",
+        },
         panel: {
           DEFAULT: "hsl(var(--panel))",
           foreground: "hsl(var(--panel-foreground))",

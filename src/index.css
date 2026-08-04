@@ -223,7 +223,7 @@
      rhythm and content held to the reading column via the frame-x model. */
   .band {
     position: relative;
-    padding-block: clamp(3.5rem, 2rem + 4.6vw, 7rem);
+    padding-block: clamp(4.5rem, 2.5rem + 5.5vw, 9rem);
     padding-inline: max(var(--page-pad), calc((100% - var(--page-max)) / 2));
   }
 
@@ -306,18 +306,8 @@
     margin-bottom: 0;
   }
 
-  /* Cadence rail: a single measured span — a red terminal at each end of one
-     line, matching the section rules — with the two stages labelled beneath it. */
-  .cadence-rail {
-    height: 7px;
-    background:
-      linear-gradient(hsl(var(--brand)) 0 0) center / 100% 1px no-repeat,
-      radial-gradient(circle at center, hsl(var(--brand)) 0 3.5px, transparent 3.5px)
-        left center / 7px 7px no-repeat,
-      radial-gradient(circle at center, hsl(var(--brand)) 0 3.5px, transparent 3.5px)
-        right center / 7px 7px no-repeat;
-  }
-
+  /* The two cadence stages: labels for the table below, dimmed when the other
+     phase is the one being pointed at. */
   .cadence-stage {
     outline-offset: 4px;
     transition: opacity 0.3s ease-out;

@@ -74,22 +74,15 @@ const economics = {
 
 <section class="band" aria-labelledby="how-heading">
   <div class="mx-auto max-w-6xl">
-    <div class="grid gap-5 lg:grid-cols-2 lg:gap-16">
-      <div>
-        <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">The economics</p>
-        <h2 id="how-heading" class="section-heading mt-5">Learn on demand, search on every scan</h2>
-      </div>
-      <p class="section-subtitle mt-0 max-w-[68ch]">
-        Spend model reasoning only on context the application has not revealed yet. Everything already learned runs on CPU, on every change.
-      </p>
+    <div>
+      <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">The economics</p>
+      <h2 id="how-heading" class="section-heading mt-5">Learn on demand, search on every scan</h2>
     </div>
 
-    <figure class="cadence reveal mt-10 lg:mt-14" data-cadence>
+    <figure class="cadence reveal mt-12 lg:mt-16" data-cadence>
       <figcaption class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">One security review, unlimited security scans</figcaption>
 
-      <div class="cadence-rail mt-7" aria-hidden="true"></div>
-
-      <div class="mt-5 grid gap-4 pb-2 sm:grid-cols-2 sm:gap-10">
+      <div class="mt-8 grid gap-4 pb-2 sm:grid-cols-2 sm:gap-10">
         {cadence.map((item, index) => (
           <button
             type="button"
@@ -106,7 +99,11 @@ const economics = {
     </figure>
 
     <div class="reveal mt-12 lg:mt-16">
-      <div class="overflow-x-auto">
+      <p class="section-subtitle mt-0 max-w-[72ch]">
+        Spend model reasoning only on context the application has not revealed yet. Everything already learned runs on CPU, on every change.
+      </p>
+
+      <div class="mt-8 overflow-x-auto lg:mt-10">
         <table id="economics" class="economics w-full border-collapse font-mono sm:min-w-[560px]" data-economics data-mobile-phase="learn">
           <caption class="sr-only">What each phase costs and what it leaves behind</caption>
           <thead class="hidden sm:table-header-group">
@@ -129,13 +126,23 @@ const economics = {
       </div>
     </div>
 
+  <div class="reveal mt-16 grid gap-7 lg:mt-20 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:gap-12">
+      <div class="lg:order-2">
+        <p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">The agent skills</p>
+        <h3 class="mt-4 font-mono text-xl font-semibold leading-8 text-foreground">{skills.title}</h3>
+        <p class="mt-4 max-w-[52ch] font-mono text-sm leading-7 text-muted-foreground lg:text-[15px]">{skills.description}</p>
+        <a href={skills.href} class="mt-6 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Read the release post</a>
+      </div>
+
+      <AgentPipeline />
+    </div>
+
     <div class="mt-16 border-t border-border-strong pt-14 lg:mt-24 lg:pt-20" aria-labelledby="proof-heading">
       {/* The proof block opens on the centre line: its subtitle is one sentence,
           so a centred header reads as a pause between two dense sections. */}
       <div class="mx-auto max-w-3xl text-center">
         <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Show, don't tell</p>
         <h2 id="proof-heading" class="section-heading mt-5">See what the engine catches</h2>
-        <p class="section-subtitle mx-auto max-w-[56ch]">Traces and results you can open yourself.</p>
       </div>
 
       <div class="mt-10 grid gap-8 lg:mt-14 lg:grid-cols-[0.72fr_1.28fr] lg:items-center lg:gap-16">
@@ -197,17 +204,6 @@ const economics = {
             ))}
           </p>
         </div>
-      </div>
-
-      <div class="reveal mt-14 grid gap-7 border-t border-border pt-14 lg:mt-20 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:gap-12 lg:pt-20">
-        <div class="lg:order-2">
-          <p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">The agent skills</p>
-          <h3 class="mt-4 font-mono text-xl font-semibold leading-8 text-foreground">{skills.title}</h3>
-          <p class="mt-4 max-w-[52ch] font-mono text-sm leading-7 text-muted-foreground lg:text-[15px]">{skills.description}</p>
-          <a href={skills.href} class="mt-6 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Read the release post</a>
-        </div>
-
-        <AgentPipeline />
       </div>
 
     </div>

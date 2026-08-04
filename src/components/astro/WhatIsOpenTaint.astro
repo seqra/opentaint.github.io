@@ -24,28 +24,28 @@ const features = [
 
 const pressures = [
   {
-    title: "Did the agent write a vulnerability into code you never reviewed?",
+    title: "How long will you keep betting nobody will bother to exploit your code?",
     description:
-      "It can look finished and pass its tests while an untrusted value crosses helpers, fields, and libraries nobody read. OpenTaint reports the whole source-to-sink trace before that becomes invisible security debt.",
+      "Attackers automate discovery too, and the odds get worse with every release. OpenTaint traces untrusted data to the operations it can damage, so the bet stops being a bet.",
+    value: "Know what is reachable, not what is likely.",
+  },
+  {
+    title: "Would you notice the agent slipping a vulnerability into code you never reviewed?",
+    description:
+      "The output can look finished and pass its tests while an untrusted value crosses helpers, fields, and libraries nobody read. OpenTaint reports the whole source-to-sink trace before that becomes invisible security debt.",
     value: "Generate fast. Verify before merge.",
   },
   {
-    title: "Is the feature done if a vulnerability ships with it?",
-    description:
-      "A feature that passes its tests can still carry security debt into production, where the fix competes with roadmap work. OpenTaint catches forbidden flows in the pull request, not in the incident.",
-    value: "Make secure part of done.",
-  },
-  {
-    title: "Will your security agent find tomorrow what it found today?",
+    title: "Will your security agent review find tomorrow what it found today?",
     description:
       "An agent can find a pattern once, then miss it on the next nondeterministic review. OpenTaint records it as a versioned taint rule the engine applies on every scan.",
     value: "Turn every discovery into deterministic coverage.",
   },
   {
-    title: "How many times will you pay an agent to review the same risk?",
+    title: "How much money will you waste on everything your security agent forgot it reviewed?",
     description:
       "Your last review already paid to learn the trust boundaries, vulnerability patterns, and opaque library behavior. Every scan that starts from zero buys that context again. OpenTaint records it as taint rules and dependency models, then applies both on every change.",
-    value: "Spend tokens only when new context must be learned. Keep every scan fast enough to enforce.",
+    value: "Spend tokens only when new context must be learned.",
   },
 ];
 
@@ -366,31 +366,46 @@ const economics = {
       </ol>
     </figure>
 
-    <div class="reveal mt-12 overflow-x-auto lg:mt-16">
-      <table class="economics w-full min-w-[560px] border-collapse border-y border-border-strong font-mono" data-economics>
-        <caption class="sr-only">What each phase costs and what it leaves behind</caption>
-        <thead>
-          <tr>
-            <th scope="col" class="w-[38%] px-5 py-5 text-right text-lg font-semibold text-foreground lg:text-xl" data-phase="learn">Learn</th>
-            <th scope="col" class="w-[24%] px-4 py-5"><span class="sr-only">Attribute</span></th>
-            <th scope="col" class="w-[38%] px-5 py-5 text-left text-lg font-semibold text-foreground lg:text-xl" data-phase="search">Search</th>
-          </tr>
-        </thead>
-        <tbody>
-          {economics.rows.map((row) => (
-            <tr class="economics-row border-t border-border">
-              <td class="px-5 py-4 text-right text-xs font-medium text-foreground sm:text-sm" data-phase="learn">{row.learn}</td>
-              <th scope="row" class="px-4 py-4 text-center text-xs font-normal uppercase tracking-[0.12em] text-muted-foreground sm:text-[13px]">{row.label}</th>
-              <td class="px-5 py-4 text-left text-xs font-medium text-foreground sm:text-sm" data-phase="search">{row.search}</td>
+    <div class="reveal mt-12 lg:mt-16">
+      {/* Narrow screens read one phase at a time: three columns of prose do not
+          survive 375px, and side-scrolling a comparison defeats the comparison. */}
+      <div class="flex gap-px border border-border-strong sm:hidden" role="group" aria-label="Show one phase">
+        {economics.phases.map((phase, index) => (
+          <button
+            type="button"
+            class:list={["economics-toggle flex-1 px-4 py-3 font-mono text-[13px] font-semibold text-muted-foreground", index > 0 && "border-l border-border"]}
+            data-phase-toggle={phase.key}
+            aria-pressed={index === 0 ? "true" : "false"}
+          >{phase.name}</button>
+        ))}
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="economics w-full border-collapse border-b border-border-strong font-mono sm:min-w-[560px] sm:border-t" data-economics data-mobile-phase="learn">
+          <caption class="sr-only">What each phase costs and what it leaves behind</caption>
+          <thead class="hidden sm:table-header-group">
+            <tr>
+              <th scope="col" class="w-[38%] px-5 py-5 text-right text-lg font-semibold text-foreground lg:text-xl" data-phase="learn">Learn</th>
+              <th scope="col" class="w-[24%] px-4 py-5"><span class="sr-only">Attribute</span></th>
+              <th scope="col" class="w-[38%] px-5 py-5 text-left text-lg font-semibold text-foreground lg:text-xl" data-phase="search">Search</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {economics.rows.map((row) => (
+              <tr class="economics-row border-t border-border">
+                <td class="px-5 py-4 text-right text-xs font-medium text-foreground sm:text-sm" data-phase="learn">{row.learn}</td>
+                <th scope="row" class="px-4 py-4 text-center text-xs font-normal uppercase tracking-[0.12em] text-muted-foreground sm:text-[13px]">{row.label}</th>
+                <td class="px-5 py-4 text-left text-xs font-medium text-foreground sm:text-sm" data-phase="search">{row.search}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div class="mt-16 border-t border-border-strong pt-14 lg:mt-24 lg:pt-20" aria-labelledby="proof-heading">
       <div class="max-w-2xl">
-        <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Proof, not promises</p>
+        <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Show, don't tell</p>
         <h2 id="proof-heading" class="section-heading mt-5">See what the engine catches</h2>
         <p class="section-subtitle max-w-[68ch]">Claims about detection depth need traces and results you can inspect.</p>
       </div>
@@ -476,14 +491,16 @@ const economics = {
 </section>
 
 <script>
-  /* Links the cadence rail to the table under it: pointing at (or focusing) a
-     stage lights that phase's column, so "one review, then every commit" and
-     the numbers behind it read as one idea. Pure enhancement — without it both
-     columns simply stay at rest. */
+  /* Two enhancements over one table. Wide screens: pointing at (or focusing) a
+     cadence stage lights that phase's column, so the rail and the numbers under
+     it read as one idea. Narrow screens: a toggle picks which phase is on
+     screen, because three columns of prose do not fit 375px. Without JS both
+     stay at rest and the table shows the Learn column. */
   const rail = document.querySelector<HTMLElement>("[data-cadence]");
   const table = document.querySelector<HTMLElement>("[data-economics]");
+  const toggles = [...document.querySelectorAll<HTMLButtonElement>("[data-phase-toggle]")];
 
-  if (rail && table) {
+  if (table && rail) {
     const stages = [...rail.querySelectorAll<HTMLElement>(".cadence-stage")];
 
     const setPhase = (phase: string | null) => {
@@ -500,6 +517,19 @@ const economics = {
       stage.addEventListener("focus", activate);
       stage.addEventListener("pointerleave", clear);
       stage.addEventListener("blur", clear);
+    });
+  }
+
+  if (table && toggles.length) {
+    const showPhase = (phase: string) => {
+      table.dataset.mobilePhase = phase;
+      toggles.forEach((toggle) => {
+        toggle.setAttribute("aria-pressed", String(toggle.dataset.phaseToggle === phase));
+      });
+    };
+
+    toggles.forEach((toggle) => {
+      toggle.addEventListener("click", () => showPhase(toggle.dataset.phaseToggle ?? "learn"));
     });
   }
 </script>

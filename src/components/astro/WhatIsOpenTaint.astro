@@ -4,7 +4,7 @@ import { VideoDemo } from "@/components/VideoDemo";
 
 const discoveries = [
   { label: "Trust boundary", text: "Unauthenticated workflow input reaches the script evaluators" },
-  { label: "Vulnerability pattern", text: "Untrusted script text on a full-host-access context is RCE" },
+  { label: "Vulnerability pattern", text: "Untrusted text passed to <code>Context.eval()</code> on a context built with <code>allowAllAccess(true)</code>" },
   { label: "Opaque behavior", text: "<code>Builder.option()</code> returns the same builder" },
 ];
 
@@ -118,20 +118,13 @@ languages: [java]
 mode: taint
 pattern-sinks:
   - patterns:
-      - pattern-either:
-          - pattern: (Context $CTX).eval($SOURCE)
-          - pattern: (Context $CTX).eval($LANG, $SOURCE)
+      - pattern: (Context $CTX).eval($LANG, $SOURCE)
       - focus-metavariable: $SOURCE
       # Only a context with full host access is RCE.
-      - pattern-either:
-          - pattern-inside: |
-              Context $CTX = $B
-                .allowAllAccess(true).build();
-              ...
-          - pattern-inside: |
-              Context $CTX = $B
-                .allowHostAccess(HostAccess.ALL).build();
-              ...`,
+      - pattern-inside: |
+          Context $CTX = $B
+            .allowAllAccess(true).build();
+          ...`,
   },
   {
     label: "Dependency model",

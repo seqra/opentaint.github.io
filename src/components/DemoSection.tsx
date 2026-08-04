@@ -95,13 +95,12 @@ export function DemoSection() {
                   direction === 1 ? "demo-slide-in-next" : "demo-slide-in-prev",
                 ].join(" ")}
               >
-                {/* Box 2 — wraps its demo exactly (full width, height driven by
-                    the content), framed and rounded. There is no empty
-                    inverted slack: the cast player and the media images each set
-                    the box height, and the leftover space lives in box 1. */}
+                {/* Box 2 — the frame. It fills the stage exactly, so every tab
+                    is the same size and the tab row never shifts; each demo
+                    covers it rather than setting its own height. */}
                 <div
                   className={[
-                    "w-full overflow-hidden rounded-xl border border-panel-border",
+                    "absolute inset-0 flex overflow-hidden rounded-xl border border-panel-border",
                     slide.pageBackground
                       ? "bg-background"
                       : "bg-[#feffff] dark:bg-[#1b0100]",

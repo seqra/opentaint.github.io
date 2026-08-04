@@ -41,7 +41,7 @@ export function AnimatedHero() {
         The open source taint analysis engine for the AI era
       </h1>
 
-      <p className="subheadline mt-6 max-w-[62ch] lg:mt-8">
+      <p className="subheadline mt-6 max-w-none lg:mt-8">
         <span className="block text-foreground">Formal program analysis for security agents.</span>
         <span className="block">
           AI agents learn your application <span className="hero-mark">on demand</span>. OpenTaint scans it{" "}

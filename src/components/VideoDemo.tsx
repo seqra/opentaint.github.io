@@ -45,7 +45,7 @@ export function VideoDemo({ sources, poster, alt, testId, href }: VideoDemoProps
   if (reducedMotion) {
     const still = <ThemedImage sources={poster} alt={alt} testId={testId} />;
     return href ? (
-      <a href={href} target="_blank" rel="noopener noreferrer" aria-label={alt} className="block w-full">
+      <a href={href} target="_blank" rel="noopener noreferrer" aria-label={alt} className="block h-full w-full">
         {still}
       </a>
     ) : (
@@ -65,7 +65,7 @@ export function VideoDemo({ sources, poster, alt, testId, href }: VideoDemoProps
         muted
         playsInline
         preload="metadata"
-        className="block h-auto w-full dark:hidden"
+        className="block h-full w-full object-cover dark:hidden"
       />
       <video
         ref={darkRef}
@@ -77,15 +77,15 @@ export function VideoDemo({ sources, poster, alt, testId, href }: VideoDemoProps
         muted
         playsInline
         preload="metadata"
-        className="hidden h-auto w-full dark:block"
+        className="hidden h-full w-full object-cover dark:block"
       />
     </>
   );
 
   return (
-    <div className="group relative w-full">
+    <div className="group relative h-full w-full">
       {href ? (
-        <a href={href} target="_blank" rel="noopener noreferrer" aria-label={alt} className="block w-full">
+        <a href={href} target="_blank" rel="noopener noreferrer" aria-label={alt} className="block h-full w-full">
           {frames}
         </a>
       ) : (

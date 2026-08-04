@@ -223,7 +223,7 @@
      rhythm and content held to the reading column via the frame-x model. */
   .band {
     position: relative;
-    padding-block: clamp(3rem, 1.75rem + 3.4vw, 5.5rem);
+    padding-block: clamp(3.5rem, 2rem + 4.6vw, 7rem);
     padding-inline: max(var(--page-pad), calc((100% - var(--page-max)) / 2));
   }
 

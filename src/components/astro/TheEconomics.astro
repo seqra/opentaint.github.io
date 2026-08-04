@@ -130,10 +130,12 @@ const economics = {
     </div>
 
     <div class="mt-16 border-t border-border-strong pt-14 lg:mt-24 lg:pt-20" aria-labelledby="proof-heading">
-      <div class="max-w-2xl">
+      {/* The proof block opens on the centre line: its subtitle is one sentence,
+          so a centred header reads as a pause between two dense sections. */}
+      <div class="mx-auto max-w-3xl text-center">
         <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Show, don't tell</p>
         <h2 id="proof-heading" class="section-heading mt-5">See what the engine catches</h2>
-        <p class="section-subtitle max-w-[68ch]">Claims about detection depth need traces and results you can inspect.</p>
+        <p class="section-subtitle mx-auto max-w-[56ch]">Claims about detection depth need traces and results you can inspect.</p>
       </div>
 
       <div class="mt-10 grid gap-8 lg:mt-14 lg:grid-cols-[0.72fr_1.28fr] lg:items-center lg:gap-16">

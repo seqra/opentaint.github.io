@@ -30,6 +30,6 @@ describe("DEMO_SLIDES", () => {
     const agent = DEMO_SLIDES.find((s) => s.id === "agent");
     expect(agent?.kind).toBe("video");
     expect(agent?.sources).toEqual({ light: "/agent-video-light.mp4", dark: "/agent-video-dark.mp4" });
-    expect(agent?.fallback).toEqual({ light: "/screen-light-3.png", dark: "/screen-dark-3.png" });
+    expect(agent?.fallback).toEqual({ light: "/agent-poster-light.webp", dark: "/agent-poster-dark.webp" });
   });
 });

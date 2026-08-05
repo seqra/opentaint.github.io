@@ -1,0 +1,103 @@
+---
+const proof = {
+  href: "/blog/semgrep-vs-codeql-vs-opentaint",
+  title: "Detection depth, compared",
+  description:
+    "See Semgrep, CodeQL, and OpenTaint run against five progressively harder Java XSS cases, from direct returns to builders with virtual dispatch.",
+};
+
+/* Coverage matrix. Columns pair each tool with the analysis mode it was run in,
+   so a miss is attributed to a mode rather than hidden behind a slashed pair.
+   State is encoded by fill (solid / half / empty), never by color alone. */
+const coverageColumns = [
+  { tool: "Semgrep Code", mode: "patterns" },
+  { tool: "Semgrep Code", mode: "taint rules" },
+  { tool: "CodeQL", mode: "taint rules" },
+  { tool: "OpenTaint", mode: "patterns", accent: true },
+  { tool: "OpenTaint", mode: "taint rules", accent: true },
+];
+
+const coverageRows = [
+  { depth: "Direct return", cells: ["full", "full", "full", "full", "full"] },
+  { depth: "Local dataflow", cells: ["miss", "full", "full", "full", "full"] },
+  { depth: "Inter-procedural", cells: ["miss", "full", "full", "full", "full"] },
+  { depth: "Field sensitivity", cells: ["miss", "partial", "partial", "full", "full"] },
+  { depth: "Virtual dispatch", cells: ["miss", "miss", "partial", "full", "full"] },
+];
+
+const coverageStates = {
+  full: { label: "Detected", fill: "bg-current" },
+  partial: { label: "Partial", fill: "bg-[linear-gradient(to_right,currentColor_50%,transparent_50%)]" },
+  miss: { label: "Missed", fill: "bg-transparent" },
+};
+---
+
+<section class="band" aria-labelledby="proof-heading">
+  <div class="mx-auto max-w-6xl">
+    <div class="mx-auto max-w-3xl text-center">
+      <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Show, don't tell</p>
+      <h2 id="proof-heading" class="section-heading mt-6">See what the engine catches</h2>
+    </div>
+
+    <div class="mt-10 grid gap-8 lg:mt-16 lg:grid-cols-[0.72fr_1.28fr] lg:items-center lg:gap-16">
+      <div>
+        <p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">Five-case comparison</p>
+        <h3 class="mt-4 font-mono text-xl font-semibold leading-8 text-foreground">{proof.title}</h3>
+        <p class="mt-4 max-w-[52ch] font-mono text-sm leading-7 text-muted-foreground lg:text-[15px]">{proof.description}</p>
+        <a href={proof.href} class="mt-6 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Read the comparison</a>
+      </div>
+
+      <div class="reveal min-w-0 overflow-x-auto border border-border-strong bg-background scrollbar-thin">
+        {/* Five verdict columns fit a 375px screen only if the cells stop
+            padding and the labels shorten; past sm both come back. */}
+        <table class="w-full table-fixed border-collapse font-mono text-left text-[10px] sm:table-auto sm:min-w-[560px] sm:text-xs">
+          <caption class="sr-only">XSS detection depth by tool and analysis mode across five Java test cases</caption>
+          <thead>
+            <tr class="text-muted-foreground">
+              <th scope="col" rowspan="2" class="w-[36%] px-2 py-3 align-bottom font-medium sm:w-auto sm:px-4">Analysis depth</th>
+              <th scope="colgroup" colspan="2" class="border-l border-border px-1 py-3 text-center font-medium sm:px-4"><span class="sm:hidden">Semgrep</span><span class="hidden sm:inline">Semgrep Code</span></th>
+              <th scope="colgroup" class="border-l border-border px-1 py-3 text-center font-medium sm:px-4">CodeQL</th>
+              <th scope="colgroup" colspan="2" class="border-l border-border bg-primary/5 px-1 py-3 text-center font-semibold text-primary sm:px-4">OpenTaint</th>
+            </tr>
+            <tr class="border-b border-border-strong text-muted-foreground">
+              {coverageColumns.map((column) => (
+                <th scope="col" class:list={[
+                  "border-l border-border px-1 py-3 text-center text-[9px] font-normal sm:px-4 sm:text-[11px]",
+                  column.accent && "bg-primary/5",
+                ]}><span class="sm:hidden">{column.mode === "taint rules" ? "taint" : "pattern"}</span><span class="hidden sm:inline">{column.mode}</span></th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {coverageRows.map((row, rowIndex) => (
+              <tr class="matrix-row border-b border-border transition-colors duration-200 last:border-b-0 hover:bg-primary/[0.04] motion-reduce:transition-none" style={`--row-index:${rowIndex}`}>
+                <th scope="row" class="px-2 py-3 font-medium text-foreground sm:px-4">{row.depth}</th>
+                {row.cells.map((state, index) => (
+                  <td class:list={[
+                    "border-l border-border px-1 py-3 text-center sm:px-4",
+                    coverageColumns[index].accent ? "bg-primary/5 text-primary" : "text-foreground",
+                  ]}>
+                    <span class="sr-only">{coverageStates[state].label}</span>
+                    <span aria-hidden="true" class:list={[
+                      "inline-block h-[11px] w-[11px] border border-current align-middle",
+                      state === "miss" && "opacity-40",
+                      coverageStates[state].fill,
+                    ]}></span>
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p class="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border px-2 py-3 font-mono text-[10px] leading-5 text-muted-foreground sm:gap-x-6 sm:px-4 sm:text-[11px]">
+          {Object.values(coverageStates).map((state) => (
+            <span class="flex items-center gap-2">
+              <span aria-hidden="true" class:list={["inline-block h-[10px] w-[10px] border border-current", state.fill]}></span>
+              {state.label}
+            </span>
+          ))}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

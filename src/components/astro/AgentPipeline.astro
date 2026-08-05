@@ -9,6 +9,12 @@
  * 'from.side > to.side : lane [ch:X]'.
  */
 
+type Props = {
+  mobileView?: "focus" | "scroll";
+};
+
+const { mobileView = "focus" } = Astro.props;
+
 const U = 8; // the grid unit — keep every coordinate on it
 const FONT = 1.25; // global label scale
 
@@ -309,15 +315,38 @@ function render() {
 const scene = render();
 ---
 
-{/* The frame wraps the drawing rather than the column, so no empty margin opens
-    up inside the border. On a phone the graph scales down to the column the way
-    the demos do. */}
-<div class="pipeline mx-auto w-full min-w-0 max-w-[38rem] border border-border-strong bg-background p-3 sm:p-4">
-  <svg
-    viewBox="0 0 1440 856"
-    class="block h-auto w-full"
-    role="img"
-    aria-label="The appsec-agent pipeline: build, discover sources, scan, model approximations until the loop saturates, then triage findings into a vulnerabilities report"
-    set:html={scene}
-  />
+{/* The landing uses a focused crop through phone widths so labels remain
+    legible. The article opts into the complete, horizontally scrollable graph. */}
+<div class:list={[
+  "pipeline mx-auto w-full min-w-0 border border-border-strong bg-background p-3 sm:p-4",
+  mobileView === "scroll" ? "max-w-none" : "max-w-[38rem]",
+]}>
+  {mobileView === "focus" ? (
+    <>
+      <svg
+        viewBox="520 184 640 416"
+        class="pipeline-mobile-view h-auto w-full"
+        role="img"
+        aria-label="The central appsec-agent loop: scan, model approximations, discover dangerous operations, and triage findings"
+        set:html={scene}
+      />
+      <svg
+        viewBox="0 0 1440 856"
+        class="pipeline-desktop-view h-auto w-full"
+        role="img"
+        aria-label="The appsec-agent pipeline: build, discover sources, scan, model approximations until the loop saturates, then triage findings into a vulnerabilities report"
+        set:html={scene}
+      />
+    </>
+  ) : (
+    <div class="overflow-x-auto scrollbar-thin">
+      <svg
+        viewBox="0 0 1440 856"
+        class="block h-auto w-full min-w-[46rem] md:min-w-0"
+        role="img"
+        aria-label="The appsec-agent pipeline: build, discover sources, scan, model approximations until the loop saturates, then triage findings into a vulnerabilities report"
+        set:html={scene}
+      />
+    </div>
+  )}
 </div>

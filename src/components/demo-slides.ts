@@ -29,7 +29,7 @@ export const DEMO_SLIDES: DemoSlide[] = [
     // The video plays inline; `fallback` doubles as the poster frame and the
     // static image shown under prefers-reduced-motion.
     sources: { light: "/agent-video-light.mp4", dark: "/agent-video-dark.mp4" },
-    fallback: { light: "/screen-light-3.png", dark: "/screen-dark-3.png" },
+    fallback: { light: "/agent-poster-light.webp", dark: "/agent-poster-dark.webp" },
     alt: "A coding agent running OpenTaint via the skill",
     testId: "demo-agent-media",
   },

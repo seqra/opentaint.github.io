@@ -7,7 +7,7 @@ export type FaqItem = {
 export const faqItems: readonly FaqItem[] = [
   {
     question: "What is OpenTaint?",
-    answer: "OpenTaint is an open source taint analysis engine designed to work with AI agents. During a security review, the agent enacts AST-pattern taint rules from vulnerabilities and captures opaque code behavior as dependency models. On every scan, the engine applies those rules and dependency models while formal inter-procedural dataflow analysis tracks tainted values across the codebase. It is customizable, self-hosted, and an AI-ready open source alternative to Semgrep Pro and CodeQL.",
+    answer: "OpenTaint is an open source taint analysis engine designed to work with AI agents. During a security review, the agent enacts AST-pattern taint rules from vulnerabilities and captures opaque code behavior as dependency models. On every scan, the engine uses those rules and dependency models to perform formal inter-procedural dataflow analysis across the codebase. It is customizable, self-hosted, and an AI-ready open source alternative to Semgrep Pro and CodeQL.",
   },
   {
     question: "What vulnerabilities does OpenTaint detect?",

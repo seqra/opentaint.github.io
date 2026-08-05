@@ -235,9 +235,10 @@
     padding-inline: max(var(--page-pad), calc((100% - var(--page-max)) / 2));
   }
 
-  /* Alternating tinted band — full-bleed background that delineates the
-     thematic block from the plain bands around it. */
-  .band-tint {
+  /* Background changes follow top-level semantic sections rather than being
+     assigned by individual components. This keeps each scope visually bounded
+     even when sections are reordered. */
+  .landing-sections > .band:nth-of-type(odd) {
     background-color: hsl(var(--band));
   }
 
@@ -317,8 +318,19 @@
   /* The two cadence stages: labels for the table below, dimmed when the other
      phase is the one being pointed at. */
   .cadence-stage {
+    cursor: pointer;
     outline-offset: 4px;
     transition: opacity 0.3s ease-out;
+  }
+
+  .cadence-label {
+    transition: color 0.2s ease-out;
+  }
+
+  .cadence-stage:hover .cadence-label,
+  .cadence-stage:focus-visible .cadence-label,
+  .cadence-stage[aria-pressed="true"] .cadence-label {
+    color: hsl(var(--brand));
   }
 
   .cadence-stage[data-dimmed="true"] {
@@ -380,11 +392,6 @@
       text-align: right;
     }
 
-    /* Pressed reads as selected, on the stage label only. */
-    .cadence-stage[aria-pressed="true"] .cadence-label {
-      color: hsl(var(--brand));
-    }
-
     .cadence-stage[aria-pressed="false"] {
       opacity: 0.5;
     }
@@ -406,6 +413,27 @@
 
   .pipeline .note-text {
     fill: hsl(var(--brand));
+  }
+
+  /* A focused crop keeps the workflow legible on phones. Pointer capability is
+     included because some mobile profiles (including Zenfone 7 landscape)
+     report a wide viewport that would otherwise trip a desktop breakpoint. */
+  .pipeline-mobile-view {
+    display: block;
+  }
+
+  .pipeline-desktop-view {
+    display: none;
+  }
+
+  @media (min-width: 768px) and (hover: hover) and (pointer: fine) {
+    .pipeline-mobile-view {
+      display: none;
+    }
+
+    .pipeline-desktop-view {
+      display: block;
+    }
   }
 
   .pipeline .gtitle {
@@ -610,6 +638,14 @@
   .expressive-code .copy button {
     width: 1.75rem !important;
     height: 1.75rem !important;
+  }
+}
+
+/* The terminal recording is intentionally desktop-only. The pointer clause
+   also covers wide mobile profiles and phone landscape layouts. */
+@media (max-width: 767px), (hover: none) and (pointer: coarse) {
+  .demo-desktop-only {
+    display: none !important;
   }
 }
 

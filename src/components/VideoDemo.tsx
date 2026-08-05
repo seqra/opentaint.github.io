@@ -22,11 +22,10 @@ export function VideoDemo({ sources, poster, alt, testId, href }: VideoDemoProps
   const [playing, setPlaying] = useState(true);
 
   // Both videos render so CSS can show the theme-correct one (with its themed
-  // poster) before the island hydrates — no wrong-theme flash. Only the visible
-  // one plays: `preload="metadata"` fetches enough for a first frame, so
-  // arriving on this tab does not pop from poster to playback, while the body of
-  // the hidden source stays unfetched. play() starts just the active one;
-  // toggling theme moves playback (and the download) with it.
+  // poster) before the island hydrates — no wrong-theme flash. Video bytes are
+  // deferred with `preload="none"`; the lightweight poster appears first, then
+  // play() fetches only the active theme. Toggling theme moves playback (and
+  // the download) with it.
   useEffect(() => {
     if (reducedMotion) return;
     const active = theme === "dark" ? darkRef.current : lightRef.current;
@@ -64,7 +63,7 @@ export function VideoDemo({ sources, poster, alt, testId, href }: VideoDemoProps
         loop
         muted
         playsInline
-        preload="metadata"
+        preload="none"
         className="block h-full w-full object-cover dark:hidden"
       />
       <video
@@ -76,7 +75,7 @@ export function VideoDemo({ sources, poster, alt, testId, href }: VideoDemoProps
         loop
         muted
         playsInline
-        preload="metadata"
+        preload="none"
         className="hidden h-full w-full object-cover dark:block"
       />
     </>

@@ -15,10 +15,18 @@ author: "Seqra Team"
 ---
 
 import Mermaid from "@/components/astro/Mermaid.astro";
+import AgentPipeline from "@/components/astro/AgentPipeline.astro";
 
 Frontier models can genuinely review code for security now. An LLM agent reads code the way a human reviewer does — it follows intent, catches the dangerous pattern nobody wrote a rule for, and reasons about whether a given flow is actually exploitable in context. The catch is that you're only renting that judgment — the agent burns tokens on every file, it gives a different answer each time you run it, and it can't promise it ever looked everywhere. A taint engine is the opposite kind of tool: it traces untrusted data through your code and invents nothing, but whatever you teach it, the engine applies everywhere, the same way every time, for the cost of CPU. It is a mistake to treat these two as a choice — pick one and you're left living with its blind spots.
 
 We're releasing a set of [skills](https://github.com/seqra/opentaint/tree/main/skills) that run the two together as a single workflow. The skills plus OpenTaint — our taint-analysis engine — form a harness for the model: the agent does the discovering, and the engine applies what it finds on every scan, deterministically, and costs CPU only. The slow, probabilistic work happens once and gets distilled into a few artifacts the engine reuses on every future commit. From there, a frontier-model security review becomes a plain deterministic scan.
+
+<figure className="my-8">
+  <AgentPipeline mobileView="scroll" />
+  <figcaption className="mx-auto mt-3 max-w-3xl text-center font-mono text-xs leading-5 text-muted-foreground">
+    The complete AppSec Agent workflow: review decisions become versioned rules and dependency models that the engine reuses on every scan.
+  </figcaption>
+</figure>
 
 ## Division of labor
 
@@ -72,7 +80,7 @@ That's all an artifact really is — a small, checkable claim about how data mov
 
 ## Distilling the security review
 
-A security review is really a chain of judgments about trust. Where's the attack surface — the places outside data gets in, and the operations it could damage? Where do the trust boundaries run — the checks that make data safe, and the library code it vanishes into along the way? And of the flows running between those points, which are actually exploitable? Point the AppSec Agent skill at a project and it works through exactly those questions, writing down each answer as it goes. The attack-surface map becomes a coverage record. Checks and dangerous operations turn into rules. The library behavior gets written up as approximations, and every flow ends up with a recorded verdict and the reasoning behind it. Of all of that, the rules and approximations are the part the engine replays on every later scan — the distilled review. Here's the workflow:
+A security review is really a chain of judgments about trust. Where's the attack surface — the places outside data gets in, and the operations it could damage? Where do the trust boundaries run — the checks that make data safe, and the library code it vanishes into along the way? And of the flows running between those points, which are actually exploitable? Point the AppSec Agent skill at a project and it works through exactly those questions, writing down each answer as it goes. The attack-surface map becomes a coverage record. Checks and dangerous operations turn into rules. The library behavior gets written up as approximations, and every flow ends up with a recorded verdict and the reasoning behind it. Of all of that, the rules and approximations are the part the engine replays on every later scan — the distilled review. The scan stage works like this:
 
 <Mermaid chart={`flowchart LR
     surface["Map attack surface"]

@@ -46,17 +46,17 @@ describe("VideoDemo", () => {
     expect(dark.className).toContain("dark:block");
   });
 
-  it("loops muted inline and plays only the visible source, fetching just its metadata", () => {
+  it("loops muted inline and defers video bytes until the visible source plays", () => {
     render(<VideoDemo sources={sources} poster={poster} alt="x" testId="v" />);
     const video = screen.getByTestId("v") as HTMLVideoElement;
     expect(video.loop).toBe(true);
     expect(video.muted).toBe(true);
     expect(video.playsInline).toBe(true);
-    // No `autoPlay` attribute, and preload="metadata" so a first frame is ready
-    // without pulling the body of either source; JS plays only the visible one.
+    // No `autoPlay` attribute, and preload="none" keeps both video bodies out of
+    // the initial page load; JS plays only the visible source after hydration.
     expect(video.autoplay).toBe(false);
-    expect(video).toHaveAttribute("preload", "metadata");
-    expect(screen.getByTestId("v-dark")).toHaveAttribute("preload", "metadata");
+    expect(video).toHaveAttribute("preload", "none");
+    expect(screen.getByTestId("v-dark")).toHaveAttribute("preload", "none");
     // On a light page the effect starts the visible (light) video.
     expect(play).toHaveBeenCalled();
   });

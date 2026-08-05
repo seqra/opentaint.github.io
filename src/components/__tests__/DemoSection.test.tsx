@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DemoSection } from "../DemoSection";
 
@@ -36,6 +36,26 @@ describe("DemoSection", () => {
     const tabs = screen.getAllByRole("tab");
     expect(tabs.map((t) => t.textContent)).toEqual(["Agent", "Viewer", "CLI"]);
     expect(screen.getByRole("tab", { name: "Agent" })).toHaveAttribute("aria-selected", "true");
+  });
+
+  it("hides the CLI demo on mobile and touch layouts", async () => {
+    window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+      matches: query.includes("max-width: 767px"),
+      media: query,
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
+
+    render(<DemoSection />);
+
+    await waitFor(() => {
+      expect(screen.queryByRole("tab", { name: "CLI" })).not.toBeInTheDocument();
+    });
+    expect(screen.getAllByRole("tab").map((tab) => tab.textContent)).toEqual(["Agent", "Viewer"]);
   });
 
   it("plays the agent video with a stop control on the default tab", () => {

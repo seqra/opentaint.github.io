@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent, type TouchEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type TouchEvent } from "react";
 import { TerminalDemo } from "./TerminalDemo";
 import { MediaDemo } from "./MediaDemo";
 import { VideoDemo } from "./VideoDemo";
@@ -6,26 +6,48 @@ import { DEMO_SLIDES, type DemoSlideId } from "./demo-slides";
 
 const SWIPE_THRESHOLD_PX = 48;
 const AUTO_ADVANCE_MS = 7000;
+const MOBILE_DEMO_QUERY = "(max-width: 767px), (hover: none) and (pointer: coarse)";
 
 export function DemoSection() {
   const [activeId, setActiveId] = useState<DemoSlideId>(DEMO_SLIDES[0].id);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [autoAdvance, setAutoAdvance] = useState(true);
+  const [mobileDemo, setMobileDemo] = useState(false);
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const touchStartX = useRef<number | null>(null);
   const hoverPauseRef = useRef(false);
 
-  const activeIndex = DEMO_SLIDES.findIndex((s) => s.id === activeId);
+  const visibleSlides = useMemo(
+    () => mobileDemo ? DEMO_SLIDES.filter((slide) => slide.id !== "terminal") : DEMO_SLIDES,
+    [mobileDemo],
+  );
+  const effectiveActiveId = visibleSlides.some((slide) => slide.id === activeId)
+    ? activeId
+    : visibleSlides[0].id;
+  const activeIndex = visibleSlides.findIndex((slide) => slide.id === effectiveActiveId);
+
+  useEffect(() => {
+    const query = window.matchMedia(MOBILE_DEMO_QUERY);
+    const sync = () => setMobileDemo(query.matches);
+    sync();
+    query.addEventListener?.("change", sync);
+    return () => query.removeEventListener?.("change", sync);
+  }, []);
+
+  useEffect(() => {
+    if (activeId !== effectiveActiveId) setActiveId(effectiveActiveId);
+  }, [activeId, effectiveActiveId]);
 
   const goTo = (id: DemoSlideId) => {
-    const nextIndex = DEMO_SLIDES.findIndex((s) => s.id === id);
+    const nextIndex = visibleSlides.findIndex((slide) => slide.id === id);
+    if (nextIndex < 0) return;
     if (nextIndex === activeIndex) return;
     setDirection(nextIndex > activeIndex ? 1 : -1);
     setActiveId(id);
   };
 
   const step = (dir: 1 | -1) => {
-    const next = DEMO_SLIDES[(activeIndex + dir + DEMO_SLIDES.length) % DEMO_SLIDES.length];
+    const next = visibleSlides[(activeIndex + dir + visibleSlides.length) % visibleSlides.length];
     setDirection(dir);
     setActiveId(next.id);
   };
@@ -35,7 +57,7 @@ export function DemoSection() {
     event.preventDefault();
     setAutoAdvance(false);
     const dir = event.key === "ArrowRight" ? 1 : -1;
-    const next = DEMO_SLIDES[(activeIndex + dir + DEMO_SLIDES.length) % DEMO_SLIDES.length];
+    const next = visibleSlides[(activeIndex + dir + visibleSlides.length) % visibleSlides.length];
     step(dir);
     tabRefs.current[next.id]?.focus();
   };
@@ -58,13 +80,13 @@ export function DemoSection() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const timer = window.setInterval(() => {
       if (hoverPauseRef.current) return;
-      const index = DEMO_SLIDES.findIndex((s) => s.id === activeId);
-      const next = DEMO_SLIDES[(index + 1) % DEMO_SLIDES.length];
+      const index = visibleSlides.findIndex((slide) => slide.id === effectiveActiveId);
+      const next = visibleSlides[(index + 1) % visibleSlides.length];
       setDirection(1);
       setActiveId(next.id);
     }, AUTO_ADVANCE_MS);
     return () => window.clearInterval(timer);
-  }, [autoAdvance, activeId]);
+  }, [autoAdvance, effectiveActiveId, visibleSlides]);
 
   return (
     <div className="mx-auto max-w-[68rem]">
@@ -76,7 +98,7 @@ export function DemoSection() {
         onMouseEnter={() => { hoverPauseRef.current = true; }}
         onMouseLeave={() => { hoverPauseRef.current = false; }}
       >
-        {DEMO_SLIDES.map((slide) => (
+        {visibleSlides.map((slide) => (
           // Box 1 — the stage. Same colour as the page so it is invisible. Its
           // aspect is the agent recording's own (3024x1898), so that demo fits
           // exactly and the other two are fitted to it; every tab reserves the
@@ -86,10 +108,13 @@ export function DemoSection() {
             role="tabpanel"
             id={`demo-panel-${slide.id}`}
             aria-labelledby={`demo-tab-${slide.id}`}
-            hidden={slide.id !== activeId}
-            className="relative aspect-[1512/949] w-full bg-background"
+            hidden={slide.id !== effectiveActiveId}
+            className={[
+              "relative aspect-[1512/949] w-full bg-background",
+              slide.id === "terminal" ? "demo-desktop-only" : "",
+            ].join(" ")}
           >
-            {slide.id === activeId && (
+            {slide.id === effectiveActiveId && (
               <div
                 className={[
                   "absolute inset-0 flex items-center justify-center",
@@ -139,8 +164,8 @@ export function DemoSection() {
         aria-label="Demo selector"
         className="mt-2 flex items-center justify-center gap-4 sm:mt-3 sm:gap-8"
       >
-        {DEMO_SLIDES.map((slide) => {
-          const isActive = slide.id === activeId;
+        {visibleSlides.map((slide) => {
+          const isActive = slide.id === effectiveActiveId;
           return (
             <button
               key={slide.id}
@@ -157,6 +182,7 @@ export function DemoSection() {
               onKeyDown={onTabKeyDown}
               className={[
                 "group flex min-h-[44px] items-center px-1 font-mono text-xs font-medium uppercase tracking-[0.16em] transition-colors sm:min-h-0 lg:text-[13px]",
+                slide.id === "terminal" ? "demo-desktop-only" : "",
                 isActive ? "text-primary" : "text-muted-foreground hover:text-primary",
               ].join(" ")}
             >

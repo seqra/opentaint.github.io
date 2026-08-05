@@ -15,7 +15,7 @@ export const faqItems: readonly FaqItem[] = [
   },
   {
     question: "What are AST-pattern rules?",
-    answer: "AST-pattern rules describe code shapes in a format familiar from Semgrep and ast-grep and readable by humans and AI agents alike. An AST-pattern taint rule identifies sources, sinks, sanitizers, and the source-to-sink flows the engine must report. Formal inter-procedural dataflow analysis follows tainted values through function boundaries, fields, async code, and persistence layers. AST-pattern matchers stop at the syntactic match. OpenTaint keeps tracing the tainted value. When a rule fires on safe code, you refine it directly.",
+    answer: "AST-pattern rules describe code shapes in a format familiar from Semgrep and ast-grep and readable by humans and AI agents alike. An AST-pattern taint rule identifies untrusted inputs, dangerous operations, sanitizers, and the data flows the engine must report. Formal inter-procedural dataflow analysis follows tainted values through function boundaries, fields, async code, and persistence layers. AST-pattern matchers stop at the syntactic match. OpenTaint keeps tracing the tainted value. When a rule fires on safe code, you refine it directly.",
   },
   {
     question: "Why not just use an LLM agent for security scanning?",
@@ -31,7 +31,7 @@ export const faqItems: readonly FaqItem[] = [
   },
   {
     question: "Why is application security the new tech debt?",
-    answer: "AI helps teams create code faster than anyone can review it. The security work moves downstream into review queues, remediation backlogs, and incident response. Every unmodeled trust boundary and missed source-to-sink path becomes invisible debt that compounds across releases. Attackers automate discovery too. They will probe the paths your team misses whether or not your backlog is ready. Security debt is tech debt an attacker can force you to repay. The agent enacts AST-pattern taint rules from vulnerabilities and captures opaque code behavior as dependency models, then the engine applies both on every scan while the code is still fresh and the fix is still cheap.",
+    answer: "AI helps teams create code faster than anyone can review it. The security work moves downstream into review queues, remediation backlogs, and incident response. Every unmodeled trust boundary and missed path from untrusted input to a dangerous operation becomes invisible debt that compounds across releases. Attackers automate discovery too. They will probe the paths your team misses whether or not your backlog is ready. Security debt is tech debt an attacker can force you to repay. The agent enacts AST-pattern taint rules from vulnerabilities and captures opaque code behavior as dependency models, then the engine applies both on every scan while the code is still fresh and the fix is still cheap.",
   },
   {
     question: "What languages and frameworks are supported?",

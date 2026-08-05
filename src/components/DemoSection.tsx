@@ -162,7 +162,7 @@ export function DemoSection() {
       <div
         role="tablist"
         aria-label="Demo selector"
-        className="mt-2 flex items-center justify-center gap-4 sm:mt-3 sm:gap-8"
+        className="mt-6 flex items-center justify-center gap-4 sm:mt-8 sm:gap-8"
       >
         {visibleSlides.map((slide) => {
           const isActive = slide.id === effectiveActiveId;

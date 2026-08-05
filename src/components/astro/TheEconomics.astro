@@ -10,9 +10,9 @@ const proof = {
 
 const skills = {
   href: "/blog/appsec-agent",
-  title: "The agent that writes the rules",
+  title: "An end-to-end application-security workflow",
   description:
-    "Skills that pair an LLM agent with the engine. It maps your attack surface, models the library methods the engine cannot see, writes rules specific to your code, and confirms a finding by exploiting it. The engine takes it from there.",
+    "The appsec-agent skill builds the project, runs OpenTaint, discovers the attack surface, adds targeted taint rules, models opaque library code, triages findings, and optionally generates dynamic proof-of-concept checks for confirmed vulnerabilities.",
 };
 
 /* Coverage matrix. Columns pair each tool with the analysis mode it was run in,
@@ -47,12 +47,12 @@ const cadence = [
   {
     phase: "learn",
     label: "One security review",
-    detail: "The agent learns the application, then commits taint rules and dependency models.",
+    detail: "The agent enacts AST-pattern taint rules from vulnerabilities and captures opaque code behavior as dependency models.",
   },
   {
     phase: "search",
     label: "Unlimited security scans",
-    detail: "Every commit after it, on CPU, with no model in the loop.",
+    detail: "The engine applies those rules and dependency models on every scan without spending model tokens again.",
   },
 ];
 
@@ -66,8 +66,8 @@ const economics = {
   rows: [
     { label: "Who", learn: "Security agent", search: "Taint analysis engine" },
     { label: "When", learn: "When new context appears", search: "On every change" },
-    { label: "Compute", learn: "Expensive model reasoning", search: "Deterministic CPU analysis" },
-    { label: "Artifacts", learn: "Taint rules and dependency models", search: "Detailed dataflow traces" },
+    { label: "Compute", learn: "Model reasoning", search: "Formal inter-procedural dataflow analysis" },
+    { label: "Artifacts", learn: "AST-pattern taint rules and dependency models", search: "Detailed dataflow traces" },
   ],
 };
 ---
@@ -122,7 +122,7 @@ const economics = {
       </div>
 
       <p class="section-subtitle mt-8 max-w-[72ch]">
-        Spend model reasoning only on context the application has not revealed yet. Everything already learned runs on CPU, on every change.
+        The agent learns the attack surface, trust boundaries, vulnerability patterns, and opaque code behavior when new context is needed. The engine applies the resulting taint rules and dependency models on every scan without spending model tokens again.
       </p>
     </div>
 

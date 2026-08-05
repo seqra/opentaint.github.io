@@ -1,6 +1,6 @@
 export const siteConfig = {
   title: "OpenTaint",
-  description: "Formal program analysis for security agents. Make every security review protect every future commit.",
+  description: "Formal program analysis for security agents. AI agents review your application on demand. OpenTaint scans it on every change.",
   url: "https://opentaint.org",
   author: "Seqra Team",
   twitter: "@seqradev",

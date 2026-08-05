@@ -7,7 +7,7 @@ export type FaqItem = {
 export const faqItems: readonly FaqItem[] = [
   {
     question: "What is OpenTaint?",
-    answer: "OpenTaint is the open source taint analysis engine for the AI era: formal program analysis for security agents. During a review, the agent records vulnerability patterns as reusable AST-pattern taint rules and opaque code behavior as dependency models. On every scan, the deterministic engine applies those rules and applies those models while formal inter-procedural dataflow analysis tracks tainted values across procedures, fields, aliases, async code, and persistence layers. It is customizable, self-hosted, and an AI-ready open source alternative to Semgrep Pro and CodeQL.",
+    answer: "OpenTaint is an open source taint analysis engine designed to work with AI agents. During a security review, the agent enacts AST-pattern taint rules from vulnerabilities and captures opaque code behavior as dependency models. On every scan, the engine applies those rules and dependency models while formal inter-procedural dataflow analysis tracks tainted values across the codebase. It is customizable, self-hosted, and an AI-ready open source alternative to Semgrep Pro and CodeQL.",
   },
   {
     question: "What vulnerabilities does OpenTaint detect?",
@@ -19,11 +19,11 @@ export const faqItems: readonly FaqItem[] = [
   },
   {
     question: "Why not just use an LLM agent for security scanning?",
-    answer: "Learning an application's attack surface, trust boundaries, vulnerability patterns, and opaque code behavior is expensive and unpredictable. An LLM agent does that work on demand and records vulnerability patterns as AST-pattern taint rules and opaque code behavior as dependency models. Applying those rules and applying those models is cheap and deterministic. OpenTaint does that across the entire codebase on every scan in minutes of CPU without asking the model to reread every file or burning tokens on every commit. A deep security review becomes lean, continuous application security coverage.",
+    answer: "Learning an application's attack surface, trust boundaries, vulnerabilities, and opaque code behavior is expensive and unpredictable. An LLM agent does that work on demand, enacts AST-pattern taint rules from vulnerabilities, and captures opaque code behavior as dependency models. Applying those rules and dependency models is cheap and deterministic. OpenTaint does that across the entire codebase on every scan in minutes of CPU without asking the model to reread every file or burning tokens on every scan. A deep security review becomes lean, continuous application security coverage.",
   },
   {
     question: "Does OpenTaint require an AI agent?",
-    answer: "No. The engine runs deterministic taint analysis with built-in or existing rules whether or not an agent is present. During a security review, the agent learns the codebase, records vulnerability patterns as new AST-pattern taint rules, and captures opaque code behavior as dependency models. People can inspect and refine both artifacts. The engine applies the rules and applies the models on every scan.",
+    answer: "No. The engine runs deterministic taint analysis with built-in or existing rules whether or not an agent is present. During a security review, the agent learns the codebase, enacts new AST-pattern taint rules from vulnerabilities, and captures opaque code behavior as dependency models. People can inspect and refine both artifacts. The engine applies the rules and dependency models on every scan.",
   },
   {
     question: "How does OpenTaint secure agent-generated code?",
@@ -31,7 +31,7 @@ export const faqItems: readonly FaqItem[] = [
   },
   {
     question: "Why is application security the new tech debt?",
-    answer: "AI helps teams create code faster than anyone can review it. The security work moves downstream into review queues, remediation backlogs, and incident response. Every unmodeled trust boundary and missed source-to-sink path becomes invisible debt that compounds across releases. Attackers automate discovery too. They will probe the paths your team misses whether or not your backlog is ready. Security debt is tech debt an attacker can force you to repay. OpenTaint captures vulnerability patterns as taint rules and opaque code behavior as dependency models, then runs taint analysis on every commit while the code is still fresh and the fix is still cheap.",
+    answer: "AI helps teams create code faster than anyone can review it. The security work moves downstream into review queues, remediation backlogs, and incident response. Every unmodeled trust boundary and missed source-to-sink path becomes invisible debt that compounds across releases. Attackers automate discovery too. They will probe the paths your team misses whether or not your backlog is ready. Security debt is tech debt an attacker can force you to repay. The agent enacts AST-pattern taint rules from vulnerabilities and captures opaque code behavior as dependency models, then the engine applies both on every scan while the code is still fresh and the fix is still cheap.",
   },
   {
     question: "What languages and frameworks are supported?",

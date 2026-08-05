@@ -44,7 +44,7 @@ export function AnimatedHero() {
       <p className="subheadline mt-6 max-w-none lg:mt-8">
         <span className="block text-foreground">Formal program analysis for security agents.</span>
         <span className="block">
-          AI agents learn your application <span className="hero-mark">on demand</span>. OpenTaint scans it{" "}
+          AI agents review your application <span className="hero-mark">on demand</span>. OpenTaint scans it{" "}
           <span className="hero-mark">on every change</span>.
         </span>
       </p>

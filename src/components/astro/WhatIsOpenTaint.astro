@@ -9,14 +9,14 @@ const discoveries = [
 
 const features = [
   {
-    title: "Fast scans, fewer false alarms, fewer missed findings",
+    title: "Fast scans. Fewer false alarms. Fewer missed findings.",
     description:
-      "Formal inter-procedural dataflow analysis tracks tainted values across procedures, fields, aliases, async code, and persistence layers at scale.",
+      "The engine runs formal inter-procedural dataflow analysis, applying taint rules and dependency models as it tracks tainted values across procedures, fields, aliases, async code, and persistence layers at scale.",
   },
   {
-    title: "Open source, customizable, and self-hosted",
+    title: "Open source, batteries included.",
     description:
-      "Engine, AST-pattern rules, agent skills, and CI integrations ship under Apache 2.0 and MIT — an AI-ready open source alternative to Semgrep Pro and CodeQL.",
+      "Engine, AST-pattern rules, agent skills, and CI integrations ship as one stack under Apache 2.0 and MIT.",
   },
 ];
 
@@ -72,10 +72,11 @@ const traceSteps = [
   <div class="mx-auto max-w-6xl">
     <div class="text-center">
       <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">What OpenTaint does</p>
-      <h2 id="what-heading" class="section-heading mt-6">One review becomes continuous coverage</h2>
+      <h2 id="what-heading" class="section-heading mt-6">Make every security review executable</h2>
       <p class="section-subtitle mx-auto max-w-[62ch]">
-        Agents write down what they learn as taint rules and dependency models. The engine applies both on every scan, without spending tokens again.
+        The agent enacts AST-pattern taint rules from vulnerabilities and captures opaque code behavior as dependency models. Both become versioned, reviewable analysis artifacts.
       </p>
+      <a href="/blog/conductor-rce-cve-2026-58138" class="mt-6 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Read the CVE-2026-58138 reproduction post.</a>
     </div>
 
 
@@ -83,7 +84,7 @@ const traceSteps = [
       <div class="p-6 sm:p-6 lg:p-8">
         <p class="flex items-baseline gap-3 font-mono text-[11px] font-semibold uppercase tracking-[0.16em]">
           <span class="text-primary">01</span>
-          <span class="text-foreground">Agent discovers</span>
+          <span class="text-foreground">Agent reviews</span>
         </p>
 
         <div class="mt-6 grid md:mt-8 md:grid-cols-3">
@@ -103,7 +104,7 @@ const traceSteps = [
       <div class="border-t border-border p-6 sm:p-6 lg:p-8">
         <p class="flex items-baseline gap-3 font-mono text-[11px] font-semibold uppercase tracking-[0.16em]">
           <span class="text-primary">02</span>
-          <span class="text-foreground">Agent writes</span>
+          <span class="text-foreground">Agent enacts</span>
         </p>
 
         <div class="mt-8 grid gap-6 lg:grid-cols-2">
@@ -188,9 +189,5 @@ const traceSteps = [
       </div>
     </figure>
 
-    <p class="mt-4 font-mono text-[11px] leading-5 text-muted-foreground">
-      Every artifact above is from the
-      <a href="/blog/conductor-rce-cve-2026-58138" class="font-semibold text-foreground underline decoration-primary/30 underline-offset-4 transition-colors hover:text-primary">CVE-2026-58138 reproduction</a>.
-    </p>
   </div>
 </section>

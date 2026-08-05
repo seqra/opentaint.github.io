@@ -12,8 +12,9 @@ describe("faq Q3 — AST-pattern rules answer", () => {
     expect(q3?.answer).toMatch(/AST-pattern rules/);
   });
 
-  it("names whole-program taint analysis as the other layer", () => {
-    expect(q3?.answer).toMatch(/Whole-program taint analysis/);
+  it("names formal inter-procedural dataflow analysis as the tracing layer", () => {
+    expect(q3?.answer).toMatch(/Formal inter-procedural dataflow analysis/);
+    expect(q3?.answer).toMatch(/tainted values/);
   });
 
   it("contrasts with AST-pattern matchers", () => {

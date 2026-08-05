@@ -9,19 +9,24 @@ type VideoDemoProps = {
   poster: MediaSources;
   alt: string;
   testId: string;
+  /* Optional destination for the footage itself. The play control stays a
+     sibling of the link rather than a child of it: a button nested inside an
+     anchor is invalid, and every click on it would also navigate. */
+  href?: string;
 };
 
-export function VideoDemo({ sources, poster, alt, testId }: VideoDemoProps) {
+export function VideoDemo({ sources, poster, alt, testId, href }: VideoDemoProps) {
   const { theme, reducedMotion } = useThemeSync();
   const lightRef = useRef<HTMLVideoElement | null>(null);
   const darkRef = useRef<HTMLVideoElement | null>(null);
   const [playing, setPlaying] = useState(true);
 
   // Both videos render so CSS can show the theme-correct one (with its themed
-  // poster) before the island hydrates — no wrong-theme flash. But only the
-  // visible one is played: `preload="none"` plus no `autoPlay` keeps the hidden
-  // ~4 MB source from ever being fetched. play() here loads and starts just the
-  // active one; toggling theme moves playback (and the download) with it.
+  // poster) before the island hydrates — no wrong-theme flash. Only the visible
+  // one plays: `preload="metadata"` fetches enough for a first frame, so
+  // arriving on this tab does not pop from poster to playback, while the body of
+  // the hidden source stays unfetched. play() starts just the active one;
+  // toggling theme moves playback (and the download) with it.
   useEffect(() => {
     if (reducedMotion) return;
     const active = theme === "dark" ? darkRef.current : lightRef.current;
@@ -38,11 +43,18 @@ export function VideoDemo({ sources, poster, alt, testId }: VideoDemoProps) {
   // Honour the user's motion preference: show the static poster, no autoplay,
   // no control. Mirrors MediaDemo's reduced-motion fallback.
   if (reducedMotion) {
-    return <ThemedImage sources={poster} alt={alt} testId={testId} />;
+    const still = <ThemedImage sources={poster} alt={alt} testId={testId} />;
+    return href ? (
+      <a href={href} target="_blank" rel="noopener noreferrer" aria-label={alt} className="block h-full w-full">
+        {still}
+      </a>
+    ) : (
+      still
+    );
   }
 
-  return (
-    <div className="group relative w-full">
+  const frames = (
+    <>
       <video
         ref={lightRef}
         data-testid={testId}
@@ -52,8 +64,8 @@ export function VideoDemo({ sources, poster, alt, testId }: VideoDemoProps) {
         loop
         muted
         playsInline
-        preload="none"
-        className="block h-auto w-full dark:hidden"
+        preload="metadata"
+        className="block h-full w-full object-cover dark:hidden"
       />
       <video
         ref={darkRef}
@@ -64,9 +76,21 @@ export function VideoDemo({ sources, poster, alt, testId }: VideoDemoProps) {
         loop
         muted
         playsInline
-        preload="none"
-        className="hidden h-auto w-full dark:block"
+        preload="metadata"
+        className="hidden h-full w-full object-cover dark:block"
       />
+    </>
+  );
+
+  return (
+    <div className="group relative h-full w-full">
+      {href ? (
+        <a href={href} target="_blank" rel="noopener noreferrer" aria-label={alt} className="block h-full w-full">
+          {frames}
+        </a>
+      ) : (
+        frames
+      )}
       <button
         type="button"
         onClick={() => setPlaying((p) => !p)}

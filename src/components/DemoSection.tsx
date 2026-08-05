@@ -67,7 +67,7 @@ export function DemoSection() {
   }, [autoAdvance, activeId]);
 
   return (
-    <div className="mx-auto max-w-[80rem]">
+    <div className="mx-auto max-w-[68rem]">
       <div
         className="relative"
         data-testid="demo-stage"
@@ -77,16 +77,17 @@ export function DemoSection() {
         onMouseLeave={() => { hoverPauseRef.current = false; }}
       >
         {DEMO_SLIDES.map((slide) => (
-          // Box 1 — the stage. Same colour as the page so it is invisible; its
-          // constant aspect reserves identical space on every tab, aligning the
-          // demos and holding the tab row steady.
+          // Box 1 — the stage. Same colour as the page so it is invisible. Its
+          // aspect is the agent recording's own (3024x1898), so that demo fits
+          // exactly and the other two are fitted to it; every tab reserves the
+          // same space and the tab row never shifts.
           <div
             key={slide.id}
             role="tabpanel"
             id={`demo-panel-${slide.id}`}
             aria-labelledby={`demo-tab-${slide.id}`}
             hidden={slide.id !== activeId}
-            className="relative aspect-[3/2] w-full bg-background"
+            className="relative aspect-[1512/949] w-full bg-background"
           >
             {slide.id === activeId && (
               <div
@@ -95,13 +96,12 @@ export function DemoSection() {
                   direction === 1 ? "demo-slide-in-next" : "demo-slide-in-prev",
                 ].join(" ")}
               >
-                {/* Box 2 — wraps its demo exactly (full width, height driven by
-                    the content), framed and rounded. There is no empty
-                    inverted slack: the cast player and the media images each set
-                    the box height, and the leftover space lives in box 1. */}
+                {/* Box 2 — the frame. It fills the stage exactly, so every tab
+                    is the same size and the tab row never shifts; each demo
+                    covers it rather than setting its own height. */}
                 <div
                   className={[
-                    "w-full overflow-hidden rounded-xl border border-panel-border",
+                    "absolute inset-0 flex overflow-hidden rounded-xl border border-panel-border",
                     slide.pageBackground
                       ? "bg-background"
                       : "bg-[#feffff] dark:bg-[#1b0100]",
@@ -115,6 +115,7 @@ export function DemoSection() {
                       poster={slide.fallback!}
                       alt={slide.alt!}
                       testId={slide.testId!}
+                      href={slide.href}
                     />
                   ) : (
                     <MediaDemo

@@ -1,0 +1,60 @@
+---
+const pressures = [
+  {
+    title: "How long will you keep betting nobody will bother to exploit your code?",
+    description:
+      "As the codebase grows, defenders must review more paths while attackers need to find only one. OpenTaint traces untrusted data to dangerous operations, replacing assumptions with evidence about what is actually reachable.",
+    value: "Know what is reachable, not what seems likely.",
+  },
+  {
+    title: "Would you notice the agent slipping a vulnerability into code you never reviewed?",
+    description:
+      "Generated code can look complete and pass its tests while untrusted data crosses helpers, fields, and libraries on its way to a dangerous operation. OpenTaint reports the complete data-flow trace before merge.",
+    value: "Generate fast. Verify before merge.",
+  },
+  {
+    title: "Will tomorrow's security review catch what today's review found?",
+    description:
+      "A security agent can find a vulnerability once, then miss it on the next nondeterministic review. When you find a vulnerability, the OpenTaint agent enacts a versioned AST-pattern taint rule from it. The engine applies that rule on every scan, turning a one-time discovery into repeatable protection.",
+    value: "Make every security review executable.",
+  },
+  {
+    title: "How much money will you waste asking a security agent to review the same parts of your application again?",
+    description:
+      "Your first review already paid to map the attack surface, trust boundaries, vulnerabilities, and opaque code behavior. OpenTaint preserves that knowledge in AST-pattern taint rules and dependency models, so future reviews can focus on new context while the engine reuses what is already known on every scan.",
+    value: "Review on demand, scan on every change.",
+  },
+];
+---
+
+<section class="band" aria-labelledby="security-debt-heading">
+  <div class="mx-auto max-w-6xl">
+    <div>
+      <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Why now</p>
+      <h2 id="security-debt-heading" class="section-heading mt-6">Application security is the new tech debt</h2>
+      <p class="section-subtitle max-w-[76ch]">
+        AI makes code cheaper to produce and harder to fully review. The security work that does not happen before merge accumulates in review queues, remediation backlogs, and production risk. Attackers automate discovery too, so every unreviewed path and unmodeled trust boundary compounds across releases — until an attacker forces repayment.
+      </p>
+    </div>
+
+    {/* One text edge per question: the number sits in a gutter, the body runs
+        in a single column, and only the conclusion breaks back out to the left. */}
+    <ul class="mt-10 grid border-y border-border-strong md:grid-cols-2 lg:mt-16" aria-labelledby="security-debt-heading">
+      {pressures.map((pressure, index) => (
+        <li class:list={[
+          "reveal grid grid-cols-[2.25rem_1fr] gap-y-3 py-8 md:py-8",
+          index !== pressures.length - 1 && "border-b border-border",
+          index === 2 && "md:border-b-0",
+          index % 2 === 0 ? "md:pr-10" : "md:border-l md:border-border md:pl-10",
+        ]}>
+          <span class="pt-1 font-mono text-[11px] font-semibold tracking-[0.14em] text-primary">0{index + 1}</span>
+          <h3 class="font-mono text-base font-semibold leading-7 text-foreground lg:text-[17px] lg:leading-[1.65]">{pressure.title}</h3>
+
+          <p class="col-start-2 max-w-[54ch] font-mono text-sm leading-7 text-muted-foreground">{pressure.description}</p>
+
+          <p class="col-span-2 mt-2 self-end border-l-2 border-primary pl-3 font-mono text-xs font-semibold leading-5 text-foreground lg:text-sm lg:leading-6">{pressure.value}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

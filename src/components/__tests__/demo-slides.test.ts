@@ -12,13 +12,17 @@ describe("DEMO_SLIDES", () => {
     expect(terminal?.sources).toBeUndefined();
   });
 
-  it("gives the viewer slide a live-site href and theme-paired stills", () => {
+  it("gives the viewer slide a live-site href and a theme-paired recording", () => {
     const viewer = DEMO_SLIDES.find((s) => s.id === "viewer");
-    expect(viewer?.kind).toBe("media");
+    expect(viewer?.kind).toBe("video");
     expect(viewer?.href).toBe("https://viewer.opentaint.org/");
     expect(viewer?.sources).toEqual({
-      light: "/viewer-screen-light-2.png",
-      dark: "/viewer-screen-dark-2.png",
+      light: "/video/viewer-light.mp4",
+      dark: "/video/viewer-dark.mp4",
+    });
+    expect(viewer?.fallback).toEqual({
+      light: "/video/viewer-poster-light.webp",
+      dark: "/video/viewer-poster-dark.webp",
     });
   });
 

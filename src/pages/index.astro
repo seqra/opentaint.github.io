@@ -5,6 +5,8 @@ import LandingFooter from "@/components/astro/LandingFooter.astro";
 import { AnimatedHero } from "@/components/AnimatedHero";
 import Demo from "@/components/astro/Demo.astro";
 import WhatIsOpenTaint from "@/components/astro/WhatIsOpenTaint.astro";
+import SecurityDebt from "@/components/astro/SecurityDebt.astro";
+import TheEconomics from "@/components/astro/TheEconomics.astro";
 import SupportedTechnology from "@/components/astro/SupportedTechnology.astro";
 import FAQ from "@/components/astro/FAQ.astro";
 import { defaultKeywords, siteConfig } from "@/lib/site";
@@ -36,7 +38,7 @@ const structuredData = [
     name: siteConfig.title,
     applicationCategory: "DeveloperApplication",
     operatingSystem: "Linux, macOS, Windows",
-    description: "The open source taint analysis engine for the AI era. Formal taint analysis for application security — finds what AST-pattern matchers miss, lets LLM agents enact vulnerabilities as rules, scales where neither can alone. The most thorough taint analysis engine for Spring apps.",
+    description: "The open source taint analysis engine for the AI era. Powered by formal inter-procedural dataflow analysis. Customizable and self-hosted, built so AI agents drive your application security analysis without burning tokens on every scan. An AI-ready open source alternative to Semgrep Pro and CodeQL.",
     url: siteConfig.url,
     downloadUrl: "https://github.com/seqra/opentaint/releases",
     license: "https://www.apache.org/licenses/LICENSE-2.0",
@@ -70,14 +72,14 @@ const structuredData = [
 
 <BaseLayout
   title="OpenTaint | The Open Source Taint Analysis Engine for the AI Era"
-  description="The open source taint analysis engine for the AI era. Formal taint analysis for application security — finds what AST-pattern matchers miss, lets LLM agents enact rules from vulnerabilities, scales where neither can alone."
+  description="Formal program analysis for security agents. AI agents review your application on demand. OpenTaint scans it on every change."
   keywords={defaultKeywords}
   structuredData={structuredData}
 >
   <div class="min-h-screen bg-background flex flex-col">
     <SiteHeader />
     <main id="main" class="flex-1 pt-16">
-      <section class="band band-tint pt-10 pb-12 sm:pt-16 sm:pb-11 lg:pt-20 lg:pb-14">
+      <section class="band band-tint pt-12 pb-16 sm:pt-20 sm:pb-16 lg:pt-24 lg:pb-20">
         <AnimatedHero client:load />
       </section>
 
@@ -85,7 +87,12 @@ const structuredData = [
 
       <WhatIsOpenTaint />
 
+      <SecurityDebt />
+
       <SupportedTechnology />
+
+      <TheEconomics />
+
       <FAQ />
 
       <div class="frame-x">

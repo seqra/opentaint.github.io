@@ -1,0 +1,323 @@
+---
+/*
+ * The appsec-agent pipeline graph, ported from the standalone board so it
+ * renders at build time: the layout runs here and the page ships plain SVG,
+ * with every mark reading a CSS variable so one markup serves both themes.
+ *
+ * Only the SPEC section below is meant to be edited. The spine auto-stacks
+ * top-to-bottom, groups auto-size from their children, and edges are strings:
+ * 'from.side > to.side : lane [ch:X]'.
+ */
+
+const U = 8; // the grid unit — keep every coordinate on it
+const FONT = 1.25; // global label scale
+
+const SZ = {
+  spine: [224, 56], file: [240, 48],
+  ae: [144, 80], out: [112, 48], outW: [248, 48],
+  tri: [168, 56], triW: [184, 56], rd: [160, 56],
+};
+
+const KIND = {
+  step: { cls: "n-step", fs: 15.5 },   // spine stage run by the engine
+  agent: { cls: "n-agent", fs: 15.5 }, // spine stage run by the agent
+  taint: { cls: "n-taint", fs: 15.5 }, // sources / sinks
+  sub: { cls: "n-sub", fs: 14 },       // action inside a skill group
+  out: { cls: "n-out", fs: 13 },       // outcome chip
+  tout: { cls: "n-taint", fs: 13 },    // outcome chip that is taint data
+  file: { cls: "n-file", fs: 14 },     // artifact on disk
+};
+
+const LANE = {
+  flow: { cls: "e-flow", m: "aInk" },
+  feed: { cls: "e-feed", m: "aBlu" },
+  taint: { cls: "e-taint", m: "aRed" },
+  loop: { cls: "e-loop", m: "aRed" },
+  debug: { cls: "e-debug", m: "aBlu", fitDash: true },
+  detail: { cls: "e-detail", m: null }, // undirected: "expands into"
+};
+
+/* ── SPEC ───────────────────────────────────────────────────────────────── */
+
+const SPINE = {
+  x: 608, top: 40, gap: 40, sz: "spine",
+  steps: [
+    { id: "build", kind: "step" },
+    { id: "sources", kind: "taint" },
+    { id: "scan", kind: "step" },
+    { id: "approx", kind: "agent", label: "approximation" },
+    { id: "sinks", kind: "taint" },
+    { id: "triage", kind: "agent" },
+  ],
+};
+
+const TAIL = [{ id: "vuln", x: 600, sz: "file", kind: "file", label: "vulnerabilities.md" }];
+
+const GAP = 80;        // clearance spine <-> every group
+const PAD = 24;        // inner padding of every group
+const GUT = 40;        // gutter between the two stacked right groups
+const STACK_TOP = 352; // top of the right stack
+
+const GROUPS = {
+  gSrc: {
+    title: "sources", place: { side: "R", v: ["center", "sources"] },
+    nodes: {
+      td: { lx: 0, ly: 0, sz: "tri", kind: "sub", t: ["triage", "dependencies"] },
+      da: { lx: 192, ly: 0, sz: "triW", kind: "sub", t: ["discover attack", "surface"] },
+    },
+  },
+  gAppx: {
+    title: "approximation", place: { side: "L", v: ["center", "approx"] },
+    nodes: {
+      ae: { lx: 0, ly: 80, sz: "ae", kind: "sub", t: ["analyze", "external"] },
+      pt: { lx: 200, ly: 0, sz: "outW", kind: "out", t: ["pass-through"] },
+      te: { lx: 200, ly: 64, sz: "out", kind: "out", t: ["test"] },
+      sk: { lx: 200, ly: 128, sz: "outW", kind: "file", t: ["skipped.yaml"] },
+      si: { lx: 200, ly: 192, sz: "outW", kind: "tout", t: ["sinks"] },
+      df: { lx: 336, ly: 64, sz: "out", kind: "out", t: ["dataflow"] },
+    },
+  },
+  gTri: {
+    title: "triage", place: { side: "L", v: ["top", "triage"] },
+    nodes: {
+      af: { lx: 0, ly: 0, sz: "tri", kind: "sub", t: ["analyze", "findings"] },
+      gp: { lx: 0, ly: 80, sz: "tri", kind: "sub", t: ["generate", "poc"] },
+    },
+  },
+  gDbg: {
+    title: "debug", dash: true, place: { side: "R", v: ["stack", 0] },
+    nodes: {
+      dr: { lx: 0, ly: 0, sz: "rd", kind: "sub", t: ["debug rule"] },
+      ri: { lx: 0, ly: 72, sz: "rd", kind: "sub", t: ["report issue"] },
+    },
+  },
+  gRul: {
+    title: "rule creation", place: { side: "R", v: ["stack", 1] },
+    nodes: {
+      rt: { lx: 0, ly: 0, sz: "rd", kind: "sub", t: ["test"] },
+      cr: { lx: 0, ly: 72, sz: "rd", kind: "sub", t: ["create rule"] },
+      jn: { lx: 0, ly: 144, sz: "rd", kind: "sub", t: ["join"] },
+    },
+  },
+};
+
+const EDGES = [
+  // main spine
+  "build.b > sources.t : flow",
+  "sources.b > scan.t : flow",
+  "scan.b > approx.t : flow",
+  "approx.b > sinks.t : flow",
+  "sinks.b > triage.t : flow",
+  "triage.b > vuln.t : flow",
+  // undirected expansion links: the group is the stage, zoomed in
+  "sources.r > gSrc.l : detail",
+  "approx.l > gAppx.r : detail",
+  "triage.l > gTri.r@-64 : detail",
+  // discovered sources and sinks feed the rule-creation skills
+  "sinks.r > gRul.l : feed",
+  "gSrc.r > gRul.r : feed ch:1384",
+  "approx.r > gDbg.l : debug",
+  "gRul.r > gDbg.r : debug",
+  // group internals
+  "td.r > da.l : feed",
+  "ae.r > pt.l : feed", "ae.r > te.l : feed", "ae.r > sk.l : feed", "ae.r > si.l : feed",
+  "te.r > df.l : feed",
+  "af.b > gp.t : feed",
+  "rt.b > cr.t : feed", "cr.b > jn.t : feed",
+  "dr.b > ri.t : debug",
+  // re-scan iteration — declared last so red paints over the stub it shares
+  "approx.r > scan.r : loop",
+];
+
+const NOTES = [{ text: "saturation loop" }];
+
+/* ── ENGINE ─────────────────────────────────────────────────────────────── */
+
+const STUB = 24, RADIUS = 12;
+const NORMAL = { l: [-1, 0], r: [1, 0], t: [0, -1], b: [0, 1] };
+const NODES = {};
+const BOX = (id) => NODES[id] || GROUPS[id];
+
+function parseEnd(spec) {
+  const [box, off] = spec.split("@");
+  const [id, side] = box.split(".");
+  return { id, side, off: off ? +off : 0 };
+}
+
+function parseEdge(s) {
+  const m = s.match(/^(\S+)\s*>\s*(\S+)\s*:\s*(\w+)(?:\s+ch:(-?\d+))?$/);
+  if (!m) throw new Error("bad edge: " + s);
+  return { from: parseEnd(m[1]), to: parseEnd(m[2]), lane: m[3], ch: m[4] ? +m[4] : null };
+}
+
+function anchor(box, side, off = 0) {
+  const cx = box.x + box.w / 2, cy = box.y + box.h / 2;
+  return side === "l" ? { x: box.x, y: cy + off }
+    : side === "r" ? { x: box.x + box.w, y: cy + off }
+    : side === "t" ? { x: cx + off, y: box.y }
+    : { x: cx + off, y: box.y + box.h };
+}
+
+function trace(S, fromSide, T, toSide) {
+  const ds = NORMAL[fromSide], dt = NORMAL[toSide];
+  const horizS = ds[0] !== 0, horizT = dt[0] !== 0;
+  const P1 = { x: S.x + ds[0] * STUB, y: S.y + ds[1] * STUB };
+  let mid;
+  if (horizS && horizT) mid = { x: P1.x, y: T.y };
+  else if (!horizS && !horizT) mid = { x: T.x, y: P1.y };
+  else if (horizS && !horizT) mid = { x: T.x, y: S.y };
+  else mid = { x: S.x, y: T.y };
+  let pts = [S, P1, mid, T];
+  if (new Set(pts.map((p) => p.x)).size === 1 || new Set(pts.map((p) => p.y)).size === 1) pts = [S, T];
+  return pts.filter((p, i) => i === 0 || p.x !== pts[i - 1].x || p.y !== pts[i - 1].y);
+}
+
+function channel(S, T, chX) {
+  const pts = [S, { x: chX, y: S.y }, { x: chX, y: T.y }, T];
+  return pts.filter((p, i) => i === 0 || p.x !== pts[i - 1].x || p.y !== pts[i - 1].y);
+}
+
+function roundPath(pts, r = RADIUS) {
+  if (pts.length < 2) return "";
+  const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+  const unit = (a, b) => { const d = dist(a, b) || 1; return { x: (b.x - a.x) / d, y: (b.y - a.y) / d }; };
+  let d = `M ${pts[0].x},${pts[0].y}`;
+  for (let i = 1; i < pts.length - 1; i++) {
+    const a = pts[i - 1], b = pts[i], c = pts[i + 1];
+    const d1 = Math.min(r, dist(a, b) / 2), d2 = Math.min(r, dist(b, c) / 2);
+    const u1 = unit(b, a), u2 = unit(b, c);
+    d += ` L ${b.x + u1.x * d1},${b.y + u1.y * d1} Q ${b.x},${b.y} ${b.x + u2.x * d2},${b.y + u2.y * d2}`;
+  }
+  const e = pts[pts.length - 1];
+  return d + ` L ${e.x},${e.y}`;
+}
+
+const cy = (id) => NODES[id].y + NODES[id].h / 2;
+
+function layout() {
+  const [sw, sh] = SZ[SPINE.sz];
+  SPINE.steps.forEach((st, i) => {
+    NODES[st.id] = {
+      x: SPINE.x, y: SPINE.top + i * (sh + SPINE.gap), w: sw, h: sh,
+      kind: st.kind, t: [st.label || st.id],
+    };
+  });
+  const spineBottom = SPINE.top + SPINE.steps.length * (sh + SPINE.gap) - SPINE.gap;
+  for (const f of TAIL) {
+    const [w, h] = SZ[f.sz];
+    NODES[f.id] = { x: f.x, y: spineBottom + SPINE.gap + (f.dy || 0), w, h, kind: f.kind, t: [f.label] };
+  }
+
+  for (const id in GROUPS) {
+    const g = GROUPS[id];
+    let x1 = 0, y1 = 0;
+    for (const nid in g.nodes) {
+      const n = g.nodes[nid];
+      [n.w, n.h] = SZ[n.sz];
+      x1 = Math.max(x1, n.lx + n.w);
+      y1 = Math.max(y1, n.ly + n.h);
+    }
+    g.w = x1 + 2 * PAD;
+    g.h = y1 + 2 * PAD;
+  }
+
+  const stackY = (i) => i === 0 ? STACK_TOP
+    : STACK_TOP + Object.values(GROUPS)
+        .filter((g) => g.place.v[0] === "stack" && g.place.v[1] < i)
+        .reduce((s, g) => s + g.h + GUT, 0);
+
+  for (const id in GROUPS) {
+    const g = GROUPS[id], [mode, ref] = g.place.v;
+    g.x = g.place.side === "L" ? SPINE.x - GAP - g.w : SPINE.x + SZ[SPINE.sz][0] + GAP;
+    g.y = mode === "center" ? cy(ref) - g.h / 2
+      : mode === "top" ? NODES[ref].y
+      : mode === "bottom" ? NODES[ref].y + NODES[ref].h - g.h
+      : stackY(ref);
+    for (const nid in g.nodes) {
+      const n = g.nodes[nid];
+      NODES[nid] = { x: g.x + PAD + n.lx, y: g.y + PAD + n.ly, w: n.w, h: n.h, kind: n.kind, t: n.t };
+    }
+  }
+
+  const n = NOTES[0];
+  n.h = Math.round(26 * FONT);
+  n.w = Math.round(n.text.length * 13 * FONT * 0.6) + 26;
+  n.x = SPINE.x + SZ[SPINE.sz][0] + STUB + 16;
+  n.y = (cy("approx") + cy("scan")) / 2 - n.h / 2;
+}
+
+function nodeSVG(id, n) {
+  const k = KIND[n.kind], cx = n.x + n.w / 2, cyy = n.y + n.h / 2;
+  const rx = n.kind === "out" ? 4 : 8;
+  let s = `<rect class="${k.cls}" x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="${rx}"/>`;
+  if (n.kind === "file") {
+    const ffs = k.fs * FONT, textW = n.t[0].length * ffs * 0.6, ix = cx - (28 + textW) / 2;
+    s += `<path d="M${ix},${n.y + 13} h15 l5,5 v14 h-20 z" fill="none" stroke="hsl(var(--border-strong))" stroke-width="1.3"/>`;
+    return s + `<text class="mono" x="${ix + 28}" y="${cyy}" font-size="${ffs.toFixed(1)}" dominant-baseline="central">${n.t[0]}</text>`;
+  }
+  const fs = k.fs * FONT, lh = 18 * FONT;
+  n.t.forEach((ln, i) => {
+    s += `<text class="lbl" x="${cx}" y="${cyy + (i - (n.t.length - 1) / 2) * lh}" font-size="${fs.toFixed(1)}" text-anchor="middle" dominant-baseline="central">${ln}</text>`;
+  });
+  return s;
+}
+
+/* Arrowheads, one per lane colour. Inline so the SVG stays self-contained. */
+const marker = (id, cls, size) =>
+  `<marker id="${id}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="${size}" markerHeight="${size}" orient="auto-start-reverse">`
+  + `<path class="${cls}" d="M0,0 L9,5 L0,10 L3,5 z"/></marker>`;
+
+const DEFS = `<defs>${marker("aInk", "m-ink", 7)}${marker("aMut", "m-mut", 7)}`
+  + `${marker("aRed", "m-red", 7.5)}${marker("aBlu", "m-blu", 7)}</defs>`;
+
+function render() {
+  layout();
+  let s = DEFS;
+  for (const id in GROUPS) {
+    const g = GROUPS[id];
+    s += `<rect class="g-box${g.dash ? " dash" : ""}" x="${g.x}" y="${g.y}" width="${g.w}" height="${g.h}" rx="12"/>`;
+  }
+  for (const spec of EDGES) {
+    const e = parseEdge(spec), lane = LANE[e.lane];
+    const S = anchor(BOX(e.from.id), e.from.side, e.from.off);
+    const T = anchor(BOX(e.to.id), e.to.side, e.to.off);
+    const pts = e.ch != null ? channel(S, T, e.ch) : trace(S, e.from.side, T, e.to.side);
+    let extra = "";
+    if (lane.fitDash) {
+      let L = 0;
+      for (let i = 1; i < pts.length; i++) L += Math.abs(pts[i].x - pts[i - 1].x) + Math.abs(pts[i].y - pts[i - 1].y);
+      const k = Math.max(1, Math.round(L / 9)), d = +(L / (2 * k - 1)).toFixed(2);
+      extra = ` style="stroke-dasharray:${d} ${d}"`;
+    }
+    const arrow = lane.m ? ` marker-end="url(#${lane.m})"` : "";
+    s += `<path class="${lane.cls}" d="${roundPath(pts)}"${extra}${arrow}/>`;
+  }
+  for (const id in NODES) s += nodeSVG(id, NODES[id]);
+  for (const id in GROUPS) {
+    const g = GROUPS[id], fs = 11 * FONT;
+    const w = Math.round(g.title.length * fs * 0.8) + 24, cx = g.x + g.w / 2, th = Math.round(22 * FONT);
+    s += `<rect class="n-chip" x="${cx - w / 2}" y="${g.y - th / 2}" width="${w}" height="${th}" rx="4"/>`
+      + `<text class="gtitle" x="${cx}" y="${g.y + 1}" font-size="${fs.toFixed(1)}" text-anchor="middle" dominant-baseline="central">${g.title}</text>`;
+  }
+  for (const n of NOTES) {
+    s += `<rect class="n-note" x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="4"/>`
+      + `<text class="mono note-text" x="${n.x + 13}" y="${n.y + n.h / 2}" font-size="${(13 * FONT).toFixed(1)}" dominant-baseline="central">${n.text.replace(/>/g, "&gt;")}</text>`;
+  }
+  return s;
+}
+
+const scene = render();
+---
+
+{/* The frame wraps the drawing rather than the column, so no empty margin opens
+    up inside the border. On a phone the graph scales down to the column the way
+    the demos do. */}
+<div class="pipeline mx-auto w-full min-w-0 max-w-[38rem] border border-border-strong bg-background p-3 sm:p-4">
+  <svg
+    viewBox="0 0 1440 856"
+    class="block h-auto w-full"
+    role="img"
+    aria-label="The appsec-agent pipeline: build, discover sources, scan, model approximations until the loop saturates, then triage findings into a vulnerabilities report"
+    set:html={scene}
+  />
+</div>

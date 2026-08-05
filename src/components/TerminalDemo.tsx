@@ -61,7 +61,7 @@ export function TerminalDemo() {
         data-testid="demo-hero-fallback-image"
         src={HERO_FALLBACK_SRC}
         alt="OpenTaint scan demo (static fallback)"
-        className="block h-auto w-full"
+        className="block h-full w-full"
       />
     );
   }
@@ -71,7 +71,7 @@ export function TerminalDemo() {
       ref={heroRef}
       data-testid="demo-hero-player"
       aria-label="OpenTaint scan demo, running continuously"
-      className="w-full"
+      className="h-full w-full"
     />
   );
 }

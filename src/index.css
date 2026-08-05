@@ -57,6 +57,11 @@
     --radius: 0.5rem;
     --page-max: 1760px;
     --page-pad: clamp(1rem, 4vw, 6rem);
+    /* Reading column shared by the landing bands and the blog/404 pages. */
+    --content-max: 72rem;
+    /* The agent's layer in the pipeline graph — term-blue from the console
+       palette, cooled against the warm paper so the hue does not grey out. */
+    --agent: 205 68% 30%;
     --band: 28 25% 96.5%;
   }
 
@@ -107,6 +112,7 @@
     --code-taint-bg: 0 90% 50% / 0.18;
     --code-taint-text: #ffb3b3;
     --band: 0 55% 5.5%;
+    --agent: 205 84% 70%;
   }
 
   * {
@@ -162,9 +168,9 @@
   }
 
   .section-heading {
-    @apply text-2xl font-semibold sm:text-3xl md:text-4xl lg:text-[2.5rem];
-    line-height: 1.08;
-    letter-spacing: -0.03em;
+    @apply text-[1.75rem] font-semibold sm:text-[2.125rem] md:text-[2.5rem] lg:text-[2.875rem];
+    line-height: 1.1;
+    letter-spacing: -0.032em;
   }
 
   .theme-button {
@@ -186,17 +192,19 @@
     display: none;
   }
 
-  /* Constrained reading frame used by blog + 404 (centered, capped width). */
+  /* Constrained reading frame used by blog + 404. Holds text to the same
+     column the landing bands use, so a post and the landing page share one
+     measure and one separator width. */
   .page-container {
     @apply mx-auto w-full;
-    max-width: var(--page-max);
+    max-width: calc(var(--content-max) + 2 * var(--page-pad));
     padding-inline: var(--page-pad);
     min-height: 100vh;
   }
 
   .page-section {
     position: relative;
-    padding: clamp(1.75rem, 1rem + 1.5vw, 3.5rem) clamp(1.5rem, 0.5rem + 2vw, 3rem);
+    padding-block: clamp(1.75rem, 1rem + 1.5vw, 3.5rem);
     margin-top: clamp(1rem, 0.5rem + 1vw, 2rem);
   }
 
@@ -211,11 +219,19 @@
     padding-inline: max(var(--page-pad), calc((100% - var(--page-max)) / 2));
   }
 
+  /* Spacing ladder — the 8-point grid as IBM Carbon publishes it:
+     2 4 8 12 16 24 32 40 48 64 80 96 160px, i.e. Tailwind
+     0.5 1 2 3 4 6 8 10 12 16 20 24 40. Every margin, padding, and gap on the
+     page picks a step from it; nothing sits between steps.
+
+     Roles: 16 label to value · 24 heading to paragraph · 32 item to item ·
+     48 header block to content · 64 block to block · 64-96 section padding. */
+
   /* Landing-page thematic block: full-bleed section with generous vertical
      rhythm and content held to the reading column via the frame-x model. */
   .band {
     position: relative;
-    padding-block: clamp(2rem, 1rem + 2.2vw, 3rem);
+    padding-block: clamp(4rem, 2rem + 5vw, 6rem);
     padding-inline: max(var(--page-pad), calc((100% - var(--page-max)) / 2));
   }
 
@@ -225,93 +241,277 @@
     background-color: hsl(var(--band));
   }
 
-  /* Red bracket separator (as on opentaint.org): a thin brand-red rule across
-     the top of a section, with rounded hooks turning the corner up on the left
-     and down on the right. Shared by the landing bands and the blog/404
-     page-sections. `--rule-inset` pushes the rule in from the section edges:
-     full-bleed bands inset it to the content column; page-sections sit flush.
-     Only the hero band (first child) stays un-separated. */
+  /* Section separator (the site's signature mark): a rule across the top of the
+     section that turns a rounded corner up on the left and down on the right,
+     bracketing the section between the one before it. The bracket — the hooks
+     and the leading run of the rule — is brand red; the rest of the span is a
+     hairline, so the mark stays a mark instead of a full-width red stroke.
+     Shared by the landing bands and the blog/404 page-sections. `--rule-inset`
+     pushes it in from the section edges: full-bleed bands inset it to the
+     content column; page-sections sit flush. Only the hero band (first child)
+     stays un-separated. */
   .band:not(:first-child),
   .page-section:not(:first-child),
   .footer-links {
     --rule-inset: 0px;
+    --dot: 7px;
   }
 
   .band:not(:first-child) {
-    --rule-inset: max(var(--page-pad), calc((100% - var(--page-max)) / 2));
+    --rule-inset: max(var(--page-pad), calc((100% - var(--content-max)) / 2));
   }
 
-  /* Horizontal rule + right-hand hook curving down. */
+  /* The rule: a brand-red hairline across the section, terminated at both ends
+     by a filled dot — the mark reads as a measured span with endpoints rather
+     than a line that runs off the edge. The dots are drawn as background
+     circles on the same element, so they stay locked to the ends of the rule at
+     every width. */
   .band:not(:first-child)::before,
   .page-section:not(:first-child)::before,
   .footer-links::before {
     content: "";
     position: absolute;
     top: 0;
-    left: calc(var(--rule-inset) + 23px);
+    left: var(--rule-inset);
     right: var(--rule-inset);
-    height: 24px;
-    border-top: 1px solid hsl(var(--brand));
-    border-right: 1px solid hsl(var(--brand));
-    border-top-right-radius: 24px;
+    height: var(--dot);
+    transform: translateY(calc(var(--dot) / -2));
+    background:
+      /* the rule */
+      linear-gradient(hsl(var(--brand)) 0 0) center / 100% 1px no-repeat,
+      /* left terminal */
+      radial-gradient(circle at center, hsl(var(--brand)) 0 calc(var(--dot) / 2), transparent calc(var(--dot) / 2))
+        left center / var(--dot) var(--dot) no-repeat,
+      /* right terminal */
+      radial-gradient(circle at center, hsl(var(--brand)) 0 calc(var(--dot) / 2), transparent calc(var(--dot) / 2))
+        right center / var(--dot) var(--dot) no-repeat;
     pointer-events: none;
   }
 
-  /* Left-hand hook curving up, meeting the rule flush. */
-  .band:not(:first-child)::after,
-  .page-section:not(:first-child)::after,
-  .footer-links::after {
-    content: "";
-    position: absolute;
-    top: -23px;
-    left: var(--rule-inset);
-    width: 24px;
-    height: 24px;
-    border-left: 1px solid hsl(var(--brand));
-    border-bottom: 1px solid hsl(var(--brand));
-    border-bottom-left-radius: 24px;
-    pointer-events: none;
+  /* Scroll reveal. Elements marked `.reveal` start slightly lowered and
+     transparent, then settle once they enter the viewport (`.is-revealed`,
+     set by the observer in BaseLayout). Siblings inside one container stagger
+     off `--reveal-index`, which the same script assigns. Anything without JS
+     — or with reduced motion — renders in its final state. */
+  .js .reveal {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+    transition:
+      opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--reveal-index, 0) * 70ms);
+    will-change: opacity, transform;
   }
 
-  /* Alternating separators: every other divider mirrors the hooks so the
-     raised (upward) end flips sides down the page (-1 1 -1 1 …), while the
-     other end stays pinned low. The default rule above raises the left end;
-     these odd-of-type sections raise the right end instead. `.footer-alt`
-     opts the footer rule in so it keeps the page's zigzag going — set per
-     page (see LandingFooter `mirror` prop) whenever an even number of
-     separators precedes the footer. */
-  .band:nth-of-type(odd):not(:first-child)::before,
-  .page-section:nth-of-type(odd):not(:first-child)::before,
-  .footer-links.footer-alt::before {
-    /* Rule + left-hand hook curving down. */
-    left: var(--rule-inset);
-    right: calc(var(--rule-inset) + 23px);
-    border-right: none;
-    border-left: 1px solid hsl(var(--brand));
-    border-top-right-radius: 0;
-    border-top-left-radius: 24px;
+  .reveal.is-revealed {
+    opacity: 1;
+    transform: none;
   }
 
-  .band:nth-of-type(odd):not(:first-child)::after,
-  .page-section:nth-of-type(odd):not(:first-child)::after,
-  .footer-links.footer-alt::after {
-    /* Right-hand hook curving up, meeting the rule flush. */
-    left: auto;
-    right: var(--rule-inset);
-    border-left: none;
-    border-right: 1px solid hsl(var(--brand));
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 24px;
+  /* The taint trace holds still: the rail runs unbroken from the source dot to
+     the sink dot, so the path reads as one connected flow. */
+  .trace-step:last-child > span:last-child {
+    margin-bottom: 0;
+  }
+
+  /* The two cadence stages: labels for the table below, dimmed when the other
+     phase is the one being pointed at. */
+  .cadence-stage {
+    outline-offset: 4px;
+    transition: opacity 0.3s ease-out;
+  }
+
+  .cadence-stage[data-dimmed="true"] {
+    opacity: 0.35;
+  }
+
+  /* Economics table: shared row labels, one column per phase, and a row-wide
+     hover so a single question can be read across both answers. */
+  .economics tbody tr {
+    transition: background-color 0.2s ease-out;
+  }
+
+  .economics tbody tr:hover {
+    background-color: hsl(var(--brand) / 0.04);
+  }
+
+  .economics [data-phase] {
+    transition:
+      background-color 0.3s ease-out,
+      color 0.3s ease-out;
+  }
+
+  .economics[data-active="learn"] [data-phase="learn"],
+  .economics[data-active="search"] [data-phase="search"] {
+    background-color: hsl(var(--brand) / 0.05);
+  }
+
+  .economics[data-active="learn"] th[data-phase="learn"],
+  .economics[data-active="search"] th[data-phase="search"] {
+    color: hsl(var(--brand));
+  }
+
+  @media (max-width: 639px) {
+    /* One phase at a time; the rail stage above the table picks which. */
+    .economics[data-mobile-phase="learn"] [data-phase="search"],
+    .economics[data-mobile-phase="search"] [data-phase="learn"] {
+      display: none;
+    }
+
+    /* Source order puts the Learn cell before the label, so lay each row out as
+       a flex line and pull the label to the front — otherwise the label lands
+       after the answer in the Learn phase and the two run together. */
+    .economics tbody tr {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1.25rem;
+    }
+
+    .economics tbody th[scope="row"] {
+      order: -1;
+      padding-left: 0;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .economics tbody td[data-phase] {
+      padding-right: 0;
+      text-align: right;
+    }
+
+    /* Pressed reads as selected, on the stage label only. */
+    .cadence-stage[aria-pressed="true"] .cadence-label {
+      color: hsl(var(--brand));
+    }
+
+    .cadence-stage[aria-pressed="false"] {
+      opacity: 0.5;
+    }
+  }
+
+  /* Pipeline graph. Every mark reads a token, so one SVG serves both themes:
+     ink is the engine spine, brand red is taint, and --agent (the console's
+     term-blue) is the agent's skills layer. */
+  .pipeline .lbl {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    fill: hsl(var(--foreground));
+  }
+
+  .pipeline .mono {
+    font-family: var(--font-mono);
+    fill: var(--code-text);
+  }
+
+  .pipeline .note-text {
+    fill: hsl(var(--brand));
+  }
+
+  .pipeline .gtitle {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    fill: hsl(var(--agent));
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .pipeline .n-step { fill: hsl(var(--card)); stroke: hsl(var(--border-strong)); stroke-width: 1.5; }
+  .pipeline .n-agent { fill: hsl(var(--card)); stroke: hsl(var(--agent)); stroke-width: 1.8; }
+  .pipeline .n-taint { fill: hsl(var(--brand) / 0.08); stroke: hsl(var(--brand)); stroke-width: 2; }
+  .pipeline .n-sub { fill: hsl(var(--card)); stroke: hsl(var(--agent)); stroke-width: 1.4; }
+  .pipeline .n-out { fill: hsl(var(--muted)); stroke: hsl(var(--border)); stroke-width: 1.4; }
+  .pipeline .n-file { fill: hsl(var(--code-bg)); stroke: hsl(var(--border-strong)); stroke-width: 1.5; }
+  .pipeline .n-note { fill: hsl(var(--code-bg)); stroke: hsl(var(--border-strong)); stroke-width: 1.1; }
+  .pipeline .n-chip { fill: hsl(var(--card)); stroke: hsl(var(--border-strong)); stroke-width: 1.1; }
+
+  .pipeline .g-box { fill: hsl(var(--agent) / 0.08); stroke: hsl(var(--agent)); stroke-width: 1.4; }
+  .pipeline .g-box.dash { stroke-dasharray: 3 7; }
+
+  .pipeline .e-flow { fill: none; stroke: hsl(var(--foreground)); stroke-width: 1.8; }
+  .pipeline .e-feed { fill: none; stroke: hsl(var(--agent)); stroke-width: 1.6; }
+  .pipeline .e-taint { fill: none; stroke: hsl(var(--brand)); stroke-width: 1.8; }
+  .pipeline .e-loop { fill: none; stroke: hsl(var(--brand)); stroke-width: 2.4; }
+  .pipeline .e-debug { fill: none; stroke: hsl(var(--agent)); stroke-width: 1.5; }
+  .pipeline .e-detail { fill: none; stroke: hsl(var(--agent)); stroke-width: 1.8; }
+
+  .pipeline .m-ink { fill: hsl(var(--foreground)); }
+  .pipeline .m-mut { fill: hsl(var(--muted-foreground)); }
+  .pipeline .m-red { fill: hsl(var(--brand)); }
+  .pipeline .m-blu { fill: hsl(var(--agent)); }
+
+  /* Coverage matrix rows land one after another, top to bottom, so the eye
+     reads the depth ladder in order rather than meeting all five at once. */
+  .js .reveal .matrix-row {
+    opacity: 0;
+    transform: translate3d(0, 6px, 0);
+    transition:
+      opacity 0.4s ease-out,
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.2s ease-out;
+    transition-delay: calc(var(--row-index) * 90ms + 150ms);
+  }
+
+  .js .reveal.is-revealed .matrix-row {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal,
+    .cadence-stage,
+    .matrix-row {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+  }
+
+  /* Expressive Code inside a hand-built card: drop the block's own frame so the
+     card border, header, and caption own the edges. */
+  .expressive-code.artifact-code {
+    margin: 0;
+    flex: 1;
+  }
+
+  .expressive-code.artifact-code .frame,
+  .expressive-code.artifact-code .frame pre,
+  .expressive-code.artifact-code .frame .header {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .expressive-code.artifact-code .frame pre {
+    height: 100%;
+  }
+
+  /* Small screens: step the code down so a rule line fits the card before the
+     block has to scroll sideways. */
+  @media (max-width: 480px) {
+    .expressive-code.artifact-code .frame pre code {
+      font-size: 11.5px;
+    }
   }
 
   .section-title {
-    @apply font-mono text-base font-bold tracking-tight text-foreground lg:text-[17px];
+    @apply font-mono text-xl font-bold tracking-tight text-foreground sm:text-2xl lg:text-[1.75rem];
+    letter-spacing: -0.02em;
   }
 
   .section-subtitle {
     @apply mt-4 font-mono leading-[185%] text-muted-foreground lg:mt-5;
     font-size: 15px;
     max-width: 72ch;
+  }
+
+  /* The two halves of the loop, marked in the hero line: learning happens on
+     demand, scanning happens on every change. A brand-tinted underline rather
+     than a highlighter block, so the sentence still reads as a sentence. */
+  .hero-mark {
+    color: hsl(var(--brand));
+    font-weight: 500;
   }
 
   /* Secondary line under a headline — matches the muted body voice. */
@@ -416,20 +616,27 @@
 /* Demo carousel: the incoming panel slides in from the travel direction. */
 @media (prefers-reduced-motion: no-preference) {
   .demo-slide-in-next {
-    animation: demo-in-next 0.3s ease;
+    animation: demo-in-next 0.34s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .demo-slide-in-prev {
-    animation: demo-in-prev 0.3s ease;
+    animation: demo-in-prev 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .demo-slide-in-next,
+    .demo-slide-in-prev {
+      animation: none;
+    }
   }
 }
 
 @keyframes demo-in-next {
-  from { opacity: 0; transform: translateX(24px); }
-  to { opacity: 1; transform: translateX(0); }
+  from { opacity: 0; transform: translate3d(14px, 0, 0); }
+  to { opacity: 1; transform: none; }
 }
 
 @keyframes demo-in-prev {
-  from { opacity: 0; transform: translateX(-24px); }
-  to { opacity: 1; transform: translateX(0); }
+  from { opacity: 0; transform: translate3d(-14px, 0, 0); }
+  to { opacity: 1; transform: none; }
 }

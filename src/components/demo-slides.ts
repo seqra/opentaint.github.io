@@ -36,11 +36,13 @@ export const DEMO_SLIDES: DemoSlide[] = [
   {
     id: "viewer",
     label: "Viewer",
-    kind: "media",
+    kind: "video",
     pageBackground: true,
-    sources: { light: "/viewer-screen-light-2.png", dark: "/viewer-screen-dark-2.png" },
-    fallback: { light: "/viewer-screen-light-2.png", dark: "/viewer-screen-dark-2.png" },
-    alt: "OpenTaint viewer showing Spring vulnerability findings",
+    // Recorded against the live viewer, cursor and clicks included, so the
+    // walkthrough reads as someone using it rather than a slideshow.
+    sources: { light: "/video/viewer-light.mp4", dark: "/video/viewer-dark.mp4" },
+    fallback: { light: "/video/viewer-poster-light.webp", dark: "/video/viewer-poster-dark.webp" },
+    alt: "The OpenTaint viewer: opening a finding, stepping through its taint trace, and moving to the next flow",
     testId: "demo-viewer-media",
     href: "https://viewer.opentaint.org/",
   },

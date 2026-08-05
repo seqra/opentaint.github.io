@@ -8,16 +8,16 @@ type InstallMethod = {
 };
 
 const installMethods: InstallMethod[] = [
+  { id: "npm", label: "npm", command: "npm install -g @seqra/opentaint" },
   { id: "curl", label: "curl", command: "curl -fsSL https://opentaint.org/install.sh | bash" },
   { id: "skills", label: "skills", command: "npx skills add https://github.com/seqra/opentaint" },
-  { id: "npm", label: "npm", command: "npm install -g @seqra/opentaint" },
   { id: "brew", label: "brew", command: "brew install --cask seqra/tap/opentaint" },
   { id: "windows", label: "powershell", command: "irm https://opentaint.org/install.ps1 | iex" },
   { id: "docker", label: "docker", command: "docker pull ghcr.io/seqra/opentaint:latest" },
 ];
 
 export function AnimatedHero() {
-  const [activeMethod, setActiveMethod] = useState(installMethods[0]?.id ?? "curl");
+  const [activeMethod, setActiveMethod] = useState(installMethods[0]?.id ?? "npm");
   const [copied, setCopied] = useState(false);
 
   const activeInstallMethod = useMemo(
@@ -36,13 +36,17 @@ export function AnimatedHero() {
   };
 
   return (
-    <div className="mx-auto max-w-5xl">
-      <h1 className="font-mono text-[28px] font-bold tracking-tight text-foreground sm:text-[34px] md:text-[40px] md:leading-[1.2] lg:text-[44px] lg:leading-[1.18]">
+    <div className="mx-auto max-w-6xl">
+      <h1 className="font-mono text-[28px] font-bold tracking-tight text-foreground sm:text-[32px] md:text-[36px] md:leading-[1.2] lg:text-[38px] lg:leading-[1.15]">
         The open source taint analysis engine for the AI era
       </h1>
 
-      <p className="subheadline">
-        AST-pattern rules. Whole-program taint analysis. Formal substrate for AI application security.
+      <p className="subheadline mt-6 max-w-none lg:mt-8">
+        <span className="block text-foreground">Formal program analysis for security agents.</span>
+        <span className="block">
+          AI agents review your application <span className="hero-mark">on demand</span>. OpenTaint scans it{" "}
+          <span className="hero-mark">on every change</span>.
+        </span>
       </p>
 
       <div className="mt-8 flex w-full flex-col gap-3 sm:hidden">
@@ -64,9 +68,9 @@ export function AnimatedHero() {
         </a>
       </div>
 
-      <div className="mt-8 hidden text-left sm:block lg:mt-10">
+      <div className="mx-auto mt-10 hidden max-w-2xl text-left sm:block lg:mt-16">
         <div className="overflow-hidden rounded-xl border border-panel-border bg-panel">
-          <div className="flex items-center gap-6 overflow-x-auto border-b border-panel-border px-4 py-3 scrollbar-thin lg:gap-8 lg:px-5 lg:py-4">
+          <div className="flex items-center gap-6 overflow-x-auto border-b border-panel-border px-4 py-3 scrollbar-thin lg:gap-8 lg:px-6 lg:py-4">
             {installMethods.map((method) => {
               const isActive = method.id === activeInstallMethod?.id;
               return (
@@ -84,7 +88,7 @@ export function AnimatedHero() {
               );
             })}
           </div>
-          <div className="flex items-center gap-3 px-4 py-3 lg:px-5 lg:py-4">
+          <div className="flex items-center gap-3 px-4 py-3 lg:px-6 lg:py-4">
             <code
               role="button"
               tabIndex={0}
@@ -97,7 +101,7 @@ export function AnimatedHero() {
             <button
               type="button"
               onClick={copyCommand}
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-panel-foreground/15 px-3 py-1.5 font-mono text-xs text-panel-foreground/70 transition-colors hover:border-panel-foreground/35 hover:text-panel-foreground lg:px-3.5 lg:py-2 lg:text-[13px]"
+              className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-panel-foreground/15 px-3 py-2 font-mono text-xs text-panel-foreground/70 transition-colors hover:border-panel-foreground/35 hover:text-panel-foreground lg:px-4 lg:py-2 lg:text-[13px]"
             >
               {copied ? <Check className="h-3 w-3 text-panel-accent" /> : <Copy className="h-3 w-3" />}
             </button>

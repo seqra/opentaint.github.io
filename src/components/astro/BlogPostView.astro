@@ -45,7 +45,7 @@ const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
               href={`#${item.id}`}
               data-toc-link={item.id}
               class:list={[
-                "block py-1.5 font-mono text-xs text-muted-foreground transition-colors hover:text-primary",
+                "block py-2 font-mono text-xs text-muted-foreground transition-colors hover:text-primary",
                 item.level === 3 && "pl-3",
               ]}
             >
@@ -74,7 +74,7 @@ const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
       {post.description}
     </p>
 
-    <div class="mt-4 flex flex-wrap items-center gap-3 font-mono text-[10px] text-muted-foreground sm:text-xs lg:text-[13px] lg:mt-5">
+    <div class="mt-4 flex flex-wrap items-center gap-3 font-mono text-[10px] text-muted-foreground sm:text-xs lg:text-[13px] lg:mt-6">
       <span>{formattedDate}</span>
     </div>
 
@@ -92,21 +92,21 @@ const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
     @apply mt-8 mb-3 scroll-mt-32 font-mono text-xl font-semibold tracking-[-0.02em] text-foreground sm:text-2xl lg:text-[1.625rem] lg:mt-10 lg:mb-4;
   }
   .blog-prose h3 {
-    @apply mt-6 mb-2.5 scroll-mt-32 font-mono text-lg font-semibold tracking-[-0.02em] text-foreground lg:text-xl lg:mt-8 lg:mb-3;
+    @apply mt-6 mb-3 scroll-mt-32 font-mono text-lg font-semibold tracking-[-0.02em] text-foreground lg:text-xl lg:mt-8 lg:mb-3;
   }
   .blog-prose .expressive-code {
-    @apply mb-5;
+    @apply mb-6;
   }
   .blog-prose code:not(pre code) {
-    @apply rounded px-1.5 py-0.5 text-xs font-mono;
+    @apply rounded px-2 py-0.5 text-xs font-mono;
     border: 1px solid hsl(var(--code-border));
     background: hsl(var(--code-bg));
   }
   .blog-prose blockquote {
-    @apply my-5 border-l-2 border-border pl-4 text-muted-foreground;
+    @apply my-6 border-l-2 border-border pl-4 text-muted-foreground;
   }
   .blog-prose table {
-    @apply w-full min-w-[50rem] border-collapse text-sm mb-5;
+    @apply w-full min-w-[50rem] border-collapse text-sm mb-6;
   }
   .blog-prose thead {
     @apply border-b border-border;
@@ -127,16 +127,16 @@ const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
     white-space: nowrap;
   }
   .blog-prose .table-wrapper {
-    @apply relative overflow-x-auto rounded-lg border border-border mb-5;
+    @apply relative overflow-x-auto rounded-lg border border-border mb-6;
   }
   .blog-prose a {
     @apply text-link underline transition-colors hover:text-foreground;
   }
   .blog-prose ul {
-    @apply mb-4 ml-5 list-disc space-y-1;
+    @apply mb-4 ml-6 list-disc space-y-1;
   }
   .blog-prose ol {
-    @apply mb-4 ml-5 list-decimal space-y-1;
+    @apply mb-4 ml-6 list-decimal space-y-1;
   }
   .blog-prose p {
     @apply mb-4 leading-[190%];

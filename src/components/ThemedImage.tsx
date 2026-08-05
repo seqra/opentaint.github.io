@@ -25,7 +25,7 @@ export function ThemedImage({ sources, alt, testId, onError }: ThemedImageProps)
         alt={alt}
         loading="lazy"
         onError={onError}
-        className="block h-auto w-full dark:hidden"
+        className="block h-full w-full object-cover dark:hidden"
       />
       <img
         data-testid={`${testId}-dark`}
@@ -33,7 +33,7 @@ export function ThemedImage({ sources, alt, testId, onError }: ThemedImageProps)
         alt={alt}
         loading="lazy"
         onError={onError}
-        className="hidden h-auto w-full dark:block"
+        className="hidden h-full w-full object-cover dark:block"
       />
     </>
   );

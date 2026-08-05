@@ -24,7 +24,7 @@ export function MediaDemo({ sources, fallback, alt, testId, href }: MediaDemoPro
 
   if (href) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" aria-label={alt} className="block w-full">
+      <a href={href} target="_blank" rel="noopener noreferrer" aria-label={alt} className="block h-full w-full">
         {img}
       </a>
     );

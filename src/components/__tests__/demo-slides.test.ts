@@ -26,7 +26,7 @@ describe("DEMO_SLIDES", () => {
     });
   });
 
-  it("maps the agent video and its screenshot poster by page theme", () => {
+  it("maps the agent video and its first-frame poster by page theme", () => {
     const agent = DEMO_SLIDES.find((s) => s.id === "agent");
     expect(agent?.kind).toBe("video");
     expect(agent?.sources).toEqual({ light: "/agent-video-light.mp4", dark: "/agent-video-dark.mp4" });

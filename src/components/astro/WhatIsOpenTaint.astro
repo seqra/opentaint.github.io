@@ -7,19 +7,6 @@ const discoveries = [
   { label: "Opaque behavior", text: "<code>Builder.option()</code> returns the same builder" },
 ];
 
-const features = [
-  {
-    title: "Fast scans. Fewer false alarms. Fewer missed findings",
-    description:
-      "The engine runs formal inter-procedural dataflow analysis, applying taint rules and dependency models as it tracks tainted values across procedures, fields, aliases, async code, and persistence layers at scale.",
-  },
-  {
-    title: "Open source, batteries included",
-    description:
-      "Engine, AST-pattern rules, agent skills, and CI integrations ship as one stack under Apache 2.0 and MIT.",
-  },
-];
-
 /* Both artifacts come from the CVE-2026-58138 reproduction kit. Fully-qualified
    names are shortened to keep the lines readable; everything else is verbatim. */
 const artifacts = [
@@ -71,12 +58,9 @@ const traceSteps = [
 <section class="band" aria-labelledby="what-heading">
   <div class="mx-auto max-w-6xl">
     <div class="text-center">
-      <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">What OpenTaint does</p>
-      <h2 id="what-heading" class="section-heading mt-6">Make every security review executable</h2>
-      <p class="section-subtitle mx-auto max-w-[62ch]">
-        The agent enacts AST-pattern taint rules from vulnerabilities and captures opaque code behavior as dependency models. Both become versioned, reviewable analysis artifacts.
-      </p>
-      <a href="/blog/conductor-rce-cve-2026-58138" class="mt-6 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Read the CVE-2026-58138 reproduction post</a>
+      <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">A real-world review</p>
+      <h2 id="what-heading" class="section-heading mt-6">How OpenTaint Agent found CVE-2026-58138</h2>
+      <a href="/blog/conductor-rce-cve-2026-58138" class="mt-6 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Read the CVE-2026-58138 reproduction post.</a>
     </div>
 
 
@@ -178,14 +162,6 @@ const traceSteps = [
           </div>
         </div>
 
-        <ul class="mt-10 grid gap-x-16 gap-y-8 md:grid-cols-2 lg:mt-12">
-          {features.map((feature) => (
-            <li class="reveal">
-              <h3 class="font-mono text-[15px] font-semibold leading-6 text-foreground lg:text-base">{feature.title}</h3>
-              <p class="mt-2 max-w-[56ch] font-mono text-sm leading-7 text-muted-foreground">{feature.description}</p>
-            </li>
-          ))}
-        </ul>
       </div>
     </figure>
 

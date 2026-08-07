@@ -10,6 +10,22 @@
     --font-sans: "JetBrains Mono", ui-monospace, monospace;
     --font-mono: "JetBrains Mono", monospace;
 
+    /* IBM Carbon spacing scale. Layout whitespace uses these discrete tokens;
+       responsive layouts step between tokens instead of interpolating values. */
+    --spacing-01: 0.125rem;
+    --spacing-02: 0.25rem;
+    --spacing-03: 0.5rem;
+    --spacing-04: 0.75rem;
+    --spacing-05: 1rem;
+    --spacing-06: 1.5rem;
+    --spacing-07: 2rem;
+    --spacing-08: 2.5rem;
+    --spacing-09: 3rem;
+    --spacing-10: 4rem;
+    --spacing-11: 5rem;
+    --spacing-12: 6rem;
+    --spacing-13: 10rem;
+
     /* Red Phosphor, light: the paper printout. Warm paper, warm ink, logo red
        (#CA2121) as the rubber stamp. No cool grays, no blue. */
     --background: 36 50% 99%;
@@ -56,13 +72,29 @@
     --code-taint-text: #ca2121;
     --radius: 0.5rem;
     --page-max: 1760px;
-    --page-pad: clamp(1rem, 4vw, 6rem);
+    --page-pad: var(--spacing-05);
     /* Reading column shared by the landing bands and the blog/404 pages. */
     --content-max: 72rem;
     /* The agent's layer in the pipeline graph — term-blue from the console
        palette, cooled against the warm paper so the hue does not grey out. */
     --agent: 205 68% 30%;
     --band: 28 25% 96.5%;
+  }
+
+  @media (min-width: 640px) {
+    :root { --page-pad: var(--spacing-07); }
+  }
+
+  @media (min-width: 1024px) {
+    :root { --page-pad: var(--spacing-09); }
+  }
+
+  @media (min-width: 1280px) {
+    :root { --page-pad: var(--spacing-10); }
+  }
+
+  @media (min-width: 1920px) {
+    :root { --page-pad: var(--spacing-12); }
   }
 
   .dark {
@@ -161,7 +193,7 @@
 
 @layer components {
   .eyebrow {
-    @apply inline-flex items-center gap-2 rounded border px-3 py-1.5 text-[0.65rem] font-mono font-medium uppercase tracking-[0.2em] lg:text-[0.7rem] lg:px-3.5 lg:py-2;
+    @apply inline-flex items-center gap-2 rounded border px-3 py-1 text-[0.65rem] font-mono font-medium uppercase tracking-[0.2em] lg:text-[0.7rem] lg:px-4 lg:py-2;
     border-color: hsl(var(--border-strong));
     background-color: hsl(var(--card));
     color: hsl(var(--brand));
@@ -204,8 +236,22 @@
 
   .page-section {
     position: relative;
-    padding-block: clamp(1.75rem, 1rem + 1.5vw, 3.5rem);
-    margin-top: clamp(1rem, 0.5rem + 1vw, 2rem);
+    padding-block: var(--spacing-06);
+    margin-top: var(--spacing-05);
+  }
+
+  @media (min-width: 640px) {
+    .page-section {
+      padding-block: var(--spacing-07);
+      margin-top: var(--spacing-06);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .page-section {
+      padding-block: var(--spacing-09);
+      margin-top: var(--spacing-07);
+    }
   }
 
   .page-section:first-child {
@@ -225,14 +271,26 @@
      page picks a step from it; nothing sits between steps.
 
      Roles: 16 label to value · 24 heading to paragraph · 32 item to item ·
-     48 header block to content · 64 block to block · 64-96 section padding. */
+     48 header block to content · 64 block to block · 48-80 section padding. */
 
   /* Landing-page thematic block: full-bleed section with generous vertical
      rhythm and content held to the reading column via the frame-x model. */
   .band {
     position: relative;
-    padding-block: clamp(4rem, 2rem + 5vw, 6rem);
+    padding-block: var(--spacing-09);
     padding-inline: max(var(--page-pad), calc((100% - var(--page-max)) / 2));
+  }
+
+  @media (min-width: 640px) {
+    .band {
+      padding-block: var(--spacing-10);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .band {
+      padding-block: var(--spacing-11);
+    }
   }
 
   /* Background changes follow top-level semantic sections rather than being
@@ -377,7 +435,7 @@
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      gap: 1.25rem;
+      gap: var(--spacing-05);
     }
 
     .economics tbody th[scope="row"] {
@@ -529,7 +587,7 @@
   }
 
   .section-subtitle {
-    @apply mt-4 font-mono leading-[185%] text-muted-foreground lg:mt-5;
+    @apply mt-4 font-mono leading-[185%] text-muted-foreground;
     font-size: 15px;
     max-width: 72ch;
   }
@@ -544,7 +602,7 @@
 
   /* Secondary line under a headline — matches the muted body voice. */
   .subheadline {
-    @apply mt-5 font-mono leading-[185%] text-muted-foreground lg:mt-6;
+    @apply mt-4 font-mono leading-[185%] text-muted-foreground lg:mt-6;
     font-size: 15px;
   }
 
@@ -582,10 +640,8 @@
   }
 
   .cta-pill {
-    @apply inline-flex items-center gap-2 rounded px-5 font-mono font-medium transition-colors lg:px-6;
+    @apply inline-flex items-center gap-2 rounded px-4 py-2 font-mono font-medium transition-colors lg:px-6 lg:py-3;
     font-size: 13px;
-    padding-top: 0.625rem;
-    padding-bottom: 0.625rem;
     background-color: hsl(var(--foreground));
     color: hsl(var(--background));
   }
@@ -597,8 +653,6 @@
   @media (min-width: 1024px) {
     .cta-pill {
       font-size: 14px;
-      padding-top: 0.75rem;
-      padding-bottom: 0.75rem;
     }
   }
 }

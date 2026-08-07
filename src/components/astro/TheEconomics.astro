@@ -1,13 +1,4 @@
 ---
-import AgentPipeline from "@/components/astro/AgentPipeline.astro";
-
-const skills = {
-  href: "/blog/appsec-agent",
-  title: "An end-to-end application-security workflow",
-  description:
-    "The appsec-agent skill builds the project, runs OpenTaint, discovers the attack surface, adds targeted taint rules, models opaque library code, triages findings, and optionally generates dynamic proof-of-concept checks for confirmed vulnerabilities.",
-};
-
 /* The two halves of the loop. Each stage is the control for its column in the
    table below: it lights that column on wide screens and selects it on narrow
    ones. */
@@ -38,17 +29,30 @@ const economics = {
     { label: "Artifacts", learn: "AST-pattern taint rules and dependency models", search: "Detailed dataflow traces" },
   ],
 };
+
+const features = [
+  {
+    title: "Fast scans. Fewer false alarms. Fewer missed findings",
+    description:
+      "The engine runs formal inter-procedural dataflow analysis, applying taint rules and dependency models as it tracks tainted values across procedures, fields, aliases, async code, and persistence layers at scale.",
+  },
+  {
+    title: "Open source, batteries included",
+    description:
+      "Engine, AST-pattern rules, agent skills, and CI integrations ship as one stack under Apache 2.0 and MIT.",
+  },
+];
 ---
 
 <section class="band" aria-labelledby="how-heading">
   <div class="mx-auto max-w-6xl">
     <div>
       <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">The economics</p>
-      <h2 id="how-heading" class="section-heading mt-6">Turn what agents learn into reusable search</h2>
+      <h2 id="how-heading" class="section-heading mt-6">Turn one security review into unlimited security scans</h2>
     </div>
 
     <figure class="cadence reveal mt-12 lg:mt-16" data-cadence>
-      <figcaption class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">From probabilistic review to versioned artifacts</figcaption>
+      <figcaption class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">From chance-based review to deterministic scans</figcaption>
 
       <div class="mt-8 grid gap-4 pb-2 sm:grid-cols-2 sm:gap-10">
         {cadence.map((item, index) => (
@@ -89,20 +93,14 @@ const economics = {
         </table>
       </div>
 
-      <p class="section-subtitle mx-auto mt-8 max-w-[72ch] text-center">
-        The agent learns the attack surface, trust boundaries, vulnerability patterns, and opaque code behavior when new context is needed. The engine applies the resulting taint rules and dependency models on every scan without spending model tokens again.
-      </p>
-    </div>
-
-  <div class="reveal mt-16 grid gap-8 lg:mt-20 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:gap-12">
-      <div class="lg:order-2">
-        <p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">The agent skills</p>
-        <h3 class="mt-4 font-mono text-xl font-semibold leading-8 text-foreground">{skills.title}</h3>
-        <p class="mt-4 max-w-[52ch] font-mono text-sm leading-7 text-muted-foreground lg:text-[15px]">{skills.description}</p>
-        <a href={skills.href} class="mt-6 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Read the release post</a>
-      </div>
-
-      <AgentPipeline />
+      <ul class="mt-10 grid gap-x-16 gap-y-8 md:grid-cols-2 lg:mt-12">
+        {features.map((feature) => (
+          <li>
+            <h3 class="font-mono text-[15px] font-semibold leading-6 text-foreground lg:text-base">{feature.title}</h3>
+            <p class="mt-2 max-w-[56ch] font-mono text-sm leading-7 text-muted-foreground">{feature.description}</p>
+          </li>
+        ))}
+      </ul>
     </div>
 
   </div>

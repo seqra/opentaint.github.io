@@ -1,24 +1,32 @@
 import { expect, test } from "@playwright/test";
 
-const ANCHOR = "AST-pattern rules. Whole-program taint analysis. Formal substrate for AI application security.";
-
-test.describe("anchor phrase distinction", () => {
-  test("hero shows the anchor eyebrow above the H1", async ({ page }) => {
+test.describe("landing message", () => {
+  test("leads with the review-to-scan promise", async ({ page }) => {
     await page.goto("/");
-    const h1 = page.getByRole("heading", {
-      name: /open source taint analysis engine for the AI era/i,
+
+    await expect(page.getByRole("heading", {
+      name: "Turn one security review into unlimited security scans",
       level: 1,
-    });
-    await expect(h1).toBeVisible();
-    const eyebrow = page.getByText(ANCHOR, { exact: true }).first();
-    await expect(eyebrow).toBeVisible();
+    })).toBeVisible();
+    await expect(page.getByText(
+      "The flexibility of agent reasoning and the consistency of formal analysis combined",
+      { exact: true },
+    )).toBeVisible();
   });
 
-  test("Why OpenTaint section shows the anchor eyebrow above the H2", async ({ page }) => {
+  test("frames the product proof with the real Conductor review", async ({ page }) => {
     await page.goto("/");
-    const section = page.locator("section[aria-labelledby='what-heading']");
-    await expect(section).toBeAttached();
-    const eyebrow = section.getByText(ANCHOR, { exact: true });
-    await expect(eyebrow).toHaveCount(1);
+
+    await expect(page.getByRole("heading", { name: "How OpenTaint Agent found CVE-2026-58138" })).toBeVisible();
+    await expect(page.getByText("What works once must keep working")).toHaveCount(0);
+    await expect(page.getByText("One review versus continuous use")).toHaveCount(0);
+  });
+
+  test("highlights the learn-search operating model", async ({ page }) => {
+    await page.goto("/");
+
+    await expect(page.getByRole("heading", { name: "Turn one security review into unlimited security scans", level: 2 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Fast scans. Fewer false alarms. Fewer missed findings" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Open source, batteries included" })).toBeVisible();
   });
 });

@@ -347,6 +347,16 @@
     pointer-events: none;
   }
 
+  .demo-section::before {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .demo-work-surface {
+      animation: demo-work-surface-in 240ms ease-out;
+    }
+  }
+
   /* Scroll reveal. Elements marked `.reveal` start slightly lowered and
      transparent, then settle once they enter the viewport (`.is-revealed`,
      set by the observer in BaseLayout). Siblings inside one container stagger
@@ -728,5 +738,10 @@
 
 @keyframes demo-in-prev {
   from { opacity: 0; transform: translate3d(-14px, 0, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes demo-work-surface-in {
+  from { opacity: 0; transform: translate3d(8px, 0, 0); }
   to { opacity: 1; transform: none; }
 }

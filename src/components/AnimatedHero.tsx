@@ -1,60 +1,21 @@
-import { Check, Copy } from "lucide-react";
-import { useMemo, useState } from "react";
-
-type InstallMethod = {
-  id: string;
-  label: string;
-  command: string;
-};
-
-const installMethods: InstallMethod[] = [
-  { id: "npm", label: "npm", command: "npm install -g @seqra/opentaint" },
-  { id: "curl", label: "curl", command: "curl -fsSL https://opentaint.org/install.sh | bash" },
-  { id: "skills", label: "skills", command: "npx skills add https://github.com/seqra/opentaint" },
-  { id: "brew", label: "brew", command: "brew install --cask seqra/tap/opentaint" },
-  { id: "windows", label: "powershell", command: "irm https://opentaint.org/install.ps1 | iex" },
-  { id: "docker", label: "docker", command: "docker pull ghcr.io/seqra/opentaint:latest" },
-];
-
 export function AnimatedHero() {
-  const [activeMethod, setActiveMethod] = useState(installMethods[0]?.id ?? "npm");
-  const [copied, setCopied] = useState(false);
-
-  const activeInstallMethod = useMemo(
-    () => installMethods.find((method) => method.id === activeMethod) ?? installMethods[0],
-    [activeMethod],
-  );
-
-  const copyCommand = async () => {
-    if (!activeInstallMethod) {
-      return;
-    }
-
-    await navigator.clipboard.writeText(activeInstallMethod.command);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1800);
-  };
-
   return (
-    <div className="mx-auto max-w-6xl">
-      <h1 className="font-mono text-[28px] font-bold tracking-tight text-foreground sm:text-[32px] md:text-[36px] md:leading-[1.2] lg:text-[38px] lg:leading-[1.15]">
-        The open source taint analysis engine for the AI era
+    <div className="mx-auto max-w-6xl text-center">
+      <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Agent reasoning + formal taint analysis</p>
+      <h1 className="mx-auto mt-6 max-w-5xl font-mono text-[32px] font-bold leading-[1.15] tracking-tight text-foreground sm:text-[40px] md:text-[48px] lg:text-[56px]">
+        Turn one security review into unlimited security scans
       </h1>
 
-      <p className="subheadline mt-6 max-w-none lg:mt-8">
-        <span className="block text-foreground">Formal program analysis for security agents.</span>
-        <span className="block">
-          AI agents review your application <span className="hero-mark">on demand</span>. OpenTaint scans it{" "}
-          <span className="hero-mark">on every change</span>.
-        </span>
+      <p className="mx-auto mt-6 max-w-3xl font-mono text-sm leading-7 text-muted-foreground sm:text-base">
+        The flexibility of agent reasoning and the consistency of formal analysis combined
       </p>
 
-      <div className="mt-8 flex w-full flex-col gap-3 sm:hidden">
+      <div className="mx-auto mt-8 flex max-w-xl flex-col justify-center gap-3 sm:flex-row">
         <a
           href="https://github.com/seqra/opentaint#quick-start"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex h-10 w-full min-w-[44px] items-center justify-center rounded-lg bg-primary px-4 text-[17px] font-normal leading-[1.6] text-primary-foreground transition-colors hover:bg-primary/90"
+          className="inline-flex min-h-11 flex-1 items-center justify-center rounded-lg bg-primary px-6 font-mono text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
         >
           Try OpenTaint
         </a>
@@ -62,51 +23,10 @@ export function AnimatedHero() {
           href="https://github.com/seqra/opentaint"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex h-10 w-full min-w-[44px] items-center justify-center rounded-lg border border-border bg-secondary px-4 text-[17px] font-normal leading-[1.6] text-secondary-foreground transition-colors hover:border-border-strong"
+          className="inline-flex min-h-11 flex-1 items-center justify-center rounded-lg border border-border-strong bg-background px-6 font-mono text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary"
         >
           Star on GitHub
         </a>
-      </div>
-
-      <div className="mx-auto mt-10 hidden max-w-2xl text-left sm:block lg:mt-16">
-        <div className="overflow-hidden rounded-xl border border-panel-border bg-panel">
-          <div className="flex items-center gap-6 overflow-x-auto border-b border-panel-border px-4 py-3 scrollbar-thin lg:gap-8 lg:px-6 lg:py-4">
-            {installMethods.map((method) => {
-              const isActive = method.id === activeInstallMethod?.id;
-              return (
-                <button
-                  key={method.id}
-                  type="button"
-                  onClick={() => setActiveMethod(method.id)}
-                  className={[
-                    "font-mono text-xs font-medium uppercase tracking-[0.16em] transition-colors lg:text-[13px]",
-                    isActive ? "text-panel-accent" : "text-panel-foreground/70 hover:text-panel-accent",
-                  ].join(" ")}
-                >
-                  {method.label}
-                </button>
-              );
-            })}
-          </div>
-          <div className="flex items-center gap-3 px-4 py-3 lg:px-6 lg:py-4">
-            <code
-              role="button"
-              tabIndex={0}
-              onClick={copyCommand}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); copyCommand(); } }}
-              className="flex-1 cursor-pointer overflow-x-auto whitespace-nowrap rounded-lg px-1 font-mono text-[15px] text-panel-foreground/90 scrollbar-thin transition-colors hover:bg-panel-accent/10 hover:text-panel-foreground lg:text-base"
-            >
-              {activeInstallMethod?.command}
-            </code>
-            <button
-              type="button"
-              onClick={copyCommand}
-              className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-panel-foreground/15 px-3 py-2 font-mono text-xs text-panel-foreground/70 transition-colors hover:border-panel-foreground/35 hover:text-panel-foreground lg:px-4 lg:py-2 lg:text-[13px]"
-            >
-              {copied ? <Check className="h-3 w-3 text-panel-accent" /> : <Copy className="h-3 w-3" />}
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -5,11 +5,7 @@ const landingFiles = [
   "src/index.css",
   "src/pages/index.astro",
   "src/components/AnimatedHero.tsx",
-  "src/components/DemoSection.tsx",
-  "src/components/MediaDemo.tsx",
-  "src/components/TerminalDemo.tsx",
-  "src/components/ThemedImage.tsx",
-  "src/components/VideoDemo.tsx",
+  "src/components/UnifiedWorkbench.tsx",
   "src/components/astro/AgentPipeline.astro",
   "src/components/astro/AgentSkills.astro",
   "src/components/astro/Demo.astro",
@@ -17,10 +13,10 @@ const landingFiles = [
   "src/components/astro/FAQ.astro",
   "src/components/astro/LandingFooter.astro",
   "src/components/astro/SecurityDebt.astro",
-  "src/components/astro/SiteHeader.astro",
-  "src/components/astro/SupportedTechnology.astro",
   "src/components/astro/TheEconomics.astro",
   "src/components/astro/WhatIsOpenTaint.astro",
+  "src/components/astro/SiteHeader.astro",
+  "src/components/astro/SupportedTechnology.astro",
 ] as const;
 
 const carbonTailwindSteps = new Set([

@@ -99,13 +99,36 @@ const linesFor = (scenario: NonNullable<TerminalDemoProps["scenario"]>) => {
 };
 
 const toneClass: Record<TerminalTone, string> = {
-  plain: "text-[#322e2b] dark:text-[#f4f0ed]",
-  muted: "text-[#746c67] dark:text-[#b0aaa6]",
-  blue: "text-[#2563a6] dark:text-[#8ec7ff]",
-  green: "text-[#237344] dark:text-[#8bd3a3]",
-  red: "text-[#bd302a] dark:text-[#ff746c]",
-  purple: "text-[#9c3f56] dark:text-[#ff9a94]",
+  plain: "text-[#302d2a] dark:text-[#eee9e5]",
+  muted: "text-[#756d68] dark:text-[#aaa19c]",
+  blue: "text-[#2369b3] dark:text-[#78baff]",
+  green: "text-[#237b45] dark:text-[#72c98e]",
+  red: "text-[#ca3029] dark:text-[#ff655d]",
+  purple: "text-[#a63e58] dark:text-[#f07d91]",
 };
+
+function ConnectorGlyph({ glyph }: { glyph: string }) {
+  if (glyph === " ") return <span className="relative h-[18px] w-[1ch] shrink-0" />;
+  return (
+    <span className="relative h-[18px] w-[1ch] shrink-0" aria-hidden="true">
+      {(glyph === "│" || glyph === "├") && <span className="absolute inset-y-0 left-1/2 border-l border-current" />}
+      {glyph === "└" && <span className="absolute left-1/2 top-0 h-1/2 border-l border-current" />}
+      {(glyph === "├" || glyph === "└") && <span className="absolute left-1/2 right-0 top-1/2 border-t border-current" />}
+      {glyph === "─" && <span className="absolute inset-x-0 top-1/2 border-t border-current" />}
+    </span>
+  );
+}
+
+function TerminalContent({ content }: { content: string }) {
+  const tree = /^([ │├└─]+)(.*)$/.exec(content);
+  if (!tree || !/[│├└]/.test(tree[1])) return <>{content || " "}</>;
+  return (
+    <span className="inline-flex h-[18px] items-start align-top">
+      {Array.from(tree[1]).map((glyph, index) => <ConnectorGlyph key={`${glyph}-${index}`} glyph={glyph} />)}
+      <span>{tree[2]}</span>
+    </span>
+  );
+}
 
 export function TerminalDemo({
   scenario = "default",
@@ -130,7 +153,7 @@ export function TerminalDemo({
           opentaint — {scenario === "security-summary" ? "summary" : "scan"}
         </span>
       </div>
-      <pre
+      <div
         className="min-h-0 min-w-0 w-full flex-1 overflow-hidden whitespace-pre px-4 py-4 text-[12px] leading-[18px] sm:text-[13px]"
         style={{
           fontFamily: '"SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace',
@@ -147,18 +170,20 @@ export function TerminalDemo({
           if (frameBase) return null;
           if (frame) {
             return (
-              <span key={`${line.content}-${index}`} className="block h-7 pt-0.5 text-[#9c3f56] dark:text-[#ff9a94]">
+              <span key={`${line.content}-${index}`} className="block h-7 pt-0.5 text-[#a63e58] dark:text-[#f07d91]">
                 <span className="inline-flex h-6 items-center rounded-[5px] border border-current px-2 font-semibold">{frame[1]}</span>
               </span>
             );
           }
           return (
             <span key={`${line.content}-${index}`} className={`block h-[18px] ${toneClass[line.tone ?? "plain"]}`}>
-              <span className={line.weight === "strong" ? "font-semibold" : "font-normal"}>{line.content || " "}</span>
+              <span className={line.weight === "strong" ? "font-semibold" : "font-normal"}>
+                <TerminalContent content={line.content} />
+              </span>
             </span>
           );
         })}
-      </pre>
+      </div>
     </div>
   );
 }

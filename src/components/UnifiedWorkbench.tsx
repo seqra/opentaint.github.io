@@ -252,12 +252,11 @@ function YamlCode({ code }: { code: string }) {
   );
 }
 
-function Artifact({ path, kind, code, defaultOpen = false }: { path: string; kind: string; code: string; defaultOpen?: boolean }) {
-  const [open, setOpen] = useState(defaultOpen);
+function Artifact({ path, kind, code, open, onToggle }: { path: string; kind: string; code: string; open: boolean; onToggle: () => void }) {
   const added = code.split("\n").length;
   return (
     <article className="overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] shadow-sm dark:bg-[#140505]">
-      <button type="button" aria-expanded={open} onClick={() => setOpen((value) => !value)} className="flex min-h-10 w-full items-center gap-2 bg-[#f0eeeb] px-3 text-left dark:bg-[#1d0d0c]">
+      <button type="button" aria-expanded={open} onClick={onToggle} className="flex min-h-10 w-full items-center gap-2 bg-[#f0eeeb] px-3 text-left dark:bg-[#1d0d0c]">
         <ChevronDown className={["h-4 w-4 shrink-0 text-muted-foreground transition-transform", open ? "" : "-rotate-90"].join(" ")} strokeWidth={1.8} aria-hidden="true" />
         <FileCode2 className="h-3.5 w-3.5 text-primary" strokeWidth={1.7} aria-hidden="true" />
         <span className="min-w-0 flex-1 truncate font-mono text-[11px] text-foreground">{path}</span>
@@ -272,8 +271,9 @@ function Artifact({ path, kind, code, defaultOpen = false }: { path: string; kin
 
 function Specifications({ progress }: { progress: number }) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const artifactRefs = useRef<Array<HTMLDivElement | null>>([]);
   const activeArtifact = Math.min(3, Math.floor(progress * 4));
+  const [openState, setOpenState] = useState({ stage: activeArtifact, artifact: activeArtifact });
+  const openArtifact = openState.stage === activeArtifact ? openState.artifact : activeArtifact;
   const artifacts = [
     { path: "rules/java/lib/generic/graal-eval.yaml", kind: "Library sink", code: sinkRule },
     { path: "rules/java/lib/spring/http-input.yaml", kind: "Library source", code: sourceRule },
@@ -283,17 +283,22 @@ function Specifications({ progress }: { progress: number }) {
 
   useEffect(() => {
     const scroll = scrollRef.current;
-    const artifact = artifactRefs.current[activeArtifact];
-    if (!scroll || !artifact) return;
-    scroll.scrollTop = Math.max(0, scrollOffset(scroll, artifact) - 16);
+    if (scroll) scroll.scrollTop = 0;
   }, [activeArtifact]);
 
   return (
     <div ref={scrollRef} data-testid="artifact-scroll" className="h-full overflow-hidden bg-[#efeeeb] p-4 dark:bg-[#100908] sm:p-6">
       <div className="mx-auto max-w-[40rem] space-y-4">
         {artifacts.map((artifact, index) => (
-          <div key={`${artifact.path}-${activeArtifact}`} ref={(node) => { artifactRefs.current[index] = node; }}>
-            <Artifact {...artifact} defaultOpen={index === activeArtifact} />
+          <div key={artifact.path}>
+            <Artifact
+              {...artifact}
+              open={index === openArtifact}
+              onToggle={() => setOpenState({
+                stage: activeArtifact,
+                artifact: openArtifact === index ? -1 : index,
+              })}
+            />
           </div>
         ))}
       </div>

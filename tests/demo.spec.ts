@@ -63,6 +63,8 @@ test.describe("landing product demonstration", () => {
     await jump(0.27);
     await expect(artifacts.nth(0)).toHaveAttribute("aria-expanded", "false");
     await expect(artifacts.nth(1)).toHaveAttribute("aria-expanded", "true");
+    await expect(artifacts.nth(0)).toBeInViewport();
+    await expect(artifacts.nth(1)).toBeInViewport();
 
     await jump(0.92);
     const report = workbench.getByTestId("simplified-report-view");

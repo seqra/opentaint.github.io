@@ -1,0 +1,92 @@
+---
+/**
+ * Owns the Google tag: sets Consent Mode v2 defaults, and loads gtag.js only
+ * once analytics consent actually exists.
+ *
+ * Loading the tag up front and relying on `analytics_storage: denied` alone is
+ * not enough — under advanced consent mode GA4 still transmits cookieless pings
+ * to Google before the visitor answers. Injecting the loader on consent instead
+ * means a declined banner sends nothing at all.
+ *
+ * This must be an inline script in `<head>`: a bundled module script is
+ * deferred, and a consent default that lands after the `config` call is a
+ * default that never applied. The zone list, storage key, and measurement ID
+ * are interpolated from their unit-tested modules at build time.
+ */
+import { GA_MEASUREMENT_ID, GA_TAG_URL } from "@/lib/analytics";
+import { CONSENT_REQUIRED_TIME_ZONES, CONSENT_STORAGE_KEY } from "@/lib/consent";
+
+const consentInit = `
+(function () {
+  var STORAGE_KEY = ${JSON.stringify(CONSENT_STORAGE_KEY)};
+  var EXTRA_ZONES = ${JSON.stringify(CONSENT_REQUIRED_TIME_ZONES)};
+  var MEASUREMENT_ID = ${JSON.stringify(GA_MEASUREMENT_ID)};
+  var TAG_URL = ${JSON.stringify(GA_TAG_URL)};
+
+  function readTimeZone() {
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function requiresConsent(timeZone) {
+    if (!timeZone) return true;
+    return timeZone.indexOf("Europe/") === 0 || EXTRA_ZONES.indexOf(timeZone) !== -1;
+  }
+
+  function readChoice() {
+    try {
+      var stored = localStorage.getItem(STORAGE_KEY);
+      return stored === "granted" || stored === "denied" ? stored : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { window.dataLayer.push(arguments); }
+
+  var tagLoaded = false;
+  function loadTag() {
+    if (tagLoaded) return;
+    tagLoaded = true;
+    gtag("js", new Date());
+    gtag("config", MEASUREMENT_ID);
+    var script = document.createElement("script");
+    script.async = true;
+    script.src = TAG_URL;
+    document.head.appendChild(script);
+  }
+
+  var required = requiresConsent(readTimeZone());
+  var choice = readChoice();
+  var analytics = choice ? choice : (required ? "denied" : "granted");
+
+  gtag("consent", "default", {
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
+    analytics_storage: analytics,
+    wait_for_update: 500
+  });
+
+  if (analytics === "granted") loadTag();
+
+  window.__opentaintConsent = {
+    required: required,
+    choice: choice,
+    update: function (next) {
+      if (next !== "granted" && next !== "denied") return;
+      try { localStorage.setItem(STORAGE_KEY, next); } catch (error) { /* private mode */ }
+      window.__opentaintConsent.choice = next;
+      gtag("consent", "update", { analytics_storage: next });
+      if (next === "granted") loadTag();
+    }
+  };
+})();
+`;
+---
+
+<script is:inline set:html={consentInit} />

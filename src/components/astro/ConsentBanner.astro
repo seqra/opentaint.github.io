@@ -1,0 +1,57 @@
+---
+/**
+ * Bottom consent bar, shown only where ConsentInit resolved
+ * `required === true` and no choice has been stored yet. Everywhere else it
+ * stays in the DOM but hidden, so the markup is identical on every page.
+ */
+---
+
+<div
+  id="consent-banner"
+  hidden
+  role="dialog"
+  aria-live="polite"
+  aria-label="Analytics cookie consent"
+  class="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-card shadow-[0_-6px_24px_-12px_rgba(0,0,0,0.35)]"
+>
+  <div class="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between lg:px-6">
+    <p class="font-mono text-xs leading-relaxed text-muted-foreground lg:text-[13px]">
+      We use Google Analytics to count visits and see which pages people find
+      useful. No ads, no profiling, nothing sold. Decline and nothing is stored.
+    </p>
+    <div class="flex shrink-0 gap-2">
+      <button
+        type="button"
+        data-consent="denied"
+        class="rounded border border-border-strong px-4 py-2 font-mono text-xs font-medium text-foreground transition-colors hover:border-primary hover:text-primary lg:text-[13px]"
+      >
+        Decline
+      </button>
+      <button
+        type="button"
+        data-consent="granted"
+        class="rounded bg-primary px-4 py-2 font-mono text-xs font-medium text-primary-foreground transition-opacity hover:opacity-90 lg:text-[13px]"
+      >
+        Accept
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const banner = document.getElementById("consent-banner");
+  const consent = window.__opentaintConsent;
+
+  if (banner && consent?.required && !consent.choice) {
+    banner.hidden = false;
+
+    banner.addEventListener("click", (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLElement>("[data-consent]");
+      const choice = button?.dataset.consent;
+      if (choice !== "granted" && choice !== "denied") return;
+
+      consent.update(choice);
+      banner.hidden = true;
+    });
+  }
+</script>

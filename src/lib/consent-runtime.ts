@@ -7,12 +7,16 @@
  */
 import {
   clearAnalyticsCookies,
-  isGoogleTagLoaded,
   loadGoogleTag,
   setDefaultConsent,
   updateAnalyticsConsent,
 } from "./analytics";
-import { requiresConsent, resolveAnalyticsConsent, type ConsentChoice } from "./consent";
+import {
+  CONSENT_REQUIRED_REGIONS,
+  requiresConsent,
+  resolveAnalyticsConsent,
+  type ConsentChoice,
+} from "./consent";
 import { detectTimeZone, readStoredChoice, storeChoice } from "./consent-storage";
 
 export type ConsentState = {
@@ -27,8 +31,14 @@ const REOPEN_EVENT = "opentaint:consent-reopen";
 let state: ConsentState | null = null;
 
 /**
- * Resolve consent and start measurement if it is already allowed. Idempotent,
- * so any component may call it without caring who got there first.
+ * Resolve consent and start the tag. Idempotent, so any component may call it
+ * without caring who got there first.
+ *
+ * Advanced consent mode, so the order is fixed and load-bearing: the defaults
+ * have to be complete before the tag loads, because the first page_view goes
+ * out with whatever state is declared by then. A remembered choice is part of
+ * those defaults rather than a later update, and it drops the region scoping —
+ * their own answer governs wherever they are.
  */
 export function initConsent(): ConsentState {
   if (state) return state;
@@ -37,9 +47,11 @@ export function initConsent(): ConsentState {
   const choice = readStoredChoice();
   state = { required, choice };
 
-  const analytics = resolveAnalyticsConsent(choice, required);
-  setDefaultConsent(analytics);
-  if (analytics === "granted") loadGoogleTag();
+  setDefaultConsent(
+    resolveAnalyticsConsent(choice, required),
+    choice ? undefined : CONSENT_REQUIRED_REGIONS,
+  );
+  loadGoogleTag();
 
   return state;
 }
@@ -49,28 +61,16 @@ export function getConsentState(): ConsentState {
 }
 
 /**
- * Record the visitor's answer. Granting starts measurement; withdrawing stops
- * it and clears the identifiers already written.
- *
- * A tag already on the page cannot be taken back off it — gtag.js keeps sending
- * engagement beacons for the rest of the page view even with storage denied —
- * so withdrawing from a measured page reloads it. The stored choice then keeps
- * the tag off for good.
+ * Record the visitor's answer. The tag is already running either way, so this
+ * revises what it may store; withdrawing also clears the identifiers written
+ * while consent stood.
  */
 export function setConsentChoice(next: ConsentChoice): void {
   storeChoice(next);
   state = { ...getConsentState(), choice: next };
 
   updateAnalyticsConsent(next);
-
-  if (next === "granted") {
-    loadGoogleTag();
-    return;
-  }
-
-  const wasMeasuring = isGoogleTagLoaded();
-  clearAnalyticsCookies();
-  if (wasMeasuring) window.location.reload();
+  if (next === "denied") clearAnalyticsCookies();
 }
 
 /** Ask the consent bar to show itself again, so a choice can be revised. */

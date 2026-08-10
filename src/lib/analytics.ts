@@ -32,15 +32,40 @@ export const gtag: (...args: unknown[]) => void = function () {
   dataLayer().push(arguments);
 };
 
+const DENY_ADS = {
+  ad_storage: "denied",
+  ad_user_data: "denied",
+  ad_personalization: "denied",
+} as const;
+
 /**
- * Declare the starting consent state. Ads stay denied unconditionally: this
- * site runs no advertising and never asks for it.
+ * Declare the starting consent state, before the tag loads. Everything the tag
+ * sends afterwards carries this state, so it has to be the final answer for
+ * this page view — an update arriving later applies only to subsequent hits.
+ *
+ * `regions` adds the region-scoped default that Google's advanced consent mode
+ * prescribes, denying storage across the countries listed. Google resolves it
+ * from the request IP, so it still covers a visitor our own region check waved
+ * through. Pass it only when the answer is genuinely unknown: for a visitor who
+ * has already chosen, their choice governs everywhere, and a region default
+ * would override it — region entries win over the general one.
+ *
+ * Ads stay denied unconditionally — this site runs no advertising — so ads data
+ * is redacted too.
  */
-export function setDefaultConsent(analytics: ConsentChoice): void {
+export function setDefaultConsent(analytics: ConsentChoice, regions?: readonly string[]): void {
+  gtag("set", "ads_data_redaction", true);
+
+  if (regions?.length) {
+    gtag("consent", "default", {
+      ...DENY_ADS,
+      analytics_storage: "denied",
+      region: regions,
+    });
+  }
+
   gtag("consent", "default", {
-    ad_storage: "denied",
-    ad_user_data: "denied",
-    ad_personalization: "denied",
+    ...DENY_ADS,
     analytics_storage: analytics,
   });
 }
@@ -51,11 +76,6 @@ export function updateAnalyticsConsent(next: ConsentChoice): void {
 }
 
 let tagRequested = false;
-
-/** Whether gtag.js has been put on the page during this page view. */
-export function isGoogleTagLoaded(): boolean {
-  return tagRequested;
-}
 
 /** Load gtag.js and configure the property. Idempotent. */
 export function loadGoogleTag(): void {

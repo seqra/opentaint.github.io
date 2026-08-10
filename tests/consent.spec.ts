@@ -1,15 +1,42 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type BrowserContext, type Page } from "@playwright/test";
 import { CONSENT_STORAGE_KEY } from "../src/lib/consent";
 
-/** Any Google measurement traffic: the tag loader itself and its collect hits. */
-const GOOGLE_TAG = /googletagmanager\.com|google-analytics\.com/;
+/*
+ * Under advanced consent mode the tag loads for everyone, so what distinguishes
+ * a consenting visitor from a refusing one is not whether Google is contacted
+ * but what the contact says. Each measurement hit carries `gcs`, the consent
+ * state gtag.js applied to it: G100 denies analytics storage, G101 allows it.
+ * Cookies are the other half — denied storage must leave none behind.
+ */
+const COLLECT = /google-analytics\.com\/g\/collect/;
+const DENIED = "G100";
 
-function recordTagRequests(page: Page): string[] {
-  const hits: string[] = [];
+type Signal = { gcs: string; event: string | null };
+
+function recordConsentSignals(page: Page): Signal[] {
+  const signals: Signal[] = [];
   page.on("request", (request) => {
-    if (GOOGLE_TAG.test(request.url())) hits.push(request.url());
+    if (!COLLECT.test(request.url())) return;
+    const params = new URL(request.url()).searchParams;
+    const gcs = params.get("gcs");
+    if (gcs) signals.push({ gcs, event: params.get("en") });
   });
-  return hits;
+  return signals;
+}
+
+/*
+ * Assertions look at page_view hits. An engagement beacon queued while consent
+ * still stood can flush afterwards carrying that older state — gtag.js decides
+ * a hit's consent when it queues it, and we cannot recall one already in the
+ * air. It writes nothing, since storage is denied by the time it lands, and the
+ * next page view starts clean.
+ */
+function pageViews(signals: Signal[]): string[] {
+  return signals.filter((s) => s.event === "page_view").map((s) => s.gcs);
+}
+
+function analyticsCookies(context: BrowserContext) {
+  return context.cookies().then((cookies) => cookies.filter((c) => c.name.startsWith("_ga")));
 }
 
 function storedChoice(page: Page) {
@@ -30,40 +57,46 @@ test.describe("analytics consent", () => {
   test.describe("EU visitor", () => {
     test.use({ timezoneId: "Europe/Berlin" });
 
-    test("sees the banner, and the tag stays unloaded until they accept", async ({ page }) => {
-      const hits = recordTagRequests(page);
+    test("is measured with storage denied until they accept", async ({ page, context }) => {
+      const signals = recordConsentSignals(page);
 
       await page.goto("/");
+      await expect(page.locator("#consent-banner")).toBeVisible();
+
+      await expect.poll(() => signals, { timeout: 15_000 }).not.toHaveLength(0);
+      expect(signals.map((s) => s.gcs)).toEqual(signals.map(() => DENIED));
+      expect(await analyticsCookies(context), "denied storage sets no cookies").toEqual([]);
+    });
+
+    test("accepting lets the tag store its identifiers", async ({ page, context }) => {
+      await page.goto("/");
       const banner = page.locator("#consent-banner");
-      await expect(banner).toBeVisible();
-
-      await page.waitForTimeout(2000);
-      expect(hits, "nothing reaches Google before a choice").toHaveLength(0);
-
       await banner.getByRole("button", { name: "Accept" }).click();
       await expect(banner).toBeHidden();
 
-      await page.waitForRequest((request) => GOOGLE_TAG.test(request.url()), { timeout: 15_000 });
-      expect(hits.length).toBeGreaterThan(0);
+      await expect
+        .poll(async () => (await analyticsCookies(context)).map((c) => c.name), { timeout: 15_000 })
+        .toContain("_ga");
+      await expect.poll(() => storedChoice(page)).toBe("granted");
     });
 
-    test("declining sends nothing, on this load or the next", async ({ page }) => {
-      const hits = recordTagRequests(page);
-
+    test("declining keeps storage denied across a reload", async ({ page, context }) => {
       await page.goto("/");
       const banner = page.locator("#consent-banner");
       await banner.getByRole("button", { name: "Decline" }).click();
       await expect(banner).toBeHidden();
-
       await expect.poll(() => storedChoice(page)).toBe("denied");
 
+      const signals = recordConsentSignals(page);
       await page.reload();
-      await expect(banner).toBeHidden();
-      await page.waitForTimeout(2000);
-      expect(hits).toHaveLength(0);
+      await expect(banner, "the answer is remembered, so no second ask").toBeHidden();
+
+      await expect.poll(() => pageViews(signals), { timeout: 15_000 }).not.toHaveLength(0);
+      expect(pageViews(signals)).toEqual(pageViews(signals).map(() => DENIED));
+      expect(await analyticsCookies(context)).toEqual([]);
     });
 
-    test("remembers acceptance across reloads", async ({ page }) => {
+    test("accepting is remembered across a reload", async ({ page }) => {
       await page.goto("/");
       await page.locator("#consent-banner").getByRole("button", { name: "Accept" }).click();
 
@@ -76,32 +109,26 @@ test.describe("analytics consent", () => {
   test.describe("non-EU visitor", () => {
     test.use({ timezoneId: "America/New_York" });
 
-    test("sees no banner and is measured by default", async ({ page }) => {
-      const hits = recordTagRequests(page);
-
+    test("sees no banner and is measured with storage allowed", async ({ page, context }) => {
       await page.goto("/");
       await expect(page.locator("#consent-banner")).toBeHidden();
 
-      // The tag loads on page load here, so poll the recorded requests rather
-      // than waiting for one that has most likely already fired.
-      await expect.poll(() => hits.some((url) => url.includes("/g/collect")), {
-        timeout: 15_000,
-      }).toBe(true);
+      await expect
+        .poll(async () => (await analyticsCookies(context)).map((c) => c.name), { timeout: 15_000 })
+        .toContain("_ga");
     });
   });
 
   test.describe("withdrawing consent", () => {
     test.use({ timezoneId: "America/New_York" });
 
-    test("the footer reopens the bar, and declining clears the analytics cookies", async ({ page }) => {
+    test("the footer reopens the bar, and declining clears the cookies", async ({ page, context }) => {
       await page.goto("/");
 
-      // Measured by default here, so GA has had a chance to set its cookies.
+      // Measured by default here, so the tag has had a chance to set cookies.
       await expect
-        .poll(async () => (await page.context().cookies()).some((c) => c.name.startsWith("_ga")), {
-          timeout: 15_000,
-        })
-        .toBe(true);
+        .poll(async () => (await analyticsCookies(context)).length, { timeout: 15_000 })
+        .toBeGreaterThan(0);
 
       const banner = page.locator("#consent-banner");
       await expect(banner).toBeHidden();
@@ -112,21 +139,21 @@ test.describe("analytics consent", () => {
       await banner.getByRole("button", { name: "Decline" }).click();
       await expect(banner).toBeHidden();
       await expect.poll(() => storedChoice(page)).toBe("denied");
-
-      await expect
-        .poll(async () => (await page.context().cookies()).filter((c) => c.name.startsWith("_ga")))
-        .toEqual([]);
+      await expect.poll(() => analyticsCookies(context)).toEqual([]);
     });
 
-    test("the choice survives a reload", async ({ page }) => {
+    test("the withdrawal survives a reload", async ({ page, context }) => {
       await page.goto("/");
       await openConsentSettings(page);
       await page.locator("#consent-banner").getByRole("button", { name: "Decline" }).click();
+      await expect.poll(() => storedChoice(page)).toBe("denied");
 
-      const hits = recordTagRequests(page);
+      const signals = recordConsentSignals(page);
       await page.reload();
-      await page.waitForTimeout(2000);
-      expect(hits, "a withdrawn consent stays withdrawn").toHaveLength(0);
+
+      await expect.poll(() => pageViews(signals), { timeout: 15_000 }).not.toHaveLength(0);
+      expect(pageViews(signals)).toEqual(pageViews(signals).map(() => DENIED));
+      expect(await analyticsCookies(context)).toEqual([]);
     });
   });
 });

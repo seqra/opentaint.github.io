@@ -1,10 +1,11 @@
 ---
 /**
- * Starts measurement as early as consent allows.
+ * Declares the consent defaults and starts the Google tag.
  *
  * The script is bundled rather than inlined: since the runtime injects gtag.js
- * itself, nothing can load ahead of the consent defaults, so there is no
- * ordering left to protect and the logic can stay in type-checked modules.
+ * itself, right after declaring the defaults, nothing can load ahead of them —
+ * so there is no ordering left to protect in markup, and the logic can stay in
+ * type-checked modules.
  */
 ---
 

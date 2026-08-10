@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  CONSENT_REQUIRED_REGIONS,
   CONSENT_REQUIRED_TIME_ZONES,
   CONSENT_STORAGE_KEY,
   parseConsentChoice,
@@ -79,5 +80,23 @@ describe("resolveAnalyticsConsent", () => {
 describe("CONSENT_STORAGE_KEY", () => {
   it("is namespaced so it cannot collide with the theme key", () => {
     expect(CONSENT_STORAGE_KEY).toBe("opentaint:analytics-consent");
+  });
+});
+
+describe("CONSENT_REQUIRED_REGIONS", () => {
+  it("covers the EU, the wider EEA, and the UK", () => {
+    for (const code of ["DE", "FR", "PL", "IE", "IS", "LI", "NO", "GB"]) {
+      expect(CONSENT_REQUIRED_REGIONS).toContain(code);
+    }
+  });
+
+  it("omits Switzerland, which the GDPR does not cover", () => {
+    expect(CONSENT_REQUIRED_REGIONS).not.toContain("CH");
+  });
+
+  it("is uppercase two-letter codes, the only form Google's region accepts", () => {
+    for (const code of CONSENT_REQUIRED_REGIONS) {
+      expect(code).toMatch(/^[A-Z]{2}$/);
+    }
   });
 });

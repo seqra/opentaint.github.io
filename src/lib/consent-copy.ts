@@ -2,7 +2,7 @@
 export const consentCopy = {
   label: "Analytics cookie consent",
   message:
-    "We use Google Analytics to count visits and see which pages people find useful. No ads, no profiling, nothing sold. Decline and nothing is stored.",
+    "We use Google Analytics to count visits and see which pages people find useful. No ads, no profiling, nothing sold. Decline and no cookies are set.",
   accept: "Accept",
   decline: "Decline",
   settings: "Cookie settings",

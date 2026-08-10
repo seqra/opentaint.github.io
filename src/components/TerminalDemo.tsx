@@ -1,5 +1,3 @@
-import { useMemo, type CSSProperties } from "react";
-
 type TerminalTone = "plain" | "muted" | "blue" | "green" | "red" | "purple";
 
 type TerminalLine = {
@@ -109,74 +107,11 @@ const linesFor = (scenario: NonNullable<TerminalDemoProps["scenario"]>) => {
   return heroLines;
 };
 
-const boxConnections: Record<string, readonly [boolean, boolean, boolean, boolean]> = {
-  "─": [false, true, false, true],
-  "│": [true, false, true, false],
-  "├": [true, true, true, false],
-  "┤": [true, false, true, true],
-  "┬": [false, true, true, true],
-  "┴": [true, true, false, true],
-  "┼": [true, true, true, true],
-  "┌": [false, true, true, false],
-  "┐": [false, false, true, true],
-  "└": [true, true, false, false],
-  "┘": [true, false, false, true],
-  "╭": [false, true, true, false],
-  "╮": [false, false, true, true],
-  "╰": [true, true, false, false],
-  "╯": [true, false, false, true],
-};
-
-function boxGlyphStyle([top, , bottom]: readonly boolean[]): CSSProperties {
-  const images: string[] = [];
-  const positions: string[] = [];
-  const sizes: string[] = [];
-  if (top) {
-    images.push("linear-gradient(currentColor,currentColor)");
-    positions.push("center top");
-    sizes.push("1px 51%");
-  }
-  if (bottom) {
-    images.push("linear-gradient(currentColor,currentColor)");
-    positions.push("center bottom");
-    sizes.push("1px 51%");
-  }
-  return {
-    backgroundImage: images.join(","),
-    backgroundPosition: positions.join(","),
-    backgroundSize: sizes.join(","),
-    backgroundRepeat: "no-repeat",
-  };
-}
-
-function TerminalText({ content }: { content: string }) {
-  const parts: Array<{ text: string; glyph?: string }> = [];
-  let text = "";
-  for (const character of content) {
-    if (boxConnections[character]) {
-      if (text) parts.push({ text });
-      parts.push({ text: character, glyph: character });
-      text = "";
-    } else {
-      text += character;
-    }
-  }
-  if (text) parts.push({ text });
-
-  return <>{parts.map((part, index) => part.glyph ? (
-    <span
-      key={`${part.glyph}-${index}`}
-      className="inline-block h-4 w-[1ch] align-top"
-      style={boxGlyphStyle(boxConnections[part.glyph])}
-    >{part.text}</span>
-  ) : <span key={`${part.text}-${index}`}>{part.text}</span>)}</>;
-}
-
 export function TerminalDemo({
   scenario = "default",
   ariaLabel = "OpenTaint terminal output",
 }: TerminalDemoProps = {}) {
-  const lines = useMemo(() => linesFor(scenario), [scenario]);
+  const lines = linesFor(scenario);
 
   return (
     <div
@@ -195,10 +130,19 @@ export function TerminalDemo({
           opentaint — {scenario === "security-summary" ? "summary" : "scan"}
         </span>
       </div>
-      <pre className="min-h-0 min-w-0 w-full flex-1 overflow-hidden whitespace-pre px-4 py-4 font-mono text-[13px] leading-4 [font-variant-ligatures:none]">
+      <pre
+        className="min-h-0 min-w-0 w-full flex-1 overflow-hidden whitespace-pre px-4 py-4 text-[13px] leading-[13px]"
+        style={{
+          fontFamily: '"SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace',
+          fontVariantLigatures: "none",
+          fontSynthesis: "none",
+          WebkitFontSmoothing: "antialiased",
+          textRendering: "geometricPrecision",
+        }}
+      >
         {lines.map((line, index) => (
           <span key={`${line.content}-${index}`} className={toneClass[line.tone ?? "plain"]}>
-            <span className={line.weight === "strong" ? "font-semibold" : "font-normal"}><TerminalText content={line.content || " "} /></span>
+            <span className={line.weight === "strong" ? "font-semibold" : "font-normal"}>{line.content || " "}</span>
             {index < lines.length - 1 ? "\n" : ""}
           </span>
         ))}

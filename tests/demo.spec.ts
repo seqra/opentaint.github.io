@@ -133,8 +133,8 @@ test.describe("landing product demonstration", () => {
     await expect(terminal).toBeVisible();
     await expect(terminal.getByText(/\$ opentaint scan/)).toBeVisible();
     await expect(terminal.getByText(".opentaint/model/org.graalvm.polyglot.yaml", { exact: false })).toBeVisible();
-    await expect(terminal.locator("pre")).toHaveCSS("font-family", /JetBrains Mono/);
-    await expect(terminal.locator("pre")).toHaveCSS("line-height", "16px");
+    await expect(terminal.locator("pre")).toHaveCSS("font-family", /SFMono-Regular|Menlo|Monaco|Consolas|Liberation Mono/);
+    await expect(terminal.locator("pre")).toHaveCSS("line-height", "13px");
     await expect(terminal.locator("pre")).toHaveCSS("font-size", "13px");
     await expect(terminal).toHaveAttribute("data-terminal-renderer", "native-text");
 

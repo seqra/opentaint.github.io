@@ -30,6 +30,14 @@ function scrollOffset(container: HTMLElement, target: HTMLElement) {
   return target.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop;
 }
 
+function timelineBounds(track: HTMLElement, sticky: HTMLElement | null) {
+  const stickyTop = sticky ? Number.parseFloat(window.getComputedStyle(sticky).top) || 0 : 0;
+  const trackTop = track.getBoundingClientRect().top + window.scrollY;
+  const start = trackTop - stickyTop;
+  const end = trackTop + track.offsetHeight - window.innerHeight;
+  return { start, distance: Math.max(1, end - start) };
+}
+
 function UserPrompt({ children }: { children: ReactNode }) {
   return (
     <div className="rounded-[10px] bg-[#e8f0fb] px-4 py-3 text-[14px] leading-5 text-[#242b33] dark:bg-[#243244] dark:text-[#eef4fb]">
@@ -564,6 +572,7 @@ export function UnifiedWorkbench() {
   const [timelineIndex, setTimelineIndex] = useState(0);
   const [timelineProgress, setTimelineProgress] = useState(0);
   const scrollTrackRef = useRef<HTMLDivElement>(null);
+  const stickyRef = useRef<HTMLDivElement>(null);
   const transcriptRef = useRef<HTMLDivElement>(null);
   const stageRefs = useRef<Array<HTMLElement | null>>([]);
   const navigationTargetRef = useRef<number | null>(null);
@@ -584,8 +593,8 @@ export function UnifiedWorkbench() {
     }
     const track = scrollTrackRef.current;
     if (!track) return;
-    const available = Math.max(1, track.offsetHeight - window.innerHeight);
-    const targetTop = track.offsetTop + available * (targetTimelineIndex / timeline.length);
+    const { start, distance } = timelineBounds(track, stickyRef.current);
+    const targetTop = start + distance * ((targetTimelineIndex + 0.02) / timeline.length);
     window.scrollTo({
       top: targetTop,
       behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
@@ -607,8 +616,8 @@ export function UnifiedWorkbench() {
       const transcript = transcriptRef.current;
       if (!track) return;
 
-      const available = Math.max(1, track.offsetHeight - window.innerHeight);
-      const progress = Math.max(0, Math.min(1, (window.scrollY - track.offsetTop) / available));
+      const { start, distance } = timelineBounds(track, stickyRef.current);
+      const progress = Math.max(0, Math.min(1, (window.scrollY - start) / distance));
       const position = progress * timeline.length;
       const nextIndex = Math.min(timeline.length - 1, Math.floor(position));
       const localProgress = nextIndex === timeline.length - 1
@@ -654,22 +663,19 @@ export function UnifiedWorkbench() {
 
   return (
     <div ref={scrollTrackRef} data-testid="demo-scroll-track" className="relative h-[520vh]">
-      <div className="sticky top-16 flex h-[calc(100vh-4rem)] items-center">
+      <div ref={stickyRef} className="sticky top-16 flex h-[calc(100vh-4rem)] items-center">
         <div data-testid="unified-workbench" className="agent-ui mx-auto w-full max-w-[82rem] overflow-hidden rounded-[20px] border border-black/10 bg-white p-2 shadow-[0_28px_90px_rgba(37,25,20,0.18)] dark:border-white/10 dark:bg-[#211a17]">
       <div className="overflow-hidden rounded-[13px] border border-border bg-background">
-        <div className="grid h-10 grid-cols-[1fr_auto_1fr] items-center border-b border-border bg-[#f0efec] px-3 dark:bg-[#1b1513]">
+        <div className="flex h-10 items-center border-b border-border bg-[#f0efec] px-3 dark:bg-[#1b1513]">
           <div className="flex items-center gap-2">
             <img src="/favicon.svg" alt="" className="h-4 w-4" aria-hidden="true" />
             <span className="text-[12px] font-semibold text-foreground">OpenTaint</span>
           </div>
-          <p className="text-[12px] text-muted-foreground">Security review</p>
-          <div aria-hidden="true" />
         </div>
 
         <div className="grid h-[calc(100vh-9rem)] min-h-[34rem] max-h-[42rem] grid-cols-[4.5rem_minmax(0,1fr)] grid-rows-[minmax(0,1fr)] md:grid-cols-[8.5rem_minmax(20rem,0.9fr)_minmax(0,1.1fr)] xl:grid-cols-[10rem_minmax(22rem,0.9fr)_minmax(0,1.1fr)]">
           <aside className="border-r border-border bg-[#f2f1ee] p-3 dark:bg-[#181210]" aria-label="Demo steps">
             <p className="px-2 pt-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">Session</p>
-            <p className="mt-2 hidden truncate px-2 text-[12px] font-medium text-foreground sm:block">Security review</p>
             <ol className="mt-4 space-y-1">
               {stages.map((item, index) => (
                 <li key={item.id}>

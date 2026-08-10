@@ -92,6 +92,12 @@ const heroLines: TerminalLine[] = [
   { content: "3 findings, report written to results.sarif", tone: "red", weight: "strong" },
 ];
 
+const linesFor = (scenario: NonNullable<TerminalDemoProps["scenario"]>) => {
+  if (scenario === "security-review") return securityReviewLines;
+  if (scenario === "security-summary") return securitySummaryLines;
+  return heroLines;
+};
+
 const toneClass: Record<TerminalTone, string> = {
   plain: "text-[#322e2b] dark:text-[#f4f0ed]",
   muted: "text-[#746c67] dark:text-[#b0aaa6]",
@@ -99,12 +105,6 @@ const toneClass: Record<TerminalTone, string> = {
   green: "text-[#237344] dark:text-[#8bd3a3]",
   red: "text-[#bd302a] dark:text-[#ff746c]",
   purple: "text-[#9c3f56] dark:text-[#ff9a94]",
-};
-
-const linesFor = (scenario: NonNullable<TerminalDemoProps["scenario"]>) => {
-  if (scenario === "security-review") return securityReviewLines;
-  if (scenario === "security-summary") return securitySummaryLines;
-  return heroLines;
 };
 
 export function TerminalDemo({
@@ -116,7 +116,7 @@ export function TerminalDemo({
   return (
     <div
       data-testid="demo-hero-player"
-      data-terminal-renderer="native-text"
+      data-terminal-renderer="native-cli"
       aria-label={ariaLabel}
       className="flex h-full w-full flex-col overflow-hidden bg-[#f8f7f5] dark:bg-[#100d0c]"
     >
@@ -131,7 +131,7 @@ export function TerminalDemo({
         </span>
       </div>
       <pre
-        className="min-h-0 min-w-0 w-full flex-1 overflow-hidden whitespace-pre px-4 py-4 text-[13px] leading-[13px]"
+        className="min-h-0 min-w-0 w-full flex-1 overflow-hidden whitespace-pre px-4 py-4 text-[12px] leading-[18px] sm:text-[13px]"
         style={{
           fontFamily: '"SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace',
           fontVariantLigatures: "none",
@@ -140,12 +140,24 @@ export function TerminalDemo({
           textRendering: "geometricPrecision",
         }}
       >
-        {lines.map((line, index) => (
-          <span key={`${line.content}-${index}`} className={toneClass[line.tone ?? "plain"]}>
-            <span className={line.weight === "strong" ? "font-semibold" : "font-normal"}>{line.content || " "}</span>
-            {index < lines.length - 1 ? "\n" : ""}
-          </span>
-        ))}
+        {lines.map((line, index) => {
+          const frame = /^╭─(.+)─╮$/.exec(line.content);
+          const frameBase = index > 0 && /^╭─(.+)─╮$/.exec(lines[index - 1].content)
+            && /^╰─┬─+╯$/.test(line.content);
+          if (frameBase) return null;
+          if (frame) {
+            return (
+              <span key={`${line.content}-${index}`} className="block h-7 pt-0.5 text-[#9c3f56] dark:text-[#ff9a94]">
+                <span className="inline-flex h-6 items-center rounded-[5px] border border-current px-2 font-semibold">{frame[1]}</span>
+              </span>
+            );
+          }
+          return (
+            <span key={`${line.content}-${index}`} className={`block h-[18px] ${toneClass[line.tone ?? "plain"]}`}>
+              <span className={line.weight === "strong" ? "font-semibold" : "font-normal"}>{line.content || " "}</span>
+            </span>
+          );
+        })}
       </pre>
     </div>
   );

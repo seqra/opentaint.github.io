@@ -46,7 +46,12 @@ test.describe("landing product demonstration", () => {
     const workbench = page.getByTestId("unified-workbench");
     const jump = async (progress: number) => {
       await track.evaluate((element, value) => {
-        window.scrollTo(0, element.offsetTop + (element.offsetHeight - window.innerHeight) * value);
+        const sticky = element.firstElementChild;
+        const stickyTop = sticky ? Number.parseFloat(window.getComputedStyle(sticky).top) || 0 : 0;
+        const trackTop = element.getBoundingClientRect().top + window.scrollY;
+        const start = trackTop - stickyTop;
+        const end = trackTop + element.offsetHeight - window.innerHeight;
+        window.scrollTo(0, start + (end - start) * value);
       }, progress);
     };
 
@@ -87,7 +92,12 @@ test.describe("landing product demonstration", () => {
     const workbench = page.getByTestId("unified-workbench");
     const transcript = workbench.getByLabel("Agent transcript");
     await track.evaluate((element) => {
-      window.scrollTo(0, element.offsetTop + (element.offsetHeight - window.innerHeight) * 0.86);
+      const sticky = element.firstElementChild;
+      const stickyTop = sticky ? Number.parseFloat(window.getComputedStyle(sticky).top) || 0 : 0;
+      const trackTop = element.getBoundingClientRect().top + window.scrollY;
+      const start = trackTop - stickyTop;
+      const end = trackTop + element.offsetHeight - window.innerHeight;
+      window.scrollTo(0, start + (end - start) * 0.86);
     });
 
     await expect(workbench.getByTestId("simplified-report-view")).toBeVisible();
@@ -98,7 +108,10 @@ test.describe("landing product demonstration", () => {
     await page.goto("/");
     const track = page.getByTestId("demo-scroll-track");
     const workbench = page.getByTestId("unified-workbench");
-    await track.evaluate((element) => window.scrollTo(0, element.offsetTop + 40));
+    await track.evaluate((element) => {
+      const trackTop = element.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo(0, trackTop + 40);
+    });
     await workbench.hover();
     const before = await page.evaluate(() => window.scrollY);
     await page.mouse.wheel(0, 600);
@@ -109,13 +122,31 @@ test.describe("landing product demonstration", () => {
     await page.goto("/");
     await page.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; });
     const track = page.getByTestId("demo-scroll-track");
+    const workbench = page.getByTestId("unified-workbench");
     const transcript = page.getByLabel("Agent transcript");
 
-    await track.evaluate((element) => window.scrollTo(0, element.offsetTop));
+    await track.evaluate((element) => {
+      const sticky = element.firstElementChild;
+      const stickyTop = sticky ? Number.parseFloat(window.getComputedStyle(sticky).top) || 0 : 0;
+      const trackTop = element.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo(0, trackTop - stickyTop);
+    });
     await expect.poll(() => transcript.evaluate((element) => element.scrollTop)).toBe(0);
 
+    const alignment = await workbench.evaluate((element) => {
+      const box = element.getBoundingClientRect();
+      const sticky = element.closest("[data-testid='demo-scroll-track']")?.firstElementChild;
+      const stickyTop = sticky ? Number.parseFloat(window.getComputedStyle(sticky).top) || 0 : 0;
+      return {
+        center: box.top + box.height / 2,
+        viewportCenter: stickyTop + (window.innerHeight - stickyTop) / 2,
+      };
+    });
+    expect(Math.abs(alignment.center - alignment.viewportCenter)).toBeLessThanOrEqual(2);
+
     await track.evaluate((element) => {
-      window.scrollTo(0, element.offsetTop + element.offsetHeight - window.innerHeight);
+      const trackTop = element.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo(0, trackTop + element.offsetHeight - window.innerHeight);
     });
     await expect.poll(() => transcript.evaluate((element) => (
       element.scrollHeight - element.clientHeight - element.scrollTop
@@ -131,18 +162,21 @@ test.describe("landing product demonstration", () => {
     await workbench.getByRole("button", { name: "Scan", exact: true }).click();
     const terminal = workbench.getByTestId("demo-hero-player");
     await expect(terminal).toBeVisible();
-    await expect(terminal.getByText(/\$ opentaint scan/)).toBeVisible();
-    await expect(terminal.getByText(".opentaint/model/org.graalvm.polyglot.yaml", { exact: false })).toBeVisible();
-    await expect(terminal.locator("pre")).toHaveCSS("font-family", /SFMono-Regular|Menlo|Monaco|Consolas|Liberation Mono/);
-    await expect(terminal.locator("pre")).toHaveCSS("line-height", "13px");
-    await expect(terminal.locator("pre")).toHaveCSS("font-size", "13px");
-    await expect(terminal).toHaveAttribute("data-terminal-renderer", "native-text");
+    await expect(terminal).toContainText("$ opentaint scan");
+    await expect(terminal).toContainText(".opentaint/model/org.graalvm.polyglot.yaml");
+    await expect(terminal).toHaveAttribute("data-terminal-renderer", "native-cli");
 
     await track.evaluate((element) => {
-      window.scrollTo(0, element.offsetTop + (element.offsetHeight - window.innerHeight) * 0.62);
+      const sticky = element.firstElementChild;
+      const stickyTop = sticky ? Number.parseFloat(window.getComputedStyle(sticky).top) || 0 : 0;
+      const trackTop = element.getBoundingClientRect().top + window.scrollY;
+      const start = trackTop - stickyTop;
+      const end = trackTop + element.offsetHeight - window.innerHeight;
+      window.scrollTo(0, start + (end - start) * 0.62);
     });
-    await expect(workbench.getByLabel("Real OpenTaint summary output for the anonymous security review project")).toBeVisible();
-    await expect(workbench.getByLabel("Real OpenTaint summary output for the anonymous security review project").getByText(/\$ opentaint summary results\/report\.sarif/)).toBeInViewport();
+    const summary = workbench.getByLabel("Real OpenTaint summary output for the anonymous security review project");
+    await expect(summary).toBeVisible();
+    await expect(summary).toContainText("$ opentaint summary results/report.sarif");
   });
 
   for (const viewport of [

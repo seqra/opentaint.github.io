@@ -35,6 +35,50 @@ test.describe("landing product demonstration", () => {
     await workbench.getByRole("button", { name: "Report", exact: true }).click();
     await expect(workbench.getByTestId("simplified-report-view")).toBeVisible();
     await expect(workbench.getByText("ScriptRuntime.java", { exact: true }).first()).toBeVisible();
+    await expect(workbench.getByTestId("simplified-report-view").getByText('Method entry marks the 1st argument of "submit" as $UNTRUSTED')).toBeVisible();
+    await expect(workbench.getByRole("button", { name: "First step" })).toBeDisabled();
+  });
+
+  test("scrolling unfolds artifacts and steps through the report", async ({ page }) => {
+    await page.goto("/");
+    await page.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; });
+    const track = page.getByTestId("demo-scroll-track");
+    const workbench = page.getByTestId("unified-workbench");
+    const jump = async (progress: number) => {
+      await track.evaluate((element, value) => {
+        window.scrollTo(0, element.offsetTop + (element.offsetHeight - window.innerHeight) * value);
+      }, progress);
+    };
+
+    await jump(0.201);
+    const artifacts = workbench.getByTestId("artifact-scroll").locator("article button");
+    await expect(artifacts.nth(0)).toHaveAttribute("aria-expanded", "true");
+    await expect(artifacts.nth(1)).toHaveAttribute("aria-expanded", "false");
+
+    await jump(0.27);
+    await expect(artifacts.nth(0)).toHaveAttribute("aria-expanded", "false");
+    await expect(artifacts.nth(1)).toHaveAttribute("aria-expanded", "true");
+
+    await jump(0.92);
+    const report = workbench.getByTestId("simplified-report-view");
+    await expect(report.getByRole("status")).toContainText("Step 22 of 36");
+    let positions = await report.getByRole("status").evaluate((tooltip) => {
+      const line = tooltip.parentElement?.firstElementChild;
+      const tooltipBox = tooltip.getBoundingClientRect();
+      const lineBox = line?.getBoundingClientRect();
+      return { tooltipTop: tooltipBox.top, lineBottom: lineBox?.bottom ?? 0 };
+    });
+    expect(positions.tooltipTop).toBeGreaterThanOrEqual(positions.lineBottom);
+
+    await jump(0.9258);
+    await expect(report.getByRole("status")).toContainText("Step 23 of 36");
+    positions = await report.getByRole("status").evaluate((tooltip) => {
+      const line = tooltip.parentElement?.firstElementChild;
+      const tooltipBox = tooltip.getBoundingClientRect();
+      const lineBox = line?.getBoundingClientRect();
+      return { tooltipTop: tooltipBox.top, lineBottom: lineBox?.bottom ?? 0 };
+    });
+    expect(positions.tooltipTop).toBeGreaterThanOrEqual(positions.lineBottom);
   });
 
   test("page scrolling advances the synchronized transcript and surface", async ({ page }) => {
@@ -59,6 +103,23 @@ test.describe("landing product demonstration", () => {
     const before = await page.evaluate(() => window.scrollY);
     await page.mouse.wheel(0, 600);
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(before);
+  });
+
+  test("renders the agent transcript from its true start to its true end", async ({ page }) => {
+    await page.goto("/");
+    await page.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; });
+    const track = page.getByTestId("demo-scroll-track");
+    const transcript = page.getByLabel("Agent transcript");
+
+    await track.evaluate((element) => window.scrollTo(0, element.offsetTop));
+    await expect.poll(() => transcript.evaluate((element) => element.scrollTop)).toBe(0);
+
+    await track.evaluate((element) => {
+      window.scrollTo(0, element.offsetTop + element.offsetHeight - window.innerHeight);
+    });
+    await expect.poll(() => transcript.evaluate((element) => (
+      element.scrollHeight - element.clientHeight - element.scrollTop
+    ))).toBeLessThanOrEqual(1);
   });
 
   test("renders the native CLI timeline", async ({ page }) => {

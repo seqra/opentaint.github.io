@@ -7,6 +7,10 @@ export function AnimatedHero() {
         The open source taint analysis engine for the AI era
       </h1>
 
+      <p className="section-eyebrow mx-auto mt-6 max-w-3xl">
+        The flexibility of agent reasoning and the consistency of formal analysis combined
+      </p>
+
       <div className="mx-auto mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
         <a
           href="https://github.com/seqra/opentaint#quick-start"

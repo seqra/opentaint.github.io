@@ -39,10 +39,11 @@ describe("UnifiedWorkbench", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Report" }));
     expect(screen.getByTestId("simplified-report-view")).toBeVisible();
+    expect(screen.getByText('Method entry marks the 1st argument of "submit" as $UNTRUSTED')).toBeVisible();
+    expect(screen.getByRole("button", { name: "First step" })).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "Last step" }));
     expect(screen.getByText("ScriptRuntime.java")).toBeVisible();
     expect(screen.getByText(/Untrusted HTTP input reaches a host-enabled GraalVM/)).toBeVisible();
-    fireEvent.click(screen.getByRole("button", { name: "First step" }));
-    expect(screen.getByText('Method entry marks the 1st argument of "submit" as $UNTRUSTED')).toBeVisible();
     expect(screen.queryByText(/3\.23\.0/)).toBeNull();
   });
 

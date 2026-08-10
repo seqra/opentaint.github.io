@@ -8,6 +8,7 @@ describe("AnimatedHero", () => {
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "The open source taint analysis engine for the AI era",
     );
+    expect(screen.getByText("The flexibility of agent reasoning and the consistency of formal analysis combined")).toBeVisible();
   });
 
   it("uses no hard-coded hex colors in class names", () => {

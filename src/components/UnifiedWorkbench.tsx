@@ -26,6 +26,10 @@ type StageId = (typeof stages)[number]["id"];
 const timeline = ["review", "enact", "scan", "summary", "report"] as const;
 type TimelineId = (typeof timeline)[number];
 
+function scrollOffset(container: HTMLElement, target: HTMLElement) {
+  return target.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop;
+}
+
 function UserPrompt({ children }: { children: ReactNode }) {
   return (
     <div className="rounded-[10px] bg-[#e8f0fb] px-4 py-3 text-[14px] leading-5 text-[#242b33] dark:bg-[#243244] dark:text-[#eef4fb]">
@@ -105,7 +109,7 @@ function AgentStage({
     <section
       ref={setRef}
       data-agent-stage={id}
-      className="min-h-full snap-start scroll-mt-0 px-6 py-8"
+      className="px-6 py-6 first:pt-8 last:min-h-full last:pb-8"
     >
       {children}
     </section>
@@ -258,14 +262,32 @@ function Artifact({ path, kind, code, defaultOpen = false }: { path: string; kin
   );
 }
 
-function Specifications() {
+function Specifications({ progress }: { progress: number }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const artifactRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const activeArtifact = Math.min(3, Math.floor(progress * 4));
+  const artifacts = [
+    { path: "rules/java/lib/generic/graal-eval.yaml", kind: "Library sink", code: sinkRule },
+    { path: "rules/java/lib/spring/http-input.yaml", kind: "Library source", code: sourceRule },
+    { path: "rules/java/security/graaljs-code-injection.yaml", kind: "Security join", code: joinRule },
+    { path: "model/org.graalvm.polyglot.yaml", kind: "Dependency model", code: dependencyModel },
+  ];
+
+  useEffect(() => {
+    const scroll = scrollRef.current;
+    const artifact = artifactRefs.current[activeArtifact];
+    if (!scroll || !artifact) return;
+    scroll.scrollTop = Math.max(0, scrollOffset(scroll, artifact) - 16);
+  }, [activeArtifact]);
+
   return (
-    <div className="h-full overflow-hidden bg-[#efeeeb] p-4 dark:bg-[#100908] sm:p-6">
+    <div ref={scrollRef} data-testid="artifact-scroll" className="h-full overflow-hidden bg-[#efeeeb] p-4 dark:bg-[#100908] sm:p-6">
       <div className="mx-auto max-w-[40rem] space-y-4">
-        <Artifact path="rules/java/lib/generic/graal-eval.yaml" kind="Library sink" code={sinkRule} defaultOpen />
-        <Artifact path="rules/java/lib/spring/http-input.yaml" kind="Library source" code={sourceRule} />
-        <Artifact path="rules/java/security/graaljs-code-injection.yaml" kind="Security join" code={joinRule} />
-        <Artifact path="model/org.graalvm.polyglot.yaml" kind="Dependency model" code={dependencyModel} />
+        {artifacts.map((artifact, index) => (
+          <div key={`${artifact.path}-${activeArtifact}`} ref={(node) => { artifactRefs.current[index] = node; }}>
+            <Artifact {...artifact} defaultOpen={index === activeArtifact} />
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -445,8 +467,8 @@ function JavaLine({ line }: { line: string }) {
   })}</>;
 }
 
-function FindingReport() {
-  const [stepIndex, setStepIndex] = useState(flowSteps.length - 1);
+function FindingReport({ progress }: { progress: number }) {
+  const [stepIndex, setStepIndex] = useState(0);
   const currentStep = flowSteps[stepIndex];
   const [selectedFile, setSelectedFile] = useState(currentStep.file);
   const activeFile = selectedFile;
@@ -459,6 +481,10 @@ function FindingReport() {
     setStepIndex(bounded);
     setSelectedFile(flowSteps[bounded].file);
   };
+
+  useEffect(() => {
+    move(Math.round(progress * (flowSteps.length - 1)));
+  }, [progress]);
 
   return (
     <div data-testid="simplified-report-view" className="flex h-full flex-col bg-[#f9f7f5] font-mono text-[#44342c] dark:bg-[#140505] dark:text-[#f0dcdc]">
@@ -494,7 +520,7 @@ function FindingReport() {
             const line = index + 1;
             const isCurrent = line === currentLine;
             const isSink = isCurrent && stepIndex === flowSteps.length - 1;
-            const tooltipAbove = line > sourceFiles[activeFile].split("\n").length * 0.58;
+            const tooltipBelow = line <= 4 || line <= sourceFiles[activeFile].split("\n").length * 0.58;
             return (
               <div key={line} className="relative">
                 <div className={["grid min-h-6 grid-cols-[2rem_3rem_1fr] px-3", isSink ? "bg-primary/20" : isCurrent ? "bg-blue-500/20" : ""].join(" ")}>
@@ -507,7 +533,7 @@ function FindingReport() {
                     role="status"
                     className={[
                       "absolute left-20 z-20 w-[28rem] max-w-[calc(100%-6rem)] rounded-lg border border-primary/30 bg-background/95 px-3 py-2 font-sans text-[11px] leading-4 text-foreground shadow-[0_8px_28px_rgba(37,25,20,0.2)] backdrop-blur-sm dark:bg-[#211412]/95",
-                      tooltipAbove ? "bottom-full mb-2" : "top-full mt-2",
+                      tooltipBelow ? "top-full mt-2" : "bottom-full mb-2",
                     ].join(" ")}
                   >
                     <div className="mb-1 flex items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.06em] text-muted-foreground">
@@ -528,10 +554,10 @@ function FindingReport() {
 
 function WorkSurface({ stage, progress }: { stage: TimelineId; progress: number }) {
   if (stage === "review") return <ReviewReport progress={progress} />;
-  if (stage === "enact") return <Specifications />;
+  if (stage === "enact") return <Specifications progress={progress} />;
   if (stage === "scan") return <CliRun />;
   if (stage === "summary") return <CliSummary />;
-  return <FindingReport />;
+  return <FindingReport progress={progress} />;
 }
 
 export function UnifiedWorkbench() {
@@ -553,7 +579,9 @@ export function UnifiedWorkbench() {
     setTimelineIndex(targetTimelineIndex);
     setTimelineProgress(0);
     const transcriptTarget = stageRefs.current[targetTimelineIndex];
-    if (transcriptRef.current && transcriptTarget) transcriptRef.current.scrollTop = transcriptTarget.offsetTop;
+    if (transcriptRef.current && transcriptTarget) {
+      transcriptRef.current.scrollTop = scrollOffset(transcriptRef.current, transcriptTarget);
+    }
     const track = scrollTrackRef.current;
     if (!track) return;
     const available = Math.max(1, track.offsetHeight - window.innerHeight);
@@ -592,7 +620,7 @@ export function UnifiedWorkbench() {
         setTimelineIndex(navigationTarget);
         setTimelineProgress(0);
         const navigationStage = stageRefs.current[navigationTarget];
-        if (transcript && navigationStage) transcript.scrollTop = navigationStage.offsetTop;
+        if (transcript && navigationStage) transcript.scrollTop = scrollOffset(transcript, navigationStage);
         return;
       }
 
@@ -603,8 +631,8 @@ export function UnifiedWorkbench() {
         const current = stageRefs.current[nextIndex];
         const next = stageRefs.current[Math.min(timeline.length - 1, nextIndex + 1)];
         if (current) {
-          const currentTop = current.offsetTop;
-          const nextTop = next?.offsetTop ?? currentTop;
+          const currentTop = scrollOffset(transcript, current);
+          const nextTop = next ? scrollOffset(transcript, next) : currentTop;
           transcript.scrollTop = currentTop + (nextTop - currentTop) * localProgress;
         }
       }
@@ -704,7 +732,7 @@ export function UnifiedWorkbench() {
 
               <AgentStage id="report" setRef={(node) => { stageRefs.current[4] = node; }}>
                 <AgentText>Review complete. OpenTaint reproduced the finding as a 36-step path from <code className="font-mono text-[12px]">POST /api/jobs</code> to <code className="font-mono text-[12px] text-primary">Context.eval</code>.</AgentText>
-                <ToolActivity title="Opened results/report.sarif" detail="1 error, 1 affected file, 1 triggered rule" icon="file" defaultOpen />
+                <ToolActivity title="Opened results/report.sarif" activity={["1 error", "1 affected file", "1 triggered rule"]} icon="file" defaultOpen />
                 <div className="mt-4 rounded-md border border-border bg-background px-4 py-3 text-[12px] leading-5">
                   <div className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-primary" /><span className="font-semibold text-foreground">Unauthenticated script execution</span></div>
                   <p className="mt-2 text-muted-foreground">The report viewer preserves every call, assignment, and return along the path, with the sink highlighted in red.</p>

@@ -1,4 +1,6 @@
 ---
+import { consentCopy } from "@/lib/consent-copy";
+
 const links = [
   { href: "https://github.com/seqra/opentaint", label: "GitHub", external: true },
   { href: "https://discord.gg/6BXDfbP4p9", label: "Discord", external: true },
@@ -21,10 +23,26 @@ const links = [
     ))}
   </div>
 
-  <div class="flex items-center justify-center py-6 lg:py-8">
+  <div class="flex items-center justify-center gap-5 py-6 lg:py-8">
     <span class="font-mono text-xs text-muted-foreground lg:text-[13px]">&copy; 2026 Seqra Team</span>
+    <!-- Withdrawing consent has to be as easy as giving it. -->
+    <button
+      type="button"
+      id="consent-settings"
+      class="font-mono text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline lg:text-[13px]"
+    >
+      {consentCopy.settings}
+    </button>
   </div>
 </footer>
+
+<script>
+  import { requestConsentReopen } from "@/lib/consent-runtime";
+
+  document
+    .getElementById("consent-settings")
+    ?.addEventListener("click", () => requestConsentReopen());
+</script>
 
 <style>
   /* Divider styling is shared globally via `.footer-links` in index.css. */

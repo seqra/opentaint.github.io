@@ -3,9 +3,11 @@ import { faqItems } from "@/lib/faq";
 ---
 
 <section class="band" aria-labelledby="faq-heading">
-  <h2 id="faq-heading" class="section-title text-center">FAQ</h2>
+  <div class="section-header">
+    <h2 id="faq-heading" class="section-heading">FAQ</h2>
+  </div>
 
-  <ul class="mx-auto mt-6 max-w-5xl lg:mt-8">
+  <ul class="section-content mx-auto max-w-5xl">
     {faqItems.map((item, index) => (
       <li class="border-r-2 border-transparent pr-4 sm:pr-16 transition-colors" data-faq-item>
         <button

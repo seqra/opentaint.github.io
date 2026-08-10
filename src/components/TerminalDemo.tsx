@@ -16,10 +16,20 @@ type PlayerModule = {
 const HERO_SRC = "/demo/hero.cast";
 const HERO_FALLBACK_SRC = "/demo/hero.svg";
 
+type TerminalDemoProps = {
+  source?: string;
+  fallbackSource?: string;
+  ariaLabel?: string;
+};
+
 const demoThemeFor = (pageTheme: Theme): DemoTheme =>
   pageTheme === "dark" ? "opentaint-dark" : "opentaint-light";
 
-export function TerminalDemo() {
+export function TerminalDemo({
+  source = HERO_SRC,
+  fallbackSource = HERO_FALLBACK_SRC,
+  ariaLabel = "OpenTaint scan demo, running continuously",
+}: TerminalDemoProps = {}) {
   const { theme, reducedMotion } = useThemeSync();
   const [status, setStatus] = useState<PlayerStatus>("loading");
   const heroRef = useRef<HTMLDivElement | null>(null);
@@ -33,7 +43,7 @@ export function TerminalDemo() {
       try {
         const mod = (await import("asciinema-player")) as PlayerModule;
         if (cancelled || !heroRef.current) return;
-        heroHandleRef.current = mod.create(HERO_SRC, heroRef.current, {
+        heroHandleRef.current = mod.create(source, heroRef.current, {
           autoPlay: true,
           loop: true,
           preload: true,
@@ -53,13 +63,13 @@ export function TerminalDemo() {
       heroHandleRef.current?.dispose();
       heroHandleRef.current = null;
     };
-  }, [reducedMotion, demoTheme]);
+  }, [reducedMotion, demoTheme, source]);
 
   if (reducedMotion || status === "error") {
     return (
       <img
         data-testid="demo-hero-fallback-image"
-        src={HERO_FALLBACK_SRC}
+        src={fallbackSource}
         alt="OpenTaint scan demo (static fallback)"
         className="block h-full w-full"
       />
@@ -70,7 +80,7 @@ export function TerminalDemo() {
     <div
       ref={heroRef}
       data-testid="demo-hero-player"
-      aria-label="OpenTaint scan demo, running continuously"
+      aria-label={ariaLabel}
       className="h-full w-full"
     />
   );

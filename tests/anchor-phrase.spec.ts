@@ -25,7 +25,7 @@ test.describe("landing message", () => {
   test("highlights the learn-search operating model", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page.getByRole("heading", { name: "Turn one security review into unlimited security scans", level: 2 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Agentic application security testing: continuous and lean", level: 2 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Fast scans. Fewer false alarms. Fewer missed findings" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Open source, batteries included" })).toBeVisible();
   });

@@ -1,12 +1,11 @@
 export function AnimatedHero() {
   return (
     <div className="mx-auto max-w-6xl text-center">
-      <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Agent reasoning + formal taint analysis</p>
-      <h1 className="mx-auto mt-6 max-w-5xl font-mono text-[32px] font-bold leading-[1.15] tracking-tight text-foreground sm:text-[40px] md:text-[48px] lg:text-[56px]">
+      <h1 className="mx-auto max-w-5xl font-mono text-[32px] font-bold leading-[1.15] tracking-tight text-foreground sm:text-[40px] md:text-[48px] lg:text-[56px]">
         Turn one security review into unlimited security scans
       </h1>
 
-      <p className="mx-auto mt-6 max-w-3xl font-mono text-sm leading-7 text-muted-foreground sm:text-base">
+      <p className="section-eyebrow mx-auto mt-6 max-w-3xl">
         The flexibility of agent reasoning and the consistency of formal analysis combined
       </p>
 

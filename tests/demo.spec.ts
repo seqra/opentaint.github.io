@@ -6,28 +6,33 @@ test.describe("landing product demonstration", () => {
 
     const workbench = page.getByTestId("unified-workbench");
     await workbench.scrollIntoViewIfNeeded();
-    await expect(workbench.getByText("Review this application for exploitable vulnerabilities.")).toBeVisible();
+    await expect(workbench.getByText("Review Conductor 3.23.0 for unauthenticated code execution.")).toBeVisible();
 
     await workbench.getByRole("button", { name: "Running OpenTaint" }).click();
-    await expect(workbench.getByText(/opentaint scan/)).toBeVisible();
+    await expect(workbench.getByTestId("demo-hero-player")).toBeVisible();
 
     await workbench.getByRole("button", { name: "Writing security specifications" }).click();
-    await expect(workbench.getByText("server-side-template-injection.yaml")).toBeVisible();
-    await expect(workbench.getByText("org.thymeleaf.yaml")).toBeVisible();
+    await expect(workbench.getByText("graalvm-polyglot-eval.yaml")).toBeVisible();
+    await expect(workbench.getByText("org.graalvm.polyglot.yaml")).toBeVisible();
 
     await workbench.getByRole("button", { name: "Opening finding" }).click();
-    await expect(workbench.getByRole("link", { name: "Open the OpenTaint report viewer" })).toBeVisible();
+    await expect(workbench.getByTitle("Interactive OpenTaint vulnerability report")).toBeVisible();
   });
 
-  test("does not depend on video or terminal recordings", async ({ page }) => {
-    const mediaRequests: string[] = [];
+  test("loads the real CLI only when the agent invokes it", async ({ page }) => {
+    const castRequests: string[] = [];
     page.on("request", (request) => {
-      if (/\.(?:mp4|cast)(?:\?|$)/.test(request.url())) mediaRequests.push(request.url());
+      if (/\.cast(?:\?|$)/.test(request.url())) castRequests.push(request.url());
     });
 
     await page.goto("/");
-    await page.getByTestId("unified-workbench").scrollIntoViewIfNeeded();
-    expect(mediaRequests).toEqual([]);
+    const workbench = page.getByTestId("unified-workbench");
+    await workbench.scrollIntoViewIfNeeded();
+    expect(castRequests).toEqual([]);
+
+    await workbench.getByRole("button", { name: "Running OpenTaint" }).click();
+    await expect(workbench.getByTestId("demo-hero-player")).toBeVisible();
+    await expect.poll(() => castRequests.some((url) => url.includes("/demo/conductor.cast"))).toBe(true);
   });
 
   for (const viewport of [
@@ -41,9 +46,9 @@ test.describe("landing product demonstration", () => {
       const workbench = page.getByTestId("unified-workbench");
       await workbench.scrollIntoViewIfNeeded();
       await workbench.getByRole("button", { name: "Running OpenTaint" }).click();
-      await expect(workbench.getByText(/opentaint scan/)).toBeVisible();
+      await expect(workbench.getByTestId("demo-hero-player")).toBeVisible();
       await workbench.getByRole("button", { name: "Opening finding" }).click();
-      await expect(workbench.getByRole("link", { name: "Open the OpenTaint report viewer" })).toBeVisible();
+      await expect(workbench.getByTitle("Interactive OpenTaint vulnerability report")).toBeVisible();
 
       const pageWidth = await page.evaluate(() => document.body.scrollWidth);
       expect(pageWidth).toBeLessThanOrEqual(viewport.width + 1);

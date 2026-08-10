@@ -36,11 +36,11 @@ const pressures = [
 
 <section class="band" aria-labelledby="security-debt-heading">
   <div class="mx-auto max-w-6xl">
-    <h2 id="security-debt-heading" class="font-mono text-[26px] font-semibold leading-tight tracking-[-0.04em] text-foreground sm:text-[32px] lg:whitespace-nowrap lg:text-[40px]">
-      Application security is the new tech debt
-    </h2>
+    <div class="section-header max-w-6xl">
+      <h2 id="security-debt-heading" class="section-heading lg:whitespace-nowrap">Application security is the new tech debt</h2>
+    </div>
 
-    <ol class="mt-12 border-t border-border-strong lg:mt-16">
+    <ol class="section-content border-t border-border-strong">
       {pressures.map((pressure) => (
         <li class="grid gap-8 border-b border-border-strong py-8 lg:grid-cols-[0.82fr_1.18fr] lg:gap-16 lg:py-10">
           <h3 class="max-w-[46ch] font-mono text-base font-semibold leading-7 text-foreground lg:text-lg lg:leading-8">{pressure.question}</h3>

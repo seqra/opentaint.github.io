@@ -200,9 +200,34 @@
   }
 
   .section-heading {
-    @apply text-[1.75rem] font-semibold sm:text-[2.125rem] md:text-[2.5rem] lg:text-[2.875rem];
+    @apply font-mono text-[1.75rem] font-semibold text-foreground sm:text-[2.125rem] md:text-[2.5rem] lg:text-[2.875rem];
     line-height: 1.1;
     letter-spacing: -0.032em;
+  }
+
+  .section-header {
+    @apply mx-auto max-w-5xl text-center;
+  }
+
+  .section-eyebrow,
+  .section-banner {
+    @apply font-mono font-semibold uppercase text-primary;
+  }
+
+  .section-eyebrow {
+    @apply text-xs tracking-[0.18em];
+  }
+
+  .section-banner {
+    @apply text-[11px] tracking-[0.16em];
+  }
+
+  .section-header > .section-heading:not(:first-child) {
+    @apply mt-6;
+  }
+
+  .section-content {
+    @apply mt-12 lg:mt-16;
   }
 
   .theme-button {
@@ -592,8 +617,9 @@
   }
 
   .section-title {
-    @apply font-mono text-xl font-bold tracking-tight text-foreground sm:text-2xl lg:text-[1.75rem];
-    letter-spacing: -0.02em;
+    @apply font-mono text-[1.75rem] font-semibold text-foreground sm:text-[2.125rem] md:text-[2.5rem] lg:text-[2.875rem];
+    line-height: 1.1;
+    letter-spacing: -0.032em;
   }
 
   .section-subtitle {

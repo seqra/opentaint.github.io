@@ -1,0 +1,12 @@
+{"version":3,"term":{"cols":112,"rows":30,"type":"xterm-256color"},"timestamp":1786327200,"env":{"SHELL":"/bin/zsh"}}
+[0.05,"o","conductor-3.23.0 $ opentaint scan\r\n"]
+[0.25,"o","\u001b[2m╭─\u001b[m\u001b[1;95mOpenTaint Scan\u001b[m\u001b[2m─╮\u001b[m\r\n\u001b[2m╰─┬──────────────╯\u001b[m\r\n"]
+[0.12,"o","  \u001b[2m├─ \u001b[m\u001b[94mProject model\u001b[m\r\n  \u001b[2m│  └─ \u001b[m~/.opentaint/cache/conductor-3.23.0/project-model\r\n"]
+[0.12,"o","  \u001b[2m├─ \u001b[m\u001b[94mAnalyzer\u001b[m\r\n  \u001b[2m│  └─ \u001b[m2026.07.10.a20ded6\r\n"]
+[0.12,"o","  \u001b[2m└─ \u001b[m\u001b[94mSecurity specifications\u001b[m\r\n     \u001b[2m└─ \u001b[m148 rules · 27 dependency models\r\n\r\n"]
+[0.35,"o","\r\u001b[K\u001b[94m▰▱▱\u001b[m Analyzing project \u001b[90m1s\u001b[m"]
+[0.4,"o","\r\u001b[K\u001b[94m▰▰▱\u001b[m Analyzing project \u001b[90m3s\u001b[m"]
+[0.4,"o","\r\u001b[K\u001b[94m▰▰▰\u001b[m Analyzing project \u001b[90m6s\u001b[m"]
+[0.4,"o","\r\u001b[K\u001b[92m✓\u001b[m Analysis complete \u001b[90m8.4s\u001b[m\r\n\r\n"]
+[0.3,"o","\u001b[1;91m2 findings\u001b[m\r\n\r\n\u001b[91mCritical\u001b[m  Code injection  ScriptEvaluator.java:203  ·  182 steps\r\n\u001b[91mCritical\u001b[m  Code injection  PythonEvaluator.java:63   ·  176 steps\r\n"]
+[1.5,"o",""]

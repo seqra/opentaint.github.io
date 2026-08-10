@@ -8,36 +8,49 @@ vi.mock("../TerminalDemo", () => ({
 
 beforeEach(() => {
   vi.stubGlobal("matchMedia", vi.fn().mockReturnValue({ matches: true }));
-  vi.stubGlobal("IntersectionObserver", undefined);
+  vi.stubGlobal("scrollTo", vi.fn());
+  Element.prototype.scrollTo = vi.fn();
 });
 
 describe("UnifiedWorkbench", () => {
-  it("opens as an agent review rather than a media carousel", () => {
-    const { container } = render(<UnifiedWorkbench />);
-
-    expect(screen.getByText("Review Conductor 3.23.0 for unauthenticated code execution.")).toBeVisible();
-    expect(screen.getByText("ScriptEvaluator.java", { exact: true })).toBeVisible();
-    expect(container.querySelector("video")).toBeNull();
-  });
-
-  it("shows the CLI invocation within the agent run", () => {
+  it("starts with a versionless security-review request and review report", () => {
     render(<UnifiedWorkbench />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Running OpenTaint" }));
+    expect(screen.getByText("Review this application for unauthenticated code execution and write a security review report.")).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Unauthenticated script execution" })).toBeVisible();
+    expect(screen.queryByText(/Conductor/i)).toBeNull();
+    expect(screen.queryByText(/3\.23\.0/)).toBeNull();
+  });
+
+  it("uses the stage navigation to time-travel through one agent transcript", () => {
+    render(<UnifiedWorkbench />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Enact" }));
+    expect(screen.getByText("rules/java/security/graaljs-code-injection.yaml")).toBeVisible();
+    expect(screen.getByText("model/org.graalvm.polyglot.yaml")).toBeVisible();
+
+    const sinkArtifact = screen.getByRole("button", { name: /rules\/java\/lib\/generic\/graal-eval\.yaml/ });
+    expect(sinkArtifact).toHaveAttribute("aria-expanded", "true");
+    fireEvent.click(sinkArtifact);
+    expect(sinkArtifact).toHaveAttribute("aria-expanded", "false");
+
+    fireEvent.click(screen.getByRole("button", { name: "Scan" }));
     expect(screen.getByTestId("demo-hero-player")).toBeVisible();
+
+    fireEvent.click(screen.getByRole("button", { name: "Report" }));
+    expect(screen.getByTestId("simplified-report-view")).toBeVisible();
+    expect(screen.getByText("ScriptRuntime.java")).toBeVisible();
+    expect(screen.getByText(/Untrusted HTTP input reaches a host-enabled GraalVM/)).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "First step" }));
+    expect(screen.getByText('Method entry marks the 1st argument of "submit" as $UNTRUSTED')).toBeVisible();
+    expect(screen.queryByText(/3\.23\.0/)).toBeNull();
   });
 
-  it("shows the produced rule, model, and report", () => {
+  it("shows the scan and summary commands in the agent session", () => {
     render(<UnifiedWorkbench />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Writing security specifications" }));
-    expect(screen.getByText("graalvm-polyglot-eval.yaml")).toBeVisible();
-    expect(screen.getByText("org.graalvm.polyglot.yaml")).toBeVisible();
-
-    fireEvent.click(screen.getByRole("button", { name: "Opening finding" }));
-    expect(screen.getByTitle("Interactive OpenTaint vulnerability report")).toHaveAttribute(
-      "src",
-      "/reports/conductor-cve-2026-58138.html",
-    );
+    expect(screen.getAllByText("opentaint scan", { exact: false }).length).toBeGreaterThan(0);
+    expect(screen.getByText(/opentaint summary results\/report\.sarif/)).toBeInTheDocument();
+    expect(screen.getByText(/--show-findings --verbose-flow --show-code-snippets/)).toBeInTheDocument();
   });
 });

@@ -1,0 +1,25 @@
+rules:
+  - id: http-input
+    options:
+      lib: true
+    severity: NOTE
+    message: Untrusted HTTP input enters the application
+    languages:
+      - java
+    patterns:
+      - patterns:
+          - pattern: |
+              @$ANNOTATION(...)
+              $RETURNTYPE $METHOD(..., $TYPE $UNTRUSTED, ...) {
+                ...
+              }
+          - metavariable-pattern:
+              metavariable: $ANNOTATION
+              patterns:
+                - pattern-either:
+                    - pattern: RequestMapping
+                    - pattern: GetMapping
+                    - pattern: PostMapping
+                    - pattern: PutMapping
+                    - pattern: PatchMapping
+                    - pattern: DeleteMapping

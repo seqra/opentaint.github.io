@@ -1,29 +1,29 @@
+import { Download, Star } from "lucide-react";
+
 export function AnimatedHero() {
   return (
-    <div className="mx-auto max-w-6xl text-center">
-      <h1 className="mx-auto max-w-5xl font-mono text-[32px] font-bold leading-[1.15] tracking-tight text-foreground sm:text-[40px] md:text-[48px] lg:text-[56px]">
-        Turn one security review into unlimited security scans
+    <div className="mx-auto max-w-[90rem] text-center">
+      <h1 className="mx-auto font-mono text-[28px] font-bold leading-[1.15] tracking-tight text-foreground sm:text-[32px] md:text-[36px] lg:whitespace-nowrap lg:text-[38px] xl:text-[40px]">
+        The open source taint analysis engine for the AI era
       </h1>
 
-      <p className="section-eyebrow mx-auto mt-6 max-w-3xl">
-        The flexibility of agent reasoning and the consistency of formal analysis combined
-      </p>
-
-      <div className="mx-auto mt-8 flex max-w-xl flex-col justify-center gap-3 sm:flex-row">
+      <div className="mx-auto mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
         <a
           href="https://github.com/seqra/opentaint#quick-start"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex min-h-11 flex-1 items-center justify-center rounded-lg bg-primary px-6 font-mono text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+          className="inline-flex h-9 w-fit items-center justify-center gap-2 rounded-lg bg-primary px-3 text-[15px] font-semibold leading-none text-primary-foreground transition-colors hover:bg-primary/90"
         >
+          <Download className="h-4 w-4" strokeWidth={1.8} aria-hidden="true" />
           Try OpenTaint
         </a>
         <a
           href="https://github.com/seqra/opentaint"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex min-h-11 flex-1 items-center justify-center rounded-lg border border-border-strong bg-background px-6 font-mono text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary"
+          className="inline-flex h-9 w-fit items-center justify-center gap-2 rounded-lg border border-border-strong bg-background px-3 text-[15px] font-semibold leading-none text-foreground transition-colors hover:border-primary hover:text-primary"
         >
+          <Star className="h-4 w-4" strokeWidth={1.8} aria-hidden="true" />
           Star on GitHub
         </a>
       </div>

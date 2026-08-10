@@ -1,17 +1,13 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("landing message", () => {
-  test("leads with the review-to-scan promise", async ({ page }) => {
+  test("leads with the open source engine position", async ({ page }) => {
     await page.goto("/");
 
     await expect(page.getByRole("heading", {
-      name: "Turn one security review into unlimited security scans",
+      name: "The open source taint analysis engine for the AI era",
       level: 1,
     })).toBeVisible();
-    await expect(page.getByText(
-      "The flexibility of agent reasoning and the consistency of formal analysis combined",
-      { exact: true },
-    )).toBeVisible();
   });
 
   test("frames the product proof with the real Conductor review", async ({ page }) => {
@@ -25,7 +21,7 @@ test.describe("landing message", () => {
   test("highlights the learn-search operating model", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page.getByRole("heading", { name: "Agentic application security testing: continuous and lean", level: 2 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Turn one security review into unlimited security scans", level: 2 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Fast scans. Fewer false alarms. Fewer missed findings" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Open source, batteries included" })).toBeVisible();
   });

@@ -1,0 +1,18 @@
+rules:
+  - id: graalvm-eval-sinks
+    severity: ERROR
+    message: Test input reaches GraalVM evaluation
+    metadata:
+      cwe: CWE-000
+      short-description: test join for GraalVM evaluation sinks
+    languages:
+      - java
+    mode: join
+    join:
+      refs:
+        - rule: java/lib/test/generic-source.yaml#generic-taint-source
+          as: source
+        - rule: java/lib/generic/graal-eval.yaml#graal-eval
+          as: sink
+      on:
+        - 'source.$UNTRUSTED -> sink.$UNTRUSTED'

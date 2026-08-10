@@ -1,0 +1,9 @@
+rules:
+  - id: graal-eval
+    options:
+      lib: true
+    severity: NOTE
+    message: Script text reaches GraalVM evaluation
+    languages:
+      - java
+    pattern: (org.graalvm.polyglot.Context $CONTEXT).eval($LANGUAGE, $UNTRUSTED)

@@ -6,9 +6,8 @@ describe("AnimatedHero", () => {
   it("renders the core promise", () => {
     render(<AnimatedHero />);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Turn one security review into unlimited security scans",
+      "The open source taint analysis engine for the AI era",
     );
-    expect(screen.getByText(/flexibility of agent reasoning/i)).toBeVisible();
   });
 
   it("uses no hard-coded hex colors in class names", () => {
@@ -22,7 +21,7 @@ describe("AnimatedHero", () => {
     const { container } = render(<AnimatedHero />);
     expect(container.querySelector("h1 .crt-cursor")).toBeNull();
     expect(container.querySelector("h1")?.textContent).toBe(
-      "Turn one security review into unlimited security scans",
+      "The open source taint analysis engine for the AI era",
     );
   });
 

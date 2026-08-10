@@ -1,0 +1,20 @@
+rules:
+  - id: graaljs-code-injection
+    severity: ERROR
+    message: >-
+      Untrusted HTTP input reaches a host-enabled GraalVM Context.eval call,
+      allowing attacker-controlled script execution.
+    metadata:
+      cwe: CWE-94
+      short-description: Untrusted script execution
+    languages:
+      - java
+    mode: join
+    join:
+      refs:
+        - rule: java/lib/spring/http-input.yaml#http-input
+          as: source
+        - rule: java/lib/generic/graal-eval.yaml#graal-eval
+          as: sink
+      on:
+        - 'source.$UNTRUSTED -> sink.$UNTRUSTED'

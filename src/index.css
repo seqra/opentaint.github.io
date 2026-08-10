@@ -1,4 +1,3 @@
-@import "./styles/demo-theme.css";
 
 @tailwind base;
 @tailwind components;
@@ -295,8 +294,8 @@
      0.5 1 2 3 4 6 8 10 12 16 20 24 40. Every margin, padding, and gap on the
      page picks a step from it; nothing sits between steps.
 
-     Roles: 16 label to value · 24 heading to paragraph · 32 item to item ·
-     48 header block to content · 64 block to block · 48-80 section padding. */
+     Roles: 16 label to value, 24 heading to paragraph, 32 item to item,
+     48 header block to content, 64 block to block, 48-80 section padding. */
 
   /* Landing-page thematic block: full-bleed section with generous vertical
      rhythm and content held to the reading column via the frame-x model. */
@@ -372,8 +371,18 @@
     pointer-events: none;
   }
 
-  .demo-section::before {
-    display: none;
+  .agent-ui {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  .agent-ui h1,
+  .agent-ui h2,
+  .agent-ui h3,
+  .agent-ui h4,
+  .agent-ui h5,
+  .agent-ui h6 {
+    font-family: inherit;
+    letter-spacing: -0.015em;
   }
 
   @media (prefers-reduced-motion: no-preference) {

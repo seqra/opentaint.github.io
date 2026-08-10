@@ -1,0 +1,6 @@
+language: java
+passThrough:
+  - function: org.graalvm.polyglot.Context$Builder#option
+    copy:
+      - from: this
+        to: result

@@ -1,6 +1,8 @@
 ---
 import "@/index.css";
 import { siteConfig } from "@/lib/site";
+import ConsentInit from "@/components/astro/ConsentInit.astro";
+import ConsentBanner from "@/components/astro/ConsentBanner.astro";
 
 type Props = {
   title?: string;
@@ -43,6 +45,10 @@ const dataBlocks = Array.isArray(structuredData) ? structuredData : [structuredD
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Google tag (gtag.js), loaded by ConsentInit once consent allows it -->
+    <ConsentInit />
+
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <meta name="keywords" content={keywords.join(", ")} />
@@ -146,5 +152,6 @@ const dataBlocks = Array.isArray(structuredData) ? structuredData : [structuredD
         targets.forEach((el) => observer.observe(el));
       })();
     </script>
+    <ConsentBanner />
   </body>
 </html>

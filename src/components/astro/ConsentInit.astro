@@ -1,0 +1,15 @@
+---
+/**
+ * Starts measurement as early as consent allows.
+ *
+ * The script is bundled rather than inlined: since the runtime injects gtag.js
+ * itself, nothing can load ahead of the consent defaults, so there is no
+ * ordering left to protect and the logic can stay in type-checked modules.
+ */
+---
+
+<script>
+  import { initConsent } from "@/lib/consent-runtime";
+
+  initConsent();
+</script>

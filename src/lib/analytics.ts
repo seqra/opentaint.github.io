@@ -6,9 +6,9 @@
 import type { ConsentChoice } from "./consent";
 
 /** Google Analytics 4 measurement ID for opentaint.org. */
-export const GA_MEASUREMENT_ID = "G-7412RN2Q85";
+const GA_MEASUREMENT_ID = "G-7412RN2Q85";
 
-export const GA_TAG_URL = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+const GA_TAG_URL = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
 
 /** Cookie prefixes gtag.js sets, cleared when consent is withdrawn. `_ga`
  *  covers both the client id and the per-property `_ga_<id>` session cookie. */
@@ -76,7 +76,10 @@ export function loadGoogleTag(): void {
  * identifiers go too, not merely that no new ones are written.
  */
 export function clearAnalyticsCookies(): void {
-  const domains = [undefined, location.hostname, `.${location.hostname}`];
+  /* Host-only, as set on localhost, and domain-scoped, as gtag.js sets them on
+     the live site. A leading dot is the only form worth sending: browsers
+     normalise it, so `domain=x` and `domain=.x` delete the same cookie. */
+  const domains = [undefined, `.${location.hostname}`];
 
   for (const cookie of document.cookie.split(";")) {
     const name = cookie.split("=")[0]?.trim();

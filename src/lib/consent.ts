@@ -28,7 +28,6 @@ export const CONSENT_REQUIRED_TIME_ZONES: readonly string[] = [
   "America/Guadeloupe",
   "America/Martinique",
   "America/Miquelon",
-  "Antarctica/Troll",
   "Asia/Famagusta",
   "Asia/Nicosia",
   "Atlantic/Azores",

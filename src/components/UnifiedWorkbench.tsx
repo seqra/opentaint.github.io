@@ -566,19 +566,19 @@ function FindingReport({ progress }: { progress: number }) {
     <SurfaceStory
       title="Fewer missed findings"
       window={<div data-testid="simplified-report-view" className="flex h-full flex-col overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] font-mono text-[#44342c] shadow-sm dark:bg-[#140505] dark:text-[#f0dcdc]">
-      <div className="flex h-10 shrink-0 items-center border-b border-[#ded7d1] bg-[#f0eeeb] text-[11px] dark:border-[#4b1d1d] dark:bg-[#1d0d0c]">
-        <div className="flex min-w-0 flex-1 items-center gap-2 px-3">
+      <div className="relative flex h-10 shrink-0 items-center border-b border-[#ded7d1] bg-[#f0eeeb] text-[11px] dark:border-[#4b1d1d] dark:bg-[#1d0d0c]">
+        <div className="flex min-w-0 flex-1 items-center gap-2 px-3 pr-56">
           <FileCode2 className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={1.7} aria-hidden="true" />
           <span className="truncate text-[#44342c] dark:text-[#f0dcdc]">{activeFile}</span>
         </div>
-        <div className="flex shrink-0 items-center gap-1 px-2">
+        <div className="absolute inset-y-0 right-0 flex w-56 items-center justify-end gap-1 px-2" data-testid="report-navigation">
           <button aria-label="First step" disabled={stepIndex === 0} onClick={() => move(0)} className="inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-background text-foreground disabled:opacity-35"><SkipBack size={13} /></button>
           <button aria-label="Back over a call" disabled={stepIndex === 0} onClick={() => move(stepIndex - 3)} className="inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-background text-foreground disabled:opacity-35"><ChevronsLeft size={13} /></button>
           <button aria-label="Back" disabled={stepIndex === 0} onClick={() => move(stepIndex - 1)} className="inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-background text-foreground disabled:opacity-35"><ChevronLeft size={13} /></button>
           <button aria-label="Next" disabled={stepIndex === flowSteps.length - 1} onClick={() => move(stepIndex + 1)} className="inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-background text-foreground disabled:opacity-35"><ChevronRight size={13} /></button>
           <button aria-label="Next over a call" disabled={stepIndex === flowSteps.length - 1} onClick={() => move(stepIndex + 3)} className="inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-background text-foreground disabled:opacity-35"><ChevronsRight size={13} /></button>
           <button aria-label="Last step" disabled={stepIndex === flowSteps.length - 1} onClick={() => move(flowSteps.length - 1)} className="inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-background text-foreground disabled:opacity-35"><SkipForward size={13} /></button>
-          <span className="ml-1 whitespace-nowrap text-[#76665d] dark:text-[#a98e8e]">{stepIndex + 1}/{flowSteps.length}</span>
+          <span className="ml-1 inline-flex w-[5ch] shrink-0 justify-end whitespace-nowrap tabular-nums text-[#76665d] dark:text-[#a98e8e]">{stepIndex + 1}/{flowSteps.length}</span>
         </div>
       </div>
       <div className="relative min-h-0 flex-1 overflow-auto py-4 scrollbar-thin">

@@ -44,6 +44,13 @@ test.describe("landing product demonstration", () => {
     await expect(report.getByRole("tablist")).toHaveCount(0);
     await expect(report.getByText('Method entry marks the 1st argument of "submit" as $UNTRUSTED')).toBeVisible();
     await expect(workbench.getByRole("button", { name: "First step" })).toBeDisabled();
+    const navigation = report.getByTestId("report-navigation");
+    await page.waitForTimeout(300);
+    const initialNavigationBox = await navigation.boundingBox();
+    await workbench.getByRole("button", { name: "Last step" }).click();
+    const finalNavigationBox = await navigation.boundingBox();
+    expect(finalNavigationBox?.x).toBeCloseTo(initialNavigationBox?.x ?? 0, 1);
+    expect(finalNavigationBox?.width).toBe(initialNavigationBox?.width);
   });
 
   test("scrolling unfolds artifacts and steps through the report", async ({ page }) => {

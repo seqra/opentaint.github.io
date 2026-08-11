@@ -7,10 +7,12 @@ rules:
     languages:
       - java
     patterns:
-      - pattern: (org.graalvm.polyglot.Context $CONTEXT).eval(..., $UNTRUSTED)
+      - pattern: |
+          (org.graalvm.polyglot.Context $CONTEXT).eval(..., $UNTRUSTED)
       - focus-metavariable: $UNTRUSTED
       - pattern-inside: |
-          org.graalvm.polyglot.Context $CONTEXT = org.graalvm.polyglot.Context.newBuilder(...)
-            .allowHostAccess(org.graalvm.polyglot.HostAccess.ALL)
-            .build();
+          org.graalvm.polyglot.Context $CONTEXT =
+            org.graalvm.polyglot.Context.newBuilder(...)
+              .allowHostAccess(org.graalvm.polyglot.HostAccess.ALL)
+              .build();
           ...

@@ -39,8 +39,9 @@ describe("UnifiedWorkbench", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Triage" }));
     expect(screen.getByText("Fewer false alarms")).toBeVisible();
-    expect(screen.getByText("2 candidates")).toBeVisible();
-    expect(screen.getByText("PreviewRenderer.java:11")).toBeVisible();
+    expect(screen.getByText("rules/java/lib/generic/graal-eval.yaml")).toBeVisible();
+    expect(within(screen.getByTestId("triage-view")).getByText(/pattern-inside/)).toBeVisible();
+    expect(screen.getByText("1 confirmed, 1 false positive")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Report" }));
     const report = screen.getByTestId("simplified-report-view");

@@ -89,8 +89,8 @@ export function FirstScanFunnel() {
   return (
     <section id="install" className="band quickstart-section" aria-labelledby="quickstart-heading">
       <div className="mx-auto max-w-[82rem]">
-        <div className="mx-auto text-center">
-          <h2 id="quickstart-heading" className="section-eyebrow">Five-minute quickstart</h2>
+        <div className="section-header">
+          <h2 id="quickstart-heading" className="section-heading">Five-minute quickstart</h2>
         </div>
 
         <div className="mx-auto mt-10 max-w-4xl space-y-4 text-left">
@@ -140,9 +140,9 @@ export function FirstScanFunnel() {
           </div>
         </div>
 
-        <div className="mx-auto mt-8 grid max-w-4xl border-t border-border pt-6 md:grid-cols-[12rem_minmax(0,1fr)] md:gap-4">
-          <p className="font-mono text-sm font-semibold text-foreground">Open source, batteries included</p>
-          <p className="mt-2 font-mono text-xs leading-6 text-muted-foreground md:mt-0">Engine, rules, dependency models, agent skills, CLI, report viewer, and CI integrations ship together under open-source licenses.</p>
+        <div className="mx-auto mt-8 grid max-w-4xl rounded-xl border border-primary/40 bg-primary/[0.06] p-6 shadow-sm md:grid-cols-[12rem_minmax(0,1fr)] md:items-center md:gap-4">
+          <p className="font-mono text-lg font-semibold leading-6 text-primary">Open source, batteries included</p>
+          <p className="mt-4 font-mono text-xs leading-6 text-foreground md:mt-0">Engine, rules, dependency models, agent skills, CLI, report viewer, and CI integrations ship together under open-source licenses.</p>
         </div>
       </div>
     </section>

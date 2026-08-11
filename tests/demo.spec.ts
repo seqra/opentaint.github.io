@@ -34,7 +34,8 @@ test.describe("landing product demonstration", () => {
 
     await workbench.getByRole("button", { name: "Triage", exact: true }).click();
     await expect(workbench.getByText("Fewer false alarms", { exact: true })).toBeVisible();
-    await expect(workbench.getByTestId("triage-view")).toContainText("2 candidates");
+    await expect(workbench.getByTestId("triage-view")).toContainText("graal-eval.yaml");
+    await expect(workbench.getByTestId("triage-view")).toContainText("pattern-inside");
 
     await workbench.getByRole("button", { name: "Report", exact: true }).click();
     const report = workbench.getByTestId("simplified-report-view");
@@ -65,13 +66,14 @@ test.describe("landing product demonstration", () => {
     const artifacts = workbench.getByTestId("artifact-scroll").locator("article button");
     await expect(artifacts.nth(0)).toHaveAttribute("aria-expanded", "true");
     await expect(artifacts.nth(1)).toHaveAttribute("aria-expanded", "false");
-    await expect(workbench.getByTestId("artifact-code")).toContainText("(org.graalvm.polyglot.Context $CONTEXT).eval(..., $UNTRUSTED)");
+    await expect(workbench.getByTestId("artifact-code").nth(0)).toContainText("(org.graalvm.polyglot.Context $CONTEXT).eval(..., $UNTRUSTED)");
 
     await jump(0.235);
     await expect(artifacts.nth(0)).toHaveAttribute("aria-expanded", "false");
     await expect(artifacts.nth(1)).toHaveAttribute("aria-expanded", "true");
     await expect(artifacts.nth(0)).toBeInViewport();
     await expect(artifacts.nth(1)).toBeInViewport();
+    await expect.poll(() => workbench.getByTestId("artifact-code-scroll").nth(1).evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
 
     await jump(0.483);
     const terminalOutput = workbench.getByTestId("terminal-output");
@@ -83,7 +85,7 @@ test.describe("landing product demonstration", () => {
     await expect(workbench.getByTestId("triage-view")).toContainText("HostAccess.ALL");
 
     await jump(0.8);
-    await expect(workbench.getByTestId("triage-view")).toContainText("0 false positives");
+    await expect(workbench).toContainText("0 false positives");
 
     await jump(0.92);
     const report = workbench.getByTestId("simplified-report-view");
@@ -202,7 +204,7 @@ test.describe("landing product demonstration", () => {
     await expect(summary).toContainText("Untrusted HTTP input reaches a host-enabled GraalVM Context.eval call");
 
     await expect.poll(() => summary.getByTestId("terminal-output").evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
-    await expect(summary.getByText("Scan Summary", { exact: true })).toBeInViewport();
+    await expect(summary).not.toContainText("Scan Summary");
   });
 
   for (const viewport of [

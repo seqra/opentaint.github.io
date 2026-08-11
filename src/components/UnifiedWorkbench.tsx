@@ -128,9 +128,9 @@ function AgentStage({
 function SurfaceStory({ title, children, window }: { title: string; children: string; window: ReactNode }) {
   return (
     <div className="flex h-full min-h-0 flex-col bg-[#efeeeb] p-3 dark:bg-[#100908]">
-      <div className="mb-3 shrink-0 px-1">
+      <div className="mb-3 w-full shrink-0 px-1 text-center">
         <p className="font-mono text-[12px] font-semibold text-foreground">{title}</p>
-        <p className="mt-1 max-w-[58ch] text-[11px] leading-4 text-muted-foreground">{children}</p>
+        <p className="mt-1 w-full text-[11px] leading-4 text-muted-foreground">{children}</p>
       </div>
       <div className="min-h-0 flex-1">{window}</div>
     </div>
@@ -148,7 +148,7 @@ function ReviewReport({ progress }: { progress: number }) {
 
   return (
     <SurfaceStory
-      title="Security review knowledge persists"
+      title="Security memory layer"
       window={<div className="flex h-full flex-col overflow-hidden rounded-[10px] border border-border bg-[#faf9f7] shadow-sm dark:bg-[#120b0a]">
         <div className="relative flex h-10 shrink-0 items-center border-b border-border bg-[#f1f0ed] px-3 dark:bg-[#1b1110]">
           <div className="flex gap-2" aria-hidden="true">
@@ -230,7 +230,8 @@ const sinkRule = `rules:
     languages:
       - java
     patterns:
-      - pattern: (org.graalvm.polyglot.Context $CONTEXT).eval(..., $UNTRUSTED)
+      - pattern: |
+          (org.graalvm.polyglot.Context $CONTEXT).eval(..., $UNTRUSTED)
       - focus-metavariable: $UNTRUSTED`;
 
 const joinRule = `rules:
@@ -279,8 +280,16 @@ function YamlCode({ code }: { code: string }) {
   );
 }
 
-function Artifact({ path, kind, code, open, onToggle }: { path: string; kind: string; code: string; open: boolean; onToggle: () => void }) {
+function Artifact({ path, kind, code, open, onToggle, scrollProgress = 0 }: { path: string; kind: string; code: string; open: boolean; onToggle: () => void; scrollProgress?: number }) {
   const added = code.split("\n").length;
+  const codeScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const codeScroll = codeScrollRef.current;
+    if (!codeScroll || !open) return;
+    codeScroll.scrollTop = Math.max(0, codeScroll.scrollHeight - codeScroll.clientHeight) * scrollProgress;
+  }, [open, scrollProgress]);
+
   return (
     <article className="overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] shadow-sm dark:bg-[#140505]">
       <button type="button" aria-expanded={open} onClick={onToggle} className="flex min-h-10 w-full items-center gap-2 bg-[#f0eeeb] px-3 text-left dark:bg-[#1d0d0c]">
@@ -291,16 +300,26 @@ function Artifact({ path, kind, code, open, onToggle }: { path: string; kind: st
         <span className="font-mono text-[10px] text-[#2d8a4e] dark:text-[#79bd8f]">+{added}</span>
         <span className="font-mono text-[10px] text-[#c73a32] dark:text-[#ff746c]">-0</span>
       </button>
-      {open && <div className="border-t border-border"><YamlCode code={code} /></div>}
+      <div className={[
+        "grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none",
+        open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+      ].join(" ")}>
+        <div className="min-h-0 overflow-hidden">
+          <div ref={codeScrollRef} data-testid="artifact-code-scroll" className="max-h-60 overflow-auto border-t border-border scrollbar-thin"><YamlCode code={code} /></div>
+        </div>
+      </div>
     </article>
   );
 }
 
 function Specifications({ progress }: { progress: number }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const activeArtifact = Math.min(3, Math.floor(progress * 4));
-  const [openState, setOpenState] = useState({ stage: activeArtifact, artifact: activeArtifact });
-  const openArtifact = openState.stage === activeArtifact ? openState.artifact : activeArtifact;
+  const position = Math.min(3.999, Math.max(0, progress) * 4);
+  const activeArtifact = Math.floor(position);
+  const artifactProgress = position - activeArtifact;
+  const automaticArtifact = artifactProgress < 0.9 ? activeArtifact : -1;
+  const codeScrollProgress = Math.max(0, Math.min(1, (artifactProgress - 0.1) / 0.72));
+  const [manualState, setManualState] = useState<{ stage: number; artifact: number } | null>(null);
+  const openArtifact = manualState?.stage === activeArtifact ? manualState.artifact : automaticArtifact;
   const artifacts = [
     { path: "rules/java/lib/generic/graal-eval.yaml", kind: "Library sink", code: sinkRule },
     { path: "rules/java/lib/spring/http-input.yaml", kind: "Library source", code: sourceRule },
@@ -308,22 +327,18 @@ function Specifications({ progress }: { progress: number }) {
     { path: "model/org.graalvm.polyglot.yaml", kind: "Dependency model", code: dependencyModel },
   ];
 
-  useEffect(() => {
-    const scroll = scrollRef.current;
-    if (scroll) scroll.scrollTop = 0;
-  }, [activeArtifact]);
-
   return (
     <SurfaceStory
       title="Formal security specifications"
-      window={<div ref={scrollRef} data-testid="artifact-scroll" className="h-full overflow-hidden rounded-[10px] border border-border bg-[#f4f2ef] p-3 shadow-sm dark:bg-[#140b0a]">
-        <div className="mx-auto max-w-[40rem] space-y-4">
+      window={<div data-testid="artifact-scroll" className="h-full overflow-hidden rounded-[10px] border border-border bg-[#f4f2ef] p-3 shadow-sm dark:bg-[#140b0a]">
+        <div className="mx-auto max-w-[40rem] space-y-2">
           {artifacts.map((artifact, index) => (
             <div key={artifact.path}>
               <Artifact
                 {...artifact}
                 open={index === openArtifact}
-                onToggle={() => setOpenState({
+                scrollProgress={index === activeArtifact ? codeScrollProgress : 0}
+                onToggle={() => setManualState({
                   stage: activeArtifact,
                   artifact: openArtifact === index ? -1 : index,
                 })}
@@ -463,61 +478,64 @@ function JavaLine({ line }: { line: string }) {
   })}</>;
 }
 
-const triageRule = `patterns:
-  - pattern: (Context $CONTEXT).eval(..., $UNTRUSTED)
-  - focus-metavariable: $UNTRUSTED
-  - pattern-inside: |
-      Context $CONTEXT = Context.newBuilder(...)
-        .allowHostAccess(HostAccess.ALL)
-        .build();
-      ...`;
+const triageDiff = `@@ -9,4 +9,10 @@
+     patterns:
+       - pattern: |
+           (org.graalvm.polyglot.Context $CONTEXT).eval(..., $UNTRUSTED)
+       - focus-metavariable: $UNTRUSTED
++      - pattern-inside: |
++          org.graalvm.polyglot.Context $CONTEXT =
++            org.graalvm.polyglot.Context.newBuilder(...)
++              .allowHostAccess(org.graalvm.polyglot.HostAccess.ALL)
++              .build();
++          ...`;
+
+function TriageDiff({ progress }: { progress: number }) {
+  const additions = triageDiff.split("\n").filter((line) => line.startsWith("+") && !line.startsWith("+++")).length;
+  let additionIndex = 0;
+
+  return (
+    <pre className="h-full overflow-auto py-2 font-mono text-[10px] leading-5 text-[#44342c] dark:text-[#f0dcdc] scrollbar-thin"><code>
+      {triageDiff.split("\n").map((line, index) => {
+        const addition = line.startsWith("+") && !line.startsWith("+++");
+        const threshold = addition ? (++additionIndex / additions) * 0.72 : 0;
+        const highlighted = !addition || progress >= threshold;
+        const header = line.startsWith("@@");
+        return (
+          <span
+            key={`${line}-${index}`}
+            className={[
+              "grid min-w-max grid-cols-[2rem_1fr] px-2 transition-colors duration-300",
+              addition ? highlighted ? "bg-[#2d8a4e]/15 text-[#237b45] dark:text-[#85d29d]" : "bg-[#2d8a4e]/[0.04] text-muted-foreground" : "",
+              header ? "text-primary" : "",
+            ].join(" ")}
+          >
+            <span className="select-none pr-2 text-right text-[#b3a396] dark:text-[#5e4a4a]">{addition ? "+" : " "}</span>
+            <span className="whitespace-pre">{addition ? line.slice(1) : line || " "}</span>
+          </span>
+        );
+      })}
+    </code></pre>
+  );
+}
 
 function TriageView({ progress }: { progress: number }) {
-  const phase = progress < 0.34 ? "candidates" : progress < 0.72 ? "refine" : "rescan";
-
   return (
     <SurfaceStory
       title="Fewer false alarms"
-      window={<div data-testid="triage-view" className="flex h-full flex-col overflow-hidden rounded-[10px] border border-border bg-[#faf9f7] shadow-sm dark:bg-[#120b0a]">
-        <div className="flex h-10 shrink-0 items-center border-b border-border bg-[#f1f0ed] px-3 font-mono text-[10px] dark:bg-[#1b1110]">
-          <span className="text-muted-foreground">graal-eval.yaml</span>
-          <span className="ml-auto text-foreground">{phase === "rescan" ? "1 finding, 0 false positives" : "2 candidates"}</span>
-        </div>
-
-        <div className="min-h-0 flex-1 overflow-hidden p-4">
-          {phase === "candidates" && (
-            <div className="space-y-3">
-              <article className="rounded-lg border border-primary/40 bg-primary/[0.04] p-4">
-                <div className="flex items-center justify-between gap-4"><p className="font-mono text-[11px] font-semibold text-foreground">ScriptRuntime.java:11</p><span className="rounded bg-primary px-2 py-1 font-mono text-[9px] font-semibold text-white">CONFIRMED</span></div>
-                <p className="mt-2 text-[12px] leading-5 text-muted-foreground">Untrusted script reaches a context configured with <code className="font-mono text-foreground">HostAccess.ALL</code>.</p>
-              </article>
-              <article className="rounded-lg border border-border bg-background p-4">
-                <div className="flex items-center justify-between gap-4"><p className="font-mono text-[11px] font-semibold text-foreground">PreviewRenderer.java:11</p><span className="rounded border border-border px-2 py-1 font-mono text-[9px] font-semibold text-muted-foreground">FALSE POSITIVE</span></div>
-                <p className="mt-2 text-[12px] leading-5 text-muted-foreground">The same API is called inside a restricted context with host access disabled.</p>
-              </article>
-            </div>
-          )}
-
-          {phase === "refine" && (
-            <div className="h-full overflow-hidden rounded-lg border border-border bg-[#f8f7f5] dark:bg-[#100d0c]">
-              <div className="border-b border-border px-3 py-2 font-mono text-[10px] text-muted-foreground">Narrow the sink to the dangerous context</div>
-              <pre className="overflow-hidden px-3 py-3 font-mono text-[10px] leading-4 text-[#44342c] dark:text-[#f0dcdc]"><code>{triageRule.split("\n").map((line, index) => <span key={line + index} className={line.includes("pattern-inside") || line.includes("HostAccess.ALL") ? "block bg-[#2d8a4e]/10 text-[#237b45] dark:text-[#72c98e]" : "block"}>{line || " "}</span>)}</code></pre>
-            </div>
-          )}
-
-          {phase === "rescan" && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="rounded-lg border border-border bg-background p-4"><p className="font-mono text-[22px] font-semibold text-primary">1</p><p className="mt-1 text-[11px] text-muted-foreground">confirmed finding</p></div>
-                <div className="rounded-lg border border-border bg-background p-4"><p className="font-mono text-[22px] font-semibold text-[#237b45] dark:text-[#72c98e]">0</p><p className="mt-1 text-[11px] text-muted-foreground">false positives</p></div>
-              </div>
-              <article className="rounded-lg border border-primary/40 bg-primary/[0.04] p-4">
-                <p className="font-mono text-[11px] font-semibold text-foreground">ScriptRuntime.java:11</p>
-                <p className="mt-2 text-[12px] leading-5 text-muted-foreground">The refined rule keeps the host-enabled execution path and excludes the restricted preview context.</p>
-              </article>
-            </div>
-          )}
-        </div>
+      window={<div data-testid="triage-view" className="h-full overflow-hidden rounded-[10px] border border-border bg-[#f4f2ef] p-3 shadow-sm dark:bg-[#140b0a]">
+        <article className="mx-auto h-full max-w-[40rem] overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] shadow-sm dark:bg-[#140505]">
+          <div className="flex min-h-10 items-center gap-2 bg-[#f0eeeb] px-3 dark:bg-[#1d0d0c]">
+            <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={1.8} aria-hidden="true" />
+            <FileCode2 className="h-3.5 w-3.5 text-primary" strokeWidth={1.7} aria-hidden="true" />
+            <span className="min-w-0 flex-1 truncate font-mono text-[11px] text-foreground">rules/java/lib/generic/graal-eval.yaml</span>
+            <span className="font-mono text-[10px] text-[#2d8a4e] dark:text-[#79bd8f]">+6</span>
+            <span className="font-mono text-[10px] text-[#c73a32] dark:text-[#ff746c]">-0</span>
+          </div>
+          <div className="h-[calc(100%-2.5rem)] border-t border-border">
+            <TriageDiff progress={progress} />
+          </div>
+        </article>
       </div>}
     >
       Application context narrows a broad API match into the security condition that matters.
@@ -778,11 +796,11 @@ export function UnifiedWorkbench() {
               </AgentStage>
 
               <AgentStage id="triage" setRef={(node) => { stageRefs.current[4] = node; }}>
-                <AgentText>The first rule reports two candidate paths. One uses full host access; the other evaluates inside a restricted preview context.</AgentText>
-                <ToolActivity title="Triaged 2 candidate findings" activity={["Confirmed ScriptRuntime.java:11", "Dismissed PreviewRenderer.java:11"]} meta="1 false positive" icon="check" defaultOpen />
+                <AgentText>The first rule reports two candidate paths: one confirmed vulnerability and one false positive in a restricted preview context.</AgentText>
+                <ToolActivity title="Triaged 2 candidate findings" activity={["Confirmed ScriptRuntime.java:11", "False positive: PreviewRenderer.java:11"]} meta="1 confirmed, 1 false positive" icon="check" defaultOpen />
                 <AgentText>I’ll narrow the sink to contexts built with <code className="font-mono text-[12px] text-primary">HostAccess.ALL</code>.</AgentText>
                 <ToolActivity title="Refined graal-eval.yaml" activity={["Added pattern-inside", "Correlated $CONTEXT", "Required HostAccess.ALL"]} added={6} removed={0} icon="file" defaultOpen />
-                <ToolActivity title="Rescanned with the refined rule" activity={["1 confirmed finding", "0 false positives"]} meta="Passed" icon="check" />
+                <ToolActivity title="Rescanned with the refined rule" activity={["1 confirmed finding", "0 false positives"]} meta="Passed" icon="check" defaultOpen />
               </AgentStage>
 
               <AgentStage id="report" setRef={(node) => { stageRefs.current[5] = node; }}>

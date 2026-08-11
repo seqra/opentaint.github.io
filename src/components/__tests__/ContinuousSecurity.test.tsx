@@ -19,7 +19,7 @@ describe("ContinuousSecurity", () => {
 
     expect(screen.getByText("Security agent")).toBeVisible();
     expect(screen.getByText("Taint analysis engine")).toBeVisible();
-    expect(screen.getByText("Formal inter-procedural dataflow analysis")).toBeVisible();
+    expect(screen.getByText("Formal program analysis")).toBeVisible();
     expect(screen.getByText("Taint rules and dependency models")).toBeVisible();
   });
 

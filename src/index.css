@@ -466,10 +466,6 @@
     padding-top: var(--spacing-10);
   }
 
-  .quickstart-section::before {
-    display: none;
-  }
-
   .demo-section {
     background-color: hsl(var(--band));
     padding-top: 0;

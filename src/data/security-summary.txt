@@ -30,15 +30,3 @@
               │      12         }
               │      13     }
               └────  14 }
-
-╭─Scan Summary─╮
-╰─┬────────────╯
-  ├─ Findings
-  │  ├─ Total: 1 error
-  │  ├─ Files affected: 1
-  │  ├─ Rules executed: 1
-  │  └─ Rules triggered: 1
-  │     └─ java.security.graaljs-code-injection: 1 error [CWE-94]
-  │        └─ Untrusted script execution
-  └─ Output
-     └─ Report: results/report.sarif

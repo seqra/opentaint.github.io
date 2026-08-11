@@ -51,7 +51,7 @@ const moments: Moment[] = [
 
 const operatingModel = [
   { label: "Who", review: "Security agent", scan: "Taint analysis engine" },
-  { label: "How", review: "Model reasoning", scan: "Formal inter-procedural dataflow analysis" },
+  { label: "How", review: "Model reasoning", scan: "Formal program analysis" },
   { label: "When", review: "When new context appears", scan: "Whenever a scan runs" },
   { label: "What", review: "Taint rules and dependency models", scan: "Detailed dataflow traces" },
 ];

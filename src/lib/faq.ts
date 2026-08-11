@@ -15,7 +15,7 @@ export const faqItems: readonly FaqItem[] = [
   },
   {
     question: "What are AST-pattern rules?",
-    answer: "AST-pattern rules describe code shapes in a format familiar from Semgrep and ast-grep and readable by humans and AI agents alike. An AST-pattern taint rule identifies untrusted inputs, dangerous operations, sanitizers, and the data flows the engine must report. Formal inter-procedural dataflow analysis follows tainted values through function boundaries, fields, async code, and persistence layers. AST-pattern matchers stop at the syntactic match. OpenTaint keeps tracing the tainted value. When a rule fires on safe code, you refine it directly.",
+    answer: "AST-pattern rules describe code shapes in a format familiar from Semgrep and ast-grep and readable by humans and AI agents alike. An AST-pattern taint rule identifies untrusted inputs, dangerous operations, sanitizers, and the data flows the engine must report. Formal program analysis follows tainted values through function boundaries, fields, async code, and persistence layers. AST-pattern matchers stop at the syntactic match. OpenTaint keeps tracing the tainted value. When a rule fires on safe code, you refine it directly.",
   },
   {
     question: "Why not just use an LLM agent for security scanning?",
@@ -47,7 +47,7 @@ export const faqItems: readonly FaqItem[] = [
   },
   {
     question: "How does OpenTaint compare to CodeQL?",
-    answer: "CodeQL also uses inter-procedural dataflow analysis for taint tracking, but it is proprietary — free for open source projects and gated behind a paid GitHub Advanced Security license for closed-source code. Its rules are written in QL, a domain-specific query language with its own semantics to learn. OpenTaint is fully open source with no paywall on private code, and its taint rules use an AST-pattern format that any developer or AI agent can read, write, and refine. Formal inter-procedural dataflow analysis comes out of the box.",
+    answer: "CodeQL also uses inter-procedural dataflow analysis for taint tracking, but it is proprietary — free for open source projects and gated behind a paid GitHub Advanced Security license for closed-source code. Its rules are written in QL, a domain-specific query language with its own semantics to learn. OpenTaint is fully open source with no paywall on private code, and its taint rules use an AST-pattern format that any developer or AI agent can read, write, and refine. Formal program analysis comes out of the box.",
   },
   {
     question: "Is OpenTaint free to use?",

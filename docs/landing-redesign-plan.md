@@ -19,13 +19,23 @@ Its order is:
    alarms. Fewer missed findings.”
 7. Comparative results, agent skills, supported technology, FAQ, and footer.
 
-The hero hierarchy is locked:
+The hero hierarchy is:
 
+> [OpenTaint mark]
+>
 > THE OPEN SOURCE TAINT ANALYSIS ENGINE FOR THE AI ERA
 >
-> **Turn one security review into unlimited security scans**
->
-> The flexibility of agent reasoning and the consistency of formal analysis combined
+> **CONTINUOUS / LEAN / AGENTIC**
+> **APPLICATION SECURITY TESTING**
+
+Only the first word of the headline changes and that word is red; “Application
+Security Testing” stays pinned while the prefix rotates, and the complete
+headline stays on one line at wide desktop sizes. The prefix slot is balanced
+around the three word lengths rather than sized to the longest word, so the
+three states retain a stable visual center. The engine line uses the red
+banner treatment between the headline and the install panel. The product
+workbench should sit mostly below the first fold, with just enough of it visible
+to connect the hero to the demo.
 
 Reuse the install selector from `origin/main` with npm, curl, skills, brew,
 PowerShell, and Docker methods. It is the primary action surface, not an
@@ -208,11 +218,12 @@ Do not imply that every sentence in a security review is automatically convertib
 
 Copy:
 
+> [OpenTaint mark]
+>
 > THE OPEN SOURCE TAINT ANALYSIS ENGINE FOR THE AI ERA
 >
-> **Turn one security review into unlimited security scans**
->
-> The flexibility of agent reasoning and the consistency of formal analysis combined
+> **CONTINUOUS / LEAN / AGENTIC**
+> **APPLICATION SECURITY TESTING**
 
 Restore the interactive install panel from `origin/main` and make it the primary
 action surface. Keep GitHub as a compact secondary action. The real OpenTaint
@@ -226,14 +237,14 @@ Placement: immediately after the unified product demonstration.
 
 Section copy:
 
-> **Review new context and continuously test what is already known**
+> THE FLEXIBILITY OF AGENT REASONING AND THE CONSISTENCY OF FORMAL ANALYSIS COMBINED
 >
-> OpenTaint combines flexible agent reasoning with consistent formal taint
-> analysis, so coverage grows without repeating the entire review.
+> **Turn one security review into unlimited security scans**
 
 This is the page’s central explanatory visual. It must show the strengths and weaknesses of agentic review and formal taint analysis on their own, then visibly converge their strengths into the OpenTaint process. It must work both for a single review and across many revisions.
 
-The section eyebrow is **CONTINUOUS AND LEAN APPLICATION SECURITY TESTING**.
+The section eyebrow is **THE FLEXIBILITY OF AGENT REASONING AND THE CONSISTENCY
+OF FORMAL ANALYSIS COMBINED**.
 Avoid “What works once must keep working.”
 
 Use a prominent time control:

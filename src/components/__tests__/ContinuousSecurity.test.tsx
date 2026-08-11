@@ -7,13 +7,20 @@ beforeEach(() => {
 });
 
 describe("ContinuousSecurity", () => {
+  it("leads with the reusable-scan promise", () => {
+    render(<ContinuousSecurity />);
+
+    expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("Turn one security review into unlimited security scans");
+    expect(screen.getByText("The flexibility of agent reasoning and the consistency of formal analysis combined")).toBeVisible();
+  });
+
   it("uses the review and scan operating model", () => {
     render(<ContinuousSecurity />);
 
     expect(screen.getByText("Security agent")).toBeVisible();
     expect(screen.getByText("Taint analysis engine")).toBeVisible();
     expect(screen.getByText("Formal inter-procedural dataflow analysis")).toBeVisible();
-    expect(screen.getByText("Taint rules + dependency models")).toBeVisible();
+    expect(screen.getByText("Taint rules and dependency models")).toBeVisible();
   });
 
   it("contrasts repeated agent review with a stable formal scan", () => {

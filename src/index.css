@@ -271,87 +271,6 @@
     }
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .continuous-review-phase {
-      animation: continuous-review-phase 3.2s ease-in-out infinite;
-    }
-
-    .continuous-scan-phase {
-      animation: continuous-scan-phase 3.2s ease-in-out infinite;
-    }
-
-    .continuous-review-cell {
-      animation: continuous-review-cell 3.2s ease-in-out infinite;
-    }
-
-    .continuous-scan-cell {
-      animation: continuous-scan-cell 3.2s ease-in-out infinite;
-    }
-
-    .continuous-transfer {
-      right: 0.5rem;
-      transform: scaleX(0);
-      transform-origin: left;
-      animation: continuous-transfer 3.2s ease-in-out infinite;
-    }
-
-    .continuous-transfer-scan-only {
-      animation-delay: -1.5s;
-    }
-
-    .continuous-artifact-in {
-      animation: continuous-artifact-in 420ms ease-out both;
-    }
-
-    .continuous-scan-pulse {
-      animation: continuous-scan-pulse 1.6s ease-in-out infinite;
-    }
-  }
-
-  .continuous-phase-idle {
-    animation: none;
-    opacity: 0.48;
-  }
-
-  @keyframes continuous-review-phase {
-    0%, 8%, 36% { background-color: hsl(var(--primary) / 0.08); box-shadow: inset -2px 0 hsl(var(--primary)); }
-    52%, 100% { background-color: transparent; box-shadow: inset -2px 0 transparent; }
-  }
-
-  @keyframes continuous-scan-phase {
-    0%, 42% { background-color: transparent; box-shadow: inset 2px 0 transparent; }
-    58%, 92% { background-color: hsl(var(--primary) / 0.08); box-shadow: inset 2px 0 hsl(var(--primary)); }
-    100% { background-color: transparent; box-shadow: inset 2px 0 transparent; }
-  }
-
-  @keyframes continuous-review-cell {
-    0%, 8%, 36% { color: hsl(var(--foreground)); opacity: 1; }
-    52%, 100% { color: hsl(var(--muted-foreground)); opacity: 0.62; }
-  }
-
-  @keyframes continuous-scan-cell {
-    0%, 42% { color: hsl(var(--muted-foreground)); opacity: 0.62; }
-    58%, 92% { color: hsl(var(--foreground)); opacity: 1; }
-    100% { color: hsl(var(--muted-foreground)); opacity: 0.62; }
-  }
-
-  @keyframes continuous-transfer {
-    0%, 28% { transform: scaleX(0); opacity: 0; }
-    46%, 78% { transform: scaleX(1); opacity: 1; }
-    100% { transform: scaleX(1); opacity: 0; }
-  }
-
-  @keyframes continuous-artifact-in {
-    from { opacity: 0; transform: translateY(0.5rem); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes continuous-scan-pulse {
-    from { opacity: 0; transform: translateX(-100%); }
-    35%, 65% { opacity: 1; }
-    to { opacity: 0; transform: translateX(200%); }
-  }
-
   @media (min-width: 1024px) {
     .page-section {
       padding-block: var(--spacing-09);
@@ -456,13 +375,13 @@
      the visual conclusion of the promise above it, so it shares the hero band
      and does not start behind another section rule. */
   .hero-band {
-    padding-top: var(--spacing-10);
+    padding-top: var(--spacing-11);
     padding-bottom: 0;
   }
 
   .demo-section {
     background-color: hsl(var(--band));
-    padding-top: var(--spacing-09);
+    padding-top: var(--spacing-10);
     padding-bottom: var(--spacing-10);
   }
 
@@ -472,22 +391,22 @@
 
   @media (min-width: 640px) {
     .hero-band {
-      padding-top: var(--spacing-11);
+      padding-top: var(--spacing-12);
     }
 
     .demo-section {
-      padding-top: var(--spacing-10);
+      padding-top: var(--spacing-11);
       padding-bottom: var(--spacing-11);
     }
   }
 
   @media (min-width: 1024px) {
     .hero-band {
-      padding-top: var(--spacing-12);
+      padding-top: var(--spacing-13);
     }
 
     .demo-section {
-      padding-top: var(--spacing-11);
+      padding-top: var(--spacing-12);
       padding-bottom: var(--spacing-12);
     }
   }
@@ -871,6 +790,10 @@
 
 /* Demo carousel: the incoming panel slides in from the travel direction. */
 @media (prefers-reduced-motion: no-preference) {
+  .hero-prefix-in {
+    animation: hero-prefix-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
   .demo-slide-in-next {
     animation: demo-in-next 0.34s cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -885,6 +808,11 @@
       animation: none;
     }
   }
+}
+
+@keyframes hero-prefix-in {
+  from { opacity: 0; transform: translate3d(0, 0.25em, 0); }
+  to { opacity: 1; transform: none; }
 }
 
 @keyframes demo-in-next {

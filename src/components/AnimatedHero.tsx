@@ -1,5 +1,5 @@
 import { Check, Copy } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type InstallMethod = {
   id: string;
@@ -16,9 +16,20 @@ const installMethods: InstallMethod[] = [
   { id: "docker", label: "docker", command: "docker pull ghcr.io/seqra/opentaint:latest" },
 ];
 
+const heroPrefixes = ["Continuous", "Lean", "Agentic"];
+
 export function AnimatedHero() {
   const [activeMethod, setActiveMethod] = useState(installMethods[0]?.id ?? "npm");
   const [copied, setCopied] = useState(false);
+  const [activePrefix, setActivePrefix] = useState(0);
+
+  useEffect(() => {
+    if (typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const interval = window.setInterval(() => {
+      setActivePrefix((current) => (current + 1) % heroPrefixes.length);
+    }, 2200);
+    return () => window.clearInterval(interval);
+  }, []);
 
   const activeInstallMethod = useMemo(
     () => installMethods.find((method) => method.id === activeMethod) ?? installMethods[0],
@@ -33,20 +44,27 @@ export function AnimatedHero() {
   };
 
   return (
-    <div className="relative mx-auto max-w-6xl text-center">
-      <p className="section-eyebrow mx-auto">
-        The open source taint analysis engine for the AI era
-      </p>
+    <div className="relative mx-auto max-w-[82rem] text-center">
+      <img src="/favicon.svg" alt="" className="mx-auto h-16 w-16 sm:h-20 sm:w-20" aria-hidden="true" />
 
-      <h1 className="mx-auto mt-4 max-w-[20ch] font-mono text-[36px] font-semibold leading-[1.06] tracking-[-0.045em] text-foreground sm:max-w-[25ch] sm:text-[46px] md:max-w-[28ch] md:text-[54px] lg:max-w-[30ch] lg:text-[60px] xl:text-[64px]">
-        Turn one security review into unlimited security scans
+      <h1 className="mx-auto mt-6 max-w-full font-mono text-[36px] font-semibold leading-[1.06] tracking-[-0.045em] text-foreground sm:text-[42px] md:text-[46px] lg:text-[48px] 2xl:text-[54px]">
+        <span className="sr-only">Continuous, lean, and agentic application security testing</span>
+        <span aria-hidden="true" className="xl:flex xl:items-start xl:justify-center xl:gap-3">
+          <span className="relative block h-[1.06em] xl:w-[7ch] xl:shrink-0">
+            <span
+              key={heroPrefixes[activePrefix]}
+              className="hero-prefix-in absolute inset-x-0 top-0 text-center text-primary xl:left-auto xl:right-0 xl:w-[10ch] xl:text-right"
+            >
+              {heroPrefixes[activePrefix]}
+            </span>
+          </span>
+          <span className="block xl:shrink-0 xl:whitespace-nowrap xl:text-left">Application Security Testing</span>
+        </span>
       </h1>
 
-      <p className="mx-auto mt-4 max-w-[48rem] font-mono text-sm leading-6 text-muted-foreground sm:text-base lg:text-[17px]">
-        The flexibility of agent reasoning and the consistency of formal analysis combined
-      </p>
+      <p className="section-banner mx-auto mt-6">The open source taint analysis engine for the AI era</p>
 
-      <div className="mx-auto mt-8 max-w-2xl text-left lg:mt-10">
+      <div className="mx-auto mt-8 max-w-2xl text-left">
         <div className="overflow-hidden rounded-xl border border-panel-border bg-panel">
           <div className="flex h-10 items-center gap-6 overflow-x-auto border-b border-panel-border px-4 scrollbar-thin sm:px-6 lg:gap-8">
             {installMethods.map((method) => {

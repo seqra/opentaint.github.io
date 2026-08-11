@@ -6,7 +6,7 @@ test.describe("landing message", () => {
 
     await expect(page.getByText("The open source taint analysis engine for the AI era", { exact: true })).toBeVisible();
     await expect(page.getByRole("heading", {
-      name: "Turn one security review into unlimited security scans",
+      name: "Continuous, lean, and agentic application security testing",
       level: 1,
     })).toBeVisible();
   });
@@ -22,7 +22,7 @@ test.describe("landing message", () => {
   test("highlights the learn-search operating model", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page.getByRole("heading", { name: "Turn one security review into unlimited security scans", level: 1 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Turn one security review into unlimited security scans", level: 2 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Fast scans. Fewer false alarms. Fewer missed findings" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Open source, batteries included" })).toBeVisible();
     await expect(page.getByText(/symbolic execution/i)).toHaveCount(0);
@@ -32,7 +32,7 @@ test.describe("landing message", () => {
     await page.goto("/");
 
     const comparison = page.getByRole("region", {
-      name: "Review new context and continuously test what is already known",
+      name: "Turn one security review into unlimited security scans",
     });
     const revision = comparison.getByRole("button", { name: "Revision 3" });
     await revision.scrollIntoViewIfNeeded();

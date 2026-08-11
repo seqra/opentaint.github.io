@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { CONSENT_STORAGE_KEY } from "../consent";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { CONSENT_REQUIRED_REGIONS, CONSENT_STORAGE_KEY } from "../consent";
 
 /*
  * The runtime holds module state, so each case needs a fresh copy of the
@@ -10,11 +10,7 @@ const analytics = {
   updateAnalyticsConsent: vi.fn(),
   loadGoogleTag: vi.fn(),
   clearAnalyticsCookies: vi.fn(),
-  isGoogleTagLoaded: vi.fn(() => false),
 };
-
-/* jsdom has no navigation, so the reload on withdrawal is observed here. */
-const reload = vi.fn();
 
 vi.mock("../analytics", () => analytics);
 
@@ -27,46 +23,110 @@ async function loadRuntime(timeZone: string) {
   return import("../consent-runtime");
 }
 
+/** The sequence advanced consent mode requires: defaults, tag, then updates. */
+function callOrder(): string[] {
+  return (
+    [
+      ["default", analytics.setDefaultConsent.mock.invocationCallOrder[0]],
+      ["load", analytics.loadGoogleTag.mock.invocationCallOrder[0]],
+      ["update", analytics.updateAnalyticsConsent.mock.invocationCallOrder[0]],
+    ] as [string, number | undefined][]
+  )
+    .filter(([, order]) => order !== undefined)
+    .sort((a, b) => a[1]! - b[1]!)
+    .map(([name]) => name);
+}
+
 beforeEach(() => {
   window.localStorage.clear();
   Object.values(analytics).forEach((fn) => fn.mockClear());
-  analytics.isGoogleTagLoaded.mockReturnValue(false);
-  reload.mockClear();
-  Object.defineProperty(window, "location", {
-    value: { ...window.location, reload },
-    configurable: true,
-  });
-});
-
-afterEach(() => {
-  vi.doUnmock("../consent-storage");
 });
 
 describe("initConsent", () => {
-  it("holds the tag back in a consent-required region", async () => {
+  it("denies by default in a consent-required region", async () => {
     const runtime = await loadRuntime("Europe/Berlin");
     const state = runtime.initConsent();
 
     expect(state).toEqual({ required: true, choice: null });
-    expect(analytics.setDefaultConsent).toHaveBeenCalledWith("denied");
-    expect(analytics.loadGoogleTag).not.toHaveBeenCalled();
+    expect(analytics.setDefaultConsent).toHaveBeenCalledWith("denied", CONSENT_REQUIRED_REGIONS);
   });
 
-  it("starts measuring elsewhere", async () => {
+  it("allows by default elsewhere, still scoping the denial to Google's regions", async () => {
     const runtime = await loadRuntime("America/New_York");
     const state = runtime.initConsent();
 
     expect(state).toEqual({ required: false, choice: null });
-    expect(analytics.setDefaultConsent).toHaveBeenCalledWith("granted");
+    expect(analytics.setDefaultConsent).toHaveBeenCalledWith("granted", CONSENT_REQUIRED_REGIONS);
+  });
+
+  it("withholds the tag from a visitor who is about to be asked", async () => {
+    const runtime = await loadRuntime("Europe/Berlin");
+    runtime.initConsent();
+
+    expect(analytics.loadGoogleTag).not.toHaveBeenCalled();
+  });
+
+  it("loads the tag where no banner will be shown", async () => {
+    const runtime = await loadRuntime("America/New_York");
+    runtime.initConsent();
+
     expect(analytics.loadGoogleTag).toHaveBeenCalledOnce();
   });
 
-  it("honours a stored grant in a consent-required region", async () => {
+  it("loads the tag for a visitor who consented, wherever they are", async () => {
+    window.localStorage.setItem(CONSENT_STORAGE_KEY, "granted");
+    const runtime = await loadRuntime("Europe/Berlin");
+    runtime.initConsent();
+
+    expect(analytics.loadGoogleTag).toHaveBeenCalledOnce();
+  });
+
+  it("keeps the tag off for a visitor who refused, wherever they are", async () => {
+    window.localStorage.setItem(CONSENT_STORAGE_KEY, "denied");
+    const runtime = await loadRuntime("America/New_York");
+    runtime.initConsent();
+
+    expect(analytics.loadGoogleTag).not.toHaveBeenCalled();
+  });
+
+  it("declares defaults before loading the tag", async () => {
+    const runtime = await loadRuntime("America/New_York");
+    runtime.initConsent();
+
+    expect(callOrder()).toEqual(["default", "load"]);
+  });
+
+  it("makes a remembered choice the default, unscoped, so it beats the region entry", async () => {
     window.localStorage.setItem(CONSENT_STORAGE_KEY, "granted");
     const runtime = await loadRuntime("Europe/Berlin");
 
     expect(runtime.initConsent()).toEqual({ required: true, choice: "granted" });
-    expect(analytics.loadGoogleTag).toHaveBeenCalledOnce();
+    expect(analytics.setDefaultConsent).toHaveBeenCalledWith("granted", undefined);
+  });
+
+  it("remembers a refusal the same way", async () => {
+    window.localStorage.setItem(CONSENT_STORAGE_KEY, "denied");
+    const runtime = await loadRuntime("America/New_York");
+    runtime.initConsent();
+
+    expect(analytics.setDefaultConsent).toHaveBeenCalledWith("denied", undefined);
+  });
+
+  it("never updates at load: the first page_view carries the defaults", async () => {
+    window.localStorage.setItem(CONSENT_STORAGE_KEY, "granted");
+    const runtime = await loadRuntime("Europe/Berlin");
+    runtime.initConsent();
+
+    expect(analytics.updateAnalyticsConsent).not.toHaveBeenCalled();
+    expect(callOrder()).toEqual(["default", "load"]);
+  });
+
+  it("still declares the defaults for a withheld tag, so a later grant is scoped", async () => {
+    const runtime = await loadRuntime("Europe/Berlin");
+    runtime.initConsent();
+
+    expect(analytics.setDefaultConsent).toHaveBeenCalledOnce();
+    expect(callOrder()).toEqual(["default"]);
   });
 
   it("is idempotent", async () => {
@@ -87,7 +147,7 @@ describe("initConsent", () => {
 });
 
 describe("setConsentChoice", () => {
-  it("granting persists, updates, and loads the tag", async () => {
+  it("granting persists, updates, and starts the withheld tag", async () => {
     const runtime = await loadRuntime("Europe/Berlin");
     runtime.initConsent();
     runtime.setConsentChoice("granted");
@@ -95,7 +155,24 @@ describe("setConsentChoice", () => {
     expect(window.localStorage.getItem(CONSENT_STORAGE_KEY)).toBe("granted");
     expect(analytics.updateAnalyticsConsent).toHaveBeenCalledWith("granted");
     expect(analytics.loadGoogleTag).toHaveBeenCalledOnce();
+    expect(analytics.clearAnalyticsCookies).not.toHaveBeenCalled();
     expect(runtime.getConsentState().choice).toBe("granted");
+  });
+
+  it("consents before configuring, so the first page_view is already granted", async () => {
+    const runtime = await loadRuntime("Europe/Berlin");
+    runtime.initConsent();
+    runtime.setConsentChoice("granted");
+
+    expect(callOrder()).toEqual(["default", "update", "load"]);
+  });
+
+  it("declining leaves the tag unloaded", async () => {
+    const runtime = await loadRuntime("Europe/Berlin");
+    runtime.initConsent();
+    runtime.setConsentChoice("denied");
+
+    expect(analytics.loadGoogleTag).not.toHaveBeenCalled();
   });
 
   it("withdrawing clears the cookies already written", async () => {
@@ -105,25 +182,8 @@ describe("setConsentChoice", () => {
     runtime.setConsentChoice("denied");
 
     expect(window.localStorage.getItem(CONSENT_STORAGE_KEY)).toBe("denied");
-    expect(analytics.updateAnalyticsConsent).toHaveBeenCalledWith("denied");
+    expect(analytics.updateAnalyticsConsent).toHaveBeenLastCalledWith("denied");
     expect(analytics.clearAnalyticsCookies).toHaveBeenCalledOnce();
-  });
-
-  it("reloads when withdrawing from a page that was already measuring", async () => {
-    analytics.isGoogleTagLoaded.mockReturnValue(true);
-    const runtime = await loadRuntime("America/New_York");
-    runtime.initConsent();
-    runtime.setConsentChoice("denied");
-
-    expect(reload).toHaveBeenCalledOnce();
-  });
-
-  it("does not reload when no tag was ever loaded", async () => {
-    const runtime = await loadRuntime("Europe/Berlin");
-    runtime.initConsent();
-    runtime.setConsentChoice("denied");
-
-    expect(reload).not.toHaveBeenCalled();
   });
 
   it("leaves the region verdict untouched", async () => {

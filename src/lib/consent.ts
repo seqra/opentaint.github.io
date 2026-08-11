@@ -39,6 +39,19 @@ export const CONSENT_REQUIRED_TIME_ZONES: readonly string[] = [
   "Indian/Reunion",
 ];
 
+/**
+ * The same policy expressed as ISO country codes, for Google's own
+ * region-scoped consent defaults. Google resolves these from the request IP,
+ * which catches the visitors a time zone misreports — a traveller, a VPN, a
+ * wrong clock. EU/EEA plus the UK; Switzerland is deliberately absent, being
+ * covered by the FADP rather than the GDPR.
+ */
+export const CONSENT_REQUIRED_REGIONS: readonly string[] = [
+  "AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI",
+  "FR", "GB", "GR", "HR", "HU", "IE", "IS", "IT", "LI", "LT",
+  "LU", "LV", "MT", "NL", "NO", "PL", "PT", "RO", "SE", "SI", "SK",
+];
+
 /** Whether a visitor in `timeZone` must opt in before analytics may load. */
 export function requiresConsent(timeZone: string | null | undefined): boolean {
   if (!timeZone) return true;

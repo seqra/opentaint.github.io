@@ -303,8 +303,8 @@
       animation: continuous-artifact-in 420ms ease-out both;
     }
 
-    .continuous-markdown-in {
-      animation: continuous-markdown-in 420ms ease-out both;
+    .continuous-scan-pulse {
+      animation: continuous-scan-pulse 1.6s ease-in-out infinite;
     }
   }
 
@@ -346,9 +346,10 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  @keyframes continuous-markdown-in {
-    from { opacity: 0; transform: translateX(0.5rem); }
-    to { opacity: 1; transform: translateX(0); }
+  @keyframes continuous-scan-pulse {
+    from { opacity: 0; transform: translateX(-100%); }
+    35%, 65% { opacity: 1; }
+    to { opacity: 0; transform: translateX(200%); }
   }
 
   @media (min-width: 1024px) {
@@ -455,14 +456,14 @@
      the visual conclusion of the promise above it, so it shares the hero band
      and does not start behind another section rule. */
   .hero-band {
-    padding-top: var(--spacing-09);
+    padding-top: var(--spacing-10);
     padding-bottom: 0;
   }
 
   .demo-section {
     background-color: hsl(var(--band));
-    padding-top: var(--spacing-07);
-    padding-bottom: var(--spacing-09);
+    padding-top: var(--spacing-09);
+    padding-bottom: var(--spacing-10);
   }
 
   .demo-section::before {
@@ -471,23 +472,23 @@
 
   @media (min-width: 640px) {
     .hero-band {
-      padding-top: var(--spacing-10);
+      padding-top: var(--spacing-11);
     }
 
     .demo-section {
-      padding-top: var(--spacing-08);
-      padding-bottom: var(--spacing-10);
+      padding-top: var(--spacing-10);
+      padding-bottom: var(--spacing-11);
     }
   }
 
   @media (min-width: 1024px) {
     .hero-band {
-      padding-top: var(--spacing-11);
+      padding-top: var(--spacing-12);
     }
 
     .demo-section {
-      padding-top: var(--spacing-09);
-      padding-bottom: var(--spacing-11);
+      padding-top: var(--spacing-11);
+      padding-bottom: var(--spacing-12);
     }
   }
 

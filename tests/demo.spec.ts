@@ -33,9 +33,11 @@ test.describe("landing product demonstration", () => {
     await expect(workbench.getByTestId("demo-hero-player")).toBeVisible();
 
     await workbench.getByRole("button", { name: "Report", exact: true }).click();
-    await expect(workbench.getByTestId("simplified-report-view")).toBeVisible();
-    await expect(workbench.getByText("ScriptRuntime.java", { exact: true }).first()).toBeVisible();
-    await expect(workbench.getByTestId("simplified-report-view").getByText('Method entry marks the 1st argument of "submit" as $UNTRUSTED')).toBeVisible();
+    const report = workbench.getByTestId("simplified-report-view");
+    await expect(report).toBeVisible();
+    await expect(report.getByText("JobController.java", { exact: true })).toBeVisible();
+    await expect(report.getByRole("tablist")).toHaveCount(0);
+    await expect(report.getByText('Method entry marks the 1st argument of "submit" as $UNTRUSTED')).toBeVisible();
     await expect(workbench.getByRole("button", { name: "First step" })).toBeDisabled();
   });
 

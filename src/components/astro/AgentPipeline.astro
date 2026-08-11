@@ -318,7 +318,7 @@ const scene = render();
 {/* The landing uses a focused crop through phone widths so labels remain
     legible. The article opts into the complete, horizontally scrollable graph. */}
 <div class:list={[
-  "pipeline mx-auto w-full min-w-0 border border-border-strong bg-background p-3 sm:p-4",
+  "pipeline mx-auto w-full min-w-0 rounded-xl border border-border-strong bg-background p-3 sm:p-4",
   mobileView === "scroll" ? "max-w-none" : "max-w-[38rem]",
 ]}>
   {mobileView === "focus" ? (

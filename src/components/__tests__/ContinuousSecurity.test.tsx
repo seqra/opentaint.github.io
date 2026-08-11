@@ -13,7 +13,7 @@ describe("ContinuousSecurity", () => {
     expect(screen.getByText("Security agent")).toBeVisible();
     expect(screen.getByText("Taint analysis engine")).toBeVisible();
     expect(screen.getByText("Formal inter-procedural dataflow analysis")).toBeVisible();
-    expect(screen.getByText("AST-pattern taint rules and dependency models")).toBeVisible();
+    expect(screen.getByText("Taint rules + dependency models")).toBeVisible();
   });
 
   it("contrasts repeated agent review with a stable formal scan", () => {
@@ -21,8 +21,8 @@ describe("ContinuousSecurity", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Same review" }));
     expect(screen.getByText("28k tokens")).toBeVisible();
-    expect(screen.getByText("specification unchanged")).toBeVisible();
-    expect(screen.getByText("CPU scan only")).toBeVisible();
+    expect(screen.getByText("unchanged")).toBeVisible();
+    expect(screen.getByText("0 model tokens")).toBeVisible();
   });
 
   it("accumulates enacted coverage across revisions", () => {
@@ -31,6 +31,6 @@ describe("ContinuousSecurity", () => {
     fireEvent.click(screen.getByRole("button", { name: "Revision 3" }));
     expect(screen.getByLabelText("Formal specification contains R₁, R₂, R₃, M₁")).toBeVisible();
     expect(screen.getByText("A ∪ B ∪ C")).toBeVisible();
-    expect(screen.getByLabelText("The modeled flow reaches Context.eval")).toBeVisible();
+    expect(screen.getByLabelText("The formal specification is applied by taint analysis")).toBeVisible();
   });
 });

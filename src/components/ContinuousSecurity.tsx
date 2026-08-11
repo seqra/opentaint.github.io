@@ -3,11 +3,8 @@ import { useEffect, useState } from "react";
 type Scene = {
   id: string;
   label: string;
-  commit: string;
   agentTokens: string;
   agentFindings: string[];
-  markdownFiles: number;
-  openTaintTokens: string;
   specification: string[];
   coverage: string[];
   reviewEvent: boolean;
@@ -17,11 +14,8 @@ const scenes: Scene[] = [
   {
     id: "review",
     label: "First review",
-    commit: "7a1c9e",
     agentTokens: "14k",
     agentFindings: ["A", "B"],
-    markdownFiles: 1,
-    openTaintTokens: "14k",
     specification: ["R₁"],
     coverage: ["A"],
     reviewEvent: true,
@@ -29,11 +23,8 @@ const scenes: Scene[] = [
   {
     id: "repeat",
     label: "Same review",
-    commit: "7a1c9e",
     agentTokens: "28k",
     agentFindings: ["A", "C"],
-    markdownFiles: 2,
-    openTaintTokens: "14k",
     specification: ["R₁"],
     coverage: ["A"],
     reviewEvent: false,
@@ -41,11 +32,8 @@ const scenes: Scene[] = [
   {
     id: "revision-2",
     label: "Revision 2",
-    commit: "c402bf",
     agentTokens: "42k",
     agentFindings: ["B", "C"],
-    markdownFiles: 3,
-    openTaintTokens: "25k",
     specification: ["R₁", "R₂"],
     coverage: ["A", "B"],
     reviewEvent: true,
@@ -53,25 +41,21 @@ const scenes: Scene[] = [
   {
     id: "revision-3",
     label: "Revision 3",
-    commit: "f83d21",
     agentTokens: "56k",
     agentFindings: ["A", "C"],
-    markdownFiles: 4,
-    openTaintTokens: "37k",
     specification: ["R₁", "R₂", "R₃", "M₁"],
     coverage: ["A", "B", "C"],
     reviewEvent: true,
   },
 ];
 
-const allFindings = ["A", "B", "C"];
-
 const operatingModel = [
   { label: "Who", review: "Security agent", scan: "Taint analysis engine" },
   { label: "How", review: "Model reasoning", scan: "Formal inter-procedural dataflow analysis" },
   { label: "When", review: "When new context appears", scan: "Whenever a scan runs" },
-  { label: "What", review: "AST-pattern taint rules and dependency models", scan: "Detailed dataflow traces" },
 ];
+
+const allFindings = ["A", "B", "C"];
 
 function FindingSet({ findings, stable = false }: { findings: string[]; stable?: boolean }) {
   return (
@@ -82,40 +66,18 @@ function FindingSet({ findings, stable = false }: { findings: string[]; stable?:
           <span
             key={finding}
             className={[
-              "inline-flex h-7 w-7 items-center justify-center border font-mono text-[11px] font-semibold transition-all duration-500",
+              "inline-flex h-8 w-8 items-center justify-center rounded-md border font-mono text-[11px] font-semibold transition-all duration-500",
               active
                 ? stable
                   ? "border-primary bg-primary text-primary-foreground"
                   : "border-foreground bg-foreground text-background"
-                : "border-border text-muted-foreground opacity-30",
+                : "border-border text-muted-foreground opacity-25",
             ].join(" ")}
           >
             {finding}
           </span>
         );
       })}
-    </div>
-  );
-}
-
-function Flow({ modeled }: { modeled: boolean }) {
-  return (
-    <div className="grid grid-cols-[auto_1fr_auto_1fr_auto] items-center" aria-label={modeled ? "The modeled flow reaches Context.eval" : "The flow stops at an opaque external method"}>
-      <span className="border border-border-strong bg-background px-2 py-2 font-mono text-[9px] text-foreground">HTTP input</span>
-      <span className="h-px bg-primary" aria-hidden="true" />
-      <span className={[
-        "border px-2 py-2 text-center font-mono text-[9px]",
-        modeled ? "border-primary bg-primary/10 text-primary" : "border-dashed border-border-strong text-muted-foreground",
-      ].join(" ")}>
-        {modeled ? "model M₁" : "external(?)"}
-      </span>
-      <span className={modeled ? "h-px bg-primary" : "relative h-px bg-border-strong"} aria-hidden="true">
-        {!modeled && <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-1 font-mono text-xs text-primary">×</span>}
-      </span>
-      <span className={[
-        "border px-2 py-2 font-mono text-[9px]",
-        modeled ? "border-primary bg-primary text-primary-foreground" : "border-border text-muted-foreground opacity-45",
-      ].join(" ")}>Context.eval</span>
     </div>
   );
 }
@@ -148,13 +110,10 @@ export function ContinuousSecurity() {
         <div className="section-header">
           <p className="section-eyebrow">Continuous and lean application security testing</p>
           <h2 id="continuous-security-heading" className="section-heading">Review new context and continuously test what is already known</h2>
-          <p className="mx-auto mt-6 max-w-[62ch] font-mono text-sm leading-7 text-muted-foreground">
-            OpenTaint combines flexible agent reasoning with consistent formal taint analysis, so coverage grows without repeating the entire review.
-          </p>
         </div>
 
-        <div className="section-content">
-          <div className="flex flex-wrap justify-center gap-2" aria-label="Comparison timeline">
+        <div className="section-content overflow-hidden rounded-xl border border-border-strong bg-background">
+          <div className="flex flex-wrap justify-center gap-2 border-b border-border bg-code-header p-2" aria-label="Comparison timeline">
             {scenes.map((item, index) => (
               <button
                 key={item.id}
@@ -165,7 +124,7 @@ export function ContinuousSecurity() {
                   setSceneIndex(index);
                 }}
                 className={[
-                  "min-h-11 border px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] transition-colors",
+                  "min-h-10 rounded-md border px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] transition-colors",
                   index === sceneIndex
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border-strong bg-background text-muted-foreground hover:border-primary hover:text-primary",
@@ -176,140 +135,84 @@ export function ContinuousSecurity() {
             ))}
           </div>
 
-          <div className="mt-8 overflow-hidden border-y border-border-strong bg-background" aria-label="One review becomes unlimited scans">
-            <div className="grid grid-cols-[1fr_3rem_1fr] border-b border-border-strong sm:grid-cols-[1fr_6rem_1fr]">
-              <div className={[
-                "continuous-review-phase px-3 py-4 text-right sm:px-6 sm:py-5",
-                !scene.reviewEvent && "continuous-phase-idle",
-              ].filter(Boolean).join(" ")}>
-                <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">One security review</p>
-              </div>
-              <div className="relative flex items-center px-2" aria-hidden="true">
-                <span className="h-px w-full bg-border-strong"></span>
-                <span className={[
-                  "continuous-transfer absolute left-2 h-px bg-primary",
-                  !scene.reviewEvent && "continuous-transfer-scan-only",
-                ].join(" ")}></span>
-              </div>
-              <div className="continuous-scan-phase px-3 py-4 text-left sm:px-6 sm:py-5">
-                <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-primary">Unlimited security scans</p>
-              </div>
+          <div className="grid grid-cols-[1fr_3rem_1fr] border-b border-border-strong sm:grid-cols-[1fr_6rem_1fr]">
+            <div className={[
+              "continuous-review-phase px-3 py-4 text-right sm:px-6 sm:py-5",
+              !scene.reviewEvent && "continuous-phase-idle",
+            ].filter(Boolean).join(" ")}>
+              <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-foreground">One security review</p>
             </div>
-
-            <div className="divide-y divide-border">
-              {operatingModel.map((row) => (
-                <div key={row.label} className="grid grid-cols-[1fr_3rem_1fr] sm:grid-cols-[1fr_6rem_1fr]">
-                  <p className={[
-                    "continuous-review-cell px-3 py-3 text-right font-mono text-[10px] font-medium leading-5 text-foreground sm:px-6 sm:text-xs",
-                    !scene.reviewEvent && "continuous-phase-idle",
-                  ].filter(Boolean).join(" ")}>{row.review}</p>
-                  <p className="flex items-center justify-center border-x border-border px-1 py-3 font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-muted-foreground sm:text-[10px]">{row.label}</p>
-                  <p className="continuous-scan-cell px-3 py-3 text-left font-mono text-[10px] font-medium leading-5 text-foreground sm:px-6 sm:text-xs">{row.scan}</p>
-                </div>
-              ))}
+            <div className="relative flex items-center px-2" aria-hidden="true">
+              <span className="h-px w-full bg-border-strong"></span>
+              <span className={[
+                "continuous-transfer absolute left-2 h-px bg-primary",
+                !scene.reviewEvent && "continuous-transfer-scan-only",
+              ].filter(Boolean).join(" ")}></span>
+            </div>
+            <div className="continuous-scan-phase px-3 py-4 text-left sm:px-6 sm:py-5">
+              <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-primary">Unlimited security scans</p>
             </div>
           </div>
 
-          <div className="mt-8 grid overflow-hidden border-y border-border-strong bg-background lg:grid-cols-3">
-            <article className="min-w-0 border-b border-border-strong p-5 lg:border-b-0 lg:border-r lg:p-6">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Agent review alone</p>
-                  <h3 className="mt-2 font-mono text-lg font-semibold text-foreground">Flexible, but costly to repeat</h3>
-                </div>
-                <span className="font-mono text-[10px] text-muted-foreground">{scene.commit}</span>
+          <div className="divide-y divide-border">
+            {operatingModel.map((row) => (
+              <div key={row.label} className="grid grid-cols-[1fr_3rem_1fr] sm:grid-cols-[1fr_6rem_1fr]">
+                <p className={[
+                  "continuous-review-cell px-3 py-3 text-right font-mono text-[10px] font-medium leading-5 text-foreground sm:px-6 sm:text-xs",
+                  !scene.reviewEvent && "continuous-phase-idle",
+                ].filter(Boolean).join(" ")}>{row.review}</p>
+                <p className="flex items-center justify-center border-x border-border px-1 py-3 font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-muted-foreground sm:text-[10px]">{row.label}</p>
+                <p className="continuous-scan-cell px-3 py-3 text-left font-mono text-[10px] font-medium leading-5 text-foreground sm:px-6 sm:text-xs">{row.scan}</p>
               </div>
+            ))}
 
-              <div className="mt-6 border border-border bg-code-header p-3">
-                <div className="flex items-center justify-between gap-4 font-mono text-[10px]">
-                  <span className="text-foreground">Context loaded again</span>
-                  <span className="font-semibold text-primary">{scene.agentTokens} tokens</span>
-                </div>
-                <div className="mt-3 space-y-1.5 font-mono text-[9px] text-muted-foreground">
-                  <p>Read security-review.md</p>
-                  <p>Read related application code</p>
-                  <p>Interpret trust boundaries again</p>
-                </div>
-              </div>
-
-              <div className="mt-6 flex items-end justify-between gap-4">
-                <div>
-                  <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">Current findings</p>
-                  <div className="mt-2"><FindingSet findings={scene.agentFindings} /></div>
-                </div>
-                <div className="relative h-14 w-24" aria-label={`${scene.markdownFiles} Markdown review files`}>
-                  {Array.from({ length: scene.markdownFiles }).map((_, index) => (
-                    <span key={index} className="continuous-markdown-in absolute right-0 h-10 w-20 border border-border-strong bg-background px-2 pt-2 font-mono text-[7px] text-muted-foreground transition-all duration-500" style={{ bottom: `${index * 5}px`, right: `${index * 4}px`, animationDelay: `${index * 70}ms` }}>review.md</span>
+            <div className="grid grid-cols-[1fr_3rem_1fr] sm:grid-cols-[1fr_6rem_1fr]">
+              <div className="min-w-0 px-3 py-4 sm:px-6 sm:py-6">
+                <p className="text-right font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Taint rules + dependency models</p>
+                <div className="mt-3 flex min-h-8 flex-wrap justify-end gap-2" aria-label={`Formal specification contains ${scene.specification.join(", ")}`}>
+                  {scene.specification.map((artifact, index) => (
+                    <span key={artifact} className="continuous-artifact-in rounded-md border border-primary bg-primary/10 px-2 py-1 font-mono text-[10px] font-semibold text-primary" style={{ animationDelay: `${index * 90}ms` }}>{artifact}</span>
                   ))}
+                  {!scene.reviewEvent && <span className="self-center font-mono text-[9px] text-muted-foreground">unchanged</span>}
                 </div>
               </div>
-
-              <p className="mt-5 border-l-2 border-primary pl-3 font-mono text-[11px] leading-5 text-muted-foreground">Markdown preserves prose. The agent must interpret it again before it can test new code.</p>
-            </article>
-
-            <article className="min-w-0 border-b border-border-strong p-5 lg:border-b-0 lg:border-r lg:p-6">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Fixed-specification taint analysis</p>
-                  <h3 className="mt-2 font-mono text-lg font-semibold text-foreground">Consistent, but bounded</h3>
-                </div>
-                <span className="font-mono text-[10px] text-muted-foreground">CPU scan</span>
-              </div>
-
-              <div className="mt-8"><Flow modeled={false} /></div>
-
-              <div className="mt-7 flex items-end justify-between gap-4">
-                <div>
-                  <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">Fixed specification</p>
-                  <div className="mt-2 flex gap-2"><span className="border border-border-strong px-2 py-1 font-mono text-[10px] text-foreground">R₁</span></div>
-                </div>
-                <div className="text-right font-mono text-[10px] text-muted-foreground">
-                  <p>0 model tokens</p>
-                  <p className="mt-1">same result</p>
+              <p className="flex items-center justify-center border-x border-border px-1 py-3 font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-muted-foreground sm:text-[10px]">What</p>
+              <div className="min-w-0 px-3 py-4 sm:px-6 sm:py-6">
+                <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Applied across the codebase</p>
+                <div className="mt-3 flex items-center gap-2" aria-label="The formal specification is applied by taint analysis">
+                  <span className="shrink-0 rounded-md border border-border-strong px-2 py-1 font-mono text-[9px] text-foreground">Spec</span>
+                  <span className="relative h-px min-w-4 flex-1 overflow-hidden bg-border-strong" aria-hidden="true"><span className="continuous-scan-pulse absolute inset-y-0 left-0 w-1/2 bg-primary"></span></span>
+                  <span className="shrink-0 rounded-md border border-primary bg-primary/10 px-2 py-1 font-mono text-[9px] text-primary">Scan</span>
                 </div>
               </div>
-
-              <p className="mt-5 border-l-2 border-primary pl-3 font-mono text-[11px] leading-5 text-muted-foreground">It cannot invent a missing rule. Without a dependency model, the trace stops at opaque external code.</p>
-            </article>
-
-            <article className="min-w-0 p-5 lg:p-6">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">OpenTaint</p>
-                  <h3 className="mt-2 font-mono text-lg font-semibold text-foreground">Flexible review, consistent scans</h3>
-                </div>
-                <span className="font-mono text-[10px] text-muted-foreground">{scene.openTaintTokens} tokens</span>
-              </div>
-
-              <div className="mt-6 flex min-h-7 flex-wrap gap-2" aria-label={`Formal specification contains ${scene.specification.join(", ")}`}>
-                {scene.specification.map((artifact, index) => (
-                  <span key={artifact} className="continuous-artifact-in border border-primary bg-primary/10 px-2 py-1 font-mono text-[10px] font-semibold text-primary" style={{ animationDelay: `${index * 90}ms` }}>{artifact}</span>
-                ))}
-                {!scene.reviewEvent && <span className="px-2 py-1 font-mono text-[9px] text-muted-foreground">specification unchanged</span>}
-              </div>
-
-              <div className="mt-5"><Flow modeled={scene.specification.includes("M₁")} /></div>
-
-              <div className="mt-7 flex items-end justify-between gap-4">
-                <div>
-                  <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">Enacted coverage</p>
-                  <div className="mt-2"><FindingSet findings={scene.coverage} stable /></div>
-                </div>
-                <div className="text-right font-mono text-[10px] text-muted-foreground">
-                  <p>{scene.reviewEvent ? "review + enact" : "CPU scan only"}</p>
-                  <p className="mt-1">whole codebase</p>
-                </div>
-              </div>
-
-              <p className="mt-5 border-l-2 border-primary pl-3 font-mono text-[11px] leading-5 text-muted-foreground">New reviews extend or revise the formal specification. Every scan applies everything enacted so far.</p>
-            </article>
+            </div>
           </div>
 
-          <div className="border-b border-border-strong bg-primary/[0.04] px-4 py-5 text-center font-mono text-sm font-semibold text-foreground" aria-live="polite">
+          <div className="grid border-t border-border-strong sm:grid-cols-2">
+            <div className="border-b border-border p-4 sm:border-b-0 sm:border-r sm:p-6">
+              <div className="flex items-end justify-between gap-4">
+                <div>
+                  <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Agent-only result</p>
+                  <div className="mt-3"><FindingSet findings={scene.agentFindings} /></div>
+                </div>
+                <p className="text-right font-mono text-[10px] text-muted-foreground"><span className="block font-semibold text-primary">{scene.agentTokens} tokens</span>findings vary</p>
+              </div>
+            </div>
+            <div className="p-4 sm:p-6">
+              <div className="flex items-end justify-between gap-4">
+                <div>
+                  <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">Enacted coverage</p>
+                  <div className="mt-3"><FindingSet findings={scene.coverage} stable /></div>
+                </div>
+                <p className="text-right font-mono text-[10px] text-muted-foreground"><span className="block font-semibold text-foreground">0 model tokens</span>same scan, same result</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-border-strong bg-primary/[0.04] px-4 py-4 text-center font-mono text-sm font-semibold text-foreground" aria-live="polite">
             <span className="text-primary">Coverage</span>
             <span className="mx-3 text-muted-foreground">=</span>
             {scene.coverage.join(" ∪ ")}
-            <span className="ml-4 block text-[10px] font-normal text-muted-foreground sm:inline">same code + specification, same findings</span>
           </div>
         </div>
       </div>

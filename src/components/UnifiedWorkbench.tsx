@@ -485,16 +485,13 @@ function JavaLine({ line }: { line: string }) {
 function FindingReport({ progress }: { progress: number }) {
   const [stepIndex, setStepIndex] = useState(0);
   const currentStep = flowSteps[stepIndex];
-  const [selectedFile, setSelectedFile] = useState(currentStep.file);
-  const activeFile = selectedFile;
-  const currentLine = activeFile === currentStep.file ? currentStep.line : -1;
-  const files = Object.keys(sourceFiles);
+  const activeFile = currentStep.file;
+  const currentLine = currentStep.line;
   const stepMessage = currentStep.message;
 
   const move = (next: number) => {
     const bounded = Math.max(0, Math.min(flowSteps.length - 1, next));
     setStepIndex(bounded);
-    setSelectedFile(flowSteps[bounded].file);
   };
 
   useEffect(() => {
@@ -504,20 +501,9 @@ function FindingReport({ progress }: { progress: number }) {
   return (
     <div data-testid="simplified-report-view" className="flex h-full flex-col bg-[#f9f7f5] font-mono text-[#44342c] dark:bg-[#140505] dark:text-[#f0dcdc]">
       <div className="flex h-10 shrink-0 items-center border-b border-[#ded7d1] bg-[#f0eeeb] text-[11px] dark:border-[#4b1d1d] dark:bg-[#1d0d0c]">
-        <div role="tablist" className="flex min-w-0 flex-1 overflow-x-auto scrollbar-thin">
-          {files.map((file) => (
-            <button
-              key={file}
-              type="button"
-              role="tab"
-              aria-selected={file === activeFile}
-              onClick={() => setSelectedFile(file)}
-              className={[
-                "h-10 shrink-0 border-r border-[#ded7d1] px-3 text-[11px] dark:border-[#4b1d1d]",
-                file === activeFile ? "bg-[#f9f7f5] text-[#44342c] dark:bg-[#140505] dark:text-[#f0dcdc]" : "text-[#76665d] dark:text-[#a98e8e]",
-              ].join(" ")}
-            >{file}</button>
-          ))}
+        <div className="flex min-w-0 flex-1 items-center gap-2 px-3">
+          <FileCode2 className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={1.7} aria-hidden="true" />
+          <span className="truncate text-[#44342c] dark:text-[#f0dcdc]">{activeFile}</span>
         </div>
         <div className="flex shrink-0 items-center gap-1 px-2">
           <button aria-label="First step" disabled={stepIndex === 0} onClick={() => move(0)} className="inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-background text-foreground disabled:opacity-35"><SkipBack size={13} /></button>

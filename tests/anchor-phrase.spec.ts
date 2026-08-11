@@ -41,7 +41,7 @@ test.describe("landing message", () => {
     await revision.click();
 
     await expect(comparison.getByLabel("Formal specification contains R₁, R₂, R₃, M₁")).toBeVisible();
-    await expect(comparison.getByLabel("The modeled flow reaches Context.eval")).toBeVisible();
+    await expect(comparison.getByLabel("The formal specification is applied by taint analysis")).toBeVisible();
     await expect(comparison.locator("[aria-live='polite']")).toContainText("A ∪ B ∪ C");
   });
 });

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { UnifiedWorkbench } from "../UnifiedWorkbench";
 
@@ -38,11 +38,15 @@ describe("UnifiedWorkbench", () => {
     expect(screen.getByTestId("demo-hero-player")).toBeVisible();
 
     fireEvent.click(screen.getByRole("button", { name: "Report" }));
-    expect(screen.getByTestId("simplified-report-view")).toBeVisible();
+    const report = screen.getByTestId("simplified-report-view");
+    expect(report).toBeVisible();
+    expect(within(report).queryByRole("tablist")).not.toBeInTheDocument();
+    expect(within(report).getByText("JobController.java")).toBeVisible();
     expect(screen.getByText('Method entry marks the 1st argument of "submit" as $UNTRUSTED')).toBeVisible();
     expect(screen.getByRole("button", { name: "First step" })).toBeDisabled();
     fireEvent.click(screen.getByRole("button", { name: "Last step" }));
-    expect(screen.getByText("ScriptRuntime.java")).toBeVisible();
+    expect(within(report).getByText("ScriptRuntime.java")).toBeVisible();
+    expect(within(report).queryByText("JobController.java")).not.toBeInTheDocument();
     expect(screen.getByText(/Untrusted HTTP input reaches a host-enabled GraalVM/)).toBeVisible();
     expect(screen.queryByText(/3\.23\.0/)).toBeNull();
   });

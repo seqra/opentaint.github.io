@@ -24,7 +24,7 @@ const securityReviewLines: TerminalLine[] = [
   { content: "    --project-model build/project-model \\", tone: "muted" },
   { content: "    --ruleset .opentaint/rules \\", tone: "muted" },
   { content: "    --passthrough-approximations \\", tone: "muted" },
-  { content: "      .opentaint/model/org.graalvm.polyglot.yaml \\", tone: "muted" },
+  { content: "      .opentaint/model \\", tone: "muted" },
   { content: "    -o results/report.sarif", tone: "muted" },
   { content: "" },
   { content: "╭─OpenTaint Scan─╮" },
@@ -162,10 +162,10 @@ function ConnectorGlyph({ glyph }: { glyph: string }) {
       {glyph === "└" && <span className="absolute left-1/2 top-0 h-1/2 border-l border-current" />}
       {(glyph === "├" || glyph === "└") && <span className="absolute left-1/2 right-0 top-1/2 border-t border-current" />}
       {glyph === "─" && <span className="absolute inset-x-0 top-1/2 border-t border-current" />}
-      {glyph === "╭" && <><span className="absolute bottom-0 left-1/2 h-1/2 border-l border-current" /><span className="absolute left-1/2 right-0 top-1/2 border-t border-current" /></>}
-      {glyph === "╮" && <><span className="absolute bottom-0 right-1/2 h-1/2 border-r border-current" /><span className="absolute left-0 right-1/2 top-1/2 border-t border-current" /></>}
-      {glyph === "╰" && <><span className="absolute left-1/2 top-0 h-1/2 border-l border-current" /><span className="absolute left-1/2 right-0 top-1/2 border-t border-current" /></>}
-      {glyph === "╯" && <><span className="absolute right-1/2 top-0 h-1/2 border-r border-current" /><span className="absolute left-0 right-1/2 top-1/2 border-t border-current" /></>}
+      {glyph === "╭" && <span className="absolute bottom-0 left-1/2 right-0 top-1/2 rounded-tl border-l border-t border-current" />}
+      {glyph === "╮" && <span className="absolute bottom-0 left-0 right-1/2 top-1/2 rounded-tr border-r border-t border-current" />}
+      {glyph === "╰" && <span className="absolute bottom-1/2 left-1/2 right-0 top-0 rounded-bl border-b border-l border-current" />}
+      {glyph === "╯" && <span className="absolute bottom-1/2 left-0 right-1/2 top-0 rounded-br border-b border-r border-current" />}
       {glyph === "┬" && <><span className="absolute inset-x-0 top-1/2 border-t border-current" /><span className="absolute bottom-0 left-1/2 h-1/2 border-l border-current" /></>}
     </span>
   );

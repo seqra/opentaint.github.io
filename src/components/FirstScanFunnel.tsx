@@ -87,7 +87,7 @@ export function FirstScanFunnel() {
   };
 
   return (
-    <section className="band quickstart-section" aria-labelledby="quickstart-heading">
+    <section id="install" className="band quickstart-section" aria-labelledby="quickstart-heading">
       <div className="mx-auto max-w-[82rem]">
         <div className="mx-auto text-center">
           <p className="section-eyebrow">Five-minute quickstart</p>

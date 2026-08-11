@@ -1,25 +1,56 @@
+import { createHeroFlowField } from "@/lib/heroFlowField";
+import { Download, Star } from "lucide-react";
+
 const heroPrefixes = ["Continuous", "Lean", "Agentic"];
+const heroFlowLines = createHeroFlowField();
 
 export function AnimatedHero() {
   return (
-    <div className="relative mx-auto max-w-[82rem] text-center">
-      <img src="/favicon.svg" alt="" className="mx-auto h-16 w-16 sm:h-20 sm:w-20" aria-hidden="true" />
+    <div className="hero-composition relative z-0 mx-auto flex w-full max-w-[82rem] flex-1 flex-col text-center">
+      <div className="relative z-10">
+        <img src="/opentaint-header-light.svg" alt="OpenTaint" className="hero-wordmark mx-0 h-auto w-56 dark:hidden sm:w-64 lg:mx-auto lg:w-72" />
+        <img src="/opentaint-header-dark.svg" alt="" aria-hidden="true" className="hero-wordmark mx-0 hidden h-auto w-56 dark:block sm:w-64 lg:mx-auto lg:w-72" />
 
-      <h1 className="mx-auto mt-6 max-w-full font-mono text-[36px] font-semibold leading-[1.06] tracking-[-0.045em] text-foreground sm:text-[42px] md:text-[46px] lg:text-[48px] 2xl:text-[54px]">
-        <span className="sr-only">Continuous, lean, and agentic application security testing</span>
-        <span aria-hidden="true" className="xl:flex xl:items-start xl:justify-center xl:gap-3">
-          <span className="hero-prefix-slot relative block h-[1.06em] xl:w-[10ch] xl:shrink-0">
-            {heroPrefixes.map((prefix) => (
-              <span key={prefix} className="hero-prefix-word absolute inset-x-0 top-0 text-center text-primary xl:text-right">
-                {prefix}
-              </span>
-            ))}
+        <h1 className="mx-0 mt-12 max-w-full text-left font-mono text-[28px] font-semibold leading-none tracking-[-0.04em] text-foreground min-[420px]:text-[32px] sm:text-[38px] md:text-[42px] lg:mx-auto lg:text-center lg:text-[40px] xl:text-[48px] 2xl:text-[52px]">
+          <span className="sr-only">Continuous, lean, and agentic application security testing</span>
+          <span aria-hidden="true" className="hero-title-lockup">
+            <span className="hero-prefix-slot relative block h-[1em] w-[10ch] shrink-0">
+              {heroPrefixes.map((prefix) => (
+                <span key={prefix} className="hero-prefix-word absolute inset-0 text-left text-primary lg:text-right">
+                  {prefix}
+                </span>
+              ))}
+            </span>
+            <span className="hero-title-column">
+              <span>Application</span>
+              <span>Security</span>
+              <span>Testing</span>
+            </span>
           </span>
-          <span className="block xl:shrink-0 xl:whitespace-nowrap xl:text-left">Application Security Testing</span>
-        </span>
-      </h1>
+        </h1>
 
-      <p className="section-banner mx-auto mt-6">The open source taint analysis engine for the AI era</p>
+        <p className="section-banner hero-subline mx-0 mt-12 text-left lg:mx-auto lg:text-center">The open source taint analysis engine for the AI era</p>
+
+        <div className="mt-6 flex items-center justify-start gap-3 lg:justify-center">
+          <a href="#install" className="cta-pill hero-cta">
+            <Download aria-hidden="true" className="h-4 w-4" />
+            Install
+          </a>
+          <a href="https://github.com/seqra/opentaint" target="_blank" rel="noopener noreferrer" className="cta-pill cta-pill-secondary hero-cta">
+            <Star aria-hidden="true" className="h-4 w-4" />
+            Star
+          </a>
+        </div>
+      </div>
+
+      <svg className="hero-signal-field" viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g className="hero-signal-graph">
+          {heroFlowLines.map((line, index) => <path key={`flow-${index}`} d={line.d} />)}
+          {heroFlowLines.map((line, index) => line.active
+            ? <path key={`signal-${index}`} className={`hero-signal-active hero-signal-active-${index % 3}`} d={line.d} />
+            : null)}
+        </g>
+      </svg>
     </div>
   );
 }

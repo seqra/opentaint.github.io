@@ -221,6 +221,13 @@
     @apply text-[11px] tracking-[0.16em];
   }
 
+  .hero-subline {
+    max-width: 48rem;
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+    letter-spacing: 0.08em;
+  }
+
   .section-header > .section-heading:not(:first-child) {
     @apply mt-6;
   }
@@ -375,9 +382,85 @@
      the visual conclusion of the promise above it, so it shares the hero band
      and does not start behind another section rule. */
   .hero-band {
-    padding-top: var(--spacing-11);
+    min-height: calc(100svh - var(--spacing-12) - var(--spacing-05));
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-top: 0;
     padding-bottom: 0;
   }
+
+  .hero-composition {
+    justify-content: center;
+  }
+
+  .hero-title-lockup {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hero-title-column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1;
+    text-align: left;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-title-lockup {
+      flex-direction: row;
+      align-items: center;
+      column-gap: 0.36em;
+    }
+
+    .hero-title-column {
+      flex-direction: row;
+      align-items: center;
+      column-gap: 0.36em;
+      text-align: left;
+    }
+  }
+
+  .hero-signal-field {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+    width: 100vw;
+    height: 100%;
+    transform: translateX(-50%);
+    color: hsl(var(--brand));
+    opacity: 0.26;
+    pointer-events: none;
+    mask-image: linear-gradient(to bottom, black, black 94%, transparent);
+  }
+
+  .dark .hero-signal-field {
+    opacity: 0.4;
+  }
+
+  .hero-signal-graph path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    opacity: 0.34;
+  }
+
+  .hero-signal-graph .hero-signal-active {
+    stroke-width: 3.5;
+    stroke-dasharray: 12 52;
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+
+  .hero-signal-active-1 { animation-delay: -2.5s; }
+  .hero-signal-active-2 { animation-delay: -5s; }
 
   .quickstart-section {
     padding-top: var(--spacing-10);
@@ -389,7 +472,7 @@
 
   .demo-section {
     background-color: hsl(var(--band));
-    padding-top: var(--spacing-10);
+    padding-top: 0;
     padding-bottom: var(--spacing-10);
   }
 
@@ -399,7 +482,7 @@
 
   @media (min-width: 640px) {
     .hero-band {
-      padding-top: var(--spacing-12);
+      padding-top: 0;
     }
 
     .quickstart-section {
@@ -407,14 +490,20 @@
     }
 
     .demo-section {
-      padding-top: var(--spacing-11);
+      padding-top: 0;
       padding-bottom: var(--spacing-11);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .hero-band {
+      min-height: calc(50svh + var(--spacing-13) + var(--spacing-12) + var(--spacing-09));
     }
   }
 
   @media (min-width: 1024px) {
     .hero-band {
-      padding-top: var(--spacing-13);
+      padding-top: 0;
     }
 
     .quickstart-section {
@@ -422,13 +511,13 @@
     }
 
     .demo-section {
-      padding-top: var(--spacing-12);
+      padding-top: 0;
       padding-bottom: var(--spacing-12);
     }
   }
 
   .agent-ui {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: var(--font-mono);
   }
 
   .agent-ui h1,
@@ -751,9 +840,48 @@
     background-color: hsl(var(--foreground) / 0.85);
   }
 
+  .cta-pill-secondary {
+    border: 1px solid hsl(var(--border-strong));
+    background-color: hsl(var(--background) / 0.8);
+    color: hsl(var(--foreground));
+    backdrop-filter: blur(8px);
+  }
+
+  .cta-pill-secondary:hover {
+    border-color: hsl(var(--foreground));
+    background-color: hsl(var(--card));
+  }
+
+  .hero-cta {
+    height: 2.5rem;
+    gap: 0.5rem;
+    border-radius: 0.5rem;
+    padding-inline: 1rem;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+
+  .hero-cta.cta-pill-secondary {
+    border-color: hsl(var(--brand) / 0.38);
+    background-color: hsl(var(--brand) / 0.08);
+    color: hsl(var(--brand));
+  }
+
+  .hero-cta.cta-pill-secondary:hover {
+    border-color: hsl(var(--brand) / 0.58);
+    background-color: hsl(var(--brand) / 0.14);
+  }
+
   @media (min-width: 1024px) {
     .cta-pill {
       font-size: 14px;
+    }
+
+    .hero-cta {
+      font-size: 0.9375rem;
     }
   }
 }
@@ -819,6 +947,10 @@
     animation-delay: -2.2s;
   }
 
+  .hero-signal-active {
+    animation: hero-signal-flow 6.4s linear infinite;
+  }
+
   .demo-slide-in-next {
     animation: demo-in-next 0.34s cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -839,6 +971,10 @@
   .hero-prefix-word:not(:first-child) {
     display: none;
   }
+
+  .hero-signal-active {
+    animation: none;
+  }
 }
 
 @keyframes hero-prefix-cycle {
@@ -846,6 +982,12 @@
   33%, 95% { opacity: 0; transform: translate3d(0, -0.2em, 0); }
   95.01% { opacity: 0; transform: translate3d(0, 0.2em, 0); }
   100% { opacity: 1; transform: none; }
+}
+
+@keyframes hero-signal-flow {
+  /* One exact dash-pattern period makes the restart visually identical to the
+     final frame, so the current never jumps as the animation cycles. */
+  to { stroke-dashoffset: -64; }
 }
 
 @keyframes demo-in-next {

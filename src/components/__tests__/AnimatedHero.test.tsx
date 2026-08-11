@@ -7,11 +7,15 @@ describe("AnimatedHero", () => {
     render(<AnimatedHero />);
     expect(screen.getByRole("heading", { level: 1, name: "Continuous, lean, and agentic application security testing" })).toBeVisible();
     expect(screen.getByText("The open source taint analysis engine for the AI era")).toHaveClass("section-banner");
-    expect(document.querySelector('img[src="/favicon.svg"]')).not.toBeNull();
+    expect(document.querySelector('img[src="/opentaint-header-light.svg"]')).toHaveAttribute("alt", "OpenTaint");
     expect(screen.getByText("Continuous", { selector: "span" })).toHaveClass("text-primary");
     expect(screen.getByText("Lean", { selector: "span" })).toHaveClass("hero-prefix-word");
     expect(screen.getByText("Agentic", { selector: "span" })).toHaveClass("hero-prefix-word");
     expect(document.querySelector(".hero-prefix-slot")?.children).toHaveLength(3);
+    expect(document.querySelector(".hero-title-column")?.textContent).toBe("ApplicationSecurityTesting");
+    expect(document.querySelector(".hero-signal-field")).toHaveAttribute("aria-hidden", "true");
+    expect(screen.getByRole("link", { name: "Install" })).toHaveAttribute("href", "#install");
+    expect(screen.getByRole("link", { name: "Star" })).toHaveAttribute("href", "https://github.com/seqra/opentaint");
   });
 
   it("uses no hard-coded hex colors in class names", () => {
@@ -24,7 +28,11 @@ describe("AnimatedHero", () => {
   it("renders the headline without a cursor", () => {
     const { container } = render(<AnimatedHero />);
     expect(container.querySelector("h1 .crt-cursor")).toBeNull();
-    expect(container.querySelector("h1")?.textContent).toContain("Application Security Testing");
+    expect(Array.from(container.querySelectorAll(".hero-title-column > span")).map((word) => word.textContent)).toEqual([
+      "Application",
+      "Security",
+      "Testing",
+    ]);
   });
 
   it("renders the headline without glow effects", () => {

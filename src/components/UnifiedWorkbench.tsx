@@ -717,7 +717,7 @@ export function UnifiedWorkbench() {
               <AgentStage id="scan" setRef={(node) => { stageRefs.current[2] = node; }}>
                 <AgentText>I’ll run OpenTaint with the new rule and dependency model across the project.</AgentText>
                 <ToolActivity title="Ran OpenTaint" meta="3.8s" icon="terminal" defaultOpen>
-                  <CommandCard><span className="text-[#2d8a4e] dark:text-[#8fc99f]">$</span> opentaint scan \{"\n"}    --project-model build/project-model \{"\n"}    --ruleset .opentaint/rules \{"\n"}    --passthrough-approximations \{"\n"}      .opentaint/model/org.graalvm.polyglot.yaml \{"\n"}    -o results/report.sarif</CommandCard>
+                  <CommandCard><span className="text-[#2d8a4e] dark:text-[#8fc99f]">$</span> opentaint scan \{"\n"}    --project-model build/project-model \{"\n"}    --ruleset .opentaint/rules \{"\n"}    --passthrough-approximations \{"\n"}      .opentaint/model \{"\n"}    -o results/report.sarif</CommandCard>
                 </ToolActivity>
                 <AgentText>The scan found one CWE-94 path. I’ll ask OpenTaint for the finding and its full interprocedural flow.</AgentText>
               </AgentStage>

@@ -40,6 +40,8 @@ describe("TerminalDemo", () => {
 
     const terminal = screen.getByTestId("demo-hero-player");
     expect(terminal).toHaveTextContent(/\$ opentaint scan/);
+    expect(terminal).toHaveTextContent(/\.opentaint\/model/);
+    expect(terminal).not.toHaveTextContent(/\.opentaint\/model\/org\.graalvm\.polyglot\.yaml/);
     expect(terminal).toHaveTextContent(/graaljs-code-injection:\s*1 error\s*\[CWE-94\]/);
     expect(terminal).toHaveTextContent(/Report:\s*results\/report\.sarif/);
   });

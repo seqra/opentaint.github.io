@@ -341,13 +341,15 @@
      content column; page-sections sit flush. Only the hero band (first child)
      stays un-separated. */
   .band:not(:first-child),
+  .quickstart-section,
   .page-section:not(:first-child),
   .footer-links {
     --rule-inset: 0px;
     --dot: 7px;
   }
 
-  .band:not(:first-child) {
+  .band:not(:first-child),
+  .quickstart-section {
     --rule-inset: max(var(--page-pad), calc((100% - var(--content-max)) / 2));
   }
 
@@ -357,6 +359,7 @@
      circles on the same element, so they stay locked to the ends of the rule at
      every width. */
   .band:not(:first-child)::before,
+  .quickstart-section::before,
   .page-section:not(:first-child)::before,
   .footer-links::before {
     content: "";

@@ -133,7 +133,7 @@ export function FirstScanFunnel() {
           </div>
 
           <div className="grid gap-3 md:grid-cols-[16rem_minmax(0,1fr)] md:items-center md:gap-4">
-            <StageLabel number="03">Prompt your agent to write custom rules and models, then run an OpenTaint scan with them.</StageLabel>
+            <StageLabel number="03">Prompt your agent to write custom rules and models, then run an OpenTaint scan with them</StageLabel>
             <div className="min-w-0 overflow-hidden rounded-xl border border-panel-border bg-panel">
               <CommandLine id="first security-review prompt" value={firstPrompt} prompt copiedId={copiedId} onCopy={copy} />
             </div>

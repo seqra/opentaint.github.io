@@ -9,14 +9,15 @@ test.describe("landing message", () => {
       name: "Continuous, lean, and agentic application security testing",
       level: 1,
     })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Run your first agentic application security test in 5 minutes" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Five-minute quickstart" })).toBeVisible();
+    await expect(page.getByText("Run your first agentic application security test in 5 minutes", { exact: true })).toHaveCount(0);
     await expect(page.getByText("Run deep security scan and static triage with appsec-agent skill", { exact: true })).toBeVisible();
   });
 
   test("frames the product proof with the real Conductor review", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page.getByRole("heading", { name: "How OpenTaint Agent found CVE-2026-58138" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "How OpenTaint found CVE-2026-58138" })).toBeVisible();
     await expect(page.getByText("What works once must keep working")).toHaveCount(0);
     await expect(page.getByText("One review versus continuous use")).toHaveCount(0);
   });
@@ -25,8 +26,8 @@ test.describe("landing message", () => {
     await page.goto("/");
 
     await expect(page.getByRole("heading", { name: "Turn one security review into unlimited security scans", level: 2 })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Fast scans. Fewer false alarms. Fewer missed findings" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Open source, batteries included" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Fast scans. Fewer false alarms. Fewer missed findings" })).toHaveCount(0);
+    await expect(page.getByText("Open source, batteries included", { exact: true })).toBeVisible();
     await expect(page.getByText(/symbolic execution/i)).toHaveCount(0);
   });
 

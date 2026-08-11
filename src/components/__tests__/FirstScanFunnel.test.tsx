@@ -6,10 +6,12 @@ describe("FirstScanFunnel", () => {
   it("shows the complete five-minute path", () => {
     render(<FirstScanFunnel />);
 
-    expect(screen.getByRole("heading", { name: "Run your first agentic application security test in 5 minutes" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Five-minute quickstart" })).toBeVisible();
+    expect(screen.queryByText("Run your first agentic application security test in 5 minutes")).not.toBeInTheDocument();
     expect(screen.getByText("npm install -g @seqra/opentaint")).toBeVisible();
     expect(screen.getByText("npx skills add https://github.com/seqra/opentaint")).toBeVisible();
     expect(screen.getByText("Run deep security scan and static triage with appsec-agent skill")).toBeVisible();
+    expect(screen.getByText("Open source, batteries included")).toBeVisible();
   });
 
   it("changes the OpenTaint installation method independently", () => {

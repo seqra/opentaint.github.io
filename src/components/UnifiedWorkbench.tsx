@@ -18,12 +18,13 @@ const stages = [
   { id: "review", number: "01", label: "Review" },
   { id: "enact", number: "02", label: "Enact" },
   { id: "scan", number: "03", label: "Scan" },
-  { id: "report", number: "04", label: "Report" },
+  { id: "triage", number: "04", label: "Triage" },
+  { id: "report", number: "05", label: "Report" },
 ] as const;
 
 type StageId = (typeof stages)[number]["id"];
 
-const timeline = ["review", "enact", "scan", "summary", "report"] as const;
+const timeline = ["review", "enact", "scan", "summary", "triage", "report"] as const;
 type TimelineId = (typeof timeline)[number];
 
 function scrollOffset(container: HTMLElement, target: HTMLElement) {
@@ -124,6 +125,18 @@ function AgentStage({
   );
 }
 
+function SurfaceStory({ title, children, window }: { title: string; children: string; window: ReactNode }) {
+  return (
+    <div className="flex h-full min-h-0 flex-col bg-[#efeeeb] p-3 dark:bg-[#100908]">
+      <div className="mb-3 shrink-0 px-1">
+        <p className="font-mono text-[12px] font-semibold text-foreground">{title}</p>
+        <p className="mt-1 max-w-[58ch] text-[11px] leading-4 text-muted-foreground">{children}</p>
+      </div>
+      <div className="min-h-0 flex-1">{window}</div>
+    </div>
+  );
+}
+
 function ReviewReport({ progress }: { progress: number }) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -134,13 +147,22 @@ function ReviewReport({ progress }: { progress: number }) {
   }, [progress]);
 
   return (
-    <div className="flex h-full flex-col bg-[#faf9f7] dark:bg-[#120b0a]">
-      <div className="flex h-10 shrink-0 items-center gap-2 border-b border-border bg-[#f1f0ed] px-3 dark:bg-[#1b1110]">
-        <FileText className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={1.7} aria-hidden="true" />
-        <span className="font-mono text-[12px] text-foreground">security-review.md</span>
-        <span className="ml-auto flex items-center gap-2 text-[11px] text-[#4c835e] dark:text-[#7fbd92]"><Check className="h-4 w-4" /> Saved</span>
-      </div>
-      <div ref={scrollRef} data-testid="review-report-scroll" className="min-h-0 flex-1 overflow-hidden px-8 py-8 xl:px-10">
+    <SurfaceStory
+      title="Security review knowledge persists"
+      window={<div className="flex h-full flex-col overflow-hidden rounded-[10px] border border-border bg-[#faf9f7] shadow-sm dark:bg-[#120b0a]">
+        <div className="relative flex h-10 shrink-0 items-center border-b border-border bg-[#f1f0ed] px-3 dark:bg-[#1b1110]">
+          <div className="flex gap-2" aria-hidden="true">
+            <span className="h-2 w-2 rounded-full bg-[#ff5f57]" />
+            <span className="h-2 w-2 rounded-full bg-[#febc2e]" />
+            <span className="h-2 w-2 rounded-full bg-[#28c840]" />
+          </div>
+          <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-md border border-border bg-background/80 px-4 py-1">
+            <FileText className="h-3 w-3 text-muted-foreground" strokeWidth={1.7} aria-hidden="true" />
+            <span className="whitespace-nowrap font-mono text-[10px] text-foreground">security-review.md</span>
+          </div>
+          <span className="ml-auto hidden items-center gap-2 text-[10px] text-[#4c835e] dark:text-[#7fbd92] xl:flex"><Check className="h-3.5 w-3.5" /> Saved</span>
+        </div>
+        <div ref={scrollRef} data-testid="review-report-scroll" className="min-h-0 flex-1 overflow-hidden px-8 py-8 xl:px-10">
         <article className="mx-auto max-w-[38rem] text-[13px] leading-6 text-[#443c38] dark:text-[#ded6d2]">
           <h3 className="text-[22px] font-semibold leading-8 tracking-[-0.025em] text-foreground">Unauthenticated script execution</h3>
           <div className="mt-4 flex flex-wrap gap-2">
@@ -155,7 +177,7 @@ function ReviewReport({ progress }: { progress: number }) {
           <h4 className="mt-8 border-b border-border pb-2 text-[14px] font-semibold text-foreground">Evidence</h4>
           <div className="mt-3 overflow-hidden rounded-md border border-border bg-[#f9f7f5] font-mono dark:bg-[#140505]">
             <div className="border-b border-border px-3 py-2 text-[11px] text-muted-foreground">src/main/java/demo/app/execution/ScriptRuntime.java</div>
-            <pre className="overflow-x-auto px-3 py-2 text-[11px] leading-5 text-[#44342c] dark:text-[#f0dcdc] scrollbar-thin"><code><span className="text-[#b3a396]">8</span>   try (Context context = createContext()) {'{'}{"\n"}<span className="bg-primary/15 text-primary"><span className="text-primary">9</span>       context.eval(<span className="text-primary">&quot;js&quot;</span>, script);</span>{"\n"}<span className="text-[#b3a396]">10</span>  {'}'}</code></pre>
+            <pre className="overflow-x-auto px-3 py-2 text-[11px] leading-5 text-[#44342c] dark:text-[#f0dcdc] scrollbar-thin"><code><span className="text-[#b3a396]">8</span>   try (Context context = Context.newBuilder(<span className="text-primary">&quot;js&quot;</span>){"\n"}<span className="text-[#b3a396]">9</span>       .allowHostAccess(HostAccess.ALL){"\n"}<span className="text-[#b3a396]">10</span>      .build()) {'{'}{"\n"}<span className="bg-primary/15 text-primary"><span className="text-primary">11</span>      context.eval(<span className="text-primary">&quot;js&quot;</span>, script);</span>{"\n"}<span className="text-[#b3a396]">12</span>  {'}'}</code></pre>
           </div>
 
           <h4 className="mt-8 border-b border-border pb-2 text-[14px] font-semibold text-foreground">Trust boundary</h4>
@@ -165,8 +187,11 @@ function ReviewReport({ progress }: { progress: number }) {
           <p className="mt-3">An unauthenticated attacker can evaluate arbitrary JavaScript with access to host classes exposed by the embedded runtime.</p>
 
         </article>
-      </div>
-    </div>
+        </div>
+      </div>}
+    >
+      Trust boundaries and application attack surfaces survive beyond one agent run.
+    </SurfaceStory>
   );
 }
 
@@ -289,38 +314,53 @@ function Specifications({ progress }: { progress: number }) {
   }, [activeArtifact]);
 
   return (
-    <div ref={scrollRef} data-testid="artifact-scroll" className="h-full overflow-hidden bg-[#efeeeb] p-4 dark:bg-[#100908] sm:p-6">
-      <div className="mx-auto max-w-[40rem] space-y-4">
-        {artifacts.map((artifact, index) => (
-          <div key={artifact.path}>
-            <Artifact
-              {...artifact}
-              open={index === openArtifact}
-              onToggle={() => setOpenState({
-                stage: activeArtifact,
-                artifact: openArtifact === index ? -1 : index,
-              })}
-            />
-          </div>
-        ))}
-      </div>
-    </div>
+    <SurfaceStory
+      title="Formal security specifications"
+      window={<div ref={scrollRef} data-testid="artifact-scroll" className="h-full overflow-hidden rounded-[10px] border border-border bg-[#f4f2ef] p-3 shadow-sm dark:bg-[#140b0a]">
+        <div className="mx-auto max-w-[40rem] space-y-4">
+          {artifacts.map((artifact, index) => (
+            <div key={artifact.path}>
+              <Artifact
+                {...artifact}
+                open={index === openArtifact}
+                onToggle={() => setOpenState({
+                  stage: activeArtifact,
+                  artifact: openArtifact === index ? -1 : index,
+                })}
+              />
+            </div>
+          ))}
+        </div>
+      </div>}
+    >
+      AST-pattern taint rules define security behavior; dependency models make opaque libraries analyzable.
+    </SurfaceStory>
   );
 }
 
 function CliRun({ progress }: { progress: number }) {
   return (
-    <div className="h-full bg-background">
-      <TerminalDemo scenario="security-review" progress={progress} ariaLabel="Real OpenTaint scan output for the anonymous security review project" />
-    </div>
+    <SurfaceStory
+      title="Fast scans"
+      window={<div className="h-full overflow-hidden rounded-[10px] border border-border shadow-sm">
+        <TerminalDemo scenario="security-review" progress={progress} ariaLabel="Real OpenTaint scan output for the anonymous security review project" />
+      </div>}
+    >
+      Formal taint analysis searches the project without repeating model inference.
+    </SurfaceStory>
   );
 }
 
 function CliSummary({ progress }: { progress: number }) {
   return (
-    <div className="h-full bg-background">
-      <TerminalDemo scenario="security-summary" progress={progress} ariaLabel="Real OpenTaint summary output for the anonymous security review project" />
-    </div>
+    <SurfaceStory
+      title="Fast scans"
+      window={<div className="h-full overflow-hidden rounded-[10px] border border-border shadow-sm">
+        <TerminalDemo scenario="security-summary" progress={progress} ariaLabel="Real OpenTaint summary output for the anonymous security review project" />
+      </div>}
+    >
+      One deterministic run returns the finding, endpoints, and code flow.
+    </SurfaceStory>
   );
 }
 
@@ -392,16 +432,11 @@ import org.graalvm.polyglot.HostAccess;
 
 public final class ScriptRuntime {
     public void execute(String script) {
-        try (Context context = createContext()) {
+        try (Context context = Context.newBuilder("js")
+                .allowHostAccess(HostAccess.ALL)
+                .build()) {
             context.eval("js", script);
         }
-    }
-
-    private Context createContext() {
-        return Context.newBuilder("js")
-                .allowHostAccess(HostAccess.ALL)
-                .option("engine.WarnInterpreterOnly", "false")
-                .build();
     }
 }`,
 };
@@ -416,7 +451,7 @@ export const flowSteps = [
   { file: "ExpressionEvaluator.java", line: 10, message: 'Entering "evaluate" with $UNTRUSTED data at the 1st argument of "evaluate"' },
   { file: "ExpressionEvaluator.java", line: 11, message: 'Calling "execute" with $UNTRUSTED data at the 1st argument of "evaluate"' },
   { file: "ScriptRuntime.java", line: 7, message: 'Entering "execute" with $UNTRUSTED data at the 1st argument of "execute"' },
-  { file: "ScriptRuntime.java", line: 9, message: "Untrusted HTTP input reaches a host-enabled GraalVM Context.eval call, allowing attacker-controlled script execution." },
+  { file: "ScriptRuntime.java", line: 11, message: "Untrusted HTTP input reaches a host-enabled GraalVM Context.eval call." },
 ] as const;
 
 function JavaLine({ line }: { line: string }) {
@@ -426,6 +461,68 @@ function JavaLine({ line }: { line: string }) {
     if (/^(?:package|import|public|private|final|return|new|try|record|class|void|static)$/.test(token)) return <span key={index} className="text-[#b91c1c] dark:text-[#ff6b6b]">{token}</span>;
     return <span key={index}>{token}</span>;
   })}</>;
+}
+
+const triageRule = `patterns:
+  - pattern: (Context $CONTEXT).eval(..., $UNTRUSTED)
+  - focus-metavariable: $UNTRUSTED
+  - pattern-inside: |
+      Context $CONTEXT = Context.newBuilder(...)
+        .allowHostAccess(HostAccess.ALL)
+        .build();
+      ...`;
+
+function TriageView({ progress }: { progress: number }) {
+  const phase = progress < 0.34 ? "candidates" : progress < 0.72 ? "refine" : "rescan";
+
+  return (
+    <SurfaceStory
+      title="Fewer false alarms"
+      window={<div data-testid="triage-view" className="flex h-full flex-col overflow-hidden rounded-[10px] border border-border bg-[#faf9f7] shadow-sm dark:bg-[#120b0a]">
+        <div className="flex h-10 shrink-0 items-center border-b border-border bg-[#f1f0ed] px-3 font-mono text-[10px] dark:bg-[#1b1110]">
+          <span className="text-muted-foreground">graal-eval.yaml</span>
+          <span className="ml-auto text-foreground">{phase === "rescan" ? "1 finding, 0 false positives" : "2 candidates"}</span>
+        </div>
+
+        <div className="min-h-0 flex-1 overflow-hidden p-4">
+          {phase === "candidates" && (
+            <div className="space-y-3">
+              <article className="rounded-lg border border-primary/40 bg-primary/[0.04] p-4">
+                <div className="flex items-center justify-between gap-4"><p className="font-mono text-[11px] font-semibold text-foreground">ScriptRuntime.java:11</p><span className="rounded bg-primary px-2 py-1 font-mono text-[9px] font-semibold text-white">CONFIRMED</span></div>
+                <p className="mt-2 text-[12px] leading-5 text-muted-foreground">Untrusted script reaches a context configured with <code className="font-mono text-foreground">HostAccess.ALL</code>.</p>
+              </article>
+              <article className="rounded-lg border border-border bg-background p-4">
+                <div className="flex items-center justify-between gap-4"><p className="font-mono text-[11px] font-semibold text-foreground">PreviewRenderer.java:11</p><span className="rounded border border-border px-2 py-1 font-mono text-[9px] font-semibold text-muted-foreground">FALSE POSITIVE</span></div>
+                <p className="mt-2 text-[12px] leading-5 text-muted-foreground">The same API is called inside a restricted context with host access disabled.</p>
+              </article>
+            </div>
+          )}
+
+          {phase === "refine" && (
+            <div className="h-full overflow-hidden rounded-lg border border-border bg-[#f8f7f5] dark:bg-[#100d0c]">
+              <div className="border-b border-border px-3 py-2 font-mono text-[10px] text-muted-foreground">Narrow the sink to the dangerous context</div>
+              <pre className="overflow-hidden px-3 py-3 font-mono text-[10px] leading-4 text-[#44342c] dark:text-[#f0dcdc]"><code>{triageRule.split("\n").map((line, index) => <span key={line + index} className={line.includes("pattern-inside") || line.includes("HostAccess.ALL") ? "block bg-[#2d8a4e]/10 text-[#237b45] dark:text-[#72c98e]" : "block"}>{line || " "}</span>)}</code></pre>
+            </div>
+          )}
+
+          {phase === "rescan" && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="rounded-lg border border-border bg-background p-4"><p className="font-mono text-[22px] font-semibold text-primary">1</p><p className="mt-1 text-[11px] text-muted-foreground">confirmed finding</p></div>
+                <div className="rounded-lg border border-border bg-background p-4"><p className="font-mono text-[22px] font-semibold text-[#237b45] dark:text-[#72c98e]">0</p><p className="mt-1 text-[11px] text-muted-foreground">false positives</p></div>
+              </div>
+              <article className="rounded-lg border border-primary/40 bg-primary/[0.04] p-4">
+                <p className="font-mono text-[11px] font-semibold text-foreground">ScriptRuntime.java:11</p>
+                <p className="mt-2 text-[12px] leading-5 text-muted-foreground">The refined rule keeps the host-enabled execution path and excludes the restricted preview context.</p>
+              </article>
+            </div>
+          )}
+        </div>
+      </div>}
+    >
+      Application context narrows a broad API match into the security condition that matters.
+    </SurfaceStory>
+  );
 }
 
 function FindingReport({ progress }: { progress: number }) {
@@ -445,7 +542,9 @@ function FindingReport({ progress }: { progress: number }) {
   }, [progress]);
 
   return (
-    <div data-testid="simplified-report-view" className="flex h-full flex-col bg-[#f9f7f5] font-mono text-[#44342c] dark:bg-[#140505] dark:text-[#f0dcdc]">
+    <SurfaceStory
+      title="Fewer missed findings"
+      window={<div data-testid="simplified-report-view" className="flex h-full flex-col overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] font-mono text-[#44342c] shadow-sm dark:bg-[#140505] dark:text-[#f0dcdc]">
       <div className="flex h-10 shrink-0 items-center border-b border-[#ded7d1] bg-[#f0eeeb] text-[11px] dark:border-[#4b1d1d] dark:bg-[#1d0d0c]">
         <div className="flex min-w-0 flex-1 items-center gap-2 px-3">
           <FileCode2 className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={1.7} aria-hidden="true" />
@@ -494,7 +593,10 @@ function FindingReport({ progress }: { progress: number }) {
           })}
         </div>
       </div>
-    </div>
+      </div>}
+    >
+      The report preserves the complete interprocedural path, one exact step at a time.
+    </SurfaceStory>
   );
 }
 
@@ -503,6 +605,7 @@ function WorkSurface({ stage, progress }: { stage: TimelineId; progress: number 
   if (stage === "enact") return <Specifications progress={progress} />;
   if (stage === "scan") return <CliRun progress={progress} />;
   if (stage === "summary") return <CliSummary progress={progress} />;
+  if (stage === "triage") return <TriageView progress={progress} />;
   return <FindingReport progress={progress} />;
 }
 
@@ -521,7 +624,7 @@ export function UnifiedWorkbench() {
     : stages.findIndex((stage) => stage.id === timelineStage);
 
   const selectStage = (index: number) => {
-    const targetTimelineIndex = index === 3 ? 4 : index;
+    const targetTimelineIndex = index >= 3 ? index + 1 : index;
     navigationTargetRef.current = targetTimelineIndex;
     setTimelineIndex(targetTimelineIndex);
     setTimelineProgress(0);
@@ -600,7 +703,7 @@ export function UnifiedWorkbench() {
   }, []);
 
   return (
-    <div ref={scrollTrackRef} data-testid="demo-scroll-track" className="relative h-[520vh]">
+    <div ref={scrollTrackRef} data-testid="demo-scroll-track" className="relative h-[620vh]">
       <div ref={stickyRef} className="sticky top-16 flex h-[calc(100vh-4rem)] items-center">
         <div data-testid="unified-workbench" className="agent-ui mx-auto w-full max-w-[82rem] overflow-hidden rounded-[20px] border border-black/10 bg-white p-2 shadow-[0_28px_90px_rgba(37,25,20,0.18)] dark:border-white/10 dark:bg-[#211a17]">
       <div className="overflow-hidden rounded-[13px] border border-border bg-background">
@@ -645,7 +748,7 @@ export function UnifiedWorkbench() {
               <AgentStage id="review" setRef={(node) => { stageRefs.current[0] = node; }}>
                 <UserPrompt>Review this application for unauthenticated code execution and write a security review report.</UserPrompt>
                 <AgentText>I’ll map the unauthenticated HTTP surface, then trace request-controlled values into script and command execution APIs.</AgentText>
-                <ToolActivity title="Explored the application" activity={["Read JobController.java", "Read JobService.java", "Read ScriptDispatcher.java", "Read ExpressionEvaluator.java", "Read ScriptRuntime.java", "Searched @PostMapping", "Searched Context.eval"]} meta="5 files" defaultOpen />
+                <ToolActivity title="Explored the application" activity={["Read JobController.java", "Read PreviewController.java", "Read JobService.java", "Read ScriptDispatcher.java", "Read ExpressionEvaluator.java", "Read ScriptRuntime.java", "Read PreviewRenderer.java", "Searched @PostMapping", "Searched Context.eval"]} meta="7 files" defaultOpen />
                 <AgentText>The job endpoint passes its <code className="font-mono text-[12px] text-primary">script</code> parameter through the execution pipeline into a host-enabled GraalVM context.</AgentText>
                 <ToolActivity title="Created security-review.md" activity={["Wrote Summary", "Wrote Evidence", "Wrote Trust boundary", "Wrote Impact"]} added={38} removed={0} icon="check" defaultOpen />
                 <AgentText>I documented the finding with the affected endpoint and the complete path to <code className="font-mono text-[12px] text-primary">Context.eval</code>.</AgentText>
@@ -662,19 +765,27 @@ export function UnifiedWorkbench() {
               <AgentStage id="scan" setRef={(node) => { stageRefs.current[2] = node; }}>
                 <AgentText>I’ll run OpenTaint with the new rule and dependency model across the project.</AgentText>
                 <ToolActivity title="Ran OpenTaint" meta="3.8s" icon="terminal" defaultOpen>
-                  <CommandCard><span className="text-[#2d8a4e] dark:text-[#8fc99f]">$</span> opentaint scan \{"\n"}    --project-model build/project-model \{"\n"}    --ruleset .opentaint/rules \{"\n"}    --passthrough-approximations \{"\n"}      .opentaint/model \{"\n"}    -o results/report.sarif</CommandCard>
+                  <CommandCard><span className="text-[#2d8a4e] dark:text-[#8fc99f]">$</span> opentaint scan \{"\n"}    --project-model build/project-model \{"\n"}    --ruleset .opentaint/rules \{"\n"}    --passthrough-approximations .opentaint/model \{"\n"}    --output results/report.sarif \{"\n"}    --log-file opentaint.log</CommandCard>
                 </ToolActivity>
                 <AgentText>The scan found one CWE-94 path. I’ll ask OpenTaint for the finding and its full interprocedural flow.</AgentText>
               </AgentStage>
 
               <AgentStage id="summary" setRef={(node) => { stageRefs.current[3] = node; }}>
-                <ToolActivity title="Read OpenTaint summary" meta="10 steps" icon="terminal" defaultOpen>
-                  <CommandCard><span className="text-[#2d8a4e] dark:text-[#8fc99f]">$</span> opentaint summary results/report.sarif \{"\n"}    --show-findings --verbose-flow --show-code-snippets</CommandCard>
+                <ToolActivity title="Read OpenTaint summary" meta="1 finding" icon="terminal" defaultOpen>
+                  <CommandCard><span className="text-[#2d8a4e] dark:text-[#8fc99f]">$</span> opentaint summary results/report.sarif \{"\n"}    --show-findings --show-code-snippets</CommandCard>
                 </ToolActivity>
-                <AgentText>The summary confirms the endpoint, exact sink, and every propagation step in the 10-step flow.</AgentText>
+                <AgentText>The summary confirms the endpoint, source, and sink. I’ll open the report to inspect the complete 10-step flow.</AgentText>
               </AgentStage>
 
-              <AgentStage id="report" setRef={(node) => { stageRefs.current[4] = node; }}>
+              <AgentStage id="triage" setRef={(node) => { stageRefs.current[4] = node; }}>
+                <AgentText>The first rule reports two candidate paths. One uses full host access; the other evaluates inside a restricted preview context.</AgentText>
+                <ToolActivity title="Triaged 2 candidate findings" activity={["Confirmed ScriptRuntime.java:11", "Dismissed PreviewRenderer.java:11"]} meta="1 false positive" icon="check" defaultOpen />
+                <AgentText>I’ll narrow the sink to contexts built with <code className="font-mono text-[12px] text-primary">HostAccess.ALL</code>.</AgentText>
+                <ToolActivity title="Refined graal-eval.yaml" activity={["Added pattern-inside", "Correlated $CONTEXT", "Required HostAccess.ALL"]} added={6} removed={0} icon="file" defaultOpen />
+                <ToolActivity title="Rescanned with the refined rule" activity={["1 confirmed finding", "0 false positives"]} meta="Passed" icon="check" />
+              </AgentStage>
+
+              <AgentStage id="report" setRef={(node) => { stageRefs.current[5] = node; }}>
                 <AgentText>Review complete. OpenTaint reproduced the finding as a 10-step path from <code className="font-mono text-[12px]">POST /api/jobs</code> to <code className="font-mono text-[12px] text-primary">Context.eval</code>.</AgentText>
                 <ToolActivity title="Opened results/report.sarif" activity={["1 error", "1 affected file", "1 triggered rule"]} icon="file" defaultOpen />
                 <div className="mt-4 rounded-md border border-border bg-background px-4 py-3 text-[12px] leading-5">

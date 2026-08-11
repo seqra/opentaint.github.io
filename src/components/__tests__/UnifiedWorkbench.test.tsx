@@ -37,6 +37,11 @@ describe("UnifiedWorkbench", () => {
     fireEvent.click(screen.getByRole("button", { name: "Scan" }));
     expect(screen.getByTestId("demo-hero-player")).toBeVisible();
 
+    fireEvent.click(screen.getByRole("button", { name: "Triage" }));
+    expect(screen.getByText("Fewer false alarms")).toBeVisible();
+    expect(screen.getByText("2 candidates")).toBeVisible();
+    expect(screen.getByText("PreviewRenderer.java:11")).toBeVisible();
+
     fireEvent.click(screen.getByRole("button", { name: "Report" }));
     const report = screen.getByTestId("simplified-report-view");
     expect(report).toBeVisible();
@@ -58,6 +63,6 @@ describe("UnifiedWorkbench", () => {
 
     expect(screen.getAllByText("opentaint scan", { exact: false }).length).toBeGreaterThan(0);
     expect(screen.getByText(/opentaint summary results\/report\.sarif/)).toBeInTheDocument();
-    expect(screen.getByText(/--show-findings --verbose-flow --show-code-snippets/)).toBeInTheDocument();
+    expect(screen.getByText(/--show-findings --show-code-snippets/)).toBeInTheDocument();
   });
 });

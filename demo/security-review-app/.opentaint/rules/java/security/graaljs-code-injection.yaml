@@ -1,9 +1,7 @@
 rules:
   - id: graaljs-code-injection
     severity: ERROR
-    message: >-
-      Untrusted HTTP input reaches a host-enabled GraalVM Context.eval call,
-      allowing attacker-controlled script execution.
+    message: Untrusted HTTP input reaches a host-enabled GraalVM Context.eval call.
     metadata:
       cwe: CWE-94
       short-description: Untrusted script execution

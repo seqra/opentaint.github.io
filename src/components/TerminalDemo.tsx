@@ -1,7 +1,9 @@
 import { useEffect, useRef } from "react";
+import securityScanOutput from "../data/security-scan.txt?raw";
 import securitySummaryOutput from "../data/security-summary.txt?raw";
 
 type TerminalTone = "plain" | "muted" | "blue" | "green" | "red" | "purple";
+type TerminalDensity = "default" | "compact";
 
 type TerminalLine = {
   content: string;
@@ -24,75 +26,23 @@ const securityReviewLines: TerminalLine[] = [
   { content: "$ opentaint scan \\", weight: "strong" },
   { content: "    --project-model build/project-model \\", tone: "muted" },
   { content: "    --ruleset .opentaint/rules \\", tone: "muted" },
-  { content: "    --passthrough-approximations \\", tone: "muted" },
-  { content: "      .opentaint/model \\", tone: "muted" },
-  { content: "    -o results/report.sarif", tone: "muted" },
+  { content: "    --passthrough-approximations .opentaint/model \\", tone: "muted" },
+  { content: "    --output results/report.sarif \\", tone: "muted" },
+  { content: "    --log-file opentaint.log", tone: "muted" },
   { content: "" },
-  { content: "╭─OpenTaint Scan─╮" },
-  { content: "╰─┬──────────────╯" },
-  { content: "  ├─ Project model", tone: "blue" },
-  { content: "  │  └─ build/project-model" },
-  { content: "  ├─ Analyzer", tone: "blue" },
-  { content: "  │  └─ 2026.07.10.a20ded6" },
-  { content: "  └─ User ruleset", tone: "blue" },
-  { content: "     └─ .opentaint/rules" },
-  { content: "" },
-  { content: "✓ Analyzing project in 4s", segments: [
-    { content: "✓", tone: "green" },
-    { content: " Analyzing project in " },
-    { content: "4s", tone: "muted" },
-  ] },
-  { content: "" },
-  { content: "╭─Rule Statistics─╮" },
-  { content: "╰─┬───────────────╯" },
-  { content: "  └─ Rule parsing issues" },
-  { content: "     └─ No issues found" },
-  { content: "" },
-  { content: "╭─Scan Summary─╮" },
-  { content: "╰─┬────────────╯" },
-  { content: "  ├─ Findings" },
-  { content: "  │  ├─ Total: 1 error", segments: [
-    { content: "Total:", tone: "blue" },
-    { content: " " },
-    { content: "1 error", tone: "red", weight: "strong" },
-  ] },
-  { content: "  │  ├─ Files affected: 1", segments: [
-    { content: "Files affected:", tone: "blue" },
-    { content: " 1" },
-  ] },
-  { content: "  │  ├─ Rules executed: 1", segments: [
-    { content: "Rules executed:", tone: "blue" },
-    { content: " 1" },
-  ] },
-  { content: "  │  └─ Rules triggered: 1", segments: [
-    { content: "Rules triggered:", tone: "blue" },
-    { content: " 1" },
-  ] },
-  { content: "  │     └─ java.security.graaljs-code-injection: 1 error [CWE-94]", segments: [
-    { content: "java.security.graaljs-code-injection: " },
-    { content: "1 error", tone: "red", weight: "strong" },
-    { content: " [CWE-94]" },
-  ] },
-  { content: "  │        └─ Untrusted script execution" },
-  { content: "  └─ Output" },
-  { content: "     ├─ Report: results/report.sarif", segments: [
-    { content: "Report:", tone: "blue" },
-    { content: " results/report.sarif" },
-  ] },
-  { content: "     └─ Log: results/opentaint.log", segments: [
-    { content: "Log:", tone: "blue" },
-    { content: " results/opentaint.log" },
-  ] },
-  { content: "" },
-  { content: "╭─Suggestions─╮" },
-  { content: "╰─┬───────────╯" },
-  { content: "  └─ To view findings run", tone: "green", weight: "strong" },
-  { content: "     └─ opentaint summary results/report.sarif --show-findings", weight: "strong" },
+  ...securityScanOutput.trimEnd().split("\n").map((content): TerminalLine => {
+    if (/^╭─/.test(content)) return { content, tone: "purple", weight: "strong" };
+    if (/^✓/.test(content)) return { content, tone: "green", weight: "strong" };
+    if (/1 error|graaljs-code-injection/.test(content)) return { content, tone: "red", weight: "strong" };
+    if (/Project model|Analyzer|User ruleset|Findings|Output|Total:|Files affected:|Rules (?:executed|triggered):|Report:|Log:/.test(content)) return { content, tone: "blue" };
+    if (/To view findings run/.test(content)) return { content, tone: "green", weight: "strong" };
+    return { content };
+  }),
 ];
 
 const securitySummaryLines: TerminalLine[] = [
   { content: "$ opentaint summary results/report.sarif \\", weight: "strong" },
-  { content: "    --show-findings --verbose-flow --show-code-snippets", tone: "muted" },
+  { content: "    --show-findings --show-code-snippets", tone: "muted" },
   { content: "" },
   ...securitySummaryOutput.trimEnd().split("\n").map((content): TerminalLine => {
     if (/^╭─/.test(content)) return { content, tone: "purple", weight: "strong" };
@@ -134,11 +84,23 @@ const toneClass: Record<TerminalTone, string> = {
 };
 
 const faintClass = "text-[#928c88] dark:text-[#77716e]";
+const glyphHeight: Record<TerminalDensity, string> = {
+  default: "h-[18px]",
+  compact: "h-[15px]",
+};
+const headerHeight: Record<TerminalDensity, string> = {
+  default: "h-9",
+  compact: "h-[30px]",
+};
+const glyphLeading: Record<TerminalDensity, string> = {
+  default: "leading-[18px]",
+  compact: "leading-[15px]",
+};
 
-function ConnectorGlyph({ glyph }: { glyph: string }) {
-  if (glyph === " ") return <span className="relative h-[18px] w-[1ch] shrink-0" />;
+function ConnectorGlyph({ glyph, density }: { glyph: string; density: TerminalDensity }) {
+  if (glyph === " ") return <span className={`relative ${glyphHeight[density]} w-[1ch] shrink-0`} />;
   return (
-    <span className="relative h-[18px] w-[1ch] shrink-0" aria-hidden="true">
+    <span className={`relative ${glyphHeight[density]} w-[1ch] shrink-0`} aria-hidden="true">
       {(glyph === "│" || glyph === "├") && <span className="absolute inset-y-0 left-1/2 border-l border-current" />}
       {glyph === "└" && <span className="absolute left-1/2 top-0 h-1/2 border-l border-current" />}
       {(glyph === "├" || glyph === "└") && <span className="absolute left-1/2 right-0 top-1/2 border-t border-current" />}
@@ -152,17 +114,17 @@ function ConnectorGlyph({ glyph }: { glyph: string }) {
   );
 }
 
-function GlyphRun({ content }: { content: string }) {
+function GlyphRun({ content, density }: { content: string; density: TerminalDensity }) {
   return (
-    <span className="inline-flex h-[18px] shrink-0 align-top">
-      {Array.from(content).map((glyph, index) => <ConnectorGlyph key={`${glyph}-${index}`} glyph={glyph} />)}
+    <span className={`inline-flex ${glyphHeight[density]} shrink-0 align-top`}>
+      {Array.from(content).map((glyph, index) => <ConnectorGlyph key={`${glyph}-${index}`} glyph={glyph} density={density} />)}
     </span>
   );
 }
 
-function TerminalSegments({ line, fallback, wrap = false }: { line: TerminalLine; fallback: string; wrap?: boolean }) {
+function TerminalSegments({ line, fallback }: { line: TerminalLine; fallback: string }) {
   if (!line.segments) {
-    return <span className={`${wrap ? "min-w-0 whitespace-pre-wrap break-words" : ""} ${toneClass[line.tone ?? "plain"]} ${line.weight === "strong" ? "font-semibold" : "font-normal"}`}>{fallback || " "}</span>;
+    return <span className={`${toneClass[line.tone ?? "plain"]} ${line.weight === "strong" ? "font-semibold" : "font-normal"}`}>{fallback || " "}</span>;
   }
   return <>{line.segments.map((segment, index) => (
     <span
@@ -174,26 +136,26 @@ function TerminalSegments({ line, fallback, wrap = false }: { line: TerminalLine
   ))}</>;
 }
 
-function TerminalContent({ line, wrap = false }: { line: TerminalLine; wrap?: boolean }) {
+function TerminalContent({ line, density }: { line: TerminalLine; density: TerminalDensity }) {
   const tree = /^([ │├└─]+)(.*)$/.exec(line.content);
-  if (!tree || !/[│├└]/.test(tree[1])) return <TerminalSegments line={line} fallback={line.content} wrap={wrap} />;
+  if (!tree || !/[│├└]/.test(tree[1])) return <TerminalSegments line={line} fallback={line.content} />;
   return (
-    <span className={wrap ? "flex min-h-[18px] min-w-0 items-start" : "inline-flex h-[18px] items-start align-top"}>
-      <span className={faintClass}><GlyphRun content={tree[1]} /></span>
-      <TerminalSegments line={line} fallback={tree[2]} wrap={wrap} />
+    <span className={`inline-flex ${glyphHeight[density]} items-start align-top`}>
+      <span className={faintClass}><GlyphRun content={tree[1]} density={density} /></span>
+      <TerminalSegments line={line} fallback={tree[2]} />
     </span>
   );
 }
 
-function TerminalHeader({ title, bottom }: { title: string; bottom: string }) {
+function TerminalHeader({ title, bottom, density }: { title: string; bottom: string; density: TerminalDensity }) {
   return (
-    <span className="block h-9">
-      <span className={`flex h-[18px] ${faintClass}`}>
-        <GlyphRun content="╭─" />
-        <span className={`h-[18px] font-semibold leading-[18px] ${toneClass.purple}`}>{title}</span>
-        <GlyphRun content="─╮" />
+    <span className={`block ${headerHeight[density]}`}>
+      <span className={`flex ${glyphHeight[density]} ${faintClass}`}>
+        <GlyphRun content="╭─" density={density} />
+        <span className={`${glyphHeight[density]} font-semibold ${glyphLeading[density]} ${toneClass.purple}`}>{title}</span>
+        <GlyphRun content="─╮" density={density} />
       </span>
-      <span className={`flex h-[18px] ${faintClass}`}><GlyphRun content={bottom} /></span>
+      <span className={`flex ${glyphHeight[density]} ${faintClass}`}><GlyphRun content={bottom} density={density} /></span>
     </span>
   );
 }
@@ -204,7 +166,7 @@ export function TerminalDemo({
   progress = 0,
 }: TerminalDemoProps = {}) {
   const lines = linesFor(scenario);
-  const wrapsLongLines = scenario === "security-summary";
+  const density: TerminalDensity = scenario === "default" ? "default" : "compact";
   const outputRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -233,7 +195,7 @@ export function TerminalDemo({
       <div
         ref={outputRef}
         data-testid="terminal-output"
-        className={`min-h-0 min-w-0 w-full flex-1 overflow-hidden px-4 py-4 text-[12px] leading-[18px] sm:text-[13px] ${wrapsLongLines ? "whitespace-pre-wrap" : "whitespace-pre"}`}
+        className={`min-h-0 min-w-0 w-full flex-1 overflow-hidden whitespace-pre ${scenario === "default" ? "px-4 py-4 text-[12px] leading-[18px] sm:text-[13px]" : "px-3 py-2 text-[10px] leading-[15px]"}`}
         style={{
           fontFamily: '"SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace',
           fontVariantLigatures: "none",
@@ -249,12 +211,12 @@ export function TerminalDemo({
           if (frameBase) return null;
           if (frame) {
             return (
-              <TerminalHeader key={`${line.content}-${index}`} title={frame[1]} bottom={lines[index + 1]?.content ?? ""} />
+              <TerminalHeader key={`${line.content}-${index}`} title={frame[1]} bottom={lines[index + 1]?.content ?? ""} density={density} />
             );
           }
           return (
-            <span key={`${line.content}-${index}`} className={wrapsLongLines ? "block min-h-[18px]" : "block h-[18px]"}>
-              <TerminalContent line={line} wrap={wrapsLongLines} />
+            <span key={`${line.content}-${index}`} className={`block ${glyphHeight[density]}`}>
+              <TerminalContent line={line} density={density} />
             </span>
           );
         })}

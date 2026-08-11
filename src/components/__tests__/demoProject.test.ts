@@ -21,7 +21,7 @@ describe("security review demo project", () => {
   it("gives every source file enough context for the report viewer", () => {
     const files = javaFiles(javaRoot);
 
-    expect(files).toHaveLength(5);
+    expect(files).toHaveLength(7);
     for (const file of files) {
       const lineCount = readFileSync(file, "utf8").trimEnd().split("\n").length;
       expect(lineCount, file).toBeGreaterThanOrEqual(13);

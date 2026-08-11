@@ -1,0 +1,28 @@
+╭─OpenTaint Scan─╮
+╰─┬──────────────╯
+  ├─ Project model
+  │  └─ build/project-model
+  ├─ Analyzer
+  │  └─ 2026.07.10.a20ded6
+  └─ User ruleset
+     └─ .opentaint/rules
+
+✓ Analyzing project in 3s
+
+╭─Scan Summary─╮
+╰─┬────────────╯
+  ├─ Findings
+  │  ├─ Total: 1 error
+  │  ├─ Files affected: 1
+  │  ├─ Rules executed: 1
+  │  └─ Rules triggered: 1
+  │     └─ java.security.graaljs-code-injection: 1 error [CWE-94]
+  │        └─ Untrusted script execution
+  └─ Output
+     ├─ Report: results/report.sarif
+     └─ Log: opentaint.log
+
+╭─Suggestions─╮
+╰─┬───────────╯
+  └─ To view findings run
+     └─ opentaint summary results/report.sarif --show-findings

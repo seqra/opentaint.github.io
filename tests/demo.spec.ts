@@ -32,6 +32,10 @@ test.describe("landing product demonstration", () => {
     await workbench.getByRole("button", { name: "Scan", exact: true }).click();
     await expect(workbench.getByTestId("demo-hero-player")).toBeVisible();
 
+    await workbench.getByRole("button", { name: "Triage", exact: true }).click();
+    await expect(workbench.getByText("Fewer false alarms", { exact: true })).toBeVisible();
+    await expect(workbench.getByTestId("triage-view")).toContainText("2 candidates");
+
     await workbench.getByRole("button", { name: "Report", exact: true }).click();
     const report = workbench.getByTestId("simplified-report-view");
     await expect(report).toBeVisible();
@@ -63,16 +67,23 @@ test.describe("landing product demonstration", () => {
     await expect(artifacts.nth(1)).toHaveAttribute("aria-expanded", "false");
     await expect(workbench.getByTestId("artifact-code")).toContainText("(org.graalvm.polyglot.Context $CONTEXT).eval(..., $UNTRUSTED)");
 
-    await jump(0.27);
+    await jump(0.235);
     await expect(artifacts.nth(0)).toHaveAttribute("aria-expanded", "false");
     await expect(artifacts.nth(1)).toHaveAttribute("aria-expanded", "true");
     await expect(artifacts.nth(0)).toBeInViewport();
     await expect(artifacts.nth(1)).toBeInViewport();
 
-    await jump(0.58);
+    await jump(0.483);
     const terminalOutput = workbench.getByTestId("terminal-output");
     await expect.poll(() => terminalOutput.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
     await expect(workbench.getByText("To view findings run", { exact: true })).toBeInViewport();
+
+    await jump(0.742);
+    await expect(workbench.getByTestId("triage-view")).toContainText("pattern-inside");
+    await expect(workbench.getByTestId("triage-view")).toContainText("HostAccess.ALL");
+
+    await jump(0.8);
+    await expect(workbench.getByTestId("triage-view")).toContainText("0 false positives");
 
     await jump(0.92);
     const report = workbench.getByTestId("simplified-report-view");
@@ -85,7 +96,7 @@ test.describe("landing product demonstration", () => {
     });
     expect(positions.tooltipTop).toBeGreaterThanOrEqual(positions.lineBottom);
 
-    await jump(0.9258);
+    await jump(0.945);
     await expect(report.getByRole("status")).toContainText("Step 7 of 10");
     positions = await report.getByRole("status").evaluate((tooltip) => {
       const line = tooltip.parentElement?.firstElementChild;
@@ -187,17 +198,9 @@ test.describe("landing product demonstration", () => {
     const summary = workbench.getByLabel("Real OpenTaint summary output for the anonymous security review project");
     await expect(summary).toBeVisible();
     await expect(summary).toContainText("$ opentaint summary results/report.sarif");
-    await expect(summary).toContainText("Fingerprint: WhFISTP7T5uG");
-    await expect(summary).toContainText('Entering "dispatch" with $UNTRUSTED data');
+    await expect(summary).toContainText("Fingerprint: ggAE7bbWSwRU");
+    await expect(summary).toContainText("Untrusted HTTP input reaches a host-enabled GraalVM Context.eval call");
 
-    await track.evaluate((element) => {
-      const sticky = element.firstElementChild;
-      const stickyTop = sticky ? Number.parseFloat(window.getComputedStyle(sticky).top) || 0 : 0;
-      const trackTop = element.getBoundingClientRect().top + window.scrollY;
-      const start = trackTop - stickyTop;
-      const end = trackTop + element.offsetHeight - window.innerHeight;
-      window.scrollTo(0, start + (end - start) * 0.795);
-    });
     await expect.poll(() => summary.getByTestId("terminal-output").evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
     await expect(summary.getByText("Scan Summary", { exact: true })).toBeInViewport();
   });
@@ -216,6 +219,8 @@ test.describe("landing product demonstration", () => {
       await expect(workbench.getByText("rules/java/security/graaljs-code-injection.yaml", { exact: true })).toBeVisible();
       await workbench.getByRole("button", { name: "Scan", exact: true }).click();
       await expect(workbench.getByTestId("demo-hero-player")).toBeVisible();
+      await workbench.getByRole("button", { name: "Triage", exact: true }).click();
+      await expect(workbench.getByTestId("triage-view")).toBeVisible();
       await workbench.getByRole("button", { name: "Report", exact: true }).click();
       await expect(workbench.getByTestId("simplified-report-view")).toBeVisible();
 

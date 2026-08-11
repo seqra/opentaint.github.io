@@ -7,15 +7,16 @@ Status: approved direction; implementation in progress.
 The landing is a product-led narrative, not a sequence of explanatory essays.
 Its order is:
 
-1. **Hero** — the core outcome, the existing `origin/main` install selector, and
-   the real product surface already entering the viewport.
-2. **End-to-end demo** — one stable Review → Enact → Scan → Report workbench.
-3. **Continuous and lean application security testing** — an animated
+1. **Hero** — the product position and the continuous / lean / agentic promise.
+2. **Five-minute quickstart** — install OpenTaint, install the AppSec Agent
+   skill, and copy the first deep-review prompt.
+3. **End-to-end demo** — one stable Review → Enact → Scan → Report workbench.
+4. **Continuous and lean application security testing** — an animated
    comparison of agent review alone, formal taint analysis with a fixed
    specification, and OpenTaint combining both.
-4. **Application security is the new tech debt** — sourced visual statistics.
-5. **A real-world review** — the CVE artifacts and complete report.
-6. **The analysis engine** — the mechanisms behind “Fast scans. Fewer false
+5. **Application security is the new tech debt** — sourced visual statistics.
+6. **A real-world review** — the CVE artifacts and complete report.
+7. **The analysis engine** — the mechanisms behind “Fast scans. Fewer false
    alarms. Fewer missed findings.”
 7. Comparative results, agent skills, supported technology, FAQ, and footer.
 
@@ -32,14 +33,12 @@ Only the first word of the headline changes and that word is red; “Application
 Security Testing” stays pinned while the prefix rotates, and the complete
 headline stays on one line at wide desktop sizes. The prefix slot is balanced
 around the three word lengths rather than sized to the longest word, so the
-three states retain a stable visual center. The engine line uses the red
-banner treatment between the headline and the install panel. The product
-workbench should sit mostly below the first fold, with just enough of it visible
-to connect the hero to the demo.
+three states retain a stable visual center. The engine line uses the red banner
+treatment. Installation is the next section, not part of the hero.
 
-Reuse the install selector from `origin/main` with npm, curl, skills, brew,
-PowerShell, and Docker methods. It is the primary action surface, not an
-optional command chip. Keep GitHub as the secondary action.
+The five-minute quickstart extends the `origin/main` install selector into three
+steps: install OpenTaint, install the skills package, and prompt the coding
+agent to run a deep security scan and static triage with `appsec-agent`.
 
 The post-demo comparison is a convergence, not a scoreboard:
 
@@ -225,13 +224,26 @@ Copy:
 > **CONTINUOUS / LEAN / AGENTIC**
 > **APPLICATION SECURITY TESTING**
 
-Restore the interactive install panel from `origin/main` and make it the primary
-action surface. Keep GitHub as a compact secondary action. The real OpenTaint
-workbench must already enter the viewport beneath the actions so the hero and
-demo read as one composition. Remove the visual break that currently makes the
-demo look like an unrelated section.
+Keep the hero focused on the product position. Installation belongs to the
+five-minute funnel immediately below it.
 
-### 2. Continuous and lean application security testing
+### 2. Five-minute quickstart
+
+Copy:
+
+> FIVE-MINUTE QUICKSTART
+>
+> **Run your first agentic application security test in 5 minutes**
+
+The panel contains three copyable steps: an interactive OpenTaint install
+method, `npx skills add https://github.com/seqra/opentaint`, and the prompt
+`Run deep security scan and static triage with appsec-agent skill`. Command and
+prompt text remains directly clickable in addition to the explicit copy button;
+the narrow left rail contains only step numbers, while every stage name sits in
+the command side of the panel. The quickstart headline remains on one line at
+standard desktop widths.
+
+### 3. Continuous and lean application security testing
 
 Placement: immediately after the unified product demonstration.
 
@@ -689,7 +701,8 @@ Avoid:
 
 ## Locked decisions
 
-- The install selector from `origin/main` belongs in the hero.
+- The extended install selector belongs in the five-minute quickstart directly
+  after the hero.
 - The unified demo comes before the operating-model comparison.
 - The operating-model comparison is the learn/search explanation; do not add a
   second section that repeats it.

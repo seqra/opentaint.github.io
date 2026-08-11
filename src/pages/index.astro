@@ -3,6 +3,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import SiteHeader from "@/components/astro/SiteHeader.astro";
 import LandingFooter from "@/components/astro/LandingFooter.astro";
 import { AnimatedHero } from "@/components/AnimatedHero";
+import { FirstScanFunnel } from "@/components/FirstScanFunnel";
 import Demo from "@/components/astro/Demo.astro";
 import TheEconomics from "@/components/astro/TheEconomics.astro";
 import SecurityDebt from "@/components/astro/SecurityDebt.astro";
@@ -83,10 +84,12 @@ const structuredData = [
     <SiteHeader />
     <main id="main" class="landing-sections flex-1 pt-16">
       <section class="band hero-band">
-        <AnimatedHero client:load />
+        <AnimatedHero />
       </section>
 
       <Demo />
+
+      <FirstScanFunnel client:load />
 
       <TheEconomics />
 

@@ -379,6 +379,14 @@
     padding-bottom: 0;
   }
 
+  .quickstart-section {
+    padding-top: var(--spacing-10);
+  }
+
+  .quickstart-section::before {
+    display: none;
+  }
+
   .demo-section {
     background-color: hsl(var(--band));
     padding-top: var(--spacing-10);
@@ -394,6 +402,10 @@
       padding-top: var(--spacing-12);
     }
 
+    .quickstart-section {
+      padding-top: var(--spacing-11);
+    }
+
     .demo-section {
       padding-top: var(--spacing-11);
       padding-bottom: var(--spacing-11);
@@ -403,6 +415,10 @@
   @media (min-width: 1024px) {
     .hero-band {
       padding-top: var(--spacing-13);
+    }
+
+    .quickstart-section {
+      padding-top: var(--spacing-11);
     }
 
     .demo-section {
@@ -790,8 +806,17 @@
 
 /* Demo carousel: the incoming panel slides in from the travel direction. */
 @media (prefers-reduced-motion: no-preference) {
-  .hero-prefix-in {
-    animation: hero-prefix-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  .hero-prefix-word {
+    opacity: 0;
+    animation: hero-prefix-cycle 6.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  }
+
+  .hero-prefix-word:nth-child(2) {
+    animation-delay: -4.4s;
+  }
+
+  .hero-prefix-word:nth-child(3) {
+    animation-delay: -2.2s;
   }
 
   .demo-slide-in-next {
@@ -810,9 +835,17 @@
   }
 }
 
-@keyframes hero-prefix-in {
-  from { opacity: 0; transform: translate3d(0, 0.25em, 0); }
-  to { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .hero-prefix-word:not(:first-child) {
+    display: none;
+  }
+}
+
+@keyframes hero-prefix-cycle {
+  0%, 28% { opacity: 1; transform: none; }
+  33%, 95% { opacity: 0; transform: translate3d(0, -0.2em, 0); }
+  95.01% { opacity: 0; transform: translate3d(0, 0.2em, 0); }
+  100% { opacity: 1; transform: none; }
 }
 
 @keyframes demo-in-next {

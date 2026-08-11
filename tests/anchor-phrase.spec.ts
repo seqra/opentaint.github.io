@@ -9,6 +9,8 @@ test.describe("landing message", () => {
       name: "Continuous, lean, and agentic application security testing",
       level: 1,
     })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Run your first agentic application security test in 5 minutes" })).toBeVisible();
+    await expect(page.getByText("Run deep security scan and static triage with appsec-agent skill", { exact: true })).toBeVisible();
   });
 
   test("frames the product proof with the real Conductor review", async ({ page }) => {

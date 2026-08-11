@@ -9,13 +9,9 @@ describe("AnimatedHero", () => {
     expect(screen.getByText("The open source taint analysis engine for the AI era")).toHaveClass("section-banner");
     expect(document.querySelector('img[src="/favicon.svg"]')).not.toBeNull();
     expect(screen.getByText("Continuous", { selector: "span" })).toHaveClass("text-primary");
-  });
-
-  it("renders the install panel from the original landing", () => {
-    const { container } = render(<AnimatedHero />);
-    expect(container.querySelector(".bg-panel")).not.toBeNull();
-    expect(screen.getByText("npm install -g @seqra/opentaint")).toBeVisible();
-    expect(screen.getByRole("button", { name: "Copy install command" })).toBeVisible();
+    expect(screen.getByText("Lean", { selector: "span" })).toHaveClass("hero-prefix-word");
+    expect(screen.getByText("Agentic", { selector: "span" })).toHaveClass("hero-prefix-word");
+    expect(document.querySelector(".hero-prefix-slot")?.children).toHaveLength(3);
   });
 
   it("uses no hard-coded hex colors in class names", () => {

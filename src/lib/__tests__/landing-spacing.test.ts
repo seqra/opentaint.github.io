@@ -5,6 +5,7 @@ const landingFiles = [
   "src/index.css",
   "src/pages/index.astro",
   "src/components/AnimatedHero.tsx",
+  "src/components/FirstScanFunnel.tsx",
   "src/components/UnifiedWorkbench.tsx",
   "src/components/astro/AgentPipeline.astro",
   "src/components/astro/AgentSkills.astro",

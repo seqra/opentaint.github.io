@@ -1,6 +1,88 @@
 # Landing redesign plan
 
-Status: messaging and interaction design; implementation has not started.
+Status: approved direction; implementation in progress.
+
+## Approved implementation brief — August 2026
+
+The landing is a product-led narrative, not a sequence of explanatory essays.
+Its order is:
+
+1. **Hero** — the core outcome, the existing `origin/main` install selector, and
+   the real product surface already entering the viewport.
+2. **End-to-end demo** — one stable Review → Enact → Scan → Report workbench.
+3. **Continuous and lean application security testing** — an animated
+   comparison of agent review alone, formal taint analysis with a fixed
+   specification, and OpenTaint combining both.
+4. **Application security is the new tech debt** — sourced visual statistics.
+5. **A real-world review** — the CVE artifacts and complete report.
+6. **The analysis engine** — the mechanisms behind “Fast scans. Fewer false
+   alarms. Fewer missed findings.”
+7. Comparative results, agent skills, supported technology, FAQ, and footer.
+
+The hero hierarchy is locked:
+
+> THE OPEN SOURCE TAINT ANALYSIS ENGINE FOR THE AI ERA
+>
+> **Turn one security review into unlimited security scans**
+>
+> The flexibility of agent reasoning and the consistency of formal analysis combined
+
+Reuse the install selector from `origin/main` with npm, curl, skills, brew,
+PowerShell, and Docker methods. It is the primary action surface, not an
+optional command chip. Keep GitHub as the secondary action.
+
+The post-demo comparison is a convergence, not a scoreboard:
+
+```text
+agent review alone                    fixed-specification taint analysis
+flexible, contextual                  fast, consistent, whole-codebase
+variable, model-priced                bounded by rules and dependency knowledge
+                      \              /
+                       taint rules + models
+                               ↓
+                           OpenTaint
+                               ↓
+             continuous, lean application security testing
+```
+
+Animate observable behavior. Repeating the same agent review spends tokens and
+can change its findings. Markdown preserves prose but must be loaded and
+interpreted again. A fixed formal scan repeats precisely but cannot invent a
+missing security rule, and a trace stops at an opaque external method until its
+behavior is modeled. The OpenTaint Agent enacts review conclusions as taint
+rules and dependency models; later scans apply the accumulated specification
+without model inference.
+
+Across revisions, show the cumulative result explicitly:
+
+```text
+review 1 enacts A
+review 2 enacts B
+review 3 enacts C
+
+subsequent scans apply A ∪ B ∪ C
+```
+
+Phrase this as the union of **enacted coverage**, not the union of every
+possible agent run. Do not call scans free: use “zero model tokens per scan,”
+“minutes of CPU,” or “without model inference.”
+
+The engine section is a separate technical argument. It maps the three product
+claims to documented mechanisms:
+
+| Claim | Mechanism | Visual statement |
+|---|---|---|
+| Fast scans | Abductive inference and compact representations of taint languages | Compress the search; do not truncate it |
+| Fewer false alarms | Focused metavariables, explicit dependency models, structured access paths, and expressive non-distributive rules | Model the relevant semantics precisely |
+| Fewer missed findings | Extended IFDS analysis to fixpoint without artificial call-depth, file-depth, or access-path limits | Continue until propagation stabilizes |
+
+Semgrep-style AST patterns are compiled into semantic sources, sinks,
+sanitizers, and propagation behavior. Show this as the connective tissue from
+agent-authored artifacts to whole-program analysis.
+
+**Do not mention symbolic execution anywhere on the landing or in its visual
+language.** Do not add numerical performance or precision claims without a
+reproducible benchmark.
 
 ## Objective
 
@@ -126,23 +208,33 @@ Do not imply that every sentence in a security review is automatically convertib
 
 Copy:
 
+> THE OPEN SOURCE TAINT ANALYSIS ENGINE FOR THE AI ERA
+>
 > **Turn one security review into unlimited security scans**
 >
 > The flexibility of agent reasoning and the consistency of formal analysis combined
 
-Keep two primary actions: try OpenTaint and view GitHub. Move installation methods lower on the page so the hero remains about the operating model rather than package managers.
+Restore the interactive install panel from `origin/main` and make it the primary
+action surface. Keep GitHub as a compact secondary action. The real OpenTaint
+workbench must already enter the viewport beneath the actions so the hero and
+demo read as one composition. Remove the visual break that currently makes the
+demo look like an unrelated section.
 
-### 2. One review versus continuous security testing
+### 2. Continuous and lean application security testing
+
+Placement: immediately after the unified product demonstration.
+
+Section copy:
+
+> **Review new context and continuously test what is already known**
+>
+> OpenTaint combines flexible agent reasoning with consistent formal taint
+> analysis, so coverage grows without repeating the entire review.
 
 This is the page’s central explanatory visual. It must show the strengths and weaknesses of agentic review and formal taint analysis on their own, then visibly converge their strengths into the OpenTaint process. It must work both for a single review and across many revisions.
 
-Possible section title:
-
-> What works once must keep working
-
-Supporting thought:
-
-> Agents discover application-specific attack patterns. Formal taint analysis searches the whole codebase for them.
+The section eyebrow is **CONTINUOUS AND LEAN APPLICATION SECURITY TESTING**.
+Avoid “What works once must keep working.”
 
 Use a prominent time control:
 
@@ -476,15 +568,63 @@ Role wording:
 - **Agent enacts** — writes and tests rules and dependency models.
 - **OpenTaint scans** — checks the code under the complete specification and finds the vulnerable path.
 
-### 7. Comparative results
+### 7. The analysis engine
+
+Keep this technical proof separate from the operating-model comparison. The
+comparison explains why agent reasoning and formal scans belong together; this
+section explains why the OpenTaint engine is not ordinary shallow pattern
+matching.
+
+Copy:
+
+> THE ANALYSIS ENGINE
+>
+> **Fast scans. Fewer false alarms. Fewer missed findings.**
+>
+> OpenTaint makes exhaustive analysis scalable by compressing the search
+> instead of truncating it, then applies explicit security semantics throughout
+> the codebase.
+
+Use a single code-native pipeline:
+
+```text
+AST-pattern taint rules + dependency models
+                    ↓
+          semantic rule compilation
+                    ↓
+       interprocedural fixpoint analysis
+                    ↓
+            actionable finding
+```
+
+Three synchronized proof panels:
+
+- **Fast scans — Compress the search.** Many related propagation states fold
+  into a compact representation while analysis continues. Small technical
+  labels may name abductive inference and compact taint languages.
+- **Fewer false alarms — Model semantics precisely.** Focus the relevant value,
+  preserve structured access paths, and use explicit dependency summaries
+  instead of a coarse guess at opaque code.
+- **Fewer missed findings — Continue to fixpoint.** A long path crosses calls,
+  files, fields, aliases, and object layers without meeting an arbitrary depth
+  wall. Use “no artificial depth limits,” not a claim of perfect recall.
+
+The rule compiler is the transition into the visual: familiar AST patterns
+become semantic sources, sinks, sanitizers, and propagation behavior used by
+the interprocedural engine.
+
+Do not mention symbolic execution. Do not imply formal verification, zero false
+positives, zero missed findings, or proof of absence.
+
+### 8. Comparative results
 
 Retain the existing engine comparison, but reduce prose and lead with a visual matrix. Every metric needs a visible definition or source. The comparison must reinforce complementarity rather than “agent versus analysis.”
 
-### 8. Agent workflow
+### 9. Agent workflow
 
 Retain the end-to-end workflow diagram as a separate visual block. Remove the descriptive paragraph. Selecting a skill should highlight its place in the review/enact/scan loop and expose a one-line outcome.
 
-### 9. Utility content
+### 10. Utility content
 
 Keep supported technologies, installation, FAQ, and footer compact. Installation methods can move here from the hero.
 
@@ -536,9 +676,14 @@ Avoid:
 10. Add Playwright checks for keyboard use, narrow mobile layouts, theme changes, overflow, and absence of eager video requests.
 11. Run lint, unit tests, production build, and visual review at phone, Zenfone 7, tablet, laptop, and wide-desktop widths.
 
-## Decisions still to make
+## Locked decisions
 
-- Whether the four evidence cards appear as a 2×2 dashboard or as a scroll-driven sequence.
-- Whether “Informal review → formal specification” is a standalone section or the second scene of the unified demo.
-- Whether the CVE replay reuses the workbench shell or has a distinct laboratory-style visual language.
-- Whether the installation selector moves below supported technologies or directly above the final CTA.
+- The install selector from `origin/main` belongs in the hero.
+- The unified demo comes before the operating-model comparison.
+- The operating-model comparison is the learn/search explanation; do not add a
+  second section that repeats it.
+- The comparison shows three processes: agent review alone, formal taint
+  analysis with a fixed specification, and OpenTaint combining both.
+- The engine proof is a separate section and contains no symbolic-execution
+  messaging.
+- The CVE replay retains its distinct real-world-review treatment.

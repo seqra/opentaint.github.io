@@ -6,9 +6,17 @@ describe("AnimatedHero", () => {
   it("renders the core promise", () => {
     render(<AnimatedHero />);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "The open source taint analysis engine for the AI era",
+      "Turn one security review into unlimited security scans",
     );
+    expect(screen.getByText("The open source taint analysis engine for the AI era")).toBeVisible();
     expect(screen.getByText("The flexibility of agent reasoning and the consistency of formal analysis combined")).toBeVisible();
+  });
+
+  it("renders the install panel from the original landing", () => {
+    const { container } = render(<AnimatedHero />);
+    expect(container.querySelector(".bg-panel")).not.toBeNull();
+    expect(screen.getByText("npm install -g @seqra/opentaint")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Copy install command" })).toBeVisible();
   });
 
   it("uses no hard-coded hex colors in class names", () => {
@@ -22,7 +30,7 @@ describe("AnimatedHero", () => {
     const { container } = render(<AnimatedHero />);
     expect(container.querySelector("h1 .crt-cursor")).toBeNull();
     expect(container.querySelector("h1")?.textContent).toBe(
-      "The open source taint analysis engine for the AI era",
+      "Turn one security review into unlimited security scans",
     );
   });
 

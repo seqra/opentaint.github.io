@@ -6,4 +6,6 @@ rules:
     message: Script text reaches GraalVM evaluation
     languages:
       - java
-    pattern: (org.graalvm.polyglot.Context $CONTEXT).eval($LANGUAGE, $UNTRUSTED)
+    patterns:
+      - pattern: (org.graalvm.polyglot.Context $CONTEXT).eval(..., $UNTRUSTED)
+      - focus-metavariable: $UNTRUSTED

@@ -59,12 +59,18 @@ test.describe("landing product demonstration", () => {
     const artifacts = workbench.getByTestId("artifact-scroll").locator("article button");
     await expect(artifacts.nth(0)).toHaveAttribute("aria-expanded", "true");
     await expect(artifacts.nth(1)).toHaveAttribute("aria-expanded", "false");
+    await expect(workbench.getByTestId("artifact-code")).toContainText("(org.graalvm.polyglot.Context $CONTEXT).eval(..., $UNTRUSTED)");
 
     await jump(0.27);
     await expect(artifacts.nth(0)).toHaveAttribute("aria-expanded", "false");
     await expect(artifacts.nth(1)).toHaveAttribute("aria-expanded", "true");
     await expect(artifacts.nth(0)).toBeInViewport();
     await expect(artifacts.nth(1)).toBeInViewport();
+
+    await jump(0.58);
+    const terminalOutput = workbench.getByTestId("terminal-output");
+    await expect.poll(() => terminalOutput.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+    await expect(workbench.getByText("To view findings run", { exact: true })).toBeInViewport();
 
     await jump(0.92);
     const report = workbench.getByTestId("simplified-report-view");

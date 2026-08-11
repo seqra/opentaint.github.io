@@ -38,15 +38,16 @@ describe("TerminalDemo", () => {
 
     act(() => { vi.runAllTimers(); });
 
-    expect(screen.getByText(/\$ opentaint scan/)).toBeInTheDocument();
-    expect(screen.getByText(/graaljs-code-injection: 1 error \[CWE-94\]/)).toBeInTheDocument();
-    expect(screen.getByText(/Report: results\/report\.sarif/)).toBeInTheDocument();
+    const terminal = screen.getByTestId("demo-hero-player");
+    expect(terminal).toHaveTextContent(/\$ opentaint scan/);
+    expect(terminal).toHaveTextContent(/graaljs-code-injection:\s*1 error\s*\[CWE-94\]/);
+    expect(terminal).toHaveTextContent(/Report:\s*results\/report\.sarif/);
   });
 
   it("shows the complete output immediately when reduced motion is enabled", () => {
     mockMatchMedia(true);
     render(<TerminalDemo scenario="security-review" />);
 
-    expect(screen.getByText(/Total: 1 error/)).toBeInTheDocument();
+    expect(screen.getByTestId("demo-hero-player")).toHaveTextContent(/Total:\s*1 error/);
   });
 });

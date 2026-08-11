@@ -1,14 +1,22 @@
+import { useEffect, useRef } from "react";
+
 type TerminalTone = "plain" | "muted" | "blue" | "green" | "red" | "purple";
 
 type TerminalLine = {
   content: string;
   tone?: TerminalTone;
   weight?: "normal" | "strong";
+  segments?: Array<{
+    content: string;
+    tone?: TerminalTone;
+    weight?: "normal" | "strong";
+  }>;
 };
 
 type TerminalDemoProps = {
   scenario?: "default" | "security-review" | "security-summary";
   ariaLabel?: string;
+  progress?: number;
 };
 
 const securityReviewLines: TerminalLine[] = [
@@ -19,29 +27,66 @@ const securityReviewLines: TerminalLine[] = [
   { content: "      .opentaint/model/org.graalvm.polyglot.yaml \\", tone: "muted" },
   { content: "    -o results/report.sarif", tone: "muted" },
   { content: "" },
-  { content: "╭─OpenTaint Scan─╮", tone: "purple", weight: "strong" },
-  { content: "╰─┬──────────────╯", tone: "purple" },
+  { content: "╭─OpenTaint Scan─╮" },
+  { content: "╰─┬──────────────╯" },
   { content: "  ├─ Project model", tone: "blue" },
-  { content: "  │  └─ build/project-model", tone: "muted" },
+  { content: "  │  └─ build/project-model" },
+  { content: "  ├─ Analyzer", tone: "blue" },
+  { content: "  │  └─ 2026.07.10.a20ded6" },
   { content: "  └─ User ruleset", tone: "blue" },
-  { content: "     └─ .opentaint/rules", tone: "muted" },
+  { content: "     └─ .opentaint/rules" },
   { content: "" },
-  { content: "╭─Rule Statistics─╮", tone: "purple", weight: "strong" },
-  { content: "╰─┬───────────────╯", tone: "purple" },
-  { content: "  └─ Rule parsing issues", tone: "blue" },
-  { content: "     └─ No issues found", tone: "green" },
+  { content: "✓ Analyzing project in 4s", segments: [
+    { content: "✓", tone: "green" },
+    { content: " Analyzing project in " },
+    { content: "4s", tone: "muted" },
+  ] },
   { content: "" },
-  { content: "╭─Scan Summary─╮", tone: "purple", weight: "strong" },
-  { content: "╰─┬────────────╯", tone: "purple" },
-  { content: "  ├─ Findings", tone: "blue" },
-  { content: "  │  ├─ Total: 1 error", tone: "red", weight: "strong" },
-  { content: "  │  ├─ Files affected: 1" },
-  { content: "  │  ├─ Rules executed: 1" },
-  { content: "  │  └─ Rules triggered: 1" },
-  { content: "  │     └─ java.security.graaljs-code-injection: 1 error [CWE-94]", tone: "red" },
+  { content: "╭─Rule Statistics─╮" },
+  { content: "╰─┬───────────────╯" },
+  { content: "  └─ Rule parsing issues" },
+  { content: "     └─ No issues found" },
+  { content: "" },
+  { content: "╭─Scan Summary─╮" },
+  { content: "╰─┬────────────╯" },
+  { content: "  ├─ Findings" },
+  { content: "  │  ├─ Total: 1 error", segments: [
+    { content: "Total:", tone: "blue" },
+    { content: " " },
+    { content: "1 error", tone: "red", weight: "strong" },
+  ] },
+  { content: "  │  ├─ Files affected: 1", segments: [
+    { content: "Files affected:", tone: "blue" },
+    { content: " 1" },
+  ] },
+  { content: "  │  ├─ Rules executed: 1", segments: [
+    { content: "Rules executed:", tone: "blue" },
+    { content: " 1" },
+  ] },
+  { content: "  │  └─ Rules triggered: 1", segments: [
+    { content: "Rules triggered:", tone: "blue" },
+    { content: " 1" },
+  ] },
+  { content: "  │     └─ java.security.graaljs-code-injection: 1 error [CWE-94]", segments: [
+    { content: "java.security.graaljs-code-injection: " },
+    { content: "1 error", tone: "red", weight: "strong" },
+    { content: " [CWE-94]" },
+  ] },
   { content: "  │        └─ Untrusted script execution" },
-  { content: "  └─ Output", tone: "blue" },
-  { content: "     └─ Report: results/report.sarif", tone: "green" },
+  { content: "  └─ Output" },
+  { content: "     ├─ Report: results/report.sarif", segments: [
+    { content: "Report:", tone: "blue" },
+    { content: " results/report.sarif" },
+  ] },
+  { content: "     └─ Log: results/opentaint.log", segments: [
+    { content: "Log:", tone: "blue" },
+    { content: " results/opentaint.log" },
+  ] },
+  { content: "" },
+  { content: "╭─Suggestions─╮" },
+  { content: "╰─┬───────────╯" },
+  { content: "  └─ To view findings run", tone: "green", weight: "strong" },
+  { content: "     └─ opentaint summary results/report.sarif --show-findings", weight: "strong" },
 ];
 
 const securitySummaryLines: TerminalLine[] = [
@@ -107,6 +152,8 @@ const toneClass: Record<TerminalTone, string> = {
   purple: "text-[#a63e58] dark:text-[#f07d91]",
 };
 
+const faintClass = "text-[#928c88] dark:text-[#77716e]";
+
 function ConnectorGlyph({ glyph }: { glyph: string }) {
   if (glyph === " ") return <span className="relative h-[18px] w-[1ch] shrink-0" />;
   return (
@@ -115,17 +162,57 @@ function ConnectorGlyph({ glyph }: { glyph: string }) {
       {glyph === "└" && <span className="absolute left-1/2 top-0 h-1/2 border-l border-current" />}
       {(glyph === "├" || glyph === "└") && <span className="absolute left-1/2 right-0 top-1/2 border-t border-current" />}
       {glyph === "─" && <span className="absolute inset-x-0 top-1/2 border-t border-current" />}
+      {glyph === "╭" && <><span className="absolute bottom-0 left-1/2 h-1/2 border-l border-current" /><span className="absolute left-1/2 right-0 top-1/2 border-t border-current" /></>}
+      {glyph === "╮" && <><span className="absolute bottom-0 right-1/2 h-1/2 border-r border-current" /><span className="absolute left-0 right-1/2 top-1/2 border-t border-current" /></>}
+      {glyph === "╰" && <><span className="absolute left-1/2 top-0 h-1/2 border-l border-current" /><span className="absolute left-1/2 right-0 top-1/2 border-t border-current" /></>}
+      {glyph === "╯" && <><span className="absolute right-1/2 top-0 h-1/2 border-r border-current" /><span className="absolute left-0 right-1/2 top-1/2 border-t border-current" /></>}
+      {glyph === "┬" && <><span className="absolute inset-x-0 top-1/2 border-t border-current" /><span className="absolute bottom-0 left-1/2 h-1/2 border-l border-current" /></>}
     </span>
   );
 }
 
-function TerminalContent({ content }: { content: string }) {
-  const tree = /^([ │├└─]+)(.*)$/.exec(content);
-  if (!tree || !/[│├└]/.test(tree[1])) return <>{content || " "}</>;
+function GlyphRun({ content }: { content: string }) {
+  return (
+    <span className="inline-flex h-[18px] shrink-0 align-top">
+      {Array.from(content).map((glyph, index) => <ConnectorGlyph key={`${glyph}-${index}`} glyph={glyph} />)}
+    </span>
+  );
+}
+
+function TerminalSegments({ line, fallback }: { line: TerminalLine; fallback: string }) {
+  if (!line.segments) {
+    return <span className={`${toneClass[line.tone ?? "plain"]} ${line.weight === "strong" ? "font-semibold" : "font-normal"}`}>{fallback || " "}</span>;
+  }
+  return <>{line.segments.map((segment, index) => (
+    <span
+      key={`${segment.content}-${index}`}
+      className={`${toneClass[segment.tone ?? "plain"]} ${segment.weight === "strong" ? "font-semibold" : "font-normal"}`}
+    >
+      {segment.content}
+    </span>
+  ))}</>;
+}
+
+function TerminalContent({ line }: { line: TerminalLine }) {
+  const tree = /^([ │├└─]+)(.*)$/.exec(line.content);
+  if (!tree || !/[│├└]/.test(tree[1])) return <TerminalSegments line={line} fallback={line.content} />;
   return (
     <span className="inline-flex h-[18px] items-start align-top">
-      {Array.from(tree[1]).map((glyph, index) => <ConnectorGlyph key={`${glyph}-${index}`} glyph={glyph} />)}
-      <span>{tree[2]}</span>
+      <span className={faintClass}><GlyphRun content={tree[1]} /></span>
+      <TerminalSegments line={line} fallback={tree[2]} />
+    </span>
+  );
+}
+
+function TerminalHeader({ title, bottom }: { title: string; bottom: string }) {
+  return (
+    <span className="block h-9">
+      <span className={`flex h-[18px] ${faintClass}`}>
+        <GlyphRun content="╭─" />
+        <span className={`h-[18px] font-semibold leading-[18px] ${toneClass.purple}`}>{title}</span>
+        <GlyphRun content="─╮" />
+      </span>
+      <span className={`flex h-[18px] ${faintClass}`}><GlyphRun content={bottom} /></span>
     </span>
   );
 }
@@ -133,8 +220,16 @@ function TerminalContent({ content }: { content: string }) {
 export function TerminalDemo({
   scenario = "default",
   ariaLabel = "OpenTaint terminal output",
+  progress = 0,
 }: TerminalDemoProps = {}) {
   const lines = linesFor(scenario);
+  const outputRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const output = outputRef.current;
+    if (!output) return;
+    output.scrollTop = Math.max(0, output.scrollHeight - output.clientHeight) * progress;
+  }, [progress, scenario]);
 
   return (
     <div
@@ -154,6 +249,8 @@ export function TerminalDemo({
         </span>
       </div>
       <div
+        ref={outputRef}
+        data-testid="terminal-output"
         className="min-h-0 min-w-0 w-full flex-1 overflow-hidden whitespace-pre px-4 py-4 text-[12px] leading-[18px] sm:text-[13px]"
         style={{
           fontFamily: '"SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace',
@@ -170,16 +267,12 @@ export function TerminalDemo({
           if (frameBase) return null;
           if (frame) {
             return (
-              <span key={`${line.content}-${index}`} className="block h-7 pt-0.5 text-[#a63e58] dark:text-[#f07d91]">
-                <span className="inline-flex h-6 items-center rounded-[5px] border border-current px-2 font-semibold">{frame[1]}</span>
-              </span>
+              <TerminalHeader key={`${line.content}-${index}`} title={frame[1]} bottom={lines[index + 1]?.content ?? ""} />
             );
           }
           return (
-            <span key={`${line.content}-${index}`} className={`block h-[18px] ${toneClass[line.tone ?? "plain"]}`}>
-              <span className={line.weight === "strong" ? "font-semibold" : "font-normal"}>
-                <TerminalContent content={line.content} />
-              </span>
+            <span key={`${line.content}-${index}`} className="block h-[18px]">
+              <TerminalContent line={line} />
             </span>
           );
         })}

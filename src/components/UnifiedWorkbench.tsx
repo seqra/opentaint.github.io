@@ -204,13 +204,16 @@ const sinkRule = `rules:
     message: Script text reaches GraalVM evaluation
     languages:
       - java
-    pattern: (org.graalvm.polyglot.Context $CONTEXT).eval($LANGUAGE, $UNTRUSTED)`;
+    patterns:
+      - pattern: (org.graalvm.polyglot.Context $CONTEXT).eval(..., $UNTRUSTED)
+      - focus-metavariable: $UNTRUSTED`;
 
 const joinRule = `rules:
   - id: graaljs-code-injection
     severity: ERROR
     message: >-
-      Untrusted HTTP input reaches a host-enabled GraalVM Context.eval call,
+      Untrusted HTTP input reaches
+      a host-enabled GraalVM Context.eval call,
       allowing attacker-controlled script execution.
     metadata:
       cwe: CWE-94
@@ -237,12 +240,11 @@ passThrough:
 
 function YamlCode({ code }: { code: string }) {
   return (
-    <pre className="overflow-x-auto py-2 text-[12.5px] leading-5 text-[#44342c] dark:text-[#f0dcdc] scrollbar-thin" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace' }}><code>
+    <pre data-testid="artifact-code" className="overflow-x-auto py-2 text-[12.5px] leading-5 text-[#44342c] dark:text-[#f0dcdc] scrollbar-thin" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace' }}><code>
       {code.split("\n").map((line, index) => {
         const key = /^(\s*(?:-\s+)?)([\w-]+):(.*)$/.exec(line);
         return (
-          <span key={index} className="grid min-w-max grid-cols-[1.25rem_2.25rem_1fr] bg-[#2d8a4e]/[0.08] px-3 dark:bg-[#79bd8f]/[0.08]">
-            <span className="select-none text-[#2d8a4e] dark:text-[#79bd8f]">+</span>
+          <span key={index} className="grid min-w-max grid-cols-[2rem_1fr] bg-[#2d8a4e]/[0.08] px-2 dark:bg-[#79bd8f]/[0.08]">
             <span className="select-none pr-2 text-right text-[#b3a396] dark:text-[#5e4a4a]">{index + 1}</span>
             <span className="whitespace-pre">{key ? <>{key[1]}<span className="text-primary">{key[2]}</span>:{key[3]}</> : line || " "}</span>
           </span>
@@ -306,10 +308,10 @@ function Specifications({ progress }: { progress: number }) {
   );
 }
 
-function CliRun() {
+function CliRun({ progress }: { progress: number }) {
   return (
     <div className="h-full bg-background">
-      <TerminalDemo scenario="security-review" ariaLabel="Real OpenTaint scan output for the anonymous security review project" />
+      <TerminalDemo scenario="security-review" progress={progress} ariaLabel="Real OpenTaint scan output for the anonymous security review project" />
     </div>
   );
 }
@@ -568,7 +570,7 @@ function FindingReport({ progress }: { progress: number }) {
 function WorkSurface({ stage, progress }: { stage: TimelineId; progress: number }) {
   if (stage === "review") return <ReviewReport progress={progress} />;
   if (stage === "enact") return <Specifications progress={progress} />;
-  if (stage === "scan") return <CliRun />;
+  if (stage === "scan") return <CliRun progress={progress} />;
   if (stage === "summary") return <CliSummary />;
   return <FindingReport progress={progress} />;
 }

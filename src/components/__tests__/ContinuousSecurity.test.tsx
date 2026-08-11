@@ -11,7 +11,7 @@ describe("ContinuousSecurity", () => {
     render(<ContinuousSecurity />);
 
     expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("Turn one security review into unlimited security scans");
-    expect(screen.getByText("The flexibility of agent reasoning and the consistency of formal analysis combined")).toBeVisible();
+    expect(screen.getByText("The flexibility of model reasoning and the consistency of formal program analysis combined")).toBeVisible();
   });
 
   it("uses the review and scan operating model", () => {

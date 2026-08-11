@@ -115,7 +115,7 @@ export function ContinuousSecurity() {
     >
       <div className="mx-auto max-w-6xl">
         <div className="section-header">
-          <p className="section-eyebrow">The flexibility of agent reasoning and the consistency of formal analysis combined</p>
+          <p className="section-eyebrow">The flexibility of model reasoning and the consistency of formal program analysis combined</p>
           <h2 id="continuous-security-heading" className="section-heading">Turn one security review into unlimited security scans</h2>
         </div>
 

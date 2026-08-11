@@ -66,7 +66,7 @@ test.describe("landing product demonstration", () => {
     const artifacts = workbench.getByTestId("artifact-scroll").locator("article button");
     await expect(artifacts.nth(0)).toHaveAttribute("aria-expanded", "true");
     await expect(artifacts.nth(1)).toHaveAttribute("aria-expanded", "false");
-    await expect(workbench.getByTestId("artifact-code").nth(0)).toContainText("(org.graalvm.polyglot.Context $CONTEXT).eval(..., $UNTRUSTED)");
+    await expect(workbench.getByTestId("artifact-code").nth(0)).toContainText("(Context $CONTEXT).eval(..., $UNTRUSTED)");
 
     await jump(0.235);
     await expect(artifacts.nth(0)).toHaveAttribute("aria-expanded", "false");
@@ -185,8 +185,9 @@ test.describe("landing product demonstration", () => {
     await workbench.getByRole("button", { name: "Scan", exact: true }).click();
     const terminal = workbench.getByTestId("demo-hero-player");
     await expect(terminal).toBeVisible();
-    await expect(terminal).toContainText("$ opentaint scan");
-    await expect(terminal).toContainText(".opentaint/model");
+    await expect(terminal).toContainText("OpenTaint Scan");
+    await expect(terminal).not.toContainText("$ opentaint scan");
+    await expect(terminal).not.toContainText(".opentaint/model");
     await expect(terminal).toHaveAttribute("data-terminal-renderer", "native-cli");
 
     await track.evaluate((element) => {
@@ -199,7 +200,7 @@ test.describe("landing product demonstration", () => {
     });
     const summary = workbench.getByLabel("Real OpenTaint summary output for the anonymous security review project");
     await expect(summary).toBeVisible();
-    await expect(summary).toContainText("$ opentaint summary results/report.sarif");
+    await expect(summary).not.toContainText("$ opentaint summary results/report.sarif");
     await expect(summary).toContainText("Fingerprint: ggAE7bbWSwRU");
     await expect(summary).toContainText("Untrusted HTTP input reaches a host-enabled GraalVM Context.eval call");
 

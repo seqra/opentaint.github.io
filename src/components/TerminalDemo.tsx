@@ -23,13 +23,6 @@ type TerminalDemoProps = {
 };
 
 const securityReviewLines: TerminalLine[] = [
-  { content: "$ opentaint scan \\", weight: "strong" },
-  { content: "    --project-model build/project-model \\", tone: "muted" },
-  { content: "    --ruleset .opentaint/rules \\", tone: "muted" },
-  { content: "    --passthrough-approximations .opentaint/model \\", tone: "muted" },
-  { content: "    --output results/report.sarif \\", tone: "muted" },
-  { content: "    --log-file opentaint.log", tone: "muted" },
-  { content: "" },
   ...securityScanOutput.trimEnd().split("\n").map((content): TerminalLine => {
     if (/^╭─/.test(content)) return { content, tone: "purple", weight: "strong" };
     if (/^✓/.test(content)) return { content, tone: "green", weight: "strong" };
@@ -41,9 +34,6 @@ const securityReviewLines: TerminalLine[] = [
 ];
 
 const securitySummaryLines: TerminalLine[] = [
-  { content: "$ opentaint summary results/report.sarif \\", weight: "strong" },
-  { content: "    --show-findings --show-code-snippets", tone: "muted" },
-  { content: "" },
   ...securitySummaryOutput.trimEnd().split("\n").map((content): TerminalLine => {
     if (/^╭─/.test(content)) return { content, tone: "purple", weight: "strong" };
     if (/Fingerprint:|Location:|\.java:\d+$|Code snippet/.test(content)) return { content, tone: "muted" };
@@ -86,15 +76,15 @@ const toneClass: Record<TerminalTone, string> = {
 const faintClass = "text-[#928c88] dark:text-[#77716e]";
 const glyphHeight: Record<TerminalDensity, string> = {
   default: "h-[18px]",
-  compact: "h-[15px]",
+  compact: "h-[16px]",
 };
 const headerHeight: Record<TerminalDensity, string> = {
   default: "h-9",
-  compact: "h-[30px]",
+  compact: "h-8",
 };
 const glyphLeading: Record<TerminalDensity, string> = {
   default: "leading-[18px]",
-  compact: "leading-[15px]",
+  compact: "leading-[16px]",
 };
 
 function ConnectorGlyph({ glyph, density }: { glyph: string; density: TerminalDensity }) {
@@ -195,7 +185,7 @@ export function TerminalDemo({
       <div
         ref={outputRef}
         data-testid="terminal-output"
-        className={`min-h-0 min-w-0 w-full flex-1 overflow-hidden whitespace-pre ${scenario === "default" ? "px-4 py-4 text-[12px] leading-[18px] sm:text-[13px]" : "px-3 py-2 text-[10px] leading-[15px]"}`}
+        className={`min-h-0 min-w-0 w-full flex-1 overflow-hidden whitespace-pre ${scenario === "default" ? "px-4 py-4 text-[12px] leading-[18px] sm:text-[13px]" : "px-3 py-2 text-[10.5px] leading-[16px]"}`}
         style={{
           fontFamily: '"SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace',
           fontVariantLigatures: "none",

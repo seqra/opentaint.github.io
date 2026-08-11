@@ -32,10 +32,9 @@ function CopyButton({ id, value, copiedId, onCopy }: CopyProps) {
       type="button"
       onClick={() => onCopy(id, value)}
       aria-label={copied ? `${id} copied` : `Copy ${id}`}
-      className="inline-flex h-10 min-w-10 shrink-0 items-center justify-center gap-2 rounded-lg border border-panel-foreground/15 px-3 font-mono text-xs text-panel-foreground/70 transition-colors hover:border-panel-foreground/35 hover:text-panel-foreground sm:px-4"
+      className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-panel-foreground/15 text-panel-foreground/70 transition-colors hover:border-panel-foreground/35 hover:text-panel-foreground"
     >
       {copied ? <Check className="h-4 w-4 text-panel-accent" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
-      <span className="hidden sm:inline">{copied ? "Copied" : "Copy"}</span>
     </button>
   );
 }
@@ -90,12 +89,13 @@ export function FirstScanFunnel() {
     <section id="install" className="band quickstart-section" aria-labelledby="quickstart-heading">
       <div className="mx-auto max-w-[82rem]">
         <div className="section-header">
+          <p className="section-banner">Open source, batteries included</p>
           <h2 id="quickstart-heading" className="section-heading">Five-minute quickstart</h2>
         </div>
 
         <div className="mx-auto mt-10 max-w-4xl space-y-4 text-left">
-          <div className="grid gap-3 md:grid-cols-[12rem_minmax(0,1fr)] md:items-center md:gap-4">
-            <StageLabel number="01">Install OpenTaint</StageLabel>
+          <div className="grid gap-3 md:grid-cols-[16rem_minmax(0,1fr)] md:items-center md:gap-4">
+            <StageLabel number="01">Install OpenTaint with builtin rules and models</StageLabel>
             <div className="min-w-0 overflow-hidden rounded-xl border border-panel-border bg-panel">
               <div className="flex h-12 min-w-0 items-center border-b border-panel-border/30">
                 <div className="flex min-w-0 flex-1 items-center gap-6 overflow-x-auto px-4 scrollbar-thin sm:px-6 lg:gap-8">
@@ -125,25 +125,21 @@ export function FirstScanFunnel() {
             </div>
           </div>
 
-          <div className="grid gap-3 md:grid-cols-[12rem_minmax(0,1fr)] md:items-center md:gap-4">
-            <StageLabel number="02">Install AppSec Agent</StageLabel>
+          <div className="grid gap-3 md:grid-cols-[16rem_minmax(0,1fr)] md:items-center md:gap-4">
+            <StageLabel number="02">Install AppSec agent skills</StageLabel>
             <div className="min-w-0 overflow-hidden rounded-xl border border-panel-border bg-panel">
               <CommandLine id="skills install command" value={skillsCommand} copiedId={copiedId} onCopy={copy} />
             </div>
           </div>
 
-          <div className="grid gap-3 md:grid-cols-[12rem_minmax(0,1fr)] md:items-center md:gap-4">
-            <StageLabel number="03">Prompt your agent</StageLabel>
+          <div className="grid gap-3 md:grid-cols-[16rem_minmax(0,1fr)] md:items-center md:gap-4">
+            <StageLabel number="03">Prompt your agent to write custom rules and models, then run an OpenTaint scan with them.</StageLabel>
             <div className="min-w-0 overflow-hidden rounded-xl border border-panel-border bg-panel">
               <CommandLine id="first security-review prompt" value={firstPrompt} prompt copiedId={copiedId} onCopy={copy} />
             </div>
           </div>
         </div>
 
-        <div className="mx-auto mt-8 grid max-w-4xl rounded-xl border border-primary/40 bg-primary/[0.06] p-6 shadow-sm md:grid-cols-[12rem_minmax(0,1fr)] md:items-center md:gap-4">
-          <p className="font-mono text-lg font-semibold leading-6 text-primary">Open source, batteries included</p>
-          <p className="mt-4 font-mono text-xs leading-6 text-foreground md:mt-0">Engine, rules, dependency models, agent skills, CLI, report viewer, and CI integrations ship together under open-source licenses.</p>
-        </div>
       </div>
     </section>
   );

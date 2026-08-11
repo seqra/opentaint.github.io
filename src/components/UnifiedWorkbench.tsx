@@ -128,11 +128,11 @@ function AgentStage({
 function SurfaceStory({ title, children, window }: { title: string; children: string; window: ReactNode }) {
   return (
     <div className="flex h-full min-h-0 flex-col bg-[#efeeeb] p-3 dark:bg-[#100908]">
-      <div className="mb-3 w-full shrink-0 px-1 text-center">
-        <p className="font-mono text-[12px] font-semibold text-foreground">{title}</p>
-        <p className="mt-1 w-full text-[11px] leading-4 text-muted-foreground">{children}</p>
+      <div className="mb-4 w-full shrink-0 px-2 text-center">
+        <p className="font-mono text-[15px] font-semibold leading-5 text-foreground">{title}</p>
+        <p className="mt-2 w-full text-[13px] leading-5 text-muted-foreground">{children}</p>
       </div>
-      <div className="min-h-0 flex-1">{window}</div>
+      <div className="mx-auto min-h-0 w-full max-w-[42rem] flex-1">{window}</div>
     </div>
   );
 }
@@ -231,7 +231,7 @@ const sinkRule = `rules:
       - java
     patterns:
       - pattern: |
-          (org.graalvm.polyglot.Context $CONTEXT).eval(..., $UNTRUSTED)
+          (Context $CONTEXT).eval(..., $UNTRUSTED)
       - focus-metavariable: $UNTRUSTED`;
 
 const joinRule = `rules:
@@ -280,8 +280,30 @@ function YamlCode({ code }: { code: string }) {
   );
 }
 
+function ArtifactFrame({ path, kind, added, removed = 0, open, onToggle, children }: { path: string; kind: string; added: number; removed?: number; open: boolean; onToggle: () => void; children: ReactNode }) {
+  return (
+    <article className="overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] shadow-sm dark:bg-[#140505]">
+      <button type="button" aria-expanded={open} onClick={onToggle} className="flex min-h-10 w-full items-center gap-2 bg-[#f0eeeb] px-3 text-left dark:bg-[#1d0d0c]">
+        <ChevronDown className={["h-4 w-4 shrink-0 text-muted-foreground transition-transform", open ? "" : "-rotate-90"].join(" ")} strokeWidth={1.8} aria-hidden="true" />
+        <FileCode2 className="h-3.5 w-3.5 text-primary" strokeWidth={1.7} aria-hidden="true" />
+        <span className="min-w-0 flex-1 truncate font-mono text-[11px] text-foreground">{path}</span>
+        <span className="hidden text-[11px] text-muted-foreground xl:inline">{kind}</span>
+        <span className="font-mono text-[10px] text-[#2d8a4e] dark:text-[#79bd8f]">+{added}</span>
+        <span className="font-mono text-[10px] text-[#c73a32] dark:text-[#ff746c]">-{removed}</span>
+      </button>
+      <div className={[
+        "grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none",
+        open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+      ].join(" ")}>
+        <div className="min-h-0 overflow-hidden">
+          <div className="border-t border-border">{children}</div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
 function Artifact({ path, kind, code, open, onToggle, scrollProgress = 0 }: { path: string; kind: string; code: string; open: boolean; onToggle: () => void; scrollProgress?: number }) {
-  const added = code.split("\n").length;
   const codeScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -291,24 +313,9 @@ function Artifact({ path, kind, code, open, onToggle, scrollProgress = 0 }: { pa
   }, [open, scrollProgress]);
 
   return (
-    <article className="overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] shadow-sm dark:bg-[#140505]">
-      <button type="button" aria-expanded={open} onClick={onToggle} className="flex min-h-10 w-full items-center gap-2 bg-[#f0eeeb] px-3 text-left dark:bg-[#1d0d0c]">
-        <ChevronDown className={["h-4 w-4 shrink-0 text-muted-foreground transition-transform", open ? "" : "-rotate-90"].join(" ")} strokeWidth={1.8} aria-hidden="true" />
-        <FileCode2 className="h-3.5 w-3.5 text-primary" strokeWidth={1.7} aria-hidden="true" />
-        <span className="min-w-0 flex-1 truncate font-mono text-[11px] text-foreground">{path}</span>
-        <span className="hidden text-[11px] text-muted-foreground xl:inline">{kind}</span>
-        <span className="font-mono text-[10px] text-[#2d8a4e] dark:text-[#79bd8f]">+{added}</span>
-        <span className="font-mono text-[10px] text-[#c73a32] dark:text-[#ff746c]">-0</span>
-      </button>
-      <div className={[
-        "grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none",
-        open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
-      ].join(" ")}>
-        <div className="min-h-0 overflow-hidden">
-          <div ref={codeScrollRef} data-testid="artifact-code-scroll" className="max-h-60 overflow-auto border-t border-border scrollbar-thin"><YamlCode code={code} /></div>
-        </div>
-      </div>
-    </article>
+    <ArtifactFrame path={path} kind={kind} added={code.split("\n").length} open={open} onToggle={onToggle}>
+      <div ref={codeScrollRef} data-testid="artifact-code-scroll" className="max-h-60 overflow-auto scrollbar-thin"><YamlCode code={code} /></div>
+    </ArtifactFrame>
   );
 }
 
@@ -348,7 +355,7 @@ function Specifications({ progress }: { progress: number }) {
         </div>
       </div>}
     >
-      AST-pattern taint rules define security behavior; dependency models make opaque libraries analyzable.
+      AST-pattern taint rules define security behavior. Dependency models make opaque libraries analyzable.
     </SurfaceStory>
   );
 }
@@ -374,7 +381,7 @@ function CliSummary({ progress }: { progress: number }) {
         <TerminalDemo scenario="security-summary" progress={progress} ariaLabel="Real OpenTaint summary output for the anonymous security review project" />
       </div>}
     >
-      One deterministic run returns the finding, endpoints, and code flow.
+      Formal taint analysis searches the project without repeating model inference.
     </SurfaceStory>
   );
 }
@@ -478,40 +485,35 @@ function JavaLine({ line }: { line: string }) {
   })}</>;
 }
 
-const triageDiff = `@@ -9,4 +9,10 @@
-     patterns:
-       - pattern: |
-           (org.graalvm.polyglot.Context $CONTEXT).eval(..., $UNTRUSTED)
-       - focus-metavariable: $UNTRUSTED
-+      - pattern-inside: |
-+          org.graalvm.polyglot.Context $CONTEXT =
-+            org.graalvm.polyglot.Context.newBuilder(...)
-+              .allowHostAccess(org.graalvm.polyglot.HostAccess.ALL)
-+              .build();
-+          ...`;
+const triageRuleLines = [
+  { number: 9, content: "    patterns:" },
+  { number: 10, content: "      - pattern: |" },
+  { number: 11, content: "          (Context $CONTEXT).eval(..., $UNTRUSTED)" },
+  { number: 12, content: "      - focus-metavariable: $UNTRUSTED" },
+  { number: 13, content: "      - pattern-inside: |", added: true },
+  { number: 14, content: "          Context $CONTEXT =", added: true },
+  { number: 15, content: "            org.graalvm.polyglot.Context.newBuilder(...)", added: true },
+  { number: 16, content: "              .allowHostAccess(org.graalvm.polyglot.HostAccess.ALL)", added: true },
+  { number: 17, content: "              .build();", added: true },
+  { number: 18, content: "          ...", added: true },
+] as const;
 
-function TriageDiff({ progress }: { progress: number }) {
-  const additions = triageDiff.split("\n").filter((line) => line.startsWith("+") && !line.startsWith("+++")).length;
-  let additionIndex = 0;
-
+function TriageCode() {
   return (
-    <pre className="h-full overflow-auto py-2 font-mono text-[10px] leading-5 text-[#44342c] dark:text-[#f0dcdc] scrollbar-thin"><code>
-      {triageDiff.split("\n").map((line, index) => {
-        const addition = line.startsWith("+") && !line.startsWith("+++");
-        const threshold = addition ? (++additionIndex / additions) * 0.72 : 0;
-        const highlighted = !addition || progress >= threshold;
-        const header = line.startsWith("@@");
+    <pre data-testid="triage-code" className="max-h-60 overflow-auto py-2 text-[12.5px] leading-5 text-[#44342c] dark:text-[#f0dcdc] scrollbar-thin" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace' }}><code>
+      {triageRuleLines.map((line) => {
+        const added = "added" in line && line.added;
+        const key = /^(\s*(?:-\s+)?)([\w-]+):(.*)$/.exec(line.content);
         return (
           <span
-            key={`${line}-${index}`}
+            key={line.number}
             className={[
-              "grid min-w-max grid-cols-[2rem_1fr] px-2 transition-colors duration-300",
-              addition ? highlighted ? "bg-[#2d8a4e]/15 text-[#237b45] dark:text-[#85d29d]" : "bg-[#2d8a4e]/[0.04] text-muted-foreground" : "",
-              header ? "text-primary" : "",
+              "grid min-w-max grid-cols-[2rem_1fr] px-2",
+              added ? "bg-[#2d8a4e]/15 dark:bg-[#79bd8f]/15" : "",
             ].join(" ")}
           >
-            <span className="select-none pr-2 text-right text-[#b3a396] dark:text-[#5e4a4a]">{addition ? "+" : " "}</span>
-            <span className="whitespace-pre">{addition ? line.slice(1) : line || " "}</span>
+            <span className="select-none pr-2 text-right text-[#b3a396] dark:text-[#5e4a4a]">{line.number}</span>
+            <span className="whitespace-pre">{key ? <>{key[1]}<span className="text-primary">{key[2]}</span>:{key[3]}</> : line.content}</span>
           </span>
         );
       })}
@@ -519,23 +521,24 @@ function TriageDiff({ progress }: { progress: number }) {
   );
 }
 
-function TriageView({ progress }: { progress: number }) {
+function TriageView() {
+  const [open, setOpen] = useState(true);
+
   return (
     <SurfaceStory
       title="Fewer false alarms"
       window={<div data-testid="triage-view" className="h-full overflow-hidden rounded-[10px] border border-border bg-[#f4f2ef] p-3 shadow-sm dark:bg-[#140b0a]">
-        <article className="mx-auto h-full max-w-[40rem] overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] shadow-sm dark:bg-[#140505]">
-          <div className="flex min-h-10 items-center gap-2 bg-[#f0eeeb] px-3 dark:bg-[#1d0d0c]">
-            <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={1.8} aria-hidden="true" />
-            <FileCode2 className="h-3.5 w-3.5 text-primary" strokeWidth={1.7} aria-hidden="true" />
-            <span className="min-w-0 flex-1 truncate font-mono text-[11px] text-foreground">rules/java/lib/generic/graal-eval.yaml</span>
-            <span className="font-mono text-[10px] text-[#2d8a4e] dark:text-[#79bd8f]">+6</span>
-            <span className="font-mono text-[10px] text-[#c73a32] dark:text-[#ff746c]">-0</span>
-          </div>
-          <div className="h-[calc(100%-2.5rem)] border-t border-border">
-            <TriageDiff progress={progress} />
-          </div>
-        </article>
+        <div className="mx-auto max-w-[40rem]">
+          <ArtifactFrame
+            path="rules/java/lib/generic/graal-eval.yaml"
+            kind="Library sink"
+            added={6}
+            open={open}
+            onToggle={() => setOpen((value) => !value)}
+          >
+            <TriageCode />
+          </ArtifactFrame>
+        </div>
       </div>}
     >
       Application context narrows a broad API match into the security condition that matters.
@@ -623,7 +626,7 @@ function WorkSurface({ stage, progress }: { stage: TimelineId; progress: number 
   if (stage === "enact") return <Specifications progress={progress} />;
   if (stage === "scan") return <CliRun progress={progress} />;
   if (stage === "summary") return <CliSummary progress={progress} />;
-  if (stage === "triage") return <TriageView progress={progress} />;
+  if (stage === "triage") return <TriageView />;
   return <FindingReport progress={progress} />;
 }
 

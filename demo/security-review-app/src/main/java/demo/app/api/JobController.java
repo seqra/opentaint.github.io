@@ -1,6 +1,5 @@
 package demo.app.api;
 
-import demo.app.execution.JobReceipt;
 import demo.app.execution.JobService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,7 +14,8 @@ public final class JobController {
     }
 
     @PostMapping("/api/jobs")
-    public JobReceipt submit(@RequestParam("script") String script) {
-        return jobService.submit(script);
+    public String submit(@RequestParam("script") String script) {
+        jobService.submit(script);
+        return "accepted";
     }
 }

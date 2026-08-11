@@ -7,7 +7,7 @@ public final class ExpressionEvaluator {
         this.runtime = runtime;
     }
 
-    public void evaluate(ScriptTask task) {
-        runtime.execute(task.expression());
+    public void evaluate(String script) {
+        runtime.execute(script);
     }
 }

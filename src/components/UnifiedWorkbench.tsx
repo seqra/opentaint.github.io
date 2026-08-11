@@ -316,10 +316,10 @@ function CliRun({ progress }: { progress: number }) {
   );
 }
 
-function CliSummary() {
+function CliSummary({ progress }: { progress: number }) {
   return (
     <div className="h-full bg-background">
-      <TerminalDemo scenario="security-summary" ariaLabel="Real OpenTaint summary output for the anonymous security review project" />
+      <TerminalDemo scenario="security-summary" progress={progress} ariaLabel="Real OpenTaint summary output for the anonymous security review project" />
     </div>
   );
 }
@@ -327,7 +327,6 @@ function CliSummary() {
 const sourceFiles: Record<string, string> = {
   "JobController.java": `package demo.app.api;
 
-import demo.app.execution.JobReceipt;
 import demo.app.execution.JobService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -342,64 +341,37 @@ public final class JobController {
     }
 
     @PostMapping("/api/jobs")
-    public JobReceipt submit(@RequestParam("script") String script) {
-        return jobService.submit(script);
+    public String submit(@RequestParam("script") String script) {
+        jobService.submit(script);
+        return "accepted";
     }
 }`,
   "JobService.java": `package demo.app.execution;
 
-import demo.app.model.JobDefinition;
-
 public final class JobService {
-    private final ExecutionPlanner planner;
+    private final ScriptDispatcher dispatcher;
 
-    public JobService(ExecutionPlanner planner) {
-        this.planner = planner;
+    public JobService(ScriptDispatcher dispatcher) {
+        this.dispatcher = dispatcher;
     }
 
-    public JobReceipt submit(String script) {
-        JobDefinition definition = JobDefinition.from(script);
-        planner.schedule(definition);
-        return JobReceipt.accepted();
+    public void submit(String script) {
+        dispatcher.dispatch(script);
     }
 }`,
-  "JobDefinition.java": `package demo.app.model;
+  "ScriptDispatcher.java": `package demo.app.execution;
 
-public record JobDefinition(String script) {
-    public static JobDefinition from(String script) {
-        return new JobDefinition(script);
-    }
-}`,
-  "ExecutionPlanner.java": `package demo.app.execution;
-
-import demo.app.model.JobDefinition;
-
-public final class ExecutionPlanner {
-    private final ScriptTaskMapper taskMapper;
+public final class ScriptDispatcher {
     private final ExpressionEvaluator evaluator;
 
-    public ExecutionPlanner(ScriptTaskMapper taskMapper, ExpressionEvaluator evaluator) {
-        this.taskMapper = taskMapper;
+    public ScriptDispatcher(ExpressionEvaluator evaluator) {
         this.evaluator = evaluator;
     }
 
-    public void schedule(JobDefinition definition) {
-        ScriptTask task = taskMapper.map(definition);
-        evaluator.evaluate(task);
+    public void dispatch(String script) {
+        evaluator.evaluate(script);
     }
 }`,
-  "ScriptTaskMapper.java": `package demo.app.execution;
-
-import demo.app.model.JobDefinition;
-
-public final class ScriptTaskMapper {
-    public ScriptTask map(JobDefinition definition) {
-        return new ScriptTask(definition.script());
-    }
-}`,
-  "ScriptTask.java": `package demo.app.execution;
-
-public record ScriptTask(String expression) {}`,
   "ExpressionEvaluator.java": `package demo.app.execution;
 
 public final class ExpressionEvaluator {
@@ -409,8 +381,8 @@ public final class ExpressionEvaluator {
         this.runtime = runtime;
     }
 
-    public void evaluate(ScriptTask task) {
-        runtime.execute(task.expression());
+    public void evaluate(String script) {
+        runtime.execute(script);
     }
 }`,
   "ScriptRuntime.java": `package demo.app.execution;
@@ -434,41 +406,15 @@ public final class ScriptRuntime {
 }`,
 };
 
-const flowSteps = [
-  { file: "JobController.java", line: 18, message: 'Method entry marks the 1st argument of "submit" as $UNTRUSTED' },
-  { file: "JobController.java", line: 19, message: 'Calling "submit" with $UNTRUSTED data at the 1st argument of "submit"' },
-  { file: "JobService.java", line: 12, message: 'Entering "submit" with $UNTRUSTED data at the 1st argument of "submit"' },
-  { file: "JobService.java", line: 13, message: 'Calling "from" with $UNTRUSTED data at the 1st argument of "submit"' },
-  { file: "JobDefinition.java", line: 4, message: 'Entering "from" with marked data at the 1st argument of "from"' },
-  { file: "JobDefinition.java", line: 5, message: 'Calling "JobDefinition" initializer with marked data at the 1st argument of "from"' },
-  { file: "JobDefinition.java", line: 3, message: 'Entering "JobDefinition" initializer with marked data at "script"' },
-  { file: "JobDefinition.java", line: 3, message: '"this.script" is assigned a value with marked data' },
-  { file: "JobDefinition.java", line: 3, message: 'Exiting "JobDefinition" initializer' },
-  { file: "JobDefinition.java", line: 5, message: 'Takes marked data at the 1st argument of "from" and ends up with marked data at the returned value' },
-  { file: "JobDefinition.java", line: 6, message: 'Exiting "from"' },
-  { file: "JobService.java", line: 13, message: 'Method "from" propagates $UNTRUSTED data from the 1st argument of "submit" to "definition"' },
-  { file: "JobService.java", line: 14, message: 'Calling "schedule" with $UNTRUSTED data at "definition"' },
-  { file: "ExecutionPlanner.java", line: 14, message: 'Entering "schedule" with $UNTRUSTED data at the 1st argument of "schedule"' },
-  { file: "ExecutionPlanner.java", line: 15, message: 'Calling "map" with $UNTRUSTED data at the 1st argument of "schedule"' },
-  { file: "ScriptTaskMapper.java", line: 6, message: 'Entering "map" with marked data at the 1st argument of "map"' },
-  { file: "ScriptTaskMapper.java", line: 7, message: 'Calling "script" with marked data at the 1st argument of "map"' },
-  { file: "JobDefinition.java", line: 3, message: 'The returning value is assigned marked data from "this.script"' },
-  { file: "JobDefinition.java", line: 3, message: 'Exiting "script"' },
-  { file: "ScriptTaskMapper.java", line: 7, message: 'Method "script" propagates marked data from the 1st argument of "map" to a local variable' },
-  { file: "ScriptTaskMapper.java", line: 7, message: 'Calling "ScriptTask" initializer with marked data at a local variable' },
-  { file: "ScriptTask.java", line: 3, message: 'Entering "ScriptTask" initializer with marked data at "expression"' },
-  { file: "ScriptTask.java", line: 3, message: '"this.expression" is assigned a value with marked data' },
-  { file: "ScriptTask.java", line: 3, message: 'Exiting "ScriptTask" initializer' },
-  { file: "ScriptTaskMapper.java", line: 7, message: 'Takes marked data at a local variable and ends up with marked data at the returned value' },
-  { file: "ScriptTaskMapper.java", line: 8, message: 'Exiting "map"' },
-  { file: "ExecutionPlanner.java", line: 15, message: 'Method "map" propagates $UNTRUSTED data from the 1st argument of "schedule" to "task"' },
-  { file: "ExecutionPlanner.java", line: 16, message: 'Calling "evaluate" with $UNTRUSTED data at "task"' },
+export const flowSteps = [
+  { file: "JobController.java", line: 17, message: 'Method entry marks the 1st argument of "submit" as $UNTRUSTED' },
+  { file: "JobController.java", line: 18, message: 'Calling "submit" with $UNTRUSTED data at the 1st argument of "submit"' },
+  { file: "JobService.java", line: 10, message: 'Entering "submit" with $UNTRUSTED data at the 1st argument of "submit"' },
+  { file: "JobService.java", line: 11, message: 'Calling "dispatch" with $UNTRUSTED data at the 1st argument of "submit"' },
+  { file: "ScriptDispatcher.java", line: 10, message: 'Entering "dispatch" with $UNTRUSTED data at the 1st argument of "dispatch"' },
+  { file: "ScriptDispatcher.java", line: 11, message: 'Calling "evaluate" with $UNTRUSTED data at the 1st argument of "dispatch"' },
   { file: "ExpressionEvaluator.java", line: 10, message: 'Entering "evaluate" with $UNTRUSTED data at the 1st argument of "evaluate"' },
-  { file: "ExpressionEvaluator.java", line: 11, message: 'Calling "expression" with $UNTRUSTED data at the 1st argument of "evaluate"' },
-  { file: "ScriptTask.java", line: 3, message: 'The returning value is assigned marked data from "this.expression"' },
-  { file: "ScriptTask.java", line: 3, message: 'Exiting "expression"' },
-  { file: "ExpressionEvaluator.java", line: 11, message: 'Method "expression" propagates $UNTRUSTED data from the 1st argument of "evaluate" to a local variable' },
-  { file: "ExpressionEvaluator.java", line: 11, message: 'Calling "execute" with $UNTRUSTED data at a local variable' },
+  { file: "ExpressionEvaluator.java", line: 11, message: 'Calling "execute" with $UNTRUSTED data at the 1st argument of "evaluate"' },
   { file: "ScriptRuntime.java", line: 7, message: 'Entering "execute" with $UNTRUSTED data at the 1st argument of "execute"' },
   { file: "ScriptRuntime.java", line: 9, message: "Untrusted HTTP input reaches a host-enabled GraalVM Context.eval call, allowing attacker-controlled script execution." },
 ] as const;
@@ -521,7 +467,6 @@ function FindingReport({ progress }: { progress: number }) {
             const line = index + 1;
             const isCurrent = line === currentLine;
             const isSink = isCurrent && stepIndex === flowSteps.length - 1;
-            const tooltipBelow = line <= 4 || line <= sourceFiles[activeFile].split("\n").length * 0.58;
             return (
               <div key={line} className="relative">
                 <div className={["grid min-h-6 grid-cols-[2rem_3rem_1fr] px-3", isSink ? "bg-primary/20" : isCurrent ? "bg-blue-500/20" : ""].join(" ")}>
@@ -534,7 +479,7 @@ function FindingReport({ progress }: { progress: number }) {
                     role="status"
                     className={[
                       "absolute left-20 z-20 w-[28rem] max-w-[calc(100%-6rem)] rounded-lg border border-primary/30 bg-background/95 px-3 py-2 font-sans text-[11px] leading-4 text-foreground shadow-[0_8px_28px_rgba(37,25,20,0.2)] backdrop-blur-sm dark:bg-[#211412]/95",
-                      tooltipBelow ? "top-full mt-2" : "bottom-full mb-2",
+                      "top-full mt-2",
                     ].join(" ")}
                   >
                     <div className="mb-1 flex items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.06em] text-muted-foreground">
@@ -557,7 +502,7 @@ function WorkSurface({ stage, progress }: { stage: TimelineId; progress: number 
   if (stage === "review") return <ReviewReport progress={progress} />;
   if (stage === "enact") return <Specifications progress={progress} />;
   if (stage === "scan") return <CliRun progress={progress} />;
-  if (stage === "summary") return <CliSummary />;
+  if (stage === "summary") return <CliSummary progress={progress} />;
   return <FindingReport progress={progress} />;
 }
 
@@ -700,7 +645,7 @@ export function UnifiedWorkbench() {
               <AgentStage id="review" setRef={(node) => { stageRefs.current[0] = node; }}>
                 <UserPrompt>Review this application for unauthenticated code execution and write a security review report.</UserPrompt>
                 <AgentText>I’ll map the unauthenticated HTTP surface, then trace request-controlled values into script and command execution APIs.</AgentText>
-                <ToolActivity title="Explored the application" activity={["Read JobController.java", "Read JobService.java", "Read ExpressionEvaluator.java", "Read ScriptRuntime.java", "Searched @PostMapping", "Searched Context.eval"]} meta="8 files" defaultOpen />
+                <ToolActivity title="Explored the application" activity={["Read JobController.java", "Read JobService.java", "Read ScriptDispatcher.java", "Read ExpressionEvaluator.java", "Read ScriptRuntime.java", "Searched @PostMapping", "Searched Context.eval"]} meta="5 files" defaultOpen />
                 <AgentText>The job endpoint passes its <code className="font-mono text-[12px] text-primary">script</code> parameter through the execution pipeline into a host-enabled GraalVM context.</AgentText>
                 <ToolActivity title="Created security-review.md" activity={["Wrote Summary", "Wrote Evidence", "Wrote Trust boundary", "Wrote Impact"]} added={38} removed={0} icon="check" defaultOpen />
                 <AgentText>I documented the finding with the affected endpoint and the complete path to <code className="font-mono text-[12px] text-primary">Context.eval</code>.</AgentText>
@@ -723,14 +668,14 @@ export function UnifiedWorkbench() {
               </AgentStage>
 
               <AgentStage id="summary" setRef={(node) => { stageRefs.current[3] = node; }}>
-                <ToolActivity title="Read OpenTaint summary" meta="36 steps" icon="terminal" defaultOpen>
+                <ToolActivity title="Read OpenTaint summary" meta="10 steps" icon="terminal" defaultOpen>
                   <CommandCard><span className="text-[#2d8a4e] dark:text-[#8fc99f]">$</span> opentaint summary results/report.sarif \{"\n"}    --show-findings --verbose-flow --show-code-snippets</CommandCard>
                 </ToolActivity>
-                <AgentText>The summary confirms the endpoint, exact sink, and every propagation step in the 36-step flow.</AgentText>
+                <AgentText>The summary confirms the endpoint, exact sink, and every propagation step in the 10-step flow.</AgentText>
               </AgentStage>
 
               <AgentStage id="report" setRef={(node) => { stageRefs.current[4] = node; }}>
-                <AgentText>Review complete. OpenTaint reproduced the finding as a 36-step path from <code className="font-mono text-[12px]">POST /api/jobs</code> to <code className="font-mono text-[12px] text-primary">Context.eval</code>.</AgentText>
+                <AgentText>Review complete. OpenTaint reproduced the finding as a 10-step path from <code className="font-mono text-[12px]">POST /api/jobs</code> to <code className="font-mono text-[12px] text-primary">Context.eval</code>.</AgentText>
                 <ToolActivity title="Opened results/report.sarif" activity={["1 error", "1 affected file", "1 triggered rule"]} icon="file" defaultOpen />
                 <div className="mt-4 rounded-md border border-border bg-background px-4 py-3 text-[12px] leading-5">
                   <div className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-primary" /><span className="font-semibold text-foreground">Unauthenticated script execution</span></div>

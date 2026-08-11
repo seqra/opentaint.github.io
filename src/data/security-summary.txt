@@ -1,0 +1,132 @@
+╭─demo/app/execution/ScriptRuntime.java [1]─╮
+╰─┬─────────────────────────────────────────╯
+  └─ Fingerprint: WhFISTP7T5uG
+     ├─ Rule: java.security.graaljs-code-injection [CWE-94]
+     ├─ Severity: ERROR
+     ├─ Location: demo/app/execution/ScriptRuntime.java:9
+     ├─ Message: Untrusted HTTP input reaches a host-enabled GraalVM Context.eval call, allowing attacker-controlled script execution.
+     ├─ Endpoints:
+     │  └─ POST /api/jobs (query: script)
+     │
+     └─ Code flow:
+        ├─ Method entry marks the 1st argument of "submit" as $UNTRUSTED
+        │  ├─ demo/app/api/JobController.java:17
+        │  └─ Code snippet
+        │     │      14     }
+        │     │      15
+        │     │      16     @PostMapping("/api/jobs")
+        │     │ >>   17     public String submit(@RequestParam("script") String script) {
+        │     │      18         jobService.submit(script);
+        │     │      19         return "accepted";
+        │     └────  20     }
+        │
+        ├─ Calling "submit" with $UNTRUSTED data at the 1st argument of "submit"
+        │  ├─ demo/app/api/JobController.java:18
+        │  └─ Code snippet
+        │     │      15
+        │     │      16     @PostMapping("/api/jobs")
+        │     │      17     public String submit(@RequestParam("script") String script) {
+        │     │ >>   18         jobService.submit(script);
+        │     │      19         return "accepted";
+        │     │      20     }
+        │     └────  21 }
+        │
+        ├─ Entering "submit" with $UNTRUSTED data at the 1st argument of "submit"
+        │  ├─ demo/app/execution/JobService.java:10
+        │  └─ Code snippet
+        │     │       7         this.dispatcher = dispatcher;
+        │     │       8     }
+        │     │       9
+        │     │ >>   10     public void submit(String script) {
+        │     │      11         dispatcher.dispatch(script);
+        │     │      12     }
+        │     └────  13 }
+        │
+        ├─ Calling "dispatch" with $UNTRUSTED data at the 1st argument of "submit"
+        │  ├─ demo/app/execution/JobService.java:11
+        │  └─ Code snippet
+        │     │       8     }
+        │     │       9
+        │     │      10     public void submit(String script) {
+        │     │ >>   11         dispatcher.dispatch(script);
+        │     │      12     }
+        │     │      13 }
+        │     └────  14
+        │
+        ├─ Entering "dispatch" with $UNTRUSTED data at the 1st argument of "dispatch"
+        │  ├─ demo/app/execution/ScriptDispatcher.java:10
+        │  └─ Code snippet
+        │     │       7         this.evaluator = evaluator;
+        │     │       8     }
+        │     │       9
+        │     │ >>   10     public void dispatch(String script) {
+        │     │      11         evaluator.evaluate(script);
+        │     │      12     }
+        │     └────  13 }
+        │
+        ├─ Calling "evaluate" with $UNTRUSTED data at the 1st argument of "dispatch"
+        │  ├─ demo/app/execution/ScriptDispatcher.java:11
+        │  └─ Code snippet
+        │     │       8     }
+        │     │       9
+        │     │      10     public void dispatch(String script) {
+        │     │ >>   11         evaluator.evaluate(script);
+        │     │      12     }
+        │     │      13 }
+        │     └────  14
+        │
+        ├─ Entering "evaluate" with $UNTRUSTED data at the 1st argument of "evaluate"
+        │  ├─ demo/app/execution/ExpressionEvaluator.java:10
+        │  └─ Code snippet
+        │     │       7         this.runtime = runtime;
+        │     │       8     }
+        │     │       9
+        │     │ >>   10     public void evaluate(String script) {
+        │     │      11         runtime.execute(script);
+        │     │      12     }
+        │     └────  13 }
+        │
+        ├─ Calling "execute" with $UNTRUSTED data at the 1st argument of "evaluate"
+        │  ├─ demo/app/execution/ExpressionEvaluator.java:11
+        │  └─ Code snippet
+        │     │       8     }
+        │     │       9
+        │     │      10     public void evaluate(String script) {
+        │     │ >>   11         runtime.execute(script);
+        │     │      12     }
+        │     │      13 }
+        │     └────  14
+        │
+        ├─ Entering "execute" with $UNTRUSTED data at the 1st argument of "execute"
+        │  ├─ demo/app/execution/ScriptRuntime.java:7
+        │  └─ Code snippet
+        │     │       4 import org.graalvm.polyglot.HostAccess;
+        │     │       5
+        │     │       6 public final class ScriptRuntime {
+        │     │ >>    7     public void execute(String script) {
+        │     │       8         try (Context context = createContext()) {
+        │     │       9             context.eval("js", script);
+        │     └────  10         }
+        │
+        └─ Untrusted HTTP input reaches a host-enabled GraalVM Context.eval call, allowing attacker-controlled script execution.
+           ├─ demo/app/execution/ScriptRuntime.java:9
+           └─ Code snippet
+              │       6 public final class ScriptRuntime {
+              │       7     public void execute(String script) {
+              │       8         try (Context context = createContext()) {
+              │ >>    9             context.eval("js", script);
+              │      10         }
+              │      11     }
+              └────  12
+
+╭─Scan Summary─╮
+╰─┬────────────╯
+  ├─ Findings
+  │  ├─ Total: 1 error
+  │  ├─ Files affected: 1
+  │  ├─ Rules executed: 1
+  │  └─ Rules triggered: 1
+  │     └─ java.security.graaljs-code-injection: 1 error [CWE-94]
+  │        └─ Untrusted script execution
+  └─ Output
+     └─ Report: results/report.sarif

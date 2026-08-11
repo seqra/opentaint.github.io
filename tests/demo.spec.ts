@@ -76,7 +76,7 @@ test.describe("landing product demonstration", () => {
 
     await jump(0.92);
     const report = workbench.getByTestId("simplified-report-view");
-    await expect(report.getByRole("status")).toContainText("Step 22 of 36");
+    await expect(report.getByRole("status")).toContainText("Step 6 of 10");
     let positions = await report.getByRole("status").evaluate((tooltip) => {
       const line = tooltip.parentElement?.firstElementChild;
       const tooltipBox = tooltip.getBoundingClientRect();
@@ -86,7 +86,7 @@ test.describe("landing product demonstration", () => {
     expect(positions.tooltipTop).toBeGreaterThanOrEqual(positions.lineBottom);
 
     await jump(0.9258);
-    await expect(report.getByRole("status")).toContainText("Step 23 of 36");
+    await expect(report.getByRole("status")).toContainText("Step 7 of 10");
     positions = await report.getByRole("status").evaluate((tooltip) => {
       const line = tooltip.parentElement?.firstElementChild;
       const tooltipBox = tooltip.getBoundingClientRect();
@@ -173,7 +173,7 @@ test.describe("landing product demonstration", () => {
     const terminal = workbench.getByTestId("demo-hero-player");
     await expect(terminal).toBeVisible();
     await expect(terminal).toContainText("$ opentaint scan");
-    await expect(terminal).toContainText(".opentaint/model/org.graalvm.polyglot.yaml");
+    await expect(terminal).toContainText(".opentaint/model");
     await expect(terminal).toHaveAttribute("data-terminal-renderer", "native-cli");
 
     await track.evaluate((element) => {
@@ -187,6 +187,19 @@ test.describe("landing product demonstration", () => {
     const summary = workbench.getByLabel("Real OpenTaint summary output for the anonymous security review project");
     await expect(summary).toBeVisible();
     await expect(summary).toContainText("$ opentaint summary results/report.sarif");
+    await expect(summary).toContainText("Fingerprint: WhFISTP7T5uG");
+    await expect(summary).toContainText('Entering "dispatch" with $UNTRUSTED data');
+
+    await track.evaluate((element) => {
+      const sticky = element.firstElementChild;
+      const stickyTop = sticky ? Number.parseFloat(window.getComputedStyle(sticky).top) || 0 : 0;
+      const trackTop = element.getBoundingClientRect().top + window.scrollY;
+      const start = trackTop - stickyTop;
+      const end = trackTop + element.offsetHeight - window.innerHeight;
+      window.scrollTo(0, start + (end - start) * 0.795);
+    });
+    await expect.poll(() => summary.getByTestId("terminal-output").evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+    await expect(summary.getByText("Scan Summary", { exact: true })).toBeInViewport();
   });
 
   for (const viewport of [

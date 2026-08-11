@@ -45,6 +45,8 @@ describe("UnifiedWorkbench", () => {
     expect(screen.getByText('Method entry marks the 1st argument of "submit" as $UNTRUSTED')).toBeVisible();
     expect(screen.getByRole("button", { name: "First step" })).toBeDisabled();
     fireEvent.click(screen.getByRole("button", { name: "Last step" }));
+    expect(within(report).getByText("10/10")).toBeVisible();
+    expect(within(report).getByRole("status")).toHaveTextContent("Step 10 of 10");
     expect(within(report).getByText("ScriptRuntime.java")).toBeVisible();
     expect(within(report).queryByText("JobController.java")).not.toBeInTheDocument();
     expect(screen.getByText(/Untrusted HTTP input reaches a host-enabled GraalVM/)).toBeVisible();

@@ -1,17 +1,13 @@
 package demo.app.execution;
 
-import demo.app.model.JobDefinition;
-
 public final class JobService {
-    private final ExecutionPlanner planner;
+    private final ScriptDispatcher dispatcher;
 
-    public JobService(ExecutionPlanner planner) {
-        this.planner = planner;
+    public JobService(ScriptDispatcher dispatcher) {
+        this.dispatcher = dispatcher;
     }
 
-    public JobReceipt submit(String script) {
-        JobDefinition definition = JobDefinition.from(script);
-        planner.schedule(definition);
-        return JobReceipt.accepted();
+    public void submit(String script) {
+        dispatcher.dispatch(script);
     }
 }

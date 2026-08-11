@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import securitySummaryOutput from "../data/security-summary.txt?raw";
 
 type TerminalTone = "plain" | "muted" | "blue" | "green" | "red" | "purple";
 
@@ -93,34 +94,14 @@ const securitySummaryLines: TerminalLine[] = [
   { content: "$ opentaint summary results/report.sarif \\", weight: "strong" },
   { content: "    --show-findings --verbose-flow --show-code-snippets", tone: "muted" },
   { content: "" },
-  { content: "╭─demo/app/execution/ScriptRuntime.java [1]─╮", tone: "purple", weight: "strong" },
-  { content: "╰─┬─────────────────────────────────────────╯", tone: "purple" },
-  { content: "  └─ Fingerprint: tM52G7DlsAaR", tone: "muted" },
-  { content: "     ├─ Rule: java.security.graaljs-code-injection [CWE-94]", tone: "red" },
-  { content: "     ├─ Severity: ERROR", tone: "red", weight: "strong" },
-  { content: "     ├─ Location: demo/app/execution/ScriptRuntime.java:9" },
-  { content: "     ├─ Message: Untrusted HTTP input reaches a host-enabled" },
-  { content: "     │  GraalVM Context.eval call, allowing attacker-controlled" },
-  { content: "     │  script execution." },
-  { content: "     ├─ Endpoints:", tone: "blue" },
-  { content: "     │  └─ POST /api/jobs (query: script)", tone: "green" },
-  { content: "     └─ Code flow:", tone: "blue" },
-  { content: "        ├─ Method entry marks the 1st argument of \"submit\"" },
-  { content: "        │  as $UNTRUSTED" },
-  { content: "        │  ├─ demo/app/api/JobController.java:18", tone: "muted" },
-  { content: "        │  └─ Code snippet", tone: "muted" },
-  { content: "        │     │      17     @PostMapping(\"/api/jobs\")" },
-  { content: "        │     │ >>   18     public JobReceipt submit(" },
-  { content: "        │     │               @RequestParam(\"script\") String script) {" },
-  { content: "        │     │      19         return jobService.submit(script);" },
-  { content: "        │     └────  20     }" },
-  { content: "        │" },
-  { content: "        ├─ Calling \"submit\" with $UNTRUSTED data at the 1st" },
-  { content: "        │  argument of \"submit\"" },
-  { content: "        │  └─ demo/app/api/JobController.java:19", tone: "muted" },
-  { content: "        │" },
-  { content: "        └─ 36-step flow ends at Context.eval", tone: "red", weight: "strong" },
-  { content: "           └─ demo/app/execution/ScriptRuntime.java:9", tone: "muted" },
+  ...securitySummaryOutput.trimEnd().split("\n").map((content): TerminalLine => {
+    if (/^╭─/.test(content)) return { content, tone: "purple", weight: "strong" };
+    if (/Fingerprint:|Location:|\.java:\d+$|Code snippet/.test(content)) return { content, tone: "muted" };
+    if (/Severity: ERROR|1 error|graaljs-code-injection/.test(content)) return { content, tone: "red", weight: "strong" };
+    if (/Endpoints:|Code flow:|Findings|Output|Total:|Files affected:|Rules (?:executed|triggered):|Report:/.test(content)) return { content, tone: "blue" };
+    if (/POST \/api\/jobs/.test(content)) return { content, tone: "green" };
+    return { content };
+  }),
 ];
 
 const heroLines: TerminalLine[] = [
@@ -179,9 +160,9 @@ function GlyphRun({ content }: { content: string }) {
   );
 }
 
-function TerminalSegments({ line, fallback }: { line: TerminalLine; fallback: string }) {
+function TerminalSegments({ line, fallback, wrap = false }: { line: TerminalLine; fallback: string; wrap?: boolean }) {
   if (!line.segments) {
-    return <span className={`${toneClass[line.tone ?? "plain"]} ${line.weight === "strong" ? "font-semibold" : "font-normal"}`}>{fallback || " "}</span>;
+    return <span className={`${wrap ? "min-w-0 whitespace-pre-wrap break-words" : ""} ${toneClass[line.tone ?? "plain"]} ${line.weight === "strong" ? "font-semibold" : "font-normal"}`}>{fallback || " "}</span>;
   }
   return <>{line.segments.map((segment, index) => (
     <span
@@ -193,13 +174,13 @@ function TerminalSegments({ line, fallback }: { line: TerminalLine; fallback: st
   ))}</>;
 }
 
-function TerminalContent({ line }: { line: TerminalLine }) {
+function TerminalContent({ line, wrap = false }: { line: TerminalLine; wrap?: boolean }) {
   const tree = /^([ │├└─]+)(.*)$/.exec(line.content);
-  if (!tree || !/[│├└]/.test(tree[1])) return <TerminalSegments line={line} fallback={line.content} />;
+  if (!tree || !/[│├└]/.test(tree[1])) return <TerminalSegments line={line} fallback={line.content} wrap={wrap} />;
   return (
-    <span className="inline-flex h-[18px] items-start align-top">
+    <span className={wrap ? "flex min-h-[18px] min-w-0 items-start" : "inline-flex h-[18px] items-start align-top"}>
       <span className={faintClass}><GlyphRun content={tree[1]} /></span>
-      <TerminalSegments line={line} fallback={tree[2]} />
+      <TerminalSegments line={line} fallback={tree[2]} wrap={wrap} />
     </span>
   );
 }
@@ -223,6 +204,7 @@ export function TerminalDemo({
   progress = 0,
 }: TerminalDemoProps = {}) {
   const lines = linesFor(scenario);
+  const wrapsLongLines = scenario === "security-summary";
   const outputRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -251,7 +233,7 @@ export function TerminalDemo({
       <div
         ref={outputRef}
         data-testid="terminal-output"
-        className="min-h-0 min-w-0 w-full flex-1 overflow-hidden whitespace-pre px-4 py-4 text-[12px] leading-[18px] sm:text-[13px]"
+        className={`min-h-0 min-w-0 w-full flex-1 overflow-hidden px-4 py-4 text-[12px] leading-[18px] sm:text-[13px] ${wrapsLongLines ? "whitespace-pre-wrap" : "whitespace-pre"}`}
         style={{
           fontFamily: '"SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace',
           fontVariantLigatures: "none",
@@ -271,8 +253,8 @@ export function TerminalDemo({
             );
           }
           return (
-            <span key={`${line.content}-${index}`} className="block h-[18px]">
-              <TerminalContent line={line} />
+            <span key={`${line.content}-${index}`} className={wrapsLongLines ? "block min-h-[18px]" : "block h-[18px]"}>
+              <TerminalContent line={line} wrap={wrapsLongLines} />
             </span>
           );
         })}

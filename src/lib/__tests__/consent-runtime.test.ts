@@ -59,18 +59,38 @@ describe("initConsent", () => {
     expect(analytics.setDefaultConsent).toHaveBeenCalledWith("granted", CONSENT_REQUIRED_REGIONS);
   });
 
-  it("loads the tag either way, as advanced mode expects", async () => {
-    for (const zone of ["Europe/Berlin", "America/New_York"]) {
-      Object.values(analytics).forEach((fn) => fn.mockClear());
-      const runtime = await loadRuntime(zone);
-      runtime.initConsent();
+  it("withholds the tag from a visitor who is about to be asked", async () => {
+    const runtime = await loadRuntime("Europe/Berlin");
+    runtime.initConsent();
 
-      expect(analytics.loadGoogleTag, zone).toHaveBeenCalledOnce();
-    }
+    expect(analytics.loadGoogleTag).not.toHaveBeenCalled();
+  });
+
+  it("loads the tag where no banner will be shown", async () => {
+    const runtime = await loadRuntime("America/New_York");
+    runtime.initConsent();
+
+    expect(analytics.loadGoogleTag).toHaveBeenCalledOnce();
+  });
+
+  it("loads the tag for a visitor who consented, wherever they are", async () => {
+    window.localStorage.setItem(CONSENT_STORAGE_KEY, "granted");
+    const runtime = await loadRuntime("Europe/Berlin");
+    runtime.initConsent();
+
+    expect(analytics.loadGoogleTag).toHaveBeenCalledOnce();
+  });
+
+  it("keeps the tag off for a visitor who refused, wherever they are", async () => {
+    window.localStorage.setItem(CONSENT_STORAGE_KEY, "denied");
+    const runtime = await loadRuntime("America/New_York");
+    runtime.initConsent();
+
+    expect(analytics.loadGoogleTag).not.toHaveBeenCalled();
   });
 
   it("declares defaults before loading the tag", async () => {
-    const runtime = await loadRuntime("Europe/Berlin");
+    const runtime = await loadRuntime("America/New_York");
     runtime.initConsent();
 
     expect(callOrder()).toEqual(["default", "load"]);
@@ -101,6 +121,14 @@ describe("initConsent", () => {
     expect(callOrder()).toEqual(["default", "load"]);
   });
 
+  it("still declares the defaults for a withheld tag, so a later grant is scoped", async () => {
+    const runtime = await loadRuntime("Europe/Berlin");
+    runtime.initConsent();
+
+    expect(analytics.setDefaultConsent).toHaveBeenCalledOnce();
+    expect(callOrder()).toEqual(["default"]);
+  });
+
   it("is idempotent", async () => {
     const runtime = await loadRuntime("America/New_York");
     runtime.initConsent();
@@ -119,15 +147,32 @@ describe("initConsent", () => {
 });
 
 describe("setConsentChoice", () => {
-  it("granting persists and updates", async () => {
+  it("granting persists, updates, and starts the withheld tag", async () => {
     const runtime = await loadRuntime("Europe/Berlin");
     runtime.initConsent();
     runtime.setConsentChoice("granted");
 
     expect(window.localStorage.getItem(CONSENT_STORAGE_KEY)).toBe("granted");
     expect(analytics.updateAnalyticsConsent).toHaveBeenCalledWith("granted");
+    expect(analytics.loadGoogleTag).toHaveBeenCalledOnce();
     expect(analytics.clearAnalyticsCookies).not.toHaveBeenCalled();
     expect(runtime.getConsentState().choice).toBe("granted");
+  });
+
+  it("consents before configuring, so the first page_view is already granted", async () => {
+    const runtime = await loadRuntime("Europe/Berlin");
+    runtime.initConsent();
+    runtime.setConsentChoice("granted");
+
+    expect(callOrder()).toEqual(["default", "update", "load"]);
+  });
+
+  it("declining leaves the tag unloaded", async () => {
+    const runtime = await loadRuntime("Europe/Berlin");
+    runtime.initConsent();
+    runtime.setConsentChoice("denied");
+
+    expect(analytics.loadGoogleTag).not.toHaveBeenCalled();
   });
 
   it("withdrawing clears the cookies already written", async () => {

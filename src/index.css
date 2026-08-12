@@ -341,7 +341,6 @@
 
   .continuous-security-band {
     isolation: isolate;
-    overflow: clip;
   }
 
   .security-debt-band,
@@ -349,7 +348,6 @@
   .quickstart-section,
   .engine-proof-band {
     isolation: isolate;
-    overflow: clip;
   }
 
   /* Static, seeded Perlin flow fields sit at section scope. They add depth to

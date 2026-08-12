@@ -78,17 +78,21 @@ test.describe("landing message", () => {
 
       return {
         continuousDivider: getComputedStyle(continuous, "::before").content,
+        continuousOverflow: getComputedStyle(continuous).overflow,
         continuousBackground: getComputedStyle(continuous).backgroundColor,
         realWorldBackground: getComputedStyle(realWorld).backgroundColor,
         engineBackground: getComputedStyle(engine).backgroundColor,
+        engineOverflow: getComputedStyle(engine).overflow,
         skillsBackground: getComputedStyle(skills).backgroundColor,
         skillsDivider: getComputedStyle(skills, "::before").content,
       };
     });
 
     expect(styles.continuousDivider).not.toBe("none");
+    expect(styles.continuousOverflow).toBe("visible");
     expect(styles.realWorldBackground).not.toBe(styles.continuousBackground);
     expect(styles.engineBackground).toBe(styles.skillsBackground);
+    expect(styles.engineOverflow).toBe("visible");
     expect(styles.skillsDivider).toBe("none");
   });
 });

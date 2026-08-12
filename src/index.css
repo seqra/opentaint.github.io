@@ -331,6 +331,19 @@
     background-color: hsl(var(--band));
   }
 
+  /* These sections form deliberate narrative groups rather than inheriting
+     their paint from DOM position. The real-world review starts a new scope;
+     engine proof and agent workflow share the following scope. */
+  .continuous-security-band,
+  .landing-sections > .band.engine-proof-band,
+  .landing-sections > .band.agent-skills-band {
+    background-color: hsl(var(--background));
+  }
+
+  .landing-sections > .band.real-world-band {
+    background-color: hsl(var(--band));
+  }
+
   /* Section separator (the site's signature mark): a rule across the top of the
      section that turns a rounded corner up on the left and down on the right,
      bracketing the section between the one before it. The bracket — the hooks
@@ -341,6 +354,7 @@
      content column; page-sections sit flush. Only the hero band (first child)
      stays un-separated. */
   .band:not(:first-child),
+  .band.section-divider,
   .quickstart-section,
   .page-section:not(:first-child),
   .footer-links {
@@ -349,6 +363,7 @@
   }
 
   .band:not(:first-child),
+  .band.section-divider,
   .quickstart-section {
     --rule-inset: max(var(--page-pad), calc((100% - var(--content-max)) / 2));
   }
@@ -359,6 +374,7 @@
      circles on the same element, so they stay locked to the ends of the rule at
      every width. */
   .band:not(:first-child)::before,
+  .band.section-divider::before,
   .quickstart-section::before,
   .page-section:not(:first-child)::before,
   .footer-links::before {
@@ -379,6 +395,11 @@
       radial-gradient(circle at center, hsl(var(--brand)) 0 calc(var(--dot) / 2), transparent calc(var(--dot) / 2))
         right center / var(--dot) var(--dot) no-repeat;
     pointer-events: none;
+  }
+
+  /* Engine proof and the agent workflow are one continuous section group. */
+  .landing-sections > .band.agent-skills-band::before {
+    content: none;
   }
 
   /* The hero and the workbench form one product-led composition. The demo is

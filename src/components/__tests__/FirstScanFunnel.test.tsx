@@ -7,13 +7,13 @@ describe("FirstScanFunnel", () => {
     render(<FirstScanFunnel />);
 
     expect(screen.getByRole("heading", { name: "Five-minute quickstart" })).toBeVisible();
-    expect(screen.getByRole("heading", { name: "Install OpenTaint with builtin rules and models" })).toBeVisible();
-    expect(screen.getByRole("heading", { name: "Install AppSec agent skills" })).toBeVisible();
-    expect(screen.getByRole("heading", { name: "Prompt your agent to write custom rules and models, then run an OpenTaint scan with them" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Install OpenTaint" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Install OpenTaint agent skills" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Prompt your agent to start agentic scan with OpenTaint" })).toBeVisible();
     expect(screen.queryByText("Run your first agentic application security test in 5 minutes")).not.toBeInTheDocument();
     expect(screen.getByText("npm install -g @seqra/opentaint")).toBeVisible();
     expect(screen.getByText("npx skills add https://github.com/seqra/opentaint")).toBeVisible();
-    expect(screen.getByText("Run deep security scan and static triage with appsec-agent skill")).toBeVisible();
+    expect(screen.getByText("Run deep security scan and static triage with OpenTaint appsec-agent skill")).toBeVisible();
     expect(screen.getByText("Open source, batteries included")).toBeVisible();
     expect(screen.queryByText(/Engine, rules, dependency models/)).not.toBeInTheDocument();
   });

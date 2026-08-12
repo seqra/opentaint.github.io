@@ -16,7 +16,7 @@ const installMethods: InstallMethod[] = [
 ];
 
 const skillsCommand = "npx skills add https://github.com/seqra/opentaint";
-const firstPrompt = "Run deep security scan and static triage with appsec-agent skill";
+const firstPrompt = "Run deep security scan and static triage with OpenTaint appsec-agent skill";
 
 type CopyProps = {
   id: string;
@@ -95,7 +95,7 @@ export function FirstScanFunnel() {
 
         <div className="mx-auto mt-10 max-w-4xl space-y-4 text-left">
           <div className="grid gap-3 md:grid-cols-[16rem_minmax(0,1fr)] md:items-center md:gap-4">
-            <StageLabel number="01">Install OpenTaint with builtin rules and models</StageLabel>
+            <StageLabel number="01">Install OpenTaint</StageLabel>
             <div className="min-w-0 overflow-hidden rounded-xl border border-panel-border bg-panel">
               <div className="flex h-12 min-w-0 items-center border-b border-panel-border/30">
                 <div className="flex min-w-0 flex-1 items-center gap-6 overflow-x-auto px-4 scrollbar-thin sm:px-6 lg:gap-8">
@@ -126,14 +126,14 @@ export function FirstScanFunnel() {
           </div>
 
           <div className="grid gap-3 md:grid-cols-[16rem_minmax(0,1fr)] md:items-center md:gap-4">
-            <StageLabel number="02">Install AppSec agent skills</StageLabel>
+            <StageLabel number="02">Install OpenTaint agent skills</StageLabel>
             <div className="min-w-0 overflow-hidden rounded-xl border border-panel-border bg-panel">
               <CommandLine id="skills install command" value={skillsCommand} copiedId={copiedId} onCopy={copy} />
             </div>
           </div>
 
           <div className="grid gap-3 md:grid-cols-[16rem_minmax(0,1fr)] md:items-center md:gap-4">
-            <StageLabel number="03">Prompt your agent to write custom rules and models, then run an OpenTaint scan with them</StageLabel>
+            <StageLabel number="03">Prompt your agent to start agentic scan with OpenTaint</StageLabel>
             <div className="min-w-0 overflow-hidden rounded-xl border border-panel-border bg-panel">
               <CommandLine id="first security-review prompt" value={firstPrompt} prompt copiedId={copiedId} onCopy={copy} />
             </div>

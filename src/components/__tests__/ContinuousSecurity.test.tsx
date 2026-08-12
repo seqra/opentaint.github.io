@@ -4,6 +4,7 @@ import { ContinuousSecurity } from "../ContinuousSecurity";
 
 beforeEach(() => {
   vi.stubGlobal("matchMedia", vi.fn().mockReturnValue({ matches: true }));
+  vi.stubGlobal("scrollTo", vi.fn());
 });
 
 describe("ContinuousSecurity", () => {
@@ -14,30 +15,39 @@ describe("ContinuousSecurity", () => {
     expect(screen.getByText("The flexibility of model reasoning and the consistency of formal program analysis combined")).toBeVisible();
   });
 
-  it("uses the review and scan operating model", () => {
+  it("starts with the variability of repeated model review", () => {
     render(<ContinuousSecurity />);
 
-    expect(screen.getByText("Security agent")).toBeVisible();
-    expect(screen.getByText("Taint analysis engine")).toBeVisible();
-    expect(screen.getByText("Formal program analysis")).toBeVisible();
-    expect(screen.getByText("Taint rules and dependency models")).toBeVisible();
+    expect(screen.getByRole("heading", { name: "The same review can produce different findings" })).toBeVisible();
+    expect(screen.getByText("Review₁ △ Review₂ ≠ ∅")).toBeVisible();
+    expect(screen.getByLabelText("Two model reviews of the same project return different findings")).toBeVisible();
   });
 
-  it("contrasts repeated agent review with a stable formal scan", () => {
+  it("contrasts model variability with deterministic formal analysis", () => {
     render(<ContinuousSecurity />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Same review" }));
-    expect(screen.getByText("28k tokens")).toBeVisible();
-    expect(screen.getByText("unchanged")).toBeVisible();
-    expect(screen.getByText("0 model tokens")).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: /Searching/ }));
+    expect(screen.getByRole("heading", { name: "The same inputs produce the same report" })).toBeVisible();
+    expect(screen.getByText("Report₁ = Report₂")).toBeVisible();
+    expect(screen.getByLabelText("Two formal scans of the same project and specification return the same report")).toBeVisible();
   });
 
-  it("accumulates enacted coverage across revisions", () => {
+  it("shows both engine failure modes when the specification is incomplete", () => {
     render(<ContinuousSecurity />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Revision 3" }));
-    expect(screen.getByLabelText("Formal specification contains R₁, R₂, R₃, M₁")).toBeVisible();
-    expect(screen.getByText("A ∪ B ∪ C")).toBeVisible();
-    expect(screen.getByLabelText("The formal specification is applied by taint analysis")).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: /Engine limits/ }));
+    expect(screen.getByText("Missed finding")).toBeVisible();
+    expect(screen.getByText("False alarm")).toBeVisible();
+    expect(screen.getByLabelText("An incomplete formal specification creates a missed finding and a false alarm")).toBeVisible();
+  });
+
+  it("shows review knowledge accumulating into whole-project coverage", () => {
+    render(<ContinuousSecurity />);
+
+    fireEvent.click(screen.getByRole("button", { name: /Continuous/ }));
+    expect(screen.getByRole("heading", { name: "Review the change. Scan the whole project" })).toBeVisible();
+    expect(screen.getByText("Report₂ ⊇ Review₁ ∪ Review₂")).toBeVisible();
+    expect(screen.getByLabelText("Formal specification R₁, R₂")).toBeVisible();
+    expect(screen.getByText("Lean, continuous coverage")).toBeVisible();
   });
 });

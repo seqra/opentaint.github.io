@@ -219,20 +219,12 @@ test.describe("landing product demonstration", () => {
     { name: "phone", width: 375, height: 812 },
     { name: "Zenfone 7", width: 412, height: 915 },
   ]) {
-    test(`${viewport.name} can reach every session stage without page overflow`, async ({ page }) => {
+    test(`${viewport.name} hides the agent demo without page overflow`, async ({ page }) => {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto("/");
 
       const workbench = page.getByTestId("unified-workbench");
-      await workbench.scrollIntoViewIfNeeded();
-      await workbench.getByRole("button", { name: "Enact", exact: true }).click();
-      await expect(workbench.getByText("rules/java/security/graaljs-code-injection.yaml", { exact: true })).toBeVisible();
-      await workbench.getByRole("button", { name: "Scan", exact: true }).click();
-      await expect(workbench.getByTestId("demo-hero-player")).toBeVisible();
-      await workbench.getByRole("button", { name: "Triage", exact: true }).click();
-      await expect(workbench.getByTestId("triage-view")).toBeVisible();
-      await workbench.getByRole("button", { name: "Report", exact: true }).click();
-      await expect(workbench.getByTestId("simplified-report-view")).toBeVisible();
+      await expect(workbench).toBeHidden();
 
       const pageWidth = await page.evaluate(() => document.body.scrollWidth);
       expect(pageWidth).toBeLessThanOrEqual(viewport.width + 1);

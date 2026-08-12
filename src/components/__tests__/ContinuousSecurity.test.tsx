@@ -50,6 +50,13 @@ describe("ContinuousSecurity", () => {
     expect(screen.getByLabelText("Formal specification R₁, R₂")).toBeVisible();
   });
 
+  it("shows a changed project as separate project and change symbols", () => {
+    render(<ContinuousSecurity />);
+
+    fireEvent.click(screen.getByRole("button", { name: /Learn the diff/ }));
+    expect(screen.getByLabelText("Project 2 with new code").querySelectorAll("svg")).toHaveLength(2);
+  });
+
   it("advances scenes from its internal scroll track", () => {
     render(<ContinuousSecurity />);
 

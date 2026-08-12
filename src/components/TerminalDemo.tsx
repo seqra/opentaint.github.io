@@ -65,15 +65,15 @@ const linesFor = (scenario: NonNullable<TerminalDemoProps["scenario"]>) => {
 };
 
 const toneClass: Record<TerminalTone, string> = {
-  plain: "text-[#302d2a] dark:text-[#e7e1dc]",
-  muted: "text-[#756d68] dark:text-[#aaa29d]",
-  blue: "text-[#2369b3] dark:text-[#78baff]",
+  plain: "text-[#302d2a] dark:text-[var(--code-text)]",
+  muted: "text-[#756d68] dark:text-muted-foreground",
+  blue: "text-[#2369b3] dark:text-[hsl(var(--agent))]",
   green: "text-[#237b45] dark:text-[#72c98e]",
-  red: "text-[#ca3029] dark:text-[#ff655d]",
+  red: "text-[#ca3029] dark:text-[var(--code-string)]",
   purple: "text-[#a63e58] dark:text-[#f07d91]",
 };
 
-const faintClass = "text-[#928c88] dark:text-[#77716e]";
+const faintClass = "text-[#928c88] dark:text-[var(--code-line-num)]";
 const glyphHeight: Record<TerminalDensity, string> = {
   default: "h-[18px]",
   compact: "h-[16px]",
@@ -170,15 +170,15 @@ export function TerminalDemo({
       data-testid="demo-hero-player"
       data-terminal-renderer="native-cli"
       aria-label={ariaLabel}
-      className="flex h-full w-full flex-col overflow-hidden bg-[#f8f7f5] dark:bg-[#130d0e]"
+      className="flex h-full w-full flex-col overflow-hidden bg-[#f8f7f5] dark:bg-code"
     >
-      <div className="flex h-10 shrink-0 items-center border-b border-black/10 bg-[#efeeeb] px-4 dark:border-white/10 dark:bg-[#1c1213]">
+      <div className="flex h-10 shrink-0 items-center border-b border-black/10 bg-[#efeeeb] px-4 dark:border-border dark:bg-code-header">
         <div className="flex gap-2" aria-hidden="true">
           <span className="h-2 w-2 rounded-full bg-[#ff5f57]" />
           <span className="h-2 w-2 rounded-full bg-[#febc2e]" />
           <span className="h-2 w-2 rounded-full bg-[#28c840]" />
         </div>
-        <span className="mx-auto pr-10 font-mono text-[11px] text-[#766e69] dark:text-[#a69b96]">
+        <span className="mx-auto pr-10 font-mono text-[11px] text-[#766e69] dark:text-muted-foreground">
           opentaint — {scenario === "security-summary" ? "summary" : "scan"}
         </span>
       </div>

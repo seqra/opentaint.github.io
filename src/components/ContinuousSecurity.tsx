@@ -147,7 +147,8 @@ function ProjectInput({ label, change = false, rules }: { label: string; change?
       aria-label={`${label}${change ? " with new code" : ""}${rules ? ` with formal specification ${rules.join(", ")}` : ""}`}
     >
       <span className="relative flex flex-1 items-center justify-center gap-2 px-2 py-2 font-mono text-[9px] font-semibold uppercase tracking-[0.08em] text-muted-foreground sm:text-[10px]">
-        {change ? <FileDiff className="h-5 w-5 text-primary" strokeWidth={1.4} aria-hidden="true" /> : <FolderCode className="h-5 w-5 text-foreground/55" strokeWidth={1.4} aria-hidden="true" />}
+        <FolderCode className="h-5 w-5 text-foreground/55" strokeWidth={1.4} aria-hidden="true" />
+        {change && <FileDiff className="h-5 w-5 text-primary" strokeWidth={1.4} aria-hidden="true" />}
         <span>{label}</span>
       </span>
       {rules && (

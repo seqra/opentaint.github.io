@@ -67,40 +67,29 @@ const traceSteps = [
           <span class="text-foreground">Agent reviews</span>
         </p>
 
-        <div class="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(16rem,0.65fr)]">
+        <div class="mt-8">
           <article class="reveal overflow-hidden rounded-xl border border-border-strong bg-code-bg">
             <div class="flex items-center justify-between border-b border-border bg-code-header px-4 py-3 font-mono text-[10px] text-muted-foreground">
               <span>Lambda.java → ScriptEvaluator.java</span>
               <span class="uppercase tracking-[0.12em]">reviewed path</span>
             </div>
-            <pre class="overflow-x-auto px-4 py-6 font-mono text-[11px] leading-6 text-foreground sm:px-6 sm:text-[12px]"><code><span class="text-muted-foreground">72</span>  Map&lt;String, Object&gt; taskInput = task.getInputData();
+            <pre class="overflow-x-auto px-4 py-6 font-mono text-[11px] leading-6 text-foreground sm:px-6 sm:text-[12px]"><code><span class="text-muted-foreground">71</span>  <span class="text-emerald-700 dark:text-emerald-400">// Trust boundary: workflow input controls the script.</span>
+<span class="text-muted-foreground">72</span>  Map&lt;String, Object&gt; taskInput = task.getInputData();
 <span class="text-muted-foreground">75</span>  scriptExpression = (String) taskInput.get(<span class="text-primary">"scriptExpression"</span>);
 <span class="text-muted-foreground">79</span>  Object result = ScriptEvaluator.eval(scriptExpression, taskInput);
 
+<span class="text-muted-foreground">115</span> <span class="text-emerald-700 dark:text-emerald-400">// Opaque external method behavior: option() returns this builder.</span>
 <span class="text-muted-foreground">116</span> private static Context createNewContext() &#123;
 <span class="text-muted-foreground">117</span>   return Context.newBuilder(<span class="text-primary">"js"</span>)
 <span class="text-muted-foreground">118</span>     .<span class="text-primary">allowHostAccess(HostAccess.ALL)</span>
+<span class="text-muted-foreground">119</span>     .option("engine.WarnInterpreterOnly", "false")
 <span class="text-muted-foreground">120</span>     .build();
 <span class="text-muted-foreground">121</span> &#125;
 
+<span class="text-muted-foreground">201</span> <span class="text-emerald-700 dark:text-emerald-400">// Vulnerability pattern: untrusted script reaches a host-enabled evaluator.</span>
 <span class="text-muted-foreground">202</span> executorService.submit(
 <span class="text-muted-foreground">203</span>   () -&gt; context.<span class="text-primary">eval("js", script)</span>);</code></pre>
           </article>
-
-          <ol class="reveal grid content-center gap-4 font-mono">
-            <li class="rounded-xl border border-border-strong bg-background px-4 py-4">
-              <span class="text-[9px] font-semibold uppercase tracking-[0.14em] text-primary">Trust boundary</span>
-              <p class="mt-2 text-[12px] leading-5 text-foreground">Workflow input controls the script expression.</p>
-            </li>
-            <li class="rounded-xl border border-border-strong bg-background px-4 py-4">
-              <span class="text-[9px] font-semibold uppercase tracking-[0.14em] text-primary">Host access</span>
-              <p class="mt-2 text-[12px] leading-5 text-foreground">The JavaScript context exposes the host runtime.</p>
-            </li>
-            <li class="rounded-xl border border-border-strong bg-background px-4 py-4">
-              <span class="text-[9px] font-semibold uppercase tracking-[0.14em] text-primary">Execution sink</span>
-              <p class="mt-2 text-[12px] leading-5 text-foreground">The controlled expression reaches <code>Context.eval()</code>.</p>
-            </li>
-          </ol>
         </div>
       </div>
 

@@ -60,6 +60,6 @@ describe("ContinuousSecurity", () => {
     fireEvent.scroll(track);
 
     expect(screen.getByRole("heading", { name: "Search every new version without relearning the project" })).toBeVisible();
-    expect(track.querySelector("[aria-hidden='true'] > span[style]")).toHaveStyle({ width: "49.99375%" });
+    expect(track.querySelector("[aria-hidden='true'] > span[style]")).toHaveStyle({ transform: "scaleX(0.5)" });
   });
 });

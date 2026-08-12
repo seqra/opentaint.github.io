@@ -1,4 +1,6 @@
 ---
+import PerlinBackdrop from "@/components/astro/PerlinBackdrop.astro";
+
 const proof = {
   href: "/blog/semgrep-vs-codeql-vs-opentaint",
   title: "Detection depth, compared",
@@ -33,7 +35,8 @@ const coverageStates = {
 ---
 
 <section class="band engine-proof-band" aria-labelledby="proof-heading">
-  <div class="mx-auto max-w-6xl">
+  <PerlinBackdrop class="section-flow-noise-soft" />
+  <div class="relative z-10 mx-auto max-w-6xl">
     <div class="section-header">
       <p class="section-eyebrow">Comparative results</p>
       <h2 id="proof-heading" class="section-heading">See what the engine catches</h2>

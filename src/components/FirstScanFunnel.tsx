@@ -1,5 +1,6 @@
 import { Check, Copy } from "lucide-react";
 import { useMemo, useState } from "react";
+import { createHeroFlowField } from "@/lib/heroFlowField";
 
 type InstallMethod = {
   id: string;
@@ -17,6 +18,7 @@ const installMethods: InstallMethod[] = [
 
 const skillsCommand = "npx skills add https://github.com/seqra/opentaint";
 const firstPrompt = "Run deep security scan and static triage with OpenTaint appsec-agent skill";
+const quickstartFlowLines = createHeroFlowField();
 
 type CopyProps = {
   id: string;
@@ -87,7 +89,13 @@ export function FirstScanFunnel() {
 
   return (
     <section id="install" className="band quickstart-section" aria-labelledby="quickstart-heading">
-      <div className="mx-auto max-w-[82rem]">
+      <div className="section-flow-noise section-flow-noise-soft" aria-hidden="true">
+        <svg viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid slice">
+          <g>{quickstartFlowLines.map((line, index) => <path key={`quickstart-flow-${index}`} d={line.d} />)}</g>
+        </svg>
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-[82rem]">
         <div className="section-header">
           <p className="section-banner">Open source, batteries included</p>
           <h2 id="quickstart-heading" className="section-heading">Five-minute quickstart</h2>

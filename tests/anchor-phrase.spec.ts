@@ -45,7 +45,7 @@ test.describe("landing message", () => {
     await continuous.click();
 
     await expect(comparison.getByRole("heading", { name: "Review the change. Scan the whole project" })).toBeVisible();
-    await expect(comparison.getByLabel("Whole project with new code with attached formal specification R₁, R₂", { exact: true })).toBeVisible();
+    await expect(comparison.getByLabel("Whole project with new code with formal specification R₁, R₂", { exact: true })).toBeVisible();
     await expect(comparison.locator("[aria-live='polite']")).toContainText("The model learns new context. The engine searches the whole project.");
   });
 

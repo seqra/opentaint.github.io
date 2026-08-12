@@ -346,7 +346,9 @@
   }
 
   .security-debt-band,
-  .real-world-band {
+  .real-world-band,
+  .quickstart-section,
+  .engine-proof-band {
     isolation: isolate;
     overflow: clip;
   }

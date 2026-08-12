@@ -90,6 +90,28 @@ function FindingSet({ values, report = false }: { values: string[]; report?: boo
   );
 }
 
+function SpecificationMarks({ rules }: { rules: string[] }) {
+  return (
+    <span className="flex flex-wrap justify-center gap-1" aria-label={`Formal specification ${rules.join(", ")}`}>
+      {rules.map((rule) => (
+        <span key={rule} className="flex h-7 w-7 items-center justify-center rounded bg-primary font-mono text-[9px] font-semibold text-primary-foreground sm:h-8 sm:w-8 sm:text-[10px]">
+          {rule}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function CodeChange() {
+  return (
+    <span className="mt-2 grid w-9 gap-1" aria-label="Changed code">
+      <i className="h-px w-7 bg-foreground/35" />
+      <i className="h-1 w-9 rounded-sm bg-primary" />
+      <i className="h-px w-6 bg-foreground/55" />
+    </span>
+  );
+}
+
 type NodeKind = "project" | "change" | "review" | "spec" | "report";
 
 function FlowNode({
@@ -120,13 +142,9 @@ function FlowNode({
       {kind === "project" && (
         <span className="mt-2 grid w-9 gap-1" aria-hidden="true"><i className="h-px bg-foreground/70" /><i className="h-px w-7 bg-foreground/50" /><i className="h-px w-8 bg-foreground/35" /></span>
       )}
-      {kind === "change" && <span className="mt-1 font-mono text-xl font-semibold text-primary">Δ</span>}
+      {kind === "change" && <CodeChange />}
       {findings && <span className="mt-2"><FindingSet values={findings} report={kind === "report"} /></span>}
-      {rules && (
-        <span className="mt-2 flex flex-wrap justify-center gap-1" aria-label={`Formal specification ${rules.join(", ")}`}>
-          {rules.map((rule) => <span key={rule} className="rounded bg-primary px-1.5 py-1 font-mono text-[9px] font-semibold text-primary-foreground">{rule}</span>)}
-        </span>
-      )}
+      {rules && <span className="mt-2"><SpecificationMarks rules={rules} /></span>}
     </div>
   );
 }
@@ -135,17 +153,16 @@ function ProjectInput({ label, change = false, rules }: { label: string; change?
   return (
     <div
       className="flex min-h-[4.75rem] min-w-0 flex-col overflow-hidden rounded-lg border border-border-strong bg-background text-center sm:min-h-[5.5rem]"
-      aria-label={`${label}${change ? " with new code" : ""}${rules ? ` with attached formal specification ${rules.join(", ")}` : ""}`}
+      aria-label={`${label}${change ? " with new code" : ""}${rules ? ` with formal specification ${rules.join(", ")}` : ""}`}
     >
       <span className="relative flex flex-1 items-center justify-center gap-2 px-2 py-2 font-mono text-[9px] font-semibold uppercase tracking-[0.08em] text-muted-foreground sm:text-[10px]">
         <span>{label}</span>
-        <span className="grid w-6 gap-1" aria-hidden="true"><i className="h-px bg-foreground/55" /><i className="h-px w-5 bg-foreground/35" /></span>
-        {change && <span className="font-mono text-base font-semibold text-primary">Δ</span>}
+        <span className="grid w-6 gap-1" aria-hidden="true"><i className="h-px bg-foreground/55" /><i className={change ? "h-1 bg-primary" : "h-px w-5 bg-foreground/35"} /></span>
       </span>
       {rules && (
-        <span className="flex items-center justify-center gap-1 border-t border-primary/45 bg-primary/[0.07] px-2 py-1.5 font-mono text-[8px] font-semibold uppercase tracking-[0.06em] text-primary sm:text-[9px]">
-          <span>Attached spec</span>
-          <span aria-label={`Formal specification ${rules.join(", ")}`}>{rules.join(" ")}</span>
+        <span className="flex items-center justify-center gap-2 border-t border-primary/45 bg-primary/[0.07] px-2 py-2 font-mono text-[8px] font-semibold uppercase tracking-[0.06em] text-primary sm:text-[9px]">
+          <span>Formal spec</span>
+          <SpecificationMarks rules={rules} />
         </span>
       )}
     </div>
@@ -221,21 +238,21 @@ function SceneDiagram({ id, progress }: { id: string; progress: number }) {
   const third = clamp((progress - 0.45) * 2.6);
 
   if (id === "variable") return (
-    <div className="grid gap-7" aria-label="Two model reviews of the same project return different findings">
+    <div className="grid gap-8" aria-label="Two model reviews of the same project return different findings">
       <Flow from={<FlowNode kind="project" label="Same project" />} via="model" to={<FlowNode kind="review" label="Review 1" findings={["A", "B"]} />} progress={first} />
       <Flow from={<FlowNode kind="project" label="Same project" />} via="model" to={<FlowNode kind="review" label="Review 2" findings={["A", "C"]} />} progress={second} />
     </div>
   );
 
   if (id === "deterministic") return (
-    <div className="grid gap-7" aria-label="Two formal scans of the same project and specification return the same report">
+    <div className="grid gap-8" aria-label="Two formal scans of the same project and specification return the same report">
       <Flow from={<ProjectInput label="Same project" rules={["R₁", "R₂"]} />} via="engine" formal to={<FlowNode kind="report" label="Report 1" findings={["A", "B"]} />} progress={first} />
       <Flow from={<ProjectInput label="Same project" rules={["R₁", "R₂"]} />} via="engine" formal to={<FlowNode kind="report" label="Report 2" findings={["A", "B"]} />} progress={second} />
     </div>
   );
 
   if (id === "diff") return (
-    <div className="grid gap-5" aria-label="A review of a project plus a review of its change does not equal a new whole-project review">
+    <div className="grid gap-6" aria-label="A review of a project plus a review of its change does not equal a new whole-project review">
       <Flow from={<FlowNode kind="project" label="Project 1" />} via="model" to={<FlowNode kind="review" label="Review 1" findings={["A", "B"]} />} progress={first} />
       <Flow from={<ProjectInput label="Project 2" change />} via="model" to={<FlowNode kind="review" label="Review 2" findings={["B", "C"]} />} progress={second} />
       <Flow from={<FlowNode kind="change" label="Change only" />} via="model" to={<FlowNode kind="review" label="Diff review" findings={["C"]} />} progress={third} />
@@ -243,7 +260,7 @@ function SceneDiagram({ id, progress }: { id: string; progress: number }) {
   );
 
   if (id === "rescan") return (
-    <div className="grid gap-7" aria-label="The same formal specification scans two complete project versions">
+    <div className="grid gap-8" aria-label="The same formal specification scans two complete project versions">
       <Flow from={<ProjectInput label="Project 1" rules={["R₁", "R₂"]} />} via="engine" formal to={<FlowNode kind="report" label="Report 1" findings={["A", "B"]} />} progress={first} />
       <Flow from={<ProjectInput label="Project 2" change rules={["R₁", "R₂"]} />} via="engine" formal to={<FlowNode kind="report" label="Report 2" findings={["A", "B", "C"]} />} progress={second} />
     </div>
@@ -261,14 +278,14 @@ function SceneDiagram({ id, progress }: { id: string; progress: number }) {
   );
 
   if (id === "translate") return (
-    <div className="grid gap-7" aria-label="Review findings become a formal specification which the engine applies to the project">
+    <div className="grid gap-8" aria-label="Review findings become a formal specification which the engine applies to the project">
       <Chain from={<FlowNode kind="project" label="Project" />} firstLabel="model" middle={<FlowNode kind="review" label="Review" findings={["A", "B"]} />} secondLabel="model enacts" to={<FlowNode kind="spec" label="Formal spec" rules={["R₁", "R₂"]} />} progress={first} />
       <Flow from={<ProjectInput label="Project" rules={["R₁", "R₂"]} />} via="engine" formal to={<FlowNode kind="report" label="Report" findings={["A", "B"]} />} progress={second} />
     </div>
   );
 
   if (id === "compound") return (
-    <div className="grid gap-5" aria-label="Formal specifications from two reviews combine into one report">
+    <div className="grid gap-6" aria-label="Formal specifications from two reviews combine into one report">
       <Chain from={<FlowNode kind="project" label="Project" />} firstLabel="model" middle={<FlowNode kind="review" label="Review 1" findings={["A"]} />} secondLabel="model enacts" to={<FlowNode kind="spec" label="Spec 1" rules={["R₁"]} />} progress={first} />
       <Chain from={<FlowNode kind="project" label="Project" />} firstLabel="model" middle={<FlowNode kind="review" label="Review 2" findings={["B"]} />} secondLabel="model enacts" to={<FlowNode kind="spec" label="Spec 2" rules={["R₂"]} />} progress={second} />
       <Flow from={<ProjectInput label="Project" rules={["R₁", "R₂"]} />} via="engine" formal to={<FlowNode kind="report" label="Report" findings={["A", "B"]} />} progress={third} />
@@ -276,7 +293,7 @@ function SceneDiagram({ id, progress }: { id: string; progress: number }) {
   );
 
   return (
-    <div className="grid gap-5" aria-label="A review of the project and a review of its change add formal specifications to a whole-project scan">
+    <div className="grid gap-6" aria-label="A review of the project and a review of its change add formal specifications to a whole-project scan">
       <Chain from={<FlowNode kind="project" label="Project" />} firstLabel="model" middle={<FlowNode kind="review" label="Review 1" findings={["A"]} />} secondLabel="model enacts" to={<FlowNode kind="spec" label="Spec 1" rules={["R₁"]} />} progress={first} />
       <Chain from={<FlowNode kind="change" label="New context" />} firstLabel="model" middle={<FlowNode kind="review" label="Review 2" findings={["B"]} />} secondLabel="model enacts" to={<FlowNode kind="spec" label="Spec 2" rules={["R₂"]} />} progress={second} />
       <Flow from={<ProjectInput label="Whole project" change rules={["R₁", "R₂"]} />} via="engine" formal to={<FlowNode kind="report" label="Report" findings={["A", "B"]} />} progress={third} />
@@ -299,6 +316,7 @@ export function ContinuousSecurity() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [sceneIndex, setSceneIndex] = useState(0);
   const [sceneProgress, setSceneProgress] = useState(0.35);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const scene = scenes[sceneIndex];
 
   const readScroll = useCallback(() => {
@@ -310,6 +328,7 @@ export function ContinuousSecurity() {
     const nextIndex = Math.min(scenes.length - 1, Math.floor(position));
     setSceneIndex(nextIndex);
     setSceneProgress(position - nextIndex);
+    setScrollProgress(overall);
   }, []);
 
   const goToScene = (index: number) => {
@@ -325,8 +344,6 @@ export function ContinuousSecurity() {
       scroll.scrollTop = top;
     }
   };
-
-  const overallProgress = ((sceneIndex + sceneProgress) / scenes.length) * 100;
 
   return (
     <section className="band section-divider continuous-security-band" aria-labelledby="continuous-security-heading">
@@ -384,10 +401,12 @@ export function ContinuousSecurity() {
                 </div>
 
                 <div className="flex min-h-0 flex-1 flex-col">
-                  <div className="bg-background px-5 pb-4 pt-6 text-center sm:px-8 lg:pb-6 lg:pt-8">
-                    <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-primary">{scene.kicker}</p>
-                    <h3 className="mx-auto mt-3 max-w-4xl font-mono text-xl font-semibold leading-tight text-foreground sm:text-2xl lg:text-[1.75rem]">{scene.title}</h3>
-                    <p className="mx-auto mt-3 max-w-4xl font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground sm:text-xs" aria-live="polite">{scene.conclusion}</p>
+                  <div className="grid gap-4 bg-background px-6 py-6 text-left sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,0.55fr)] lg:items-end lg:gap-8">
+                    <div>
+                      <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-primary">{scene.kicker}</p>
+                      <h3 className="mt-3 max-w-4xl font-mono text-xl font-semibold leading-tight text-foreground sm:text-2xl lg:text-[1.75rem]">{scene.title}</h3>
+                    </div>
+                    <p className="font-mono text-[11px] font-medium leading-5 text-muted-foreground sm:text-xs lg:text-right" aria-live="polite">{scene.conclusion}</p>
                   </div>
 
                   <div className="flex min-h-0 flex-1 flex-col justify-center bg-code-bg px-4 py-8 sm:px-8 lg:px-12" data-testid="continuous-security-scene" data-scene={scene.id}>
@@ -398,7 +417,7 @@ export function ContinuousSecurity() {
                 </div>
 
                 <div className="h-1 bg-transparent" aria-hidden="true">
-                  <span className="block h-full bg-primary transition-[width] duration-75 ease-linear motion-reduce:transition-none" style={{ width: `${overallProgress}%` }} />
+                  <span className="block h-full origin-left bg-primary will-change-transform" style={{ transform: `scaleX(${scrollProgress})` }} />
                 </div>
               </div>
             </figure>

@@ -65,8 +65,8 @@ const linesFor = (scenario: NonNullable<TerminalDemoProps["scenario"]>) => {
 };
 
 const toneClass: Record<TerminalTone, string> = {
-  plain: "text-[#302d2a] dark:text-[#eee9e5]",
-  muted: "text-[#756d68] dark:text-[#aaa19c]",
+  plain: "text-[#302d2a] dark:text-[#e7e1dc]",
+  muted: "text-[#756d68] dark:text-[#aaa29d]",
   blue: "text-[#2369b3] dark:text-[#78baff]",
   green: "text-[#237b45] dark:text-[#72c98e]",
   red: "text-[#ca3029] dark:text-[#ff655d]",
@@ -170,9 +170,9 @@ export function TerminalDemo({
       data-testid="demo-hero-player"
       data-terminal-renderer="native-cli"
       aria-label={ariaLabel}
-      className="flex h-full w-full flex-col overflow-hidden bg-[#f8f7f5] dark:bg-[#100d0c]"
+      className="flex h-full w-full flex-col overflow-hidden bg-[#f8f7f5] dark:bg-[#130d0e]"
     >
-      <div className="flex h-10 shrink-0 items-center border-b border-black/10 bg-[#efeeeb] px-4 dark:border-white/10 dark:bg-[#1a1614]">
+      <div className="flex h-10 shrink-0 items-center border-b border-black/10 bg-[#efeeeb] px-4 dark:border-white/10 dark:bg-[#1c1213]">
         <div className="flex gap-2" aria-hidden="true">
           <span className="h-2 w-2 rounded-full bg-[#ff5f57]" />
           <span className="h-2 w-2 rounded-full bg-[#febc2e]" />

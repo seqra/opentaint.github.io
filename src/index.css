@@ -98,51 +98,50 @@
 
   .dark {
     color-scheme: dark;
-    /* Red Phosphor, dark: the machine. Near-black red ground, phosphor-white
-       text, red as energy. Ladder: page 3.5% → band 5.5% → code 5% / card 7.5%
-       → secondary 11% → border 18% → border-strong 26%. */
-    --background: 0 70% 3.5%;
-    --foreground: 0 50% 95%;
-    --card: 0 45% 7.5%;
-    --card-foreground: 0 30% 92%;
-    --popover: 0 45% 7.5%;
-    --popover-foreground: 0 30% 92%;
-    --primary: 0 80% 48%;
+    /* Black glass with a restrained crimson undertone. Text stays neutral;
+       saturated red is reserved for active states and security signals. */
+    --background: 0 22% 5%;
+    --foreground: 24 10% 90%;
+    --card: 0 18% 8%;
+    --card-foreground: 24 9% 88%;
+    --popover: 0 18% 8%;
+    --popover-foreground: 24 9% 88%;
+    --primary: 0 76% 53%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 0 30% 11%;
-    --secondary-foreground: 0 20% 88%;
-    --muted: 0 30% 11%;
-    --muted-foreground: 0 12% 66%;
-    --accent: 0 80% 48%;
+    --secondary: 0 15% 13%;
+    --secondary-foreground: 24 8% 86%;
+    --muted: 0 15% 13%;
+    --muted-foreground: 12 7% 68%;
+    --accent: 0 76% 53%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 95% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 35% 18%;
-    --input: 0 35% 18%;
-    --ring: 0 80% 48%;
+    --border: 0 15% 20%;
+    --input: 0 15% 20%;
+    --ring: 0 76% 53%;
 
-    --brand: 0 80% 48%;
-    --border-strong: 0 35% 26%;
-    --link: 0 90% 62%;
-    --panel: 0 70% 9%;
-    --panel-border: 0 85% 40%;
-    --panel-foreground: 0 30% 92%;
-    --panel-accent: 0 90% 62%;
-    --code-bg: 0 60% 5%;
-    --code-header: 0 65% 4%;
-    --code-border: 0 45% 16%;
-    --code-text: #f0dcdc;
+    --brand: 0 76% 53%;
+    --border-strong: 0 15% 30%;
+    --link: 0 88% 68%;
+    --panel: 0 21% 9%;
+    --panel-border: 0 72% 46%;
+    --panel-foreground: 24 9% 88%;
+    --panel-accent: 0 88% 68%;
+    --code-bg: 0 20% 6.5%;
+    --code-header: 0 18% 9%;
+    --code-border: 0 16% 17%;
+    --code-text: #e8e1de;
     /* --code-muted / --code-line-num are decorative (comments, gutters): below AA by design. */
-    --code-muted: #8a7575;
-    --code-line-num: #5e4a4a;
-    --code-keyword: #ff6b6b;
-    --code-fn: #ffffff;
-    --code-string: #ff3838;
-    --code-annotation: #b09a9a;
-    --code-yaml-key: #ff6b6b;
-    --code-taint-bg: 0 90% 50% / 0.18;
-    --code-taint-text: #ffb3b3;
-    --band: 0 55% 5.5%;
+    --code-muted: #a69b97;
+    --code-line-num: #706362;
+    --code-keyword: #ff7770;
+    --code-fn: #f6f0ec;
+    --code-string: #ff625b;
+    --code-annotation: #b9aaa7;
+    --code-yaml-key: #ff7770;
+    --code-taint-bg: 0 72% 53% / 0.16;
+    --code-taint-text: #ffc0bc;
+    --band: 0 19% 7.5%;
     --agent: 205 84% 70%;
   }
 
@@ -418,15 +417,15 @@
   }
 
   .dark .continuous-security-noise {
-    opacity: 0.18;
-  }
-
-  .dark .section-flow-noise {
     opacity: 0.12;
   }
 
+  .dark .section-flow-noise {
+    opacity: 0.09;
+  }
+
   .dark .section-flow-noise-soft {
-    opacity: 0.08;
+    opacity: 0.06;
   }
 
   .continuous-security-scroll {

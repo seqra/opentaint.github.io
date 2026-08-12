@@ -101,7 +101,7 @@ function ToolActivity({ title, detail, activity, meta, icon = "file", children, 
 
 function CommandCard({ children }: { children: ReactNode }) {
   return (
-    <pre className="overflow-x-auto bg-[#f3f2ef] px-3 py-3 text-[13px] leading-5 text-[#312d2a] antialiased scrollbar-thin dark:bg-[#191615] dark:text-[#eee9e5]" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace', WebkitFontSmoothing: "antialiased", textRendering: "optimizeLegibility" }}><code>{children}</code></pre>
+    <pre className="overflow-x-auto bg-[#f3f2ef] px-3 py-3 text-[13px] leading-5 text-[#312d2a] antialiased scrollbar-thin dark:bg-[#1b1816] dark:text-[#e7e1dc]" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace', WebkitFontSmoothing: "antialiased", textRendering: "optimizeLegibility" }}><code>{children}</code></pre>
   );
 }
 
@@ -127,10 +127,10 @@ function AgentStage({
 
 function SurfaceStory({ title, children, window }: { title: string; children: string; window: ReactNode }) {
   return (
-    <div className="flex h-full min-h-0 flex-col bg-[#efeeeb] p-3 dark:bg-[#100908]">
+    <div className="flex h-full min-h-0 flex-col bg-[#efeeeb] p-3 dark:bg-[#120d0e]">
       <div className="mb-4 w-full shrink-0 px-2 text-center">
         <p className="font-mono text-[15px] font-semibold leading-5 text-foreground">{title}</p>
-        <p className="mt-2 w-full text-[13px] leading-5 text-muted-foreground">{children}</p>
+        <p className="mt-2 w-full text-[11px] leading-5 text-muted-foreground xl:whitespace-nowrap">{children}</p>
       </div>
       <div className="mx-auto min-h-0 w-full max-w-[42rem] flex-1">{window}</div>
     </div>
@@ -149,8 +149,8 @@ function ReviewReport({ progress }: { progress: number }) {
   return (
     <SurfaceStory
       title="Security memory layer"
-      window={<div className="flex h-full flex-col overflow-hidden rounded-[10px] border border-border bg-[#faf9f7] shadow-sm dark:bg-[#120b0a]">
-        <div className="relative flex h-10 shrink-0 items-center border-b border-border bg-[#f1f0ed] px-3 dark:bg-[#1b1110]">
+      window={<div className="flex h-full flex-col overflow-hidden rounded-[10px] border border-border bg-[#faf9f7] shadow-sm dark:bg-[#160f10]">
+        <div className="relative flex h-10 shrink-0 items-center border-b border-border bg-[#f1f0ed] px-3 dark:bg-[#1d1314]">
           <div className="flex gap-2" aria-hidden="true">
             <span className="h-2 w-2 rounded-full bg-[#ff5f57]" />
             <span className="h-2 w-2 rounded-full bg-[#febc2e]" />
@@ -163,7 +163,7 @@ function ReviewReport({ progress }: { progress: number }) {
           <span className="ml-auto hidden items-center gap-2 text-[10px] text-[#4c835e] dark:text-[#7fbd92] xl:flex"><Check className="h-3.5 w-3.5" /> Saved</span>
         </div>
         <div ref={scrollRef} data-testid="review-report-scroll" className="min-h-0 flex-1 overflow-hidden px-8 py-8 xl:px-10">
-        <article className="mx-auto max-w-[38rem] text-[13px] leading-6 text-[#443c38] dark:text-[#ded6d2]">
+        <article className="mx-auto max-w-[38rem] text-[13px] leading-6 text-[#443c38] dark:text-[#d9d2cd]">
           <h3 className="text-[22px] font-semibold leading-8 tracking-[-0.025em] text-foreground">Unauthenticated script execution</h3>
           <div className="mt-4 flex flex-wrap gap-2">
             <span className="rounded bg-primary px-2 py-1 font-mono text-[11px] font-semibold text-white">CRITICAL</span>
@@ -175,9 +175,9 @@ function ReviewReport({ progress }: { progress: number }) {
           <p className="mt-3">The public job endpoint accepts a script expression and passes it to a host-enabled GraalVM context. An unauthenticated request can therefore execute attacker-controlled JavaScript with host access.</p>
 
           <h4 className="mt-8 border-b border-border pb-2 text-[14px] font-semibold text-foreground">Evidence</h4>
-          <div className="mt-3 overflow-hidden rounded-md border border-border bg-[#f9f7f5] font-mono dark:bg-[#140505]">
+          <div className="mt-3 overflow-hidden rounded-md border border-border bg-[#f9f7f5] font-mono dark:bg-[#130d0e]">
             <div className="border-b border-border px-3 py-2 text-[11px] text-muted-foreground">src/main/java/demo/app/execution/ScriptRuntime.java</div>
-            <pre className="overflow-x-auto px-3 py-2 text-[11px] leading-5 text-[#44342c] dark:text-[#f0dcdc] scrollbar-thin"><code><span className="text-[#b3a396]">8</span>   try (Context context = Context.newBuilder(<span className="text-primary">&quot;js&quot;</span>){"\n"}<span className="text-[#b3a396]">9</span>       .allowHostAccess(HostAccess.ALL){"\n"}<span className="text-[#b3a396]">10</span>      .build()) {'{'}{"\n"}<span className="bg-primary/15 text-primary"><span className="text-primary">11</span>      context.eval(<span className="text-primary">&quot;js&quot;</span>, script);</span>{"\n"}<span className="text-[#b3a396]">12</span>  {'}'}</code></pre>
+            <pre className="overflow-x-auto px-3 py-2 text-[11px] leading-5 text-[#44342c] dark:text-[#e7dfda] scrollbar-thin"><code><span className="text-[#b3a396]">8</span>   try (Context context = Context.newBuilder(<span className="text-primary">&quot;js&quot;</span>){"\n"}<span className="text-[#b3a396]">9</span>       .allowHostAccess(HostAccess.ALL){"\n"}<span className="text-[#b3a396]">10</span>      .build()) {'{'}{"\n"}<span className="bg-primary/15 text-primary"><span className="text-primary">11</span>      context.eval(<span className="text-primary">&quot;js&quot;</span>, script);</span>{"\n"}<span className="text-[#b3a396]">12</span>  {'}'}</code></pre>
           </div>
 
           <h4 className="mt-8 border-b border-border pb-2 text-[14px] font-semibold text-foreground">Trust boundary</h4>
@@ -190,7 +190,7 @@ function ReviewReport({ progress }: { progress: number }) {
         </div>
       </div>}
     >
-      Trust boundaries and application attack surfaces survive beyond one agent run.
+      Trust boundaries and attack surfaces persist beyond one agent run.
     </SurfaceStory>
   );
 }
@@ -266,7 +266,7 @@ passThrough:
 
 function YamlCode({ code }: { code: string }) {
   return (
-    <pre data-testid="artifact-code" className="overflow-x-auto py-2 text-[12.5px] leading-5 text-[#44342c] dark:text-[#f0dcdc] scrollbar-thin" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace' }}><code>
+    <pre data-testid="artifact-code" className="overflow-x-auto py-2 text-[12.5px] leading-5 text-[#44342c] dark:text-[#e7dfda] scrollbar-thin" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace' }}><code>
       {code.split("\n").map((line, index) => {
         const key = /^(\s*(?:-\s+)?)([\w-]+):(.*)$/.exec(line);
         return (
@@ -282,8 +282,8 @@ function YamlCode({ code }: { code: string }) {
 
 function ArtifactFrame({ path, kind, added, removed = 0, open, onToggle, children }: { path: string; kind: string; added: number; removed?: number; open: boolean; onToggle: () => void; children: ReactNode }) {
   return (
-    <article className="overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] shadow-sm dark:bg-[#140505]">
-      <button type="button" aria-expanded={open} onClick={onToggle} className="flex min-h-10 w-full items-center gap-2 bg-[#f0eeeb] px-3 text-left dark:bg-[#1d0d0c]">
+    <article className="overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] shadow-sm dark:bg-[#130d0e]">
+      <button type="button" aria-expanded={open} onClick={onToggle} className="flex min-h-10 w-full items-center gap-2 bg-[#f0eeeb] px-3 text-left dark:bg-[#1c1213]">
         <ChevronDown className={["h-4 w-4 shrink-0 text-muted-foreground transition-transform", open ? "" : "-rotate-90"].join(" ")} strokeWidth={1.8} aria-hidden="true" />
         <FileCode2 className="h-3.5 w-3.5 text-primary" strokeWidth={1.7} aria-hidden="true" />
         <span className="min-w-0 flex-1 truncate font-mono text-[11px] text-foreground">{path}</span>
@@ -337,7 +337,7 @@ function Specifications({ progress }: { progress: number }) {
   return (
     <SurfaceStory
       title="Formal security specifications"
-      window={<div data-testid="artifact-scroll" className="h-full overflow-hidden rounded-[10px] border border-border bg-[#f4f2ef] p-3 shadow-sm dark:bg-[#140b0a]">
+      window={<div data-testid="artifact-scroll" className="h-full overflow-hidden rounded-[10px] border border-border bg-[#f4f2ef] p-3 shadow-sm dark:bg-[#160f10]">
         <div className="mx-auto max-w-[40rem] space-y-2">
           {artifacts.map((artifact, index) => (
             <div key={artifact.path}>
@@ -355,7 +355,7 @@ function Specifications({ progress }: { progress: number }) {
         </div>
       </div>}
     >
-      AST-pattern taint rules define security behavior. Dependency models make opaque libraries analyzable.
+      Taint rules define security behavior. Dependency models describe opaque libraries.
     </SurfaceStory>
   );
 }
@@ -368,7 +368,7 @@ function CliRun({ progress }: { progress: number }) {
         <TerminalDemo scenario="security-review" progress={progress} ariaLabel="Real OpenTaint scan output for the anonymous security review project" />
       </div>}
     >
-      Formal taint analysis searches the project without repeating model inference.
+      Formal taint analysis searches without repeating model inference.
     </SurfaceStory>
   );
 }
@@ -381,7 +381,7 @@ function CliSummary({ progress }: { progress: number }) {
         <TerminalDemo scenario="security-summary" progress={progress} ariaLabel="Real OpenTaint summary output for the anonymous security review project" />
       </div>}
     >
-      Formal taint analysis searches the project without repeating model inference.
+      Formal taint analysis searches without repeating model inference.
     </SurfaceStory>
   );
 }
@@ -500,7 +500,7 @@ const triageRuleLines = [
 
 function TriageCode() {
   return (
-    <pre data-testid="triage-code" className="max-h-60 overflow-auto py-2 text-[12.5px] leading-5 text-[#44342c] dark:text-[#f0dcdc] scrollbar-thin" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace' }}><code>
+    <pre data-testid="triage-code" className="max-h-60 overflow-auto py-2 text-[12.5px] leading-5 text-[#44342c] dark:text-[#e7dfda] scrollbar-thin" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace' }}><code>
       {triageRuleLines.map((line) => {
         const added = "added" in line && line.added;
         const key = /^(\s*(?:-\s+)?)([\w-]+):(.*)$/.exec(line.content);
@@ -527,7 +527,7 @@ function TriageView() {
   return (
     <SurfaceStory
       title="Fewer false alarms"
-      window={<div data-testid="triage-view" className="h-full overflow-hidden rounded-[10px] border border-border bg-[#f4f2ef] p-3 shadow-sm dark:bg-[#140b0a]">
+      window={<div data-testid="triage-view" className="h-full overflow-hidden rounded-[10px] border border-border bg-[#f4f2ef] p-3 shadow-sm dark:bg-[#160f10]">
         <div className="mx-auto max-w-[40rem]">
           <ArtifactFrame
             path="rules/java/lib/generic/graal-eval.yaml"
@@ -541,7 +541,7 @@ function TriageView() {
         </div>
       </div>}
     >
-      Application context narrows a broad API match into the security condition that matters.
+      Application context narrows broad API matches to relevant security conditions.
     </SurfaceStory>
   );
 }
@@ -565,11 +565,11 @@ function FindingReport({ progress }: { progress: number }) {
   return (
     <SurfaceStory
       title="Fewer missed findings"
-      window={<div data-testid="simplified-report-view" className="flex h-full flex-col overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] font-mono text-[#44342c] shadow-sm dark:bg-[#140505] dark:text-[#f0dcdc]">
-      <div className="grid h-10 shrink-0 grid-cols-[minmax(0,1fr)_14rem] items-center border-b border-[#ded7d1] bg-[#f0eeeb] text-[11px] dark:border-[#4b1d1d] dark:bg-[#1d0d0c]">
+      window={<div data-testid="simplified-report-view" className="flex h-full flex-col overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] font-mono text-[#44342c] shadow-sm dark:bg-[#130d0e] dark:text-[#e7dfda]">
+      <div className="grid h-10 shrink-0 grid-cols-[minmax(0,1fr)_14rem] items-center border-b border-[#ded7d1] bg-[#f0eeeb] text-[11px] dark:border-border dark:bg-[#1c1213]">
         <div className="flex min-w-0 items-center gap-2 px-3">
           <FileCode2 className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={1.7} aria-hidden="true" />
-          <span className="truncate text-[#44342c] dark:text-[#f0dcdc]">{activeFile}</span>
+          <span className="truncate text-[#44342c] dark:text-[#e7dfda]">{activeFile}</span>
         </div>
         <div className="flex h-full w-56 items-center justify-end gap-1 px-2" data-testid="report-navigation">
           <button aria-label="First step" disabled={stepIndex === 0} onClick={() => move(0)} className="inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-background text-foreground disabled:opacity-35"><SkipBack size={13} /></button>
@@ -598,7 +598,7 @@ function FindingReport({ progress }: { progress: number }) {
                   <div
                     role="status"
                     className={[
-                      "absolute left-20 z-20 w-[28rem] max-w-[calc(100%-6rem)] rounded-lg border border-primary/30 bg-background/95 px-3 py-2 font-sans text-[11px] leading-4 text-foreground shadow-[0_8px_28px_rgba(37,25,20,0.2)] backdrop-blur-sm dark:bg-[#211412]/95",
+                      "absolute left-20 z-20 w-[28rem] max-w-[calc(100%-6rem)] rounded-lg border border-primary/30 bg-background/95 px-3 py-2 font-sans text-[11px] leading-4 text-foreground shadow-[0_8px_28px_rgba(37,25,20,0.2)] backdrop-blur-sm dark:bg-[#1f1415]/95",
                       "top-full mt-2",
                     ].join(" ")}
                   >
@@ -726,9 +726,9 @@ export function UnifiedWorkbench() {
   return (
     <div ref={scrollTrackRef} data-testid="demo-scroll-track" className="relative h-[620vh]">
       <div ref={stickyRef} className="sticky top-16 flex h-[calc(100vh-4rem)] items-center">
-        <div data-testid="unified-workbench" className="agent-ui mx-auto w-full max-w-[82rem] overflow-hidden rounded-[20px] border border-black/10 bg-white p-2 shadow-[0_28px_90px_rgba(37,25,20,0.18)] dark:border-white/10 dark:bg-[#211a17]">
+        <div data-testid="unified-workbench" className="agent-ui mx-auto w-full max-w-[82rem] overflow-hidden rounded-[20px] border border-black/10 bg-white p-2 shadow-[0_28px_90px_rgba(37,25,20,0.18)] dark:border-white/10 dark:bg-[#211617]">
       <div className="overflow-hidden rounded-[13px] border border-border bg-background">
-        <div className="flex h-10 items-center border-b border-border bg-[#f0efec] px-3 dark:bg-[#1b1513]">
+        <div className="flex h-10 items-center border-b border-border bg-[#f0efec] px-3 dark:bg-[#1c1213]">
           <div className="flex items-center gap-2">
             <img src="/favicon.svg" alt="" className="h-4 w-4" aria-hidden="true" />
             <span className="text-[12px] font-semibold text-foreground">OpenTaint</span>
@@ -736,7 +736,7 @@ export function UnifiedWorkbench() {
         </div>
 
         <div className="grid h-[calc(100vh-9rem)] min-h-[34rem] max-h-[42rem] grid-cols-[4.5rem_minmax(0,1fr)] grid-rows-[minmax(0,1fr)] md:grid-cols-[8.5rem_minmax(20rem,0.9fr)_minmax(0,1.1fr)] xl:grid-cols-[10rem_minmax(22rem,0.9fr)_minmax(0,1.1fr)]">
-          <aside className="border-r border-border bg-[#f2f1ee] p-3 dark:bg-[#181210]" aria-label="Demo steps">
+          <aside className="border-r border-border bg-[#f2f1ee] p-3 dark:bg-[#180f10]" aria-label="Demo steps">
             <p className="px-2 pt-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">Session</p>
             <ol className="mt-4 space-y-1">
               {stages.map((item, index) => (
@@ -760,7 +760,7 @@ export function UnifiedWorkbench() {
             </ol>
           </aside>
 
-          <section className="hidden min-w-0 border-r border-border bg-[#fbfaf8] dark:bg-[#14100e] md:block" aria-label="Coding agent session">
+          <section className="hidden min-w-0 border-r border-border bg-[#fbfaf8] dark:bg-[#140d0e] md:block" aria-label="Coding agent session">
             <div
               ref={transcriptRef}
               className="h-full min-w-0 overflow-hidden"

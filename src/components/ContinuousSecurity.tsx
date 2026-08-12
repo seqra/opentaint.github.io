@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState, type ReactNode } from "react";
+import { FileDiff, FolderCode } from "lucide-react";
 import { createHeroFlowField } from "@/lib/heroFlowField";
 
 type Scene = {
@@ -102,16 +103,6 @@ function SpecificationMarks({ rules }: { rules: string[] }) {
   );
 }
 
-function CodeChange() {
-  return (
-    <span className="mt-2 grid w-9 gap-1" aria-label="Changed code">
-      <i className="h-px w-7 bg-foreground/35" />
-      <i className="h-1 w-9 rounded-sm bg-primary" />
-      <i className="h-px w-6 bg-foreground/55" />
-    </span>
-  );
-}
-
 type NodeKind = "project" | "change" | "review" | "spec" | "report";
 
 function FlowNode({
@@ -140,9 +131,9 @@ function FlowNode({
         {label}
       </span>
       {kind === "project" && (
-        <span className="mt-2 grid w-9 gap-1" aria-hidden="true"><i className="h-px bg-foreground/70" /><i className="h-px w-7 bg-foreground/50" /><i className="h-px w-8 bg-foreground/35" /></span>
+        <FolderCode className="mt-2 h-7 w-7 text-foreground/65" strokeWidth={1.4} aria-hidden="true" />
       )}
-      {kind === "change" && <CodeChange />}
+      {kind === "change" && <FileDiff className="mt-2 h-7 w-7 text-primary" strokeWidth={1.4} aria-hidden="true" />}
       {findings && <span className="mt-2"><FindingSet values={findings} report={kind === "report"} /></span>}
       {rules && <span className="mt-2"><SpecificationMarks rules={rules} /></span>}
     </div>
@@ -156,8 +147,8 @@ function ProjectInput({ label, change = false, rules }: { label: string; change?
       aria-label={`${label}${change ? " with new code" : ""}${rules ? ` with formal specification ${rules.join(", ")}` : ""}`}
     >
       <span className="relative flex flex-1 items-center justify-center gap-2 px-2 py-2 font-mono text-[9px] font-semibold uppercase tracking-[0.08em] text-muted-foreground sm:text-[10px]">
+        {change ? <FileDiff className="h-5 w-5 text-primary" strokeWidth={1.4} aria-hidden="true" /> : <FolderCode className="h-5 w-5 text-foreground/55" strokeWidth={1.4} aria-hidden="true" />}
         <span>{label}</span>
-        <span className="grid w-6 gap-1" aria-hidden="true"><i className="h-px bg-foreground/55" /><i className={change ? "h-1 bg-primary" : "h-px w-5 bg-foreground/35"} /></span>
       </span>
       {rules && (
         <span className="flex items-center justify-center gap-2 border-t border-primary/45 bg-primary/[0.07] px-2 py-2 font-mono text-[8px] font-semibold uppercase tracking-[0.06em] text-primary sm:text-[9px]">

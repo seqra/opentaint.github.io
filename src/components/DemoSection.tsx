@@ -129,7 +129,7 @@ export function DemoSection() {
                     "absolute inset-0 flex overflow-hidden rounded-xl border border-panel-border",
                     slide.pageBackground
                       ? "bg-background"
-                      : "bg-[#feffff] dark:bg-[#1b0100]",
+                      : "bg-[#feffff] dark:bg-[#150d0e]",
                   ].join(" ")}
                 >
                   {slide.kind === "terminal" ? (

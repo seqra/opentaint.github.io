@@ -11,7 +11,7 @@ export function AnimatedHero() {
         <img src="/opentaint-header-light.svg" alt="OpenTaint" className="hero-wordmark mx-0 h-auto w-56 dark:hidden sm:w-64 lg:mx-auto lg:w-72" />
         <img src="/opentaint-header-dark.svg" alt="" aria-hidden="true" className="hero-wordmark mx-0 hidden h-auto w-56 dark:block sm:w-64 lg:mx-auto lg:w-72" />
 
-        <h1 className="mx-0 mt-12 max-w-full text-left font-mono text-[28px] font-semibold leading-none tracking-[-0.04em] text-foreground min-[420px]:text-[32px] sm:text-[38px] md:text-[42px] lg:mx-auto lg:text-center lg:text-[40px] xl:text-[48px] 2xl:text-[52px]">
+        <h1 className="hero-heading mx-0 mt-12 max-w-full text-left font-mono font-semibold text-foreground lg:mx-auto lg:text-center">
           <span className="sr-only">Continuous, lean, and agentic application security testing</span>
           <span aria-hidden="true" className="hero-title-lockup">
             <span className="hero-prefix-slot relative block h-[1em] w-[10ch] shrink-0">
@@ -31,14 +31,14 @@ export function AnimatedHero() {
 
         <p className="section-banner hero-subline mx-0 mt-12 text-left lg:mx-auto lg:text-center">The open source taint analysis engine for the AI era</p>
 
-        <div className="mt-6 flex items-center justify-start gap-3 lg:justify-center">
+        <div className="mt-6 flex items-center justify-start gap-4 lg:justify-center">
           <a href="#install" className="cta-pill hero-cta">
-            <Download aria-hidden="true" className="h-4 w-4" />
             Install
+            <Download aria-hidden="true" className="h-5 w-5" />
           </a>
           <a href="https://github.com/seqra/opentaint" target="_blank" rel="noopener noreferrer" className="cta-pill cta-pill-secondary hero-cta">
-            <Star aria-hidden="true" className="h-4 w-4" />
             Star
+            <Star aria-hidden="true" className="h-5 w-5" />
           </a>
         </div>
       </div>

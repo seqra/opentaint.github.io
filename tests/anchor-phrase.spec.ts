@@ -25,7 +25,7 @@ test.describe("landing message", () => {
   test("highlights the learn-search operating model", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page.getByText("Security risk and review cost compound with every change", { exact: true })).toBeVisible();
+    await expect(page.getByText("As AI generates more code, security risk and review cost compound", { exact: true })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Turn one security review into unlimited security scans", level: 2 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Fast scans. Fewer false alarms. Fewer missed findings" })).toHaveCount(0);
     await expect(page.getByText("Open source, batteries included", { exact: true })).toBeVisible();
@@ -46,7 +46,24 @@ test.describe("landing message", () => {
 
     await expect(comparison.getByRole("heading", { name: "Review the change. Scan the whole project" })).toBeVisible();
     await expect(comparison.getByLabel("Whole project with new code with attached formal specification R₁, R₂", { exact: true })).toBeVisible();
-    await expect(comparison.locator("[aria-live='polite']")).toContainText("Report₂ ⊇ Review₁ ∪ Review₂");
+    await expect(comparison.locator("[aria-live='polite']")).toContainText("The model learns new context. The engine searches the whole project.");
+  });
+
+  test("keeps the continuous-security story on an internal scroll track", async ({ page }) => {
+    await page.goto("/");
+
+    const track = page.getByLabel("Scroll through the security review comparison");
+    await track.scrollIntoViewIfNeeded();
+    const pageBefore = await page.evaluate(() => window.scrollY);
+    await track.evaluate((element) => {
+      const distance = element.scrollHeight - element.clientHeight;
+      element.scrollTop = distance * 0.44;
+      element.dispatchEvent(new Event("scroll"));
+    });
+
+    expect(await track.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+    expect(await page.evaluate(() => window.scrollY)).toBe(pageBefore);
+    await expect(page.getByRole("heading", { name: "Search every new version without relearning the project" })).toBeVisible();
   });
 
   test("groups the landing sections with intentional dividers and backgrounds", async ({ page }) => {

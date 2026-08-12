@@ -19,7 +19,7 @@ describe("ContinuousSecurity", () => {
     render(<ContinuousSecurity />);
 
     expect(screen.getByRole("heading", { name: "The same review can produce different findings" })).toBeVisible();
-    expect(screen.getByText("Review₁ △ Review₂ ≠ ∅")).toBeVisible();
+    expect(screen.getByText("Repeat the review. The findings change.")).toBeVisible();
     expect(screen.getByLabelText("Two model reviews of the same project return different findings")).toBeVisible();
   });
 
@@ -28,7 +28,7 @@ describe("ContinuousSecurity", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /Searching/ }));
     expect(screen.getByRole("heading", { name: "The same inputs produce the same report" })).toBeVisible();
-    expect(screen.getByText("Report₁ = Report₂")).toBeVisible();
+    expect(screen.getByText("Repeat the scan. The report stays the same.")).toBeVisible();
     expect(screen.getByLabelText("Two formal scans of the same project and specification return the same report")).toBeVisible();
   });
 
@@ -46,8 +46,20 @@ describe("ContinuousSecurity", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /Continuous/ }));
     expect(screen.getByRole("heading", { name: "Review the change. Scan the whole project" })).toBeVisible();
-    expect(screen.getByText("Report₂ ⊇ Review₁ ∪ Review₂")).toBeVisible();
+    expect(screen.getByText("The model learns new context. The engine searches the whole project.")).toBeVisible();
     expect(screen.getByLabelText("Formal specification R₁, R₂")).toBeVisible();
-    expect(screen.getByText("Lean, continuous coverage")).toBeVisible();
+  });
+
+  it("advances scenes from its internal scroll track", () => {
+    render(<ContinuousSecurity />);
+
+    const track = screen.getByLabelText("Scroll through the security review comparison");
+    Object.defineProperty(track, "scrollHeight", { configurable: true, value: 1000 });
+    Object.defineProperty(track, "clientHeight", { configurable: true, value: 200 });
+    Object.defineProperty(track, "scrollTop", { configurable: true, writable: true, value: 400 });
+    fireEvent.scroll(track);
+
+    expect(screen.getByRole("heading", { name: "Search every new version without relearning the project" })).toBeVisible();
+    expect(track.querySelector("[aria-hidden='true'] > span[style]")).toHaveStyle({ width: "49.99375%" });
   });
 });

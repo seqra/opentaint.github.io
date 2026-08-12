@@ -1,14 +1,15 @@
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useCallback, useRef, useState, type ReactNode } from "react";
+import { createHeroFlowField } from "@/lib/heroFlowField";
 
 type Scene = {
   id: string;
   nav: string;
   kicker: string;
   title: string;
-  copy: string;
-  formula: ReactNode;
-  signal: string;
+  conclusion: string;
 };
+
+const continuousFlowLines = createHeroFlowField();
 
 const scenes: Scene[] = [
   {
@@ -16,72 +17,56 @@ const scenes: Scene[] = [
     nav: "Learning",
     kicker: "Model review",
     title: "The same review can produce different findings",
-    copy: "Repeat the review and you cannot know which findings will return.",
-    formula: <>Review₁ △ Review₂ ≠ ∅</>,
-    signal: "Repeated model inference, variable output",
+    conclusion: "Repeat the review. The findings change.",
   },
   {
     id: "deterministic",
     nav: "Searching",
     kicker: "Formal analysis",
     title: "The same inputs produce the same report",
-    copy: "A formal specification gives the engine an exact analysis to repeat.",
-    formula: <>Report₁ = Report₂</>,
-    signal: "Consistent output",
+    conclusion: "Repeat the scan. The report stays the same.",
   },
   {
     id: "diff",
     nav: "Learn the diff",
     kicker: "Expensive learning",
     title: "Learning the diff does not replace learning the whole project",
-    copy: "To recover whole-project results, the model still has to reread the whole project.",
-    formula: <>Review₁ ∪ Review<sub>Δ</sub> ≠ Review₂</>,
-    signal: "Whole-project learning repeats model cost",
+    conclusion: "The model must reread the whole project to recover full context.",
   },
   {
     id: "rescan",
     nav: "Search the whole",
     kicker: "Cheap searching",
     title: "Search every new version without relearning the project",
-    copy: "Attach the specification and let the engine scan the whole project again on CPUs.",
-    formula: <>Scan(Project₂, Spec) → Report₂</>,
-    signal: "CPU scan, no model inference",
+    conclusion: "Same specification. Whole-project scan. No model inference.",
   },
   {
     id: "bounded",
     nav: "Engine limits",
     kicker: "Specification quality",
     title: "The engine only knows its formal specification",
-    copy: "Missing or imprecise rules and models create missed findings and false alarms.",
-    formula: <>Missed {'{B}'}<br />False alarm {'{F}'}</>,
-    signal: "The specification determines precision and coverage",
+    conclusion: "Missing knowledge misses B. Imprecise knowledge reports F.",
   },
   {
     id: "translate",
     nav: "Enactment",
     kicker: "The key step",
     title: "Turn review knowledge into a formal specification",
-    copy: "The agent enacts what it learned as taint rules and dependency models.",
-    formula: <>Review ⊆ Report</>,
-    signal: "When the knowledge is expressible",
+    conclusion: "The review becomes taint rules and dependency models.",
   },
   {
     id: "compound",
     nav: "Lean",
     kicker: "OpenTaint",
     title: "Every review can add durable coverage",
-    copy: "Formal specifications combine. The next scan applies all accumulated knowledge.",
-    formula: <>Report = Review₁ ∪ Review₂</>,
-    signal: "Security knowledge compounds",
+    conclusion: "New specifications join everything already learned.",
   },
   {
     id: "continuous",
     nav: "Continuous",
     kicker: "OpenTaint",
     title: "Review the change. Scan the whole project",
-    copy: "Use model reasoning for new context and formal analysis for everything already known.",
-    formula: <>Report₂ ⊇ Review₁ ∪ Review₂</>,
-    signal: "Lean, continuous coverage",
+    conclusion: "The model learns new context. The engine searches the whole project.",
   },
 ];
 
@@ -220,7 +205,7 @@ function Chain({
   progress: number;
 }) {
   return (
-    <div className="grid grid-cols-[minmax(3.75rem,1fr)_minmax(2rem,0.38fr)_minmax(3.75rem,1fr)_minmax(2rem,0.38fr)_minmax(3.75rem,1fr)] items-center gap-1 sm:grid-cols-[minmax(6rem,1fr)_minmax(3.25rem,0.42fr)_minmax(6rem,1fr)_minmax(3.25rem,0.42fr)_minmax(6rem,1fr)] sm:gap-2">
+    <div className="grid grid-cols-[minmax(3.5rem,1fr)_minmax(2.5rem,0.46fr)_minmax(3.5rem,1fr)_minmax(2.5rem,0.46fr)_minmax(3.5rem,1fr)] items-center gap-1 sm:grid-cols-[minmax(6rem,1fr)_minmax(3.25rem,0.42fr)_minmax(6rem,1fr)_minmax(3.25rem,0.42fr)_minmax(6rem,1fr)] sm:gap-2">
       {from}
       <FlowArrow label={firstLabel} progress={clamp(progress * 1.8)} />
       {middle}
@@ -311,72 +296,64 @@ function Legend() {
 }
 
 export function ContinuousSecurity() {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const frameRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [sceneIndex, setSceneIndex] = useState(0);
   const [sceneProgress, setSceneProgress] = useState(0.35);
   const scene = scenes[sceneIndex];
 
   const readScroll = useCallback(() => {
-    const track = trackRef.current;
-    const frame = frameRef.current;
-    if (!track || !frame) return;
-    const top = track.getBoundingClientRect().top + window.scrollY;
-    const stickyTop = Number.parseFloat(window.getComputedStyle(frame).top) || 0;
-    const start = top - stickyTop;
-    const distance = Math.max(1, track.offsetHeight - frame.offsetHeight);
-    const overall = clamp((window.scrollY - start) / distance);
+    const scroll = scrollRef.current;
+    if (!scroll) return;
+    const distance = Math.max(1, scroll.scrollHeight - scroll.clientHeight);
+    const overall = clamp(scroll.scrollTop / distance);
     const position = overall * (scenes.length - 0.001);
     const nextIndex = Math.min(scenes.length - 1, Math.floor(position));
     setSceneIndex(nextIndex);
     setSceneProgress(position - nextIndex);
   }, []);
 
-  useEffect(() => {
-    let frame = 0;
-    const schedule = () => {
-      window.cancelAnimationFrame(frame);
-      frame = window.requestAnimationFrame(readScroll);
-    };
-    readScroll();
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
-    return () => {
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
-    };
-  }, [readScroll]);
-
   const goToScene = (index: number) => {
-    const track = trackRef.current;
-    const frame = frameRef.current;
+    const scroll = scrollRef.current;
     setSceneIndex(index);
     setSceneProgress(0.58);
-    if (!track || !frame) return;
-    const top = track.getBoundingClientRect().top + window.scrollY;
-    const stickyTop = Number.parseFloat(window.getComputedStyle(frame).top) || 0;
-    const start = top - stickyTop;
-    const distance = Math.max(1, track.offsetHeight - frame.offsetHeight);
-    const target = start + distance * ((index + 0.58) / scenes.length);
-    window.scrollTo({ top: target, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    if (!scroll) return;
+    const distance = Math.max(1, scroll.scrollHeight - scroll.clientHeight);
+    const top = distance * ((index + 0.58) / scenes.length);
+    if (typeof scroll.scrollTo === "function") {
+      scroll.scrollTo({ top, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    } else {
+      scroll.scrollTop = top;
+    }
   };
 
-  const sceneStyle = {
-    "--scene-progress": sceneProgress,
-  } as CSSProperties;
+  const overallProgress = ((sceneIndex + sceneProgress) / scenes.length) * 100;
 
   return (
     <section className="band section-divider continuous-security-band" aria-labelledby="continuous-security-heading">
-      <div className="mx-auto max-w-[90rem]">
+      <div className="continuous-security-noise" aria-hidden="true">
+        <svg viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid slice">
+          <g>
+            {continuousFlowLines.map((line, index) => <path key={`continuous-flow-${index}`} d={line.d} />)}
+          </g>
+        </svg>
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-[96rem]">
         <div className="section-header">
           <p className="section-eyebrow">The flexibility of model reasoning and the consistency of formal program analysis combined</p>
           <h2 id="continuous-security-heading" className="section-heading">Turn one security review into unlimited security scans</h2>
         </div>
 
-        <div ref={trackRef} className="relative mt-12 h-[720svh] lg:mt-16" data-testid="continuous-security-track">
-          <div ref={frameRef} className="sticky top-16 flex h-[calc(100svh-4rem)] min-h-[38rem] items-center py-4 sm:py-6">
-            <figure className="mx-auto grid max-h-[calc(100svh-6rem)] w-full overflow-hidden rounded-xl border border-border-strong bg-background shadow-sm lg:min-h-[38rem] lg:grid-cols-[12rem_minmax(0,1fr)] xl:min-h-[40rem]" aria-labelledby="continuous-security-heading">
+        <div
+          ref={scrollRef}
+          onScroll={readScroll}
+          tabIndex={0}
+          className="continuous-security-scroll relative mt-12 h-[40rem] overflow-y-auto rounded-xl border border-border-strong bg-background shadow-sm sm:h-[44rem] lg:mt-16 lg:h-[46rem]"
+          data-testid="continuous-security-track"
+          aria-label="Scroll through the security review comparison"
+        >
+          <div className="relative h-[150rem] lg:h-[168rem]">
+            <figure className="continuous-security-frame sticky top-0 grid h-[40rem] w-full overflow-hidden bg-background sm:h-[44rem] lg:h-[46rem] lg:grid-cols-[12rem_minmax(0,1fr)]" aria-labelledby="continuous-security-heading">
               <figcaption className="sr-only">A scroll-controlled comparison of model security review, formal program analysis, and the OpenTaint workflow</figcaption>
 
               <nav className="hidden border-r border-border bg-code-header p-3 lg:block" aria-label="Security review comparison">
@@ -400,32 +377,28 @@ export function ContinuousSecurity() {
                 </ol>
               </nav>
 
-              <div className="flex min-h-0 min-w-0 flex-col" style={sceneStyle}>
+              <div className="flex min-h-0 min-w-0 flex-col">
                 <div className="flex items-center justify-between gap-4 border-b border-border bg-code-header px-4 py-3 sm:px-6">
                   <Legend />
                   <span className="shrink-0 font-mono text-[9px] font-semibold text-muted-foreground lg:hidden">{String(sceneIndex + 1).padStart(2, "0")} / {String(scenes.length).padStart(2, "0")}</span>
                 </div>
 
-                <div className="grid min-h-0 flex-1 lg:grid-cols-[minmax(17rem,0.6fr)_minmax(32rem,1.4fr)]">
-                  <div className="flex flex-col justify-center border-b border-border px-5 py-6 sm:px-8 lg:border-b-0 lg:border-r lg:py-8">
+                <div className="flex min-h-0 flex-1 flex-col">
+                  <div className="bg-background px-5 pb-4 pt-6 text-center sm:px-8 lg:pb-6 lg:pt-8">
                     <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-primary">{scene.kicker}</p>
-                    <h3 className="mt-4 max-w-xl font-mono text-xl font-semibold leading-tight text-foreground sm:text-2xl lg:text-[1.65rem]">{scene.title}</h3>
-                    <p className="mt-4 max-w-xl text-xs leading-5 text-muted-foreground sm:text-sm sm:leading-6">{scene.copy}</p>
-                    <div className="mt-6 border-l-2 border-primary pl-4">
-                      <p className="whitespace-nowrap font-mono text-[15px] font-semibold text-foreground sm:text-base" aria-live="polite">{scene.formula}</p>
-                      <p className="mt-1.5 font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-primary sm:text-[10px]">{scene.signal}</p>
-                    </div>
+                    <h3 className="mx-auto mt-3 max-w-4xl font-mono text-xl font-semibold leading-tight text-foreground sm:text-2xl lg:text-[1.75rem]">{scene.title}</h3>
+                    <p className="mx-auto mt-3 max-w-4xl font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground sm:text-xs" aria-live="polite">{scene.conclusion}</p>
                   </div>
 
-                  <div className="flex min-h-0 flex-col justify-center bg-code-bg px-4 py-7 sm:px-8 lg:px-10" data-testid="continuous-security-scene" data-scene={scene.id}>
-                    <SceneDiagram id={scene.id} progress={sceneProgress} />
+                  <div className="flex min-h-0 flex-1 flex-col justify-center bg-code-bg px-4 py-8 sm:px-8 lg:px-12" data-testid="continuous-security-scene" data-scene={scene.id}>
+                    <div className="mx-auto w-full max-w-5xl">
+                      <SceneDiagram id={scene.id} progress={sceneProgress} />
+                    </div>
                   </div>
                 </div>
 
-                <div className="grid h-1 grid-cols-8 bg-border" aria-hidden="true">
-                  {scenes.map((item, index) => (
-                    <span key={item.id} className={index <= sceneIndex ? "bg-primary" : "bg-transparent"} />
-                  ))}
+                <div className="h-1 bg-transparent" aria-hidden="true">
+                  <span className="block h-full bg-primary transition-[width] duration-75 ease-linear motion-reduce:transition-none" style={{ width: `${overallProgress}%` }} />
                 </div>
               </div>
             </figure>

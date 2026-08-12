@@ -1,11 +1,6 @@
 ---
 import { Code } from "astro-expressive-code/components";
-
-const discoveries = [
-  { label: "Trust boundary", text: "Unauthenticated workflow input reaches the script evaluators" },
-  { label: "Vulnerability pattern", text: "Untrusted text passed to <code>Context.eval()</code> on a context built with <code>allowAllAccess(true)</code>" },
-  { label: "Opaque behavior", text: "<code>Builder.option()</code> returns the same builder" },
-];
+import PerlinBackdrop from "@/components/astro/PerlinBackdrop.astro";
 
 /* Both artifacts come from the CVE-2026-58138 reproduction kit. Fully-qualified
    names are shortened to keep the lines readable; everything else is verbatim. */
@@ -56,7 +51,8 @@ const traceSteps = [
 ---
 
 <section class="band real-world-band" aria-labelledby="what-heading">
-  <div class="mx-auto max-w-6xl">
+  <PerlinBackdrop class="section-flow-noise-soft" />
+  <div class="relative z-10 mx-auto max-w-6xl">
     <div class="section-header">
       <p class="section-eyebrow">A real-world review</p>
       <h2 id="what-heading" class="section-heading">How OpenTaint found CVE-2026-58138</h2>
@@ -71,17 +67,40 @@ const traceSteps = [
           <span class="text-foreground">Agent reviews</span>
         </p>
 
-        <div class="mt-6 grid md:mt-8 md:grid-cols-3">
-          {discoveries.map((item, index) => (
-            <div class:list={[
-              "reveal py-3 md:py-0",
-              index > 0 && "border-t border-border md:border-l md:border-t-0 md:pl-8",
-              index < discoveries.length - 1 && "md:pr-8",
-            ]}>
-              <p class="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground md:text-[11px]">{item.label}</p>
-              <p class="mt-2 max-w-[36ch] font-mono text-[13px] font-semibold leading-[1.5] text-foreground md:mt-3 md:text-[15px] md:leading-7" set:html={item.text}></p>
+        <div class="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(16rem,0.65fr)]">
+          <article class="reveal overflow-hidden rounded-xl border border-border-strong bg-code-bg">
+            <div class="flex items-center justify-between border-b border-border bg-code-header px-4 py-3 font-mono text-[10px] text-muted-foreground">
+              <span>Lambda.java → ScriptEvaluator.java</span>
+              <span class="uppercase tracking-[0.12em]">reviewed path</span>
             </div>
-          ))}
+            <pre class="overflow-x-auto px-4 py-6 font-mono text-[11px] leading-6 text-foreground sm:px-6 sm:text-[12px]"><code><span class="text-muted-foreground">72</span>  Map&lt;String, Object&gt; taskInput = task.getInputData();
+<span class="text-muted-foreground">75</span>  scriptExpression = (String) taskInput.get(<span class="text-primary">"scriptExpression"</span>);
+<span class="text-muted-foreground">79</span>  Object result = ScriptEvaluator.eval(scriptExpression, taskInput);
+
+<span class="text-muted-foreground">116</span> private static Context createNewContext() &#123;
+<span class="text-muted-foreground">117</span>   return Context.newBuilder(<span class="text-primary">"js"</span>)
+<span class="text-muted-foreground">118</span>     .<span class="text-primary">allowHostAccess(HostAccess.ALL)</span>
+<span class="text-muted-foreground">120</span>     .build();
+<span class="text-muted-foreground">121</span> &#125;
+
+<span class="text-muted-foreground">202</span> executorService.submit(
+<span class="text-muted-foreground">203</span>   () -&gt; context.<span class="text-primary">eval("js", script)</span>);</code></pre>
+          </article>
+
+          <ol class="reveal grid content-center gap-4 font-mono">
+            <li class="rounded-xl border border-border-strong bg-background px-4 py-4">
+              <span class="text-[9px] font-semibold uppercase tracking-[0.14em] text-primary">Trust boundary</span>
+              <p class="mt-2 text-[12px] leading-5 text-foreground">Workflow input controls the script expression.</p>
+            </li>
+            <li class="rounded-xl border border-border-strong bg-background px-4 py-4">
+              <span class="text-[9px] font-semibold uppercase tracking-[0.14em] text-primary">Host access</span>
+              <p class="mt-2 text-[12px] leading-5 text-foreground">The JavaScript context exposes the host runtime.</p>
+            </li>
+            <li class="rounded-xl border border-border-strong bg-background px-4 py-4">
+              <span class="text-[9px] font-semibold uppercase tracking-[0.14em] text-primary">Execution sink</span>
+              <p class="mt-2 text-[12px] leading-5 text-foreground">The controlled expression reaches <code>Context.eval()</code>.</p>
+            </li>
+          </ol>
         </div>
       </div>
 
@@ -93,7 +112,7 @@ const traceSteps = [
 
         <div class="mt-8 grid gap-6 lg:grid-cols-2">
           {artifacts.map((artifact) => (
-            <article class="reveal flex min-w-0 flex-col overflow-hidden border border-border-strong transition-colors duration-300 hover:border-primary/60 motion-reduce:transition-none">
+            <article class="reveal flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong transition-colors duration-300 hover:border-primary/60 motion-reduce:transition-none">
               <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-border bg-code-header px-4 py-3">
                 <span class="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">{artifact.label}</span>
                 <span class="font-mono text-[11px] text-muted-foreground">{artifact.file.split("/").pop()}</span>
@@ -115,15 +134,15 @@ const traceSteps = [
           {/* Both panels are the same box: header strip, body, footer strip —
               so their borders, tops, and bottoms line up whatever the content
               inside them costs. */}
-          <figure class="reveal flex min-w-0 flex-col border border-border-strong">
+          <figure class="reveal flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong">
             <figcaption class="border-b border-border bg-code-header px-4 py-3 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">
               Reported finding
             </figcaption>
 
             <a href="/reports/conductor-cve-2026-58138.html" class="group relative block flex-1 overflow-hidden bg-background">
               <span class="pointer-events-none absolute bottom-0 right-0 z-10 translate-y-full bg-primary px-3 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary-foreground transition-transform duration-300 ease-out group-hover:translate-y-0 group-focus-visible:translate-y-0 motion-reduce:transition-none">Open the report</span>
-              <img src="/pictures/report/trace-light.webp" alt="OpenTaint report with the tainted script flow selected and its steps listed below the source" class="h-full w-full object-cover object-top transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.01] dark:hidden" loading="lazy" width="1600" height="1000" />
-              <img src="/pictures/report/trace-dark.webp" alt="OpenTaint report with the tainted script flow selected and its steps listed below the source" class="hidden h-full w-full object-cover object-top transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.01] dark:block" loading="lazy" width="1600" height="1000" />
+              <img src="/pictures/report/trace-light.webp" alt="OpenTaint report with the tainted script flow selected and its steps listed below the source" class="h-full min-h-[24rem] w-full scale-[2.25] object-cover object-[70%_48%] transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[2.3] sm:scale-[1.72] sm:group-hover:scale-[1.76] dark:hidden" loading="lazy" width="1600" height="1000" />
+              <img src="/pictures/report/trace-dark.webp" alt="OpenTaint report with the tainted script flow selected and its steps listed below the source" class="hidden h-full min-h-[24rem] w-full scale-[2.25] object-cover object-[70%_48%] transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[2.3] sm:scale-[1.72] sm:group-hover:scale-[1.76] dark:block" loading="lazy" width="1600" height="1000" />
             </a>
 
             <p class="border-t border-border px-4 py-3 font-mono text-[11px] leading-5 text-muted-foreground">
@@ -131,7 +150,7 @@ const traceSteps = [
             </p>
           </figure>
 
-          <div class="reveal flex min-w-0 flex-col border border-border-strong">
+          <div class="reveal flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong">
             <p class="border-b border-border bg-code-header px-4 py-3 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">
               Reported taint trace
             </p>

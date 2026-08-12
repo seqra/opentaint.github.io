@@ -1,98 +1,179 @@
 ---
-const pressures = [
-  {
-    question: "Would you notice the agent slipping a vulnerability into code you never reviewed?",
-    percent: 45,
-    metric: "introduced a known security flaw",
-    segment: "known flaw",
-    remainder: "no known flaw observed",
-    response: "OpenTaint checks generated code against explicit security rules.",
-    source: "Veracode 2025",
-    href: "https://www.veracode.com/resources/analyst-reports/2025-genai-code-security-report/",
-  },
-  {
-    question: "How long will you keep betting nobody will bother to exploit your code?",
-    percent: 31,
-    metric: "of breaches started with vulnerability exploitation",
-    segment: "vulnerability exploitation",
-    remainder: "other initial-access vectors",
-    response: "OpenTaint shows which untrusted paths can reach dangerous operations.",
-    source: "Verizon DBIR 2026",
-    href: "https://www.verizon.com/about/news/breach-industry-wide-dbir-finds",
-  },
-  {
-    question: "Will tomorrow’s security review catch what today’s review found?",
-    percent: 86,
-    metric: "of unmatched reports did not recur in all five identical reviews",
-    segment: "did not recur every time",
-    remainder: "recurred in all five reviews",
-    caveat: "Unmatched LLM-only report signatures, not independently confirmed vulnerabilities.",
-    response: "OpenTaint enacts discoveries as taint rules for consistent subsequent scans.",
-    source: "Snyk VulnBench",
-    href: "https://snyk.io/blog/snyk-vulnbench-js-1-0-llm-security-review-repeatability/",
-  },
+import PerlinBackdrop from "@/components/astro/PerlinBackdrop.astro";
+
+const generatedCodeTiles = Array.from({ length: 25 }, (_, index) => index < 11);
+
+const exploitTrend = [
+  { year: "2023", percent: 5, x: 50, y: 174 },
+  { year: "2024", percent: 14, x: 180, y: 132 },
+  { year: "2025", percent: 20, x: 310, y: 102 },
+  { year: "2026", percent: 31, x: 440, y: 50 },
+];
+
+const reviewCircles = [
+  { cx: 245, cy: 75, label: "REVIEW 1", lx: 245, ly: 17 },
+  { cx: 287.8, cy: 106.1, label: "REVIEW 2", lx: 333, ly: 92 },
+  { cx: 271.5, cy: 156.4, label: "REVIEW 3", lx: 298, ly: 218 },
+  { cx: 218.5, cy: 156.4, label: "REVIEW 4", lx: 192, ly: 218 },
+  { cx: 202.2, cy: 106.1, label: "REVIEW 5", lx: 157, ly: 92 },
 ];
 ---
 
-<section class="band" aria-labelledby="security-debt-heading">
-  <div class="mx-auto max-w-6xl">
+<section class="band security-debt-band" aria-labelledby="security-debt-heading">
+  <PerlinBackdrop />
+  <div class="relative z-10 mx-auto max-w-[90rem]">
     <div class="section-header max-w-6xl">
-      <p class="section-eyebrow">Security risk and review cost compound with every change</p>
+      <p class="section-eyebrow">As AI generates more code, security risk and review cost compound</p>
       <h2 id="security-debt-heading" class="section-heading lg:whitespace-nowrap">Application security is the new tech debt</h2>
     </div>
 
-    <ol class="section-content border-t border-border-strong">
-      {pressures.map((pressure) => (
-        <li class="grid gap-8 border-b border-border-strong py-8 lg:grid-cols-[0.82fr_1.18fr] lg:gap-16 lg:py-10">
-          <h3 class="max-w-[46ch] font-mono text-base font-semibold leading-7 text-foreground lg:text-lg lg:leading-8">{pressure.question}</h3>
+    <div class="section-content grid gap-6 lg:grid-cols-2">
+      <article class="reveal flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
+        <header class="border-b border-border px-6 py-6 sm:px-8">
+          <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">01 / Generated code</p>
+          <h3 class="mt-3 max-w-[42ch] font-mono text-lg font-semibold leading-7 text-foreground sm:text-xl sm:leading-8">Would you notice the agent slipping a vulnerability into code you never reviewed?</h3>
+        </header>
 
-          <figure>
-            <figcaption class="flex items-baseline gap-4 font-mono text-foreground">
-              <strong class="text-4xl tracking-[-0.06em] lg:text-5xl">{pressure.percent}%</strong>
-              <span class="max-w-[38ch] text-sm font-semibold leading-6 lg:text-base">{pressure.metric}</span>
-            </figcaption>
-            <div class="mt-6 flex h-3 overflow-hidden bg-border" role="img" aria-label={`${pressure.percent}% ${pressure.metric}`}>
-              <span class="h-full bg-primary" style={`width:${pressure.percent}%`}></span>
-              <span class="h-full bg-muted" style={`width:${100 - pressure.percent}%`}></span>
-            </div>
-            <div class="mt-2 flex justify-between gap-4 font-mono text-[9px] leading-4 text-muted-foreground">
-              <span>{pressure.segment}, {pressure.percent}%</span>
-              <span class="text-right">{pressure.remainder}, {100 - pressure.percent}%</span>
-            </div>
-            {pressure.caveat && <p class="mt-3 font-mono text-[9px] leading-5 text-muted-foreground">{pressure.caveat}</p>}
-            <div class="mt-4 flex flex-col gap-2 border-l-2 border-primary pl-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
-              <p class="font-mono text-xs leading-6 text-muted-foreground">{pressure.response}</p>
-              <a href={pressure.href} target="_blank" rel="noreferrer" class="shrink-0 font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">{pressure.source}</a>
-            </div>
-          </figure>
-        </li>
-      ))}
+        <figure class="flex flex-1 flex-col bg-code-bg px-6 py-6 sm:px-8">
+          <figcaption class="flex items-end justify-between gap-6 font-mono">
+            <span><strong class="block text-5xl tracking-[-0.07em] text-foreground">44%</strong><span class="mt-2 block max-w-[32ch] text-xs font-semibold leading-5 text-muted-foreground">of code-generation tasks failed security tests without security-specific guidance</span></span>
+            <span class="hidden text-right text-[9px] uppercase leading-4 tracking-[0.08em] text-muted-foreground sm:block">Each tile<br />4 percentage points</span>
+          </figcaption>
 
-      <li class="grid gap-8 border-b border-border-strong py-8 lg:grid-cols-[0.82fr_1.18fr] lg:gap-16 lg:py-10">
-        <h3 class="max-w-[46ch] font-mono text-base font-semibold leading-7 text-foreground lg:text-lg lg:leading-8">How much money will you waste asking a security agent to review the same parts of your application again?</h3>
-        <figure>
-          <figcaption class="sr-only">Anthropic spent under $20,000 across 1,000 repeated searches</figcaption>
-          <div class="grid grid-cols-3 border-y border-border-strong font-mono">
-            <div class="py-4 pr-4">
-              <strong class="block text-xl text-foreground lg:text-2xl">1,000</strong>
-              <span class="mt-1 block text-[9px] leading-4 text-muted-foreground">repeated searches</span>
-            </div>
-            <div class="border-x border-border-strong px-4 py-4 text-center">
-              <strong class="block text-xl text-foreground lg:text-2xl">&lt;$20K</strong>
-              <span class="mt-1 block text-[9px] leading-4 text-muted-foreground">total spend</span>
-            </div>
-            <div class="py-4 pl-4 text-right">
-              <strong class="block text-xl text-foreground lg:text-2xl">&lt;$20</strong>
-              <span class="mt-1 block text-[9px] leading-4 text-muted-foreground">average per search</span>
-            </div>
+          <div class="mt-6 flex h-[15rem] items-center sm:h-[17rem]">
+            <svg class="h-auto max-h-full w-full" viewBox="0 0 490 230" role="img" aria-label="44 percent of code-generation tasks failed security tests without security-specific guidance">
+              {generatedCodeTiles.map((failed, index) => {
+                const x = 10 + (index % 5) * 96;
+                const y = 10 + Math.floor(index / 5) * 44;
+                return (
+                  <g>
+                    <rect x={x} y={y} width="86" height="34" rx="4" fill={failed ? "hsl(var(--brand) / 0.08)" : "hsl(var(--background))"} stroke={failed ? "hsl(var(--brand))" : "hsl(var(--border-strong))"} />
+                    <line x1={x + 8} y1={y + 13} x2={x + 72} y2={y + 13} stroke={failed ? "hsl(var(--brand))" : "hsl(var(--foreground) / 0.28)"} />
+                    <line x1={x + 8} y1={y + 21} x2={x + 48} y2={y + 21} stroke={failed ? "hsl(var(--brand))" : "hsl(var(--foreground) / 0.18)"} />
+                  </g>
+                );
+              })}
+            </svg>
           </div>
-          <p class="mt-3 font-mono text-[9px] leading-5 text-muted-foreground">The successful run was identifiable only afterward.</p>
-          <div class="mt-4 flex flex-col gap-2 border-l-2 border-primary pl-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
-            <p class="font-mono text-xs leading-6 text-muted-foreground">OpenTaint applies enacted rules without repeating model reasoning already captured in the specification.</p>
-            <a href="https://www.anthropic.com/research/mythos-preview" target="_blank" rel="noreferrer" class="shrink-0 font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Anthropic Mythos</a>
-          </div>
+
+          <p class="mt-6 font-mono text-[10px] leading-5 text-muted-foreground">More functional code does not automatically mean more secure code.</p>
         </figure>
-      </li>
-    </ol>
+
+        <footer class="flex flex-col gap-3 border-t border-border px-6 py-4 sm:flex-row sm:items-baseline sm:justify-between sm:px-8">
+          <p class="font-mono text-xs leading-5 text-foreground">OpenTaint checks generated code against explicit security rules.</p>
+          <a href="https://www.veracode.com/resources/analyst-reports/2026-genai-code-security-report/" target="_blank" rel="noreferrer" class="shrink-0 font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Veracode 2026</a>
+        </footer>
+      </article>
+
+      <article class="reveal flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
+        <header class="border-b border-border px-6 py-6 sm:px-8">
+          <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">02 / Exploitation</p>
+          <h3 class="mt-3 max-w-[42ch] font-mono text-lg font-semibold leading-7 text-foreground sm:text-xl sm:leading-8">How long will you keep betting nobody will bother to exploit your code?</h3>
+        </header>
+
+        <figure class="flex flex-1 flex-col bg-code-bg px-4 py-6 sm:px-8">
+          <figcaption class="px-2 font-mono sm:px-0"><strong class="text-4xl tracking-[-0.06em] text-foreground sm:text-5xl">from 5% to 31%</strong><span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">breaches beginning with vulnerability exploitation</span></figcaption>
+
+          <div class="mt-6 flex h-[15rem] items-center sm:h-[17rem]">
+            <svg class="h-auto max-h-full w-full" viewBox="0 0 490 230" role="img" aria-label="Vulnerability exploitation as initial access rose from 5 percent in 2023 to 31 percent in 2026">
+              <defs>
+                <linearGradient id="exploit-area" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="hsl(var(--brand))" stop-opacity="0.2" />
+                  <stop offset="1" stop-color="hsl(var(--brand))" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+              <path d="M50 174 C95 165 137 145 180 132 C224 119 266 114 310 102 C355 90 397 67 440 50 L440 190 L50 190 Z" fill="url(#exploit-area)" />
+              <path d="M50 174 C95 165 137 145 180 132 C224 119 266 114 310 102 C355 90 397 67 440 50" fill="none" stroke="hsl(var(--brand))" stroke-width="3" stroke-linecap="round" />
+              <line x1="50" y1="190" x2="440" y2="190" stroke="hsl(var(--border-strong))" stroke-width="1" />
+              {exploitTrend.map((point) => (
+                <g>
+                  <circle cx={point.x} cy={point.y} r="6" fill="hsl(var(--background))" stroke="hsl(var(--brand))" stroke-width="3" />
+                  <text x={point.x} y={point.y - 15} text-anchor="middle" fill="hsl(var(--foreground))" font-size="13" font-weight="700">{point.percent}%</text>
+                  <text x={point.x} y="214" text-anchor="middle" fill="hsl(var(--muted-foreground))" font-size="11">{point.year}</text>
+                </g>
+              ))}
+            </svg>
+          </div>
+
+          <p class="font-mono text-[10px] leading-5 text-muted-foreground">In 2026, vulnerability exploitation became the leading breach entry point for the first time in 19 years.</p>
+
+        </figure>
+
+        <footer class="flex flex-col gap-3 border-t border-border px-6 py-4 sm:flex-row sm:items-baseline sm:justify-between sm:px-8">
+          <p class="font-mono text-xs leading-5 text-foreground">OpenTaint continuously searches for known dangerous flows before attackers do.</p>
+          <a href="https://www.verizon.com/about/news/breach-industry-wide-dbir-finds" target="_blank" rel="noreferrer" class="shrink-0 font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Verizon DBIR 2026</a>
+        </footer>
+      </article>
+
+      <article class="reveal flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
+        <header class="border-b border-border px-6 py-6 sm:px-8">
+          <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">03 / Repeatability</p>
+          <h3 class="mt-3 max-w-[42ch] font-mono text-lg font-semibold leading-7 text-foreground sm:text-xl sm:leading-8">Will tomorrow’s security review catch what today’s review found?</h3>
+        </header>
+
+        <figure class="flex flex-1 flex-col items-center bg-code-bg px-4 py-6 sm:px-8">
+          <figcaption class="w-full font-mono"><strong class="block text-5xl tracking-[-0.07em] text-foreground">14%</strong><span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">of unmatched LLM-reported issues appeared in all five identical reviews</span></figcaption>
+          <div class="mt-6 flex h-[15rem] w-full items-center sm:h-[17rem]">
+            <svg class="h-auto max-h-full w-full" viewBox="65 0 360 230" role="img" aria-label="The exact overlap shared by all five identical reviews contains only 14 percent of unmatched LLM-reported issues">
+              <defs>
+                {reviewCircles.map((circle, index) => <clipPath id={`review-${index + 1}`}><circle cx={circle.cx} cy={circle.cy} r="72" /></clipPath>)}
+              </defs>
+              <g fill="hsl(var(--brand) / 0.025)" stroke="hsl(var(--brand) / 0.65)" stroke-width="2">
+                {reviewCircles.map((circle) => <circle cx={circle.cx} cy={circle.cy} r="72" />)}
+              </g>
+              <g clip-path="url(#review-1)"><g clip-path="url(#review-2)"><g clip-path="url(#review-3)"><g clip-path="url(#review-4)"><g clip-path="url(#review-5)">
+                <rect x="0" y="0" width="490" height="230" fill="hsl(var(--brand))" />
+              </g></g></g></g></g>
+              <g fill="hsl(var(--muted-foreground))" font-size="8" font-weight="700">
+                {reviewCircles.map((circle) => <text x={circle.lx} y={circle.ly} text-anchor="middle">{circle.label}</text>)}
+              </g>
+              <text x="245" y="129" text-anchor="middle" fill="hsl(var(--background))" font-size="9" font-weight="700">ALL FIVE</text>
+            </svg>
+          </div>
+          <p class="mt-auto text-center font-mono text-[9px] leading-5 text-muted-foreground">Reported issues outside the deterministic reference set, not independently confirmed vulnerabilities.</p>
+        </figure>
+
+        <footer class="flex flex-col gap-3 border-t border-border px-6 py-4 sm:flex-row sm:items-baseline sm:justify-between sm:px-8">
+          <p class="font-mono text-xs leading-5 text-foreground">OpenTaint enacts discoveries as taint rules for consistent subsequent scans.</p>
+          <a href="https://snyk.io/blog/snyk-vulnbench-js-1-0-llm-security-review-repeatability/" target="_blank" rel="noreferrer" class="shrink-0 font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Snyk VulnBench</a>
+        </footer>
+      </article>
+
+      <article class="reveal flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
+        <header class="border-b border-border px-6 py-6 sm:px-8">
+          <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">04 / Model cost</p>
+          <h3 class="mt-3 max-w-[42ch] font-mono text-lg font-semibold leading-7 text-foreground sm:text-xl sm:leading-8">How much money will you waste asking a security agent to review the same parts of your application again?</h3>
+        </header>
+
+        <figure class="flex flex-1 flex-col bg-code-bg px-6 py-6 sm:px-8">
+          <figcaption class="flex items-end justify-between gap-6 font-mono">
+            <span><strong class="block text-4xl tracking-[-0.06em] text-foreground sm:text-5xl">Under $20K</strong><span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">total cost across 1,000 model runs</span></span>
+            <span class="hidden text-right text-[9px] uppercase leading-4 tracking-[0.08em] text-primary sm:block">One highlighted run<br />found the critical bug</span>
+          </figcaption>
+
+          <div class="mt-6 flex h-[15rem] items-center sm:h-[17rem]">
+            <svg class="h-auto max-h-full w-full" viewBox="0 0 490 230" role="img" aria-label="One highlighted run among one thousand model runs found the critical OpenBSD vulnerability">
+              <defs>
+                <pattern id="search-runs" width="12.25" height="9.2" patternUnits="userSpaceOnUse">
+                  <circle cx="6.125" cy="4.6" r="1.45" fill="hsl(var(--muted-foreground) / 0.48)" />
+                </pattern>
+              </defs>
+              <rect width="490" height="230" fill="url(#search-runs)" />
+              <circle cx="288" cy="87" r="7" fill="hsl(var(--background))" stroke="hsl(var(--brand))" stroke-width="2" />
+              <circle cx="288" cy="87" r="3" fill="hsl(var(--brand))" />
+              <path d="M296 84 C337 67 379 51 429 38" fill="none" stroke="hsl(var(--brand))" stroke-width="1.5" />
+              <text x="480" y="35" text-anchor="end" fill="hsl(var(--brand))" font-size="9" font-weight="700">CRITICAL BUG</text>
+            </svg>
+          </div>
+
+          <p class="mt-auto font-mono text-[9px] leading-5 text-muted-foreground">Anthropic reports a total cost under $20,000. The campaign also produced several dozen other findings.</p>
+        </figure>
+
+        <footer class="flex flex-col gap-3 border-t border-border px-6 py-4 sm:flex-row sm:items-baseline sm:justify-between sm:px-8">
+          <p class="font-mono text-xs leading-5 text-foreground">OpenTaint reapplies known checks without repeating the model search.</p>
+          <a href="https://www.anthropic.com/research/mythos-preview" target="_blank" rel="noreferrer" class="shrink-0 font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Anthropic Mythos</a>
+        </footer>
+      </article>
+    </div>
   </div>
 </section>

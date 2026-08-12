@@ -40,8 +40,9 @@ const reviewIntersectionCenter = {
         </header>
 
         <figure class="flex flex-1 flex-col bg-code-bg px-6 py-6 sm:px-8">
-          <figcaption class="flex items-end justify-between gap-6 font-mono">
-            <span><strong class="block text-5xl tracking-[-0.07em] text-foreground">44%</strong><span class="mt-2 block max-w-[32ch] text-xs font-semibold leading-5 text-muted-foreground">of code-generation tasks failed security tests without security-specific guidance</span></span>
+          <figcaption class="font-mono">
+            <strong class="block text-5xl tracking-[-0.07em] text-foreground">44%</strong>
+            <span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">code-generation tasks failed security tests</span>
           </figcaption>
 
           <div class="mt-6 flex h-[15rem] items-center sm:h-[17rem]">
@@ -59,13 +60,8 @@ const reviewIntersectionCenter = {
               })}
             </svg>
           </div>
-
+          <a href="https://www.veracode.com/resources/analyst-reports/2026-genai-code-security-report/" target="_blank" rel="noreferrer" class="mt-auto self-end font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Veracode 2026</a>
         </figure>
-
-        <footer class="flex min-h-20 flex-col justify-center gap-3 border-t border-border px-6 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8">
-          <p class="font-mono text-xs leading-5 text-foreground">OpenTaint checks generated code against explicit rules.</p>
-          <a href="https://www.veracode.com/resources/analyst-reports/2026-genai-code-security-report/" target="_blank" rel="noreferrer" class="shrink-0 font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Veracode 2026</a>
-        </footer>
       </article>
 
       <article class="reveal flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
@@ -75,7 +71,10 @@ const reviewIntersectionCenter = {
         </header>
 
         <figure class="flex flex-1 flex-col bg-code-bg px-4 py-6 sm:px-8">
-          <figcaption class="px-2 font-mono sm:px-0"><strong class="text-4xl tracking-[-0.06em] text-foreground sm:text-5xl">from 5% to 31%</strong><span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">breaches beginning with vulnerability exploitation</span></figcaption>
+          <figcaption class="px-2 font-mono sm:px-0">
+            <strong class="block text-4xl tracking-[-0.06em] text-foreground sm:text-5xl">from 5% to 31%</strong>
+            <span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">breaches beginning with vulnerability exploitation</span>
+          </figcaption>
           <p class="sr-only">Vulnerability exploitation became the leading breach entry point for the first time in 19 years.</p>
 
           <div class="mt-6 flex h-[15rem] items-center sm:h-[17rem]">
@@ -98,13 +97,8 @@ const reviewIntersectionCenter = {
               ))}
             </svg>
           </div>
-
+          <a href="https://www.verizon.com/about/news/breach-industry-wide-dbir-finds" target="_blank" rel="noreferrer" class="mt-auto self-end font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Verizon DBIR 2026</a>
         </figure>
-
-        <footer class="flex min-h-20 flex-col justify-center gap-3 border-t border-border px-6 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8">
-          <p class="font-mono text-xs leading-5 text-foreground">OpenTaint searches your code for exploitable vulnerability paths.</p>
-          <a href="https://www.verizon.com/about/news/breach-industry-wide-dbir-finds" target="_blank" rel="noreferrer" class="shrink-0 font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Verizon DBIR 2026</a>
-        </footer>
       </article>
 
       <article class="reveal flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
@@ -114,7 +108,10 @@ const reviewIntersectionCenter = {
         </header>
 
         <figure class="flex flex-1 flex-col items-center bg-code-bg px-4 py-6 sm:px-8">
-          <figcaption class="w-full font-mono"><strong class="block text-5xl tracking-[-0.07em] text-foreground">14%</strong><span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">of unmatched LLM-reported issues appeared in all five identical reviews</span></figcaption>
+          <figcaption class="w-full font-mono">
+            <strong class="block text-5xl tracking-[-0.07em] text-foreground">14%</strong>
+            <span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">unmatched issues appeared in all five identical reviews</span>
+          </figcaption>
           <p class="sr-only">These were reported issues outside the deterministic reference set, not independently confirmed vulnerabilities.</p>
           <div class="mt-6 flex h-[15rem] w-full items-center sm:h-[17rem]">
             <svg class="h-auto max-h-full w-full" viewBox="60 -20 370 280" role="img" aria-label="The exact overlap shared by all five identical reviews contains only 14 percent of unmatched LLM-reported issues">
@@ -133,12 +130,8 @@ const reviewIntersectionCenter = {
               <text x={reviewIntersectionCenter.x} y={reviewIntersectionCenter.y} text-anchor="middle" dominant-baseline="middle" fill="hsl(var(--background))" font-size="9" font-weight="700">ALL FIVE</text>
             </svg>
           </div>
+          <a href="https://snyk.io/blog/snyk-vulnbench-js-1-0-llm-security-review-repeatability/" target="_blank" rel="noreferrer" class="mt-auto self-end font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Snyk VulnBench</a>
         </figure>
-
-        <footer class="flex min-h-20 flex-col justify-center gap-3 border-t border-border px-6 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8">
-          <p class="font-mono text-xs leading-5 text-foreground">OpenTaint turns discoveries into consistent scans.</p>
-          <a href="https://snyk.io/blog/snyk-vulnbench-js-1-0-llm-security-review-repeatability/" target="_blank" rel="noreferrer" class="shrink-0 font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Snyk VulnBench</a>
-        </footer>
       </article>
 
       <article class="reveal flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
@@ -148,9 +141,9 @@ const reviewIntersectionCenter = {
         </header>
 
         <figure class="flex flex-1 flex-col bg-code-bg px-6 py-6 sm:px-8">
-          <figcaption class="flex items-end justify-between gap-6 font-mono">
-            <span><strong class="block text-4xl tracking-[-0.06em] text-foreground sm:text-5xl">$20K</strong><span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">total cost across 1,000 model runs</span></span>
-            <span class="hidden text-right text-[9px] uppercase leading-4 tracking-[0.08em] text-primary sm:block">One highlighted run<br />found the critical bug</span>
+          <figcaption class="font-mono">
+            <strong class="block text-4xl tracking-[-0.06em] text-foreground sm:text-5xl">$20K</strong>
+            <span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">spent across 1,000 security reviews</span>
           </figcaption>
 
           <div class="mt-6 flex h-[15rem] items-center sm:h-[17rem]">
@@ -161,19 +154,18 @@ const reviewIntersectionCenter = {
                 </pattern>
               </defs>
               <rect width="490" height="230" fill="url(#search-runs)" />
+              <circle cx="104.125" cy="151.8" r="7" fill="hsl(var(--background))" stroke="hsl(var(--muted-foreground))" stroke-width="2" />
+              <circle cx="104.125" cy="151.8" r="3" fill="hsl(var(--muted-foreground))" />
+              <path d="M97 155 C72 165 49 178 28 194" fill="none" stroke="hsl(var(--muted-foreground))" stroke-width="1.5" />
+              <text x="10" y="211" fill="hsl(var(--muted-foreground))" font-size="9" font-weight="700">ONE SECURITY REVIEW</text>
               <circle cx="288" cy="87" r="7" fill="hsl(var(--background))" stroke="hsl(var(--brand))" stroke-width="2" />
               <circle cx="288" cy="87" r="3" fill="hsl(var(--brand))" />
               <path d="M296 84 C337 67 379 51 429 38" fill="none" stroke="hsl(var(--brand))" stroke-width="1.5" />
-              <text x="480" y="35" text-anchor="end" fill="hsl(var(--brand))" font-size="9" font-weight="700">CRITICAL BUG</text>
+              <text x="480" y="35" text-anchor="end" fill="hsl(var(--brand))" font-size="9" font-weight="700">CRITICAL BUG FOUND</text>
             </svg>
           </div>
-
+          <a href="https://www.anthropic.com/research/mythos-preview" target="_blank" rel="noreferrer" class="mt-auto self-end font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Anthropic Mythos</a>
         </figure>
-
-        <footer class="flex min-h-20 flex-col justify-center gap-3 border-t border-border px-6 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8">
-          <p class="font-mono text-xs leading-5 text-foreground">OpenTaint reapplies known checks without model inference.</p>
-          <a href="https://www.anthropic.com/research/mythos-preview" target="_blank" rel="noreferrer" class="shrink-0 font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Anthropic Mythos</a>
-        </footer>
       </article>
     </div>
   </div>

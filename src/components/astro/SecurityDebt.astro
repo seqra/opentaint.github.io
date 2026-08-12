@@ -11,12 +11,17 @@ const exploitTrend = [
 ];
 
 const reviewCircles = [
-  { cx: 245, cy: 75, label: "REVIEW 1", lx: 245, ly: 17 },
-  { cx: 287.8, cy: 106.1, label: "REVIEW 2", lx: 333, ly: 92 },
-  { cx: 271.5, cy: 156.4, label: "REVIEW 3", lx: 298, ly: 218 },
-  { cx: 218.5, cy: 156.4, label: "REVIEW 4", lx: 192, ly: 218 },
-  { cx: 202.2, cy: 106.1, label: "REVIEW 5", lx: 157, ly: 92 },
+  { cx: 245, cy: 75, label: "REVIEW 1", lx: 245, ly: -12 },
+  { cx: 287.8, cy: 106.1, label: "REVIEW 2", lx: 392, ly: 106.1 },
+  { cx: 271.5, cy: 156.4, label: "REVIEW 3", lx: 322, ly: 250 },
+  { cx: 218.5, cy: 156.4, label: "REVIEW 4", lx: 168, ly: 250 },
+  { cx: 202.2, cy: 106.1, label: "REVIEW 5", lx: 98, ly: 106.1 },
 ];
+
+const reviewIntersectionCenter = {
+  x: reviewCircles.reduce((sum, circle) => sum + circle.cx, 0) / reviewCircles.length,
+  y: reviewCircles.reduce((sum, circle) => sum + circle.cy, 0) / reviewCircles.length,
+};
 ---
 
 <section class="band security-debt-band" aria-labelledby="security-debt-heading">
@@ -97,7 +102,7 @@ const reviewCircles = [
         </figure>
 
         <footer class="flex min-h-20 flex-col justify-center gap-3 border-t border-border px-6 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8">
-          <p class="font-mono text-xs leading-5 text-foreground">OpenTaint searches for known dangerous flows.</p>
+          <p class="font-mono text-xs leading-5 text-foreground">OpenTaint searches your code for exploitable vulnerability paths.</p>
           <a href="https://www.verizon.com/about/news/breach-industry-wide-dbir-finds" target="_blank" rel="noreferrer" class="shrink-0 font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Verizon DBIR 2026</a>
         </footer>
       </article>
@@ -112,7 +117,7 @@ const reviewCircles = [
           <figcaption class="w-full font-mono"><strong class="block text-5xl tracking-[-0.07em] text-foreground">14%</strong><span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">of unmatched LLM-reported issues appeared in all five identical reviews</span></figcaption>
           <p class="sr-only">These were reported issues outside the deterministic reference set, not independently confirmed vulnerabilities.</p>
           <div class="mt-6 flex h-[15rem] w-full items-center sm:h-[17rem]">
-            <svg class="h-auto max-h-full w-full" viewBox="65 0 360 230" role="img" aria-label="The exact overlap shared by all five identical reviews contains only 14 percent of unmatched LLM-reported issues">
+            <svg class="h-auto max-h-full w-full" viewBox="60 -20 370 280" role="img" aria-label="The exact overlap shared by all five identical reviews contains only 14 percent of unmatched LLM-reported issues">
               <defs>
                 {reviewCircles.map((circle, index) => <clipPath id={`review-${index + 1}`}><circle cx={circle.cx} cy={circle.cy} r="72" /></clipPath>)}
               </defs>
@@ -125,7 +130,7 @@ const reviewCircles = [
               <g fill="hsl(var(--muted-foreground))" font-size="8" font-weight="700">
                 {reviewCircles.map((circle) => <text x={circle.lx} y={circle.ly} text-anchor="middle">{circle.label}</text>)}
               </g>
-              <text x="245" y="129" text-anchor="middle" fill="hsl(var(--background))" font-size="9" font-weight="700">ALL FIVE</text>
+              <text x={reviewIntersectionCenter.x} y={reviewIntersectionCenter.y} text-anchor="middle" dominant-baseline="middle" fill="hsl(var(--background))" font-size="9" font-weight="700">ALL FIVE</text>
             </svg>
           </div>
         </figure>

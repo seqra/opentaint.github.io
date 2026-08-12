@@ -73,7 +73,8 @@ const traceSteps = [
               <span class="font-semibold text-foreground">WorkflowResource.java / Lambda.java</span>
               <span class="uppercase tracking-[0.12em]">request path</span>
             </div>
-            <pre class="overflow-x-auto px-4 py-6 font-mono text-[10px] leading-6 text-foreground sm:px-6 sm:text-[11px]"><code><span class="text-muted-foreground">77</span>  @PostMapping(produces = TEXT_PLAIN_VALUE)
+            <pre class="overflow-x-auto px-4 py-6 font-mono text-[10px] leading-6 text-foreground sm:px-6 sm:text-[11px]"><code>    <span class="text-emerald-700 dark:text-emerald-400">// Controller entry point.</span>
+<span class="text-muted-foreground">77</span>  @PostMapping(produces = TEXT_PLAIN_VALUE)
 <span class="text-muted-foreground">81</span>  public String startWorkflow(
 <span class="text-muted-foreground">82</span>      @RequestBody StartWorkflowRequest request) &#123;
 <span class="text-muted-foreground">83</span>    return workflowService.startWorkflow(request);

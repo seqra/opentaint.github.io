@@ -7,10 +7,6 @@ export type HeroFlowLine = {
   active: boolean;
 };
 
-type FlowFieldOptions = {
-  dense?: boolean;
-};
-
 const width = 1200;
 const height = 720;
 const noiseScale = 0.0035;
@@ -56,14 +52,10 @@ function catmullRomPath(points: Point[]) {
  * small repeated steps through the field. The seed keeps the published hero
  * stable across renders.
  */
-export function createHeroFlowField({ dense = false }: FlowFieldOptions = {}): HeroFlowLine[] {
+export function createHeroFlowField(): HeroFlowLine[] {
   const noise = new NoiseConstructor(58138);
   const lines: HeroFlowLine[] = [];
   let lineIndex = 0;
-  const rowGap = dense ? 48 : 90;
-  const columnGap = dense ? 68 : 120;
-  const startY = dense ? 24 : 40;
-  const startX = dense ? 28 : 60;
 
   const trace = (start: Point, direction: 1 | -1) => {
     const points: Point[] = [];
@@ -81,8 +73,8 @@ export function createHeroFlowField({ dense = false }: FlowFieldOptions = {}): H
     return points;
   };
 
-  for (let row = 0, gridY = startY; gridY < height; row += 1, gridY += rowGap) {
-    for (let column = 0, gridX = startX; gridX < width; column += 1, gridX += columnGap) {
+  for (let row = 0, gridY = 40; gridY < height; row += 1, gridY += 90) {
+    for (let column = 0, gridX = 60; gridX < width; column += 1, gridX += 120) {
       const start = {
         x: gridX + noise.perlin2(column * 0.27 + 31, row * 0.27 + 47) * 34,
         y: gridY + noise.perlin2(column * 0.27 + 71, row * 0.27 + 89) * 22,
@@ -91,7 +83,7 @@ export function createHeroFlowField({ dense = false }: FlowFieldOptions = {}): H
       const forward = trace(start, 1);
       lines.push({
         d: catmullRomPath([...backward, start, ...forward]),
-        active: lineIndex % (dense ? 7 : 4) === 1,
+        active: lineIndex % 4 === 1,
       });
       lineIndex += 1;
     }

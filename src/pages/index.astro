@@ -72,7 +72,7 @@ const structuredData = [
       })),
   },
 ];
-const heroWorkflowFlowLines = createHeroFlowField({ dense: true });
+const heroWorkflowFlowLines = createHeroFlowField();
 ---
 
 <BaseLayout
@@ -85,12 +85,16 @@ const heroWorkflowFlowLines = createHeroFlowField({ dense: true });
     <SiteHeader />
     <main id="main" class="landing-sections flex-1 pt-16">
       <div class="hero-workflow-group">
-        <svg class="hero-workflow-signal-field" viewBox="0 0 1200 720" preserveAspectRatio="none" aria-hidden="true">
+        <svg class="hero-workflow-signal-field" viewBox="0 0 1200 1440" preserveAspectRatio="none" aria-hidden="true">
           <g class="hero-signal-graph">
-            {heroWorkflowFlowLines.map((line, index) => <path d={line.d}></path>)}
-            {heroWorkflowFlowLines.map((line, index) => line.active
-              ? <path class:list={["hero-signal-active", `hero-signal-active-${index % 3}`]} d={line.d}></path>
-              : null)}
+            {[0, 720].map((offset) => (
+              <g transform={`translate(0 ${offset})`}>
+                {heroWorkflowFlowLines.map((line) => <path d={line.d}></path>)}
+                {heroWorkflowFlowLines.map((line, index) => line.active
+                  ? <path class:list={["hero-signal-active", `hero-signal-active-${index % 3}`]} d={line.d}></path>
+                  : null)}
+              </g>
+            ))}
           </g>
         </svg>
 

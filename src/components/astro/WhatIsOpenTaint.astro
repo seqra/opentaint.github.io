@@ -61,14 +61,14 @@ const traceSteps = [
 
 
     <figure class="section-content overflow-hidden rounded-xl border border-border-strong bg-background" aria-labelledby="what-heading">
-      <div class="p-6 sm:p-6 lg:p-8">
+      <div class="p-4 sm:p-6 lg:p-8">
         <p class="flex items-baseline gap-3 font-mono text-[11px] font-semibold uppercase tracking-[0.16em]">
           <span class="text-primary">01</span>
           <span class="text-foreground">Agent reviews</span>
         </p>
 
-        <div class="mt-8 grid gap-6 lg:grid-cols-2">
-          <article class="reveal min-w-0 overflow-hidden rounded-xl border border-border-strong bg-code-bg">
+        <div class="mobile-card-rail mt-6 grid gap-6 sm:mt-8 lg:grid-cols-2" role="region" aria-label="Reviewed application code" tabindex="0">
+          <article class="reveal mobile-card-rail-item min-w-0 overflow-hidden rounded-xl border border-border-strong bg-code-bg">
             <div class="flex items-center justify-between border-b border-border bg-code-header px-4 py-3 font-mono text-[10px] text-muted-foreground">
               <span class="font-semibold text-foreground">WorkflowResource.java / Lambda.java</span>
               <span class="uppercase tracking-[0.12em]">request path</span>
@@ -88,7 +88,7 @@ const traceSteps = [
 <span class="text-muted-foreground">81</span>      scriptExpression, taskInput);</code></pre>
           </article>
 
-          <article class="reveal min-w-0 overflow-hidden rounded-xl border border-border-strong bg-code-bg">
+          <article class="reveal mobile-card-rail-item min-w-0 overflow-hidden rounded-xl border border-border-strong bg-code-bg">
             <div class="flex items-center justify-between border-b border-border bg-code-header px-4 py-3 font-mono text-[10px] text-muted-foreground">
               <span class="font-semibold text-foreground">ScriptEvaluator.java</span>
               <span class="uppercase tracking-[0.12em]">evaluation path</span>
@@ -108,15 +108,15 @@ const traceSteps = [
         </div>
       </div>
 
-      <div class="border-t border-border p-6 sm:p-6 lg:p-8">
+      <div class="border-t border-border p-4 sm:p-6 lg:p-8">
         <p class="flex items-baseline gap-3 font-mono text-[11px] font-semibold uppercase tracking-[0.16em]">
           <span class="text-primary">02</span>
           <span class="text-foreground">Agent enacts</span>
         </p>
 
-        <div class="mt-8 grid gap-6 lg:grid-cols-2">
+        <div class="mobile-card-rail mt-6 grid gap-6 sm:mt-8 lg:grid-cols-2" role="region" aria-label="Formal security specifications" tabindex="0">
           {artifacts.map((artifact) => (
-            <article class="reveal flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong transition-colors duration-300 hover:border-primary/60 motion-reduce:transition-none">
+            <article class="reveal mobile-card-rail-item flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong transition-colors duration-300 hover:border-primary/60 motion-reduce:transition-none">
               <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-border bg-code-header px-4 py-3">
                 <span class="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">{artifact.label}</span>
                 <span class="font-mono text-[11px] text-muted-foreground">{artifact.file.split("/").pop()}</span>
@@ -128,17 +128,17 @@ const traceSteps = [
         </div>
       </div>
 
-      <div class="border-t border-border p-6 sm:p-6 lg:p-8">
+      <div class="border-t border-border p-4 sm:p-6 lg:p-8">
         <p class="flex items-baseline gap-3 font-mono text-[11px] font-semibold uppercase tracking-[0.16em]">
           <span class="text-primary">03</span>
           <span class="text-foreground">Formal taint analysis searches</span>
         </p>
 
-        <div class="mt-8 grid items-stretch gap-8 lg:grid-cols-[1.5fr_0.5fr] lg:gap-10">
+        <div class="mobile-card-rail mt-6 grid items-stretch gap-6 sm:mt-8 lg:grid-cols-[1.5fr_0.5fr] lg:gap-10" role="region" aria-label="OpenTaint finding and reported trace" tabindex="0">
           {/* Both panels are the same box: header strip, body, footer strip —
               so their borders, tops, and bottoms line up whatever the content
               inside them costs. */}
-          <figure class="reveal flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong">
+          <figure class="reveal mobile-card-rail-item flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong">
             <figcaption class="border-b border-border bg-code-header px-4 py-3 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">
               Reported finding
             </figcaption>
@@ -147,11 +147,11 @@ const traceSteps = [
               <span class="pointer-events-none absolute bottom-0 right-0 z-10 translate-y-full bg-primary px-3 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary-foreground transition-transform duration-300 ease-out group-hover:translate-y-0 group-focus-visible:translate-y-0 motion-reduce:transition-none">Open the report</span>
               <picture>
                 <source media="(max-width: 639px)" srcset="/pictures/report/trace-zoom-mobile-light.png" />
-                <img src="/pictures/report/trace-zoom-light.png" alt="OpenTaint report zoomed into the vulnerable Context.eval call and the final steps of its 182-step taint trace" class="h-full min-h-[24rem] w-full object-cover object-center transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.015] dark:hidden" loading="lazy" width="2000" height="1340" />
+                <img src="/pictures/report/trace-zoom-light.png" alt="OpenTaint report zoomed into the vulnerable Context.eval call and the final steps of its 182-step taint trace" class="h-full min-h-[20rem] w-full object-cover object-center transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.015] sm:min-h-[24rem] dark:hidden" loading="lazy" width="2000" height="1340" />
               </picture>
               <picture class="hidden dark:block">
                 <source media="(max-width: 639px)" srcset="/pictures/report/trace-zoom-mobile-dark.png" />
-                <img src="/pictures/report/trace-zoom-dark.png" alt="OpenTaint report zoomed into the vulnerable Context.eval call and the final steps of its 182-step taint trace" class="h-full min-h-[24rem] w-full object-cover object-center transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.015]" loading="lazy" width="2000" height="1340" />
+                <img src="/pictures/report/trace-zoom-dark.png" alt="OpenTaint report zoomed into the vulnerable Context.eval call and the final steps of its 182-step taint trace" class="h-full min-h-[20rem] w-full object-cover object-center transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.015] sm:min-h-[24rem]" loading="lazy" width="2000" height="1340" />
               </picture>
             </a>
 
@@ -160,20 +160,20 @@ const traceSteps = [
             </p>
           </figure>
 
-          <div class="reveal flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong">
+          <div class="reveal mobile-card-rail-item flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong">
             <p class="border-b border-border bg-code-header px-4 py-3 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">
               Reported taint trace
             </p>
 
-            <ol class="trace flex-1 px-4 py-6 font-mono">
+            <ol class="trace flex flex-1 flex-col px-4 py-6 font-mono">
               {traceSteps.map((step, index) => (
-                <li class="trace-step relative pl-8">
+                <li class="trace-step relative flex-1 pl-8 last:flex-none">
                   <span class:list={[
                     "absolute left-0 top-[7px] h-2.5 w-2.5 border",
                     step.role === "Source" || step.role === "Sink" ? "border-primary bg-primary" : "border-border-strong bg-background",
                   ]} aria-hidden="true"></span>
                   {index < traceSteps.length - 1 && (
-                    <span class="trace-rail absolute -bottom-6 left-[4.5px] top-[17px] w-px bg-border-strong" aria-hidden="true"></span>
+                    <span class="trace-rail absolute -bottom-2 left-[4.5px] top-[17px] w-px bg-border-strong" aria-hidden="true"></span>
                   )}
                   <span class:list={[
                     "block text-[10px] uppercase tracking-[0.14em]",

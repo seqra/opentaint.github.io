@@ -41,7 +41,7 @@ function CopyButton({ id, value, copiedId, onCopy }: CopyProps) {
 
 function StageLabel({ number, children }: { number: string; children: string }) {
   return (
-    <div className="flex items-center gap-3 text-left">
+    <div className="flex items-start gap-3 text-left sm:items-center">
       <span className="font-mono text-[10px] font-semibold text-primary">{number}</span>
       <h3 className="font-mono text-xs font-semibold text-foreground sm:text-sm">{children}</h3>
     </div>
@@ -93,7 +93,7 @@ export function FirstScanFunnel() {
           <h2 id="quickstart-heading" className="section-heading">Five-minute quickstart</h2>
         </div>
 
-        <div className="mx-auto mt-10 max-w-4xl space-y-4 text-left">
+        <div className="mx-auto mt-8 max-w-4xl space-y-4 text-left sm:mt-10">
           <div className="grid gap-3 md:grid-cols-[16rem_minmax(0,1fr)] md:items-center md:gap-4">
             <StageLabel number="01">Install OpenTaint</StageLabel>
             <div className="min-w-0 overflow-hidden rounded-xl border border-panel-border bg-panel">

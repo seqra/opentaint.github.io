@@ -48,7 +48,7 @@ describe("ContinuousSecurity", () => {
     expect(screen.getByText("Minimize missed findings and false alarms without making whole-project analysis impractical.")).toBeVisible();
     expect(screen.getByRole("img", { name: "OpenTaint balances scan speed, finding coverage, and precision" })).toBeVisible();
     expect(screen.getByRole("heading", { name: "Open source, batteries included", level: 3 })).toBeVisible();
-    expect(screen.getByText("One open-source stack from agent review to CI.")).toBeVisible();
+    expect(screen.getByText("Engine, rules, models, agent skills, CLI, viewer, and CI integrations — all open source and built to work together.")).toBeVisible();
     expect(screen.getByRole("img", { name: /open-source OpenTaint bundle/ })).toBeVisible();
   });
 });

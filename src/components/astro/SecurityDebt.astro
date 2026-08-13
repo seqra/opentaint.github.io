@@ -32,8 +32,8 @@ const reviewIntersectionCenter = {
       <h2 id="security-debt-heading" class="section-heading lg:whitespace-nowrap">Application security is the new tech debt</h2>
     </div>
 
-    <div class="section-content grid gap-6 lg:grid-cols-2">
-      <article class="reveal flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
+    <div class="section-content mobile-card-rail grid gap-6 lg:grid-cols-2" role="region" aria-label="Application security statistics" tabindex="0">
+      <article class="reveal mobile-card-rail-item flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
         <header class="border-b border-border px-6 py-6 sm:px-8">
           <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">01 / Generated code</p>
           <h3 class="mt-3 max-w-[42ch] font-mono text-lg font-semibold leading-7 text-foreground sm:text-xl sm:leading-8">Would you notice the agent slipping a vulnerability into code you never reviewed?</h3>
@@ -41,11 +41,11 @@ const reviewIntersectionCenter = {
 
         <figure class="flex flex-1 flex-col bg-code-bg px-6 py-6 sm:px-8">
           <figcaption class="font-mono">
-            <strong class="block text-5xl tracking-[-0.07em] text-foreground">44%</strong>
-            <span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">code-generation tasks failed security tests</span>
+            <strong class="block text-5xl tracking-[-0.07em] text-foreground">44% of</strong>
+            <span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">AI-generated solutions contained a known security flaw</span>
           </figcaption>
 
-          <div class="mt-6 flex h-[15rem] items-center sm:h-[17rem]">
+          <div class="mt-4 flex h-[13rem] items-center sm:mt-6 sm:h-[17rem]">
             <svg class="h-auto max-h-full w-full" viewBox="0 0 490 230" role="img" aria-label="44 percent of code-generation tasks failed security tests without security-specific guidance">
               {generatedCodeTiles.map((failed, index) => {
                 const x = 10 + (index % 5) * 96;
@@ -64,7 +64,7 @@ const reviewIntersectionCenter = {
         </figure>
       </article>
 
-      <article class="reveal flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
+      <article class="reveal mobile-card-rail-item flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
         <header class="border-b border-border px-6 py-6 sm:px-8">
           <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">02 / Exploitation</p>
           <h3 class="mt-3 max-w-[42ch] font-mono text-lg font-semibold leading-7 text-foreground sm:text-xl sm:leading-8">How long will you keep betting nobody will bother to exploit your code?</h3>
@@ -77,7 +77,7 @@ const reviewIntersectionCenter = {
           </figcaption>
           <p class="sr-only">Vulnerability exploitation became the leading breach entry point for the first time in 19 years.</p>
 
-          <div class="mt-6 flex h-[15rem] items-center sm:h-[17rem]">
+          <div class="mt-4 flex h-[13rem] items-center sm:mt-6 sm:h-[17rem]">
             <svg class="h-auto max-h-full w-full" viewBox="0 0 490 230" role="img" aria-label="Vulnerability exploitation as initial access rose from 5 percent in 2023 to 31 percent in 2026">
               <defs>
                 <linearGradient id="exploit-area" x1="0" y1="0" x2="0" y2="1">
@@ -101,7 +101,7 @@ const reviewIntersectionCenter = {
         </figure>
       </article>
 
-      <article class="reveal flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
+      <article class="reveal mobile-card-rail-item flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
         <header class="border-b border-border px-6 py-6 sm:px-8">
           <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">03 / Repeatability</p>
           <h3 class="mt-3 max-w-[42ch] font-mono text-lg font-semibold leading-7 text-foreground sm:text-xl sm:leading-8">Will tomorrow’s security review catch what today’s review found?</h3>
@@ -109,11 +109,11 @@ const reviewIntersectionCenter = {
 
         <figure class="flex flex-1 flex-col items-center bg-code-bg px-4 py-6 sm:px-8">
           <figcaption class="w-full font-mono">
-            <strong class="block text-5xl tracking-[-0.07em] text-foreground">14%</strong>
-            <span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">unmatched issues appeared in all five identical reviews</span>
+            <strong class="block text-5xl tracking-[-0.07em] text-foreground">14% of</strong>
+            <span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">LLM-only findings recurred in all five runs on the same code and prompt</span>
           </figcaption>
           <p class="sr-only">These were reported issues outside the deterministic reference set, not independently confirmed vulnerabilities.</p>
-          <div class="mt-6 flex h-[15rem] w-full items-center sm:h-[17rem]">
+          <div class="mt-4 flex h-[13rem] w-full items-center sm:mt-6 sm:h-[17rem]">
             <svg class="h-auto max-h-full w-full" viewBox="60 -20 370 280" role="img" aria-label="The exact overlap shared by all five identical reviews contains only 14 percent of unmatched LLM-reported issues">
               <defs>
                 {reviewCircles.map((circle, index) => <clipPath id={`review-${index + 1}`}><circle cx={circle.cx} cy={circle.cy} r="72" /></clipPath>)}
@@ -134,7 +134,7 @@ const reviewIntersectionCenter = {
         </figure>
       </article>
 
-      <article class="reveal flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
+      <article class="reveal mobile-card-rail-item flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
         <header class="border-b border-border px-6 py-6 sm:px-8">
           <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">04 / Model cost</p>
           <h3 class="mt-3 max-w-[42ch] font-mono text-lg font-semibold leading-7 text-foreground sm:text-xl sm:leading-8">How much money will you waste on reviewing the same parts of your application?</h3>
@@ -142,11 +142,11 @@ const reviewIntersectionCenter = {
 
         <figure class="flex flex-1 flex-col bg-code-bg px-6 py-6 sm:px-8">
           <figcaption class="font-mono">
-            <strong class="block text-4xl tracking-[-0.06em] text-foreground sm:text-5xl">$20K</strong>
-            <span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">spent across 1,000 security reviews</span>
+            <strong class="block text-4xl tracking-[-0.06em] text-foreground sm:text-5xl">$20K spent</strong>
+            <span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">across 1,000 security reviews</span>
           </figcaption>
 
-          <div class="mt-6 flex h-[15rem] items-center sm:h-[17rem]">
+          <div class="mt-4 flex h-[13rem] items-center sm:mt-6 sm:h-[17rem]">
             <svg class="h-auto max-h-full w-full" viewBox="0 0 490 230" role="img" aria-label="One highlighted run among one thousand model runs found the critical OpenBSD vulnerability">
               <defs>
                 <pattern id="search-runs" width="12.25" height="9.2" patternUnits="userSpaceOnUse">

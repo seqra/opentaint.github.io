@@ -58,7 +58,7 @@ function FormalSpecNode({ refined = false }: { refined?: boolean }) {
   return (
     <ArtifactNode title={refined ? "TUNED FORMAL SPEC" : "FORMAL SPEC"} extension="yml" className="border-primary/35">
       <div className="workflow-formal-spec" aria-hidden="true">
-        <em>TAINT RULE</em><span className="bg-primary" />
+        <em>TAINT RULE</em><span className={refined ? "border border-emerald-700 bg-emerald-700 dark:border-emerald-400 dark:bg-emerald-400" : "bg-primary"} />
         <em>DEPENDENCY MODEL</em><span className={refined ? "border border-emerald-700/30 bg-emerald-700/[0.09]" : "border border-primary/30 bg-primary/[0.08]"} />
       </div>
     </ArtifactNode>
@@ -155,7 +155,7 @@ const cards = [
 
 function BalanceVisual() {
   return (
-    <div className="value-visual relative min-h-[18rem] overflow-hidden rounded-[18px] border border-border bg-code-bg" role="img" aria-label="OpenTaint balances scan speed, finding coverage, and precision">
+    <div className="value-visual relative min-h-[20rem] overflow-hidden rounded-[18px] border border-border bg-code-bg" role="img" aria-label="OpenTaint balances scan speed, finding coverage, and precision">
       <svg className="absolute inset-0 h-full w-full" viewBox="0 0 520 290" aria-hidden="true">
         <path d="M260 42 L86 238 L434 238 Z" fill="none" stroke="hsl(var(--border-strong))" strokeWidth="1" />
         <path d="M260 78 L133 215 L387 215 Z" fill="none" stroke="hsl(var(--border))" strokeWidth="1" />
@@ -169,46 +169,65 @@ function BalanceVisual() {
       <div className="absolute left-1/2 top-5 -translate-x-1/2 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[9px] font-semibold text-primary">SCAN TIME</span><span className="mt-1 block font-mono text-[7px] font-semibold uppercase tracking-[0.1em] text-foreground">MINIMAL</span></div>
       <div className="absolute bottom-5 left-5 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[9px] font-semibold text-primary">MISSED FINDINGS</span><span className="mt-1 block font-mono text-[7px] font-semibold uppercase tracking-[0.1em] text-foreground">MINIMAL</span></div>
       <div className="absolute bottom-5 right-5 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[9px] font-semibold text-primary">FALSE ALARMS</span><span className="mt-1 block font-mono text-[7px] font-semibold uppercase tracking-[0.1em] text-foreground">MINIMAL</span></div>
-      <div className="absolute left-1/2 top-[10rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/45 bg-background px-4 py-3 text-center shadow-[0_0_0_8px_hsl(var(--brand)/0.05)]"><span className="font-mono text-[8px] font-semibold uppercase tracking-[0.1em] text-primary">SOTA</span><span className="mt-1 block font-mono text-[6px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">STATIC ANALYSIS</span></div>
+      <div className="absolute left-1/2 top-[59.5%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/45 bg-background px-4 py-3 text-center shadow-[0_0_0_8px_hsl(var(--brand)/0.05)]"><span className="font-mono text-[8px] font-semibold uppercase tracking-[0.1em] text-primary">SOTA</span><span className="mt-1 block whitespace-nowrap font-mono text-[6px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">STATIC ANALYSIS</span></div>
     </div>
   );
 }
 
-type BundleKind = "engine" | "rules" | "models" | "skills" | "cli" | "viewer";
-
-function BundleMark({ kind }: { kind: BundleKind }) {
-  if (kind === "engine") return <div className="bundle-engine">{Array.from({ length: 9 }, (_, index) => <i key={index} className={index === 2 || index === 4 || index === 6 ? "active" : ""} />)}</div>;
-  if (kind === "rules") return <div className="bundle-code"><i className="w-7 bg-primary" /><i className="ml-2 w-5" /><i className="ml-2 w-8" /></div>;
-  if (kind === "models") return <div className="bundle-model"><span>f()</span><b>→</b><span>g()</span></div>;
-  if (kind === "skills") return <div className="bundle-code"><i className="w-8 bg-primary" /><i className="w-6" /><i className="w-9" /></div>;
-  if (kind === "cli") return <div className="bundle-cli"><span><b>$</b> opentaint</span><span>scan<span className="bundle-caret">_</span></span></div>;
-  return <div className="bundle-trace"><i /><i /><i /><i /><i /></div>;
-}
-
-const bundleItems = [
-  { label: "ENGINE", kind: "engine" },
-  { label: "RULES", kind: "rules" },
-  { label: "MODELS", kind: "models" },
-  { label: "AGENT SKILLS", kind: "skills" },
-  { label: "CLI", kind: "cli" },
-  { label: "VIEWER + CI", kind: "viewer" },
-] as const satisfies readonly { label: string; kind: BundleKind }[];
-
 function BundleVisual() {
   return (
-    <div className="value-visual relative min-h-[20rem] overflow-hidden rounded-[18px] border border-border bg-code-bg p-4 sm:p-6" role="img" aria-label="The open-source OpenTaint bundle includes the engine, rules, dependency models, agent skills, CLI, report viewer, and CI integration">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--brand)/0.08),transparent_58%)]" aria-hidden="true" />
-      <div className="relative grid h-full min-h-[15rem] grid-cols-3 gap-3">
-        {bundleItems.map(({ label, kind }, index) => (
-          <div key={label} className={`bundle-tile flex flex-col items-center justify-center rounded-xl border bg-background text-center ${index === 0 ? "border-primary/50" : "border-border-strong"}`}>
-            <BundleMark kind={kind} />
-            <span className="mt-4 font-mono text-[9px] font-semibold uppercase tracking-[0.08em] text-foreground">{label}</span>
+    <div className="bundle-system value-visual relative min-h-[20rem] overflow-hidden rounded-[18px] border border-border bg-code-bg" role="img" aria-label="The open-source OpenTaint bundle connects agent skills, taint rules, dependency models, the scan engine, report viewer, and CI integration">
+      <div className="bundle-window-bar" aria-hidden="true">
+        <span className="bundle-window-dots"><i /><i /><i /></span>
+        <span className="bundle-window-title">opentaint / security stack</span>
+        <span className="bundle-open-badge">OPEN SOURCE</span>
+      </div>
+
+      <div className="bundle-system-body" aria-hidden="true">
+        <section className="bundle-system-column">
+          <p className="bundle-system-kicker">SECURITY KNOWLEDGE</p>
+          <div className="bundle-file bundle-file-skill">
+            <span className="bundle-file-ext">md</span>
+            <span><b>appsec-agent</b><small>discover + enact</small></span>
           </div>
-        ))}
-        <div className="pointer-events-none absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-primary/45 bg-background shadow-[0_0_0_10px_hsl(var(--brand)/0.05)]">
-          <span className="font-mono text-[9px] font-bold uppercase tracking-[0.08em] text-primary">OPEN</span>
-          <span className="font-mono text-[8px] font-semibold uppercase tracking-[0.08em] text-foreground">SOURCE</span>
-        </div>
+          <div className="bundle-file">
+            <span className="bundle-file-ext">yml</span>
+            <span><b>taint rules</b><small>sources + sinks</small></span>
+          </div>
+          <div className="bundle-file">
+            <span className="bundle-file-ext">yml</span>
+            <span><b>dependency models</b><small>opaque methods</small></span>
+          </div>
+        </section>
+
+        <span className="bundle-system-arrow"><i /></span>
+
+        <section className="bundle-system-column bundle-engine-panel">
+          <p className="bundle-system-kicker">FORMAL ANALYSIS</p>
+          <div className="bundle-terminal-line"><b>$</b> opentaint scan<span className="bundle-caret">_</span></div>
+          <div className="bundle-engine-flow">
+            <span><i>01</i><b>Parse project</b><em>DONE</em></span>
+            <span><i>02</i><b>Build dataflow</b><em>DONE</em></span>
+            <span><i>03</i><b>Evaluate rules</b><em>DONE</em></span>
+          </div>
+          <div className="bundle-engine-meter"><i /></div>
+          <p className="bundle-engine-result"><b>1</b> complete trace</p>
+        </section>
+
+        <span className="bundle-system-arrow"><i /></span>
+
+        <section className="bundle-system-column">
+          <p className="bundle-system-kicker">RESULTS</p>
+          <div className="bundle-result-card bundle-report-card">
+            <span className="bundle-result-icon">{`{ }`}</span>
+            <span><b>Report viewer</b><small>report.sarif trace</small></span>
+          </div>
+          <div className="bundle-trace-line"><i /><i /><i /><i /><i /></div>
+          <div className="bundle-result-card bundle-ci-card">
+            <span className="bundle-check">✓</span>
+            <span><b>Security scan</b><small>CI check passed</small></span>
+          </div>
+        </section>
       </div>
     </div>
   );
@@ -218,37 +237,37 @@ export function ContinuousSecurity() {
   return (
     <section className="band continuous-security-band" aria-labelledby="continuous-security-heading">
       <div className="relative z-10 mx-auto max-w-[96rem]">
-        <div className="workflow-card-grid grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="workflow-card-grid mobile-card-rail grid gap-4 md:grid-cols-2 xl:grid-cols-4" role="region" aria-label="OpenTaint workflow" tabIndex={0}>
           {cards.map((card) => (
-            <article key={card.title} className="workflow-card flex min-h-[25rem] flex-col overflow-hidden rounded-[24px] border border-border-strong bg-background shadow-sm">
+            <article key={card.title} className="workflow-card mobile-card-rail-item flex min-h-[25rem] flex-col overflow-hidden rounded-[24px] border border-border-strong bg-background shadow-sm">
               <div className="relative h-[16rem] p-4">{card.preview}</div>
               <div className="flex flex-1 flex-col px-6 pb-6 pt-2">
                 <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">{card.number}</p>
                 <h3 className="mt-2 font-mono text-2xl font-semibold tracking-[-0.04em] text-foreground">{card.title}</h3>
-                <p className="mt-3 text-[12px] leading-5 text-muted-foreground">{card.description}</p>
+                <p className="mt-3 text-[11px] leading-5 text-muted-foreground">{card.description}</p>
               </div>
             </article>
           ))}
         </div>
 
-        <div className="mx-auto mt-16 max-w-[72rem] text-center">
+        <div className="mx-auto mt-12 max-w-[72rem] text-center sm:mt-16">
           <h2 id="continuous-security-heading" className="section-heading">Turn one-off review into unlimited scans</h2>
           <p className="mx-auto mt-6 max-w-[68ch] text-sm leading-7 text-muted-foreground">The flexibility of model reasoning and the consistency of formal program analysis combined.</p>
         </div>
 
-        <div className="mt-12 grid gap-6 lg:grid-cols-2">
-          <article className="value-card overflow-hidden rounded-[24px] border border-border-strong bg-background p-4 shadow-sm sm:p-6">
+        <div className="value-card-grid mobile-card-rail mt-10 grid gap-6 sm:mt-12 lg:grid-cols-2" role="region" aria-label="OpenTaint product advantages" tabIndex={0}>
+          <article className="value-card mobile-card-rail-item overflow-hidden rounded-[24px] border border-border-strong bg-background p-4 shadow-sm sm:p-6">
             <BalanceVisual />
             <div className="px-2 pb-2 pt-6">
               <h3 className="font-mono text-xl font-semibold leading-8 tracking-[-0.03em] text-foreground">Practical balance through SOTA static analysis</h3>
-              <p className="mt-3 max-w-[50ch] text-[12px] leading-5 text-muted-foreground">Minimize missed findings and false alarms without making whole-project analysis impractical.</p>
+              <p className="mt-3 w-full text-[12px] leading-5 text-muted-foreground">Minimize missed findings and false alarms without making whole-project analysis impractical.</p>
             </div>
           </article>
-          <article className="value-card overflow-hidden rounded-[24px] border border-border-strong bg-background p-4 shadow-sm sm:p-6">
+          <article className="value-card mobile-card-rail-item overflow-hidden rounded-[24px] border border-border-strong bg-background p-4 shadow-sm sm:p-6">
             <BundleVisual />
             <div className="px-2 pb-2 pt-6">
               <h3 className="font-mono text-xl font-semibold leading-8 tracking-[-0.03em] text-foreground">Open source, batteries included</h3>
-              <p className="mt-3 max-w-[50ch] text-[12px] leading-5 text-muted-foreground">One open-source stack from agent review to CI.</p>
+              <p className="mt-3 w-full text-[12px] leading-5 text-muted-foreground">Engine, rules, models, agent skills, CLI, viewer, and CI integrations — all open source and built to work together.</p>
             </div>
           </article>
         </div>

@@ -6,19 +6,14 @@ test.describe("landing product demonstration", () => {
 
     const workbench = page.getByTestId("unified-workbench");
     await workbench.scrollIntoViewIfNeeded();
-    await expect(workbench.getByText("Review this application for unauthenticated code execution and write a security review report.")).toBeVisible();
-    await expect(workbench.getByRole("heading", { name: "Unauthenticated script execution" })).toBeVisible();
+    await expect(workbench.getByText("Review this application for unauthenticated code execution. Capture what you learn for future scans.")).toBeVisible();
+    await expect(workbench.getByRole("heading", { name: "Application security knowledge" })).toBeVisible();
+    const discovery = workbench.getByTestId("review-report-scroll");
+    await expect(discovery.getByText("Trust boundary", { exact: true })).toBeVisible();
+    await expect(discovery.getByText("Vulnerability pattern", { exact: true })).toBeVisible();
+    await expect(discovery.getByText("Opaque method behavior", { exact: true })).toBeVisible();
     await expect(workbench).not.toContainText("Conductor");
     await expect(workbench).not.toContainText("3.23.0");
-
-    const reviewScroll = workbench.getByTestId("review-report-scroll");
-    const reviewDimensions = await reviewScroll.evaluate((element) => ({
-      clientHeight: element.clientHeight,
-      scrollHeight: element.scrollHeight,
-    }));
-    expect(reviewDimensions.scrollHeight).toBeGreaterThan(reviewDimensions.clientHeight);
-    await reviewScroll.evaluate((element) => element.scrollTo({ top: element.scrollHeight, behavior: "auto" }));
-    await expect.poll(() => reviewScroll.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
 
     await workbench.getByRole("button", { name: "Enact", exact: true }).click();
     await expect(workbench.getByText("rules/java/security/graaljs-code-injection.yaml", { exact: true })).toBeVisible();
@@ -30,12 +25,15 @@ test.describe("landing product demonstration", () => {
     await expect(sinkArtifact).toHaveAttribute("aria-expanded", "false");
 
     await workbench.getByRole("button", { name: "Scan", exact: true }).click();
-    await expect(workbench.getByTestId("demo-hero-player")).toBeVisible();
+    await expect(workbench.getByTestId("scan-results-view")).toBeVisible();
+    await expect(workbench.getByTestId("scan-results-view")).toContainText("2 candidate findings");
 
     await workbench.getByRole("button", { name: "Triage", exact: true }).click();
     await expect(workbench.getByText("Fewer false alarms", { exact: true })).toBeVisible();
     await expect(workbench.getByTestId("triage-view")).toContainText("graal-eval.yaml");
     await expect(workbench.getByTestId("triage-view")).toContainText("pattern-inside");
+    await expect(workbench.getByTestId("triage-view")).toContainText("FALSE ALARMS");
+    await expect(workbench.getByTestId("triage-view")).not.toContainText("PreviewRenderer.java:11");
 
     await workbench.getByRole("button", { name: "Report", exact: true }).click();
     const report = workbench.getByTestId("simplified-report-view");
@@ -81,16 +79,15 @@ test.describe("landing product demonstration", () => {
     await expect.poll(() => workbench.getByTestId("artifact-code-scroll").nth(1).evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
 
     await jump(0.483);
-    const terminalOutput = workbench.getByTestId("terminal-output");
-    await expect.poll(() => terminalOutput.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
-    await expect(workbench.getByText("To view findings run", { exact: true })).toBeInViewport();
+    await expect(workbench.getByTestId("scan-results-view")).toContainText("2 candidate findings");
+    await expect(workbench.getByTestId("scan-results-view")).toContainText("PreviewRenderer.java:11");
 
     await jump(0.742);
     await expect(workbench.getByTestId("triage-view")).toContainText("pattern-inside");
     await expect(workbench.getByTestId("triage-view")).toContainText("HostAccess.ALL");
 
     await jump(0.8);
-    await expect(workbench).toContainText("0 false positives");
+    await expect(workbench).toContainText("0 false alarms");
 
     await jump(0.92);
     const report = workbench.getByTestId("simplified-report-view");
@@ -175,32 +172,30 @@ test.describe("landing product demonstration", () => {
     ))).toBeLessThanOrEqual(1);
   });
 
-  test("renders the native CLI timeline", async ({ page }) => {
+  test("renders scan candidates and removes the false alarm after triage", async ({ page }) => {
     await page.goto("/");
     const track = page.getByTestId("demo-scroll-track");
     const workbench = page.getByTestId("unified-workbench");
     await workbench.scrollIntoViewIfNeeded();
 
     await workbench.getByRole("button", { name: "Scan", exact: true }).click();
-    const terminal = workbench.getByTestId("demo-hero-player");
-    await expect(terminal).toBeVisible();
-    await expect(terminal).toContainText("OpenTaint Scan");
-    await expect(terminal).not.toContainText("$ opentaint scan");
-    await expect(terminal).not.toContainText(".opentaint/model");
-    await expect(terminal).toHaveAttribute("data-terminal-renderer", "native-cli");
+    const scan = workbench.getByTestId("scan-results-view");
+    await expect(scan).toBeVisible();
+    await expect(scan).toContainText("ScriptRuntime.java:11");
+    await expect(scan).toContainText("PreviewRenderer.java:11");
 
     await track.evaluate((element) => {
       element.scrollTop = (element.scrollHeight - element.clientHeight) * 0.62;
       element.dispatchEvent(new Event("scroll"));
     });
-    const summary = workbench.getByLabel("Real OpenTaint summary output for the anonymous security review project");
+    const summary = workbench.getByTestId("scan-summary-view");
     await expect(summary).toBeVisible();
-    await expect(summary).not.toContainText("$ opentaint summary results/report.sarif");
-    await expect(summary).toContainText("Fingerprint: ggAE7bbWSwRU");
-    await expect(summary).toContainText("Untrusted HTTP input reaches a host-enabled GraalVM Context.eval call");
+    await expect(summary).toContainText("paths inspected");
 
-    await expect.poll(() => summary.getByTestId("terminal-output").evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
-    await expect(summary).not.toContainText("Scan Summary");
+    await workbench.getByRole("button", { name: "Triage", exact: true }).click();
+    const triage = workbench.getByTestId("triage-view");
+    await expect(triage).toContainText("FALSE ALARMS");
+    await expect(triage).not.toContainText("PreviewRenderer.java:11");
   });
 
   for (const viewport of [

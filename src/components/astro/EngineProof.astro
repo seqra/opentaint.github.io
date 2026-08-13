@@ -42,15 +42,15 @@ const coverageStates = {
       <h2 id="proof-heading" class="section-heading">See what the engine catches</h2>
     </div>
 
-    <div class="section-content grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-center lg:gap-16">
+    <div class="section-content grid gap-6 sm:gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-center lg:gap-16">
       <div>
         <p class="section-banner">Five-case comparison</p>
         <h3 class="mt-4 font-mono text-xl font-semibold leading-8 text-foreground">{proof.title}</h3>
-        <p class="mt-4 max-w-[52ch] font-mono text-sm leading-7 text-muted-foreground lg:text-[15px]">{proof.description}</p>
+        <p class="mt-4 max-w-[52ch] font-mono text-sm leading-6 text-muted-foreground sm:leading-7 lg:text-[15px]">{proof.description}</p>
         <a href={proof.href} class="mt-6 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Read the comparison</a>
       </div>
 
-      <div class="reveal min-w-0 overflow-x-auto rounded-xl border border-border-strong bg-background scrollbar-thin">
+      <div class="reveal min-w-0 overflow-x-auto rounded-xl border border-border-strong bg-background scrollbar-thin" role="region" aria-label="Scrollable detection-depth comparison" tabindex="0">
         {/* Five verdict columns fit a 375px screen only if the cells stop
             padding and the labels shorten; past sm both come back. */}
         <table class="w-full table-fixed border-collapse font-mono text-left text-[10px] sm:table-auto sm:min-w-[560px] sm:text-xs">

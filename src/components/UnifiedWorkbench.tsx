@@ -272,11 +272,11 @@ passThrough:
 
 function YamlCode({ code }: { code: string }) {
   return (
-    <pre data-testid="artifact-code" className="overflow-x-auto py-2 text-[12.5px] leading-5 text-[#44342c] dark:text-[var(--code-text)] scrollbar-thin" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace' }}><code>
+    <pre data-testid="artifact-code" className="min-h-full overflow-x-auto bg-[#2d8a4e]/[0.08] py-2 text-[12.5px] leading-5 text-[#44342c] dark:bg-[#79bd8f]/[0.08] dark:text-[var(--code-text)] scrollbar-thin" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace' }}><code>
       {code.split("\n").map((line, index) => {
         const key = /^(\s*(?:-\s+)?)([\w-]+):(.*)$/.exec(line);
         return (
-          <span key={index} className="grid min-w-max grid-cols-[2rem_1fr] bg-[#2d8a4e]/[0.08] px-2 dark:bg-[#79bd8f]/[0.08]">
+          <span key={index} className="grid min-w-max grid-cols-[2rem_1fr] px-2">
             <span className="select-none pr-2 text-right text-[#b3a396] dark:text-[#5e4a4a]">{index + 1}</span>
             <span className="whitespace-pre">{key ? <>{key[1]}<span className="text-primary">{key[2]}</span>:{key[3]}</> : line || " "}</span>
           </span>
@@ -288,7 +288,7 @@ function YamlCode({ code }: { code: string }) {
 
 function ArtifactFrame({ path, kind, added, removed = 0, open, onToggle, children }: { path: string; kind: string; added: number; removed?: number; open: boolean; onToggle: () => void; children: ReactNode }) {
   return (
-    <article className={["flex min-h-0 w-full flex-col overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] shadow-sm dark:bg-code", open ? "flex-1" : "shrink-0"].join(" ")}>
+    <article className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] shadow-sm dark:bg-code">
       <button type="button" aria-expanded={open} onClick={onToggle} className="flex min-h-10 w-full items-center gap-2 bg-[#f0eeeb] px-3 text-left dark:bg-code-header">
         <ChevronDown className={["h-4 w-4 shrink-0 text-muted-foreground transition-transform", open ? "" : "-rotate-90"].join(" ")} strokeWidth={1.8} aria-hidden="true" />
         <FileCode2 className="h-3.5 w-3.5 text-primary" strokeWidth={1.7} aria-hidden="true" />
@@ -369,10 +369,9 @@ function Specifications({ progress }: { progress: number }) {
   const position = Math.min(3.999, Math.max(0, progress) * 4);
   const activeArtifact = Math.floor(position);
   const artifactProgress = position - activeArtifact;
-  const automaticArtifact = artifactProgress < 0.9 ? activeArtifact : -1;
   const codeScrollProgress = Math.max(0, Math.min(1, (artifactProgress - 0.1) / 0.72));
   const [manualState, setManualState] = useState<{ stage: number; artifact: number } | null>(null);
-  const openArtifact = manualState?.stage === activeArtifact ? manualState.artifact : automaticArtifact;
+  const openArtifact = manualState?.stage === activeArtifact ? manualState.artifact : activeArtifact;
   const artifacts = [
     { path: "rules/java/lib/generic/graal-eval.yaml", kind: "Library sink", code: sinkRule },
     { path: "rules/java/lib/spring/http-input.yaml", kind: "Library source", code: sourceRule },
@@ -385,18 +384,21 @@ function Specifications({ progress }: { progress: number }) {
       title="Formal security specifications"
       window={<div data-testid="artifact-scroll" className="flex h-full min-h-0 flex-col overflow-hidden rounded-[10px] border border-border bg-[#f4f2ef] p-3 shadow-sm dark:bg-card">
         <SpecificationTransformation activeArtifact={activeArtifact} />
-        <div className={["mx-auto flex min-h-0 w-full max-w-[40rem] flex-1 flex-col gap-2", openArtifact === -1 ? "justify-between" : ""].join(" ")}>
+        <div className="artifact-stack mx-auto min-h-0 w-full max-w-[40rem] flex-1" data-open-artifact={openArtifact < 0 ? "none" : openArtifact}>
           {artifacts.map((artifact, index) => (
-            <div key={artifact.path} className={index === openArtifact ? "flex min-h-0 flex-1" : "shrink-0"}>
-              <Artifact
-                {...artifact}
-                open={index === openArtifact}
-                scrollProgress={index === activeArtifact ? codeScrollProgress : 0}
-                onToggle={() => setManualState({
-                  stage: activeArtifact,
-                  artifact: openArtifact === index ? -1 : index,
-                })}
-              />
+            <div key={artifact.path} className="contents">
+              <div className="artifact-stack-item min-h-0">
+                <Artifact
+                  {...artifact}
+                  open={index === openArtifact}
+                  scrollProgress={index === activeArtifact ? codeScrollProgress : 0}
+                  onToggle={() => setManualState({
+                    stage: activeArtifact,
+                    artifact: openArtifact === index ? -1 : index,
+                  })}
+                />
+              </div>
+              {index < artifacts.length - 1 && <span className="artifact-stack-spacer" aria-hidden="true" />}
             </div>
           ))}
         </div>
@@ -415,14 +417,16 @@ type ScanFindingProps = {
 
 function ScanFinding({ title, file, path }: ScanFindingProps) {
   return (
-    <article className="flex h-full min-h-0 flex-col rounded-[10px] border border-primary/35 bg-background p-4">
-      <div className="flex items-center justify-between gap-3">
-        <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-primary">CWE-94</span>
-        <span className="font-mono text-[9px] text-muted-foreground">Candidate</span>
+    <article className="grid h-full min-h-0 grid-cols-[minmax(0,1.05fr)_minmax(9rem,0.95fr)] overflow-hidden rounded-[10px] border border-primary/35 bg-background">
+      <div className="flex min-h-0 flex-col justify-center px-4 py-3.5">
+        <div className="flex items-center justify-between gap-3">
+          <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-primary">CWE-94</span>
+          <span className="font-mono text-[9px] text-muted-foreground">Candidate</span>
+        </div>
+        <h4 className="mt-3 text-[13px] font-semibold leading-5 text-foreground">{title}</h4>
+        <p className="mt-2 font-mono text-[10px] text-muted-foreground">{file}</p>
       </div>
-      <h4 className="mt-4 flex min-h-10 items-end text-[13px] font-semibold leading-5 text-foreground">{title}</h4>
-      <p className="mt-2 font-mono text-[10px] text-muted-foreground">{file}</p>
-      <div className="flex flex-1 flex-col justify-center pt-4">
+      <div className="flex min-h-0 flex-col justify-center border-l border-primary/15 bg-primary/[0.025] px-4 py-3.5 dark:bg-primary/[0.045]">
         <div className="flex items-center gap-2" aria-hidden="true">
           <span className="h-2 w-2 rounded-full bg-primary" />
           <span className="h-px flex-1 bg-primary/35" />
@@ -458,7 +462,7 @@ function ScanResults({ progress }: { progress: number }) {
           <div className="mt-5 flex items-center justify-between">
             <h3 className="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-foreground">2 candidate findings</h3>
           </div>
-          <div className="mt-3 grid min-h-0 flex-1 grid-cols-2 gap-3">
+          <div className="mt-3 grid min-h-0 flex-1 grid-rows-2 gap-3">
             <ScanFinding title="Unauthenticated script execution" file="ScriptRuntime.java:11" path="POST /api/jobs → Context.eval" />
             <ScanFinding title="Script execution in preview renderer" file="PreviewRenderer.java:11" path="POST /api/preview → Context.eval" />
           </div>

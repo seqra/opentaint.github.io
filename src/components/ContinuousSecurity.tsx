@@ -168,8 +168,8 @@ function BalanceVisual() {
         <foreignObject x="176" y="122" width="168" height="80">
           <div className="flex h-full w-full items-center justify-center">
             <div className="rounded-full border border-primary/45 bg-background px-4 py-3 text-center shadow-[0_0_0_8px_hsl(var(--brand)/0.05)]">
-              <span className="font-mono text-[8px] font-semibold uppercase tracking-[0.1em] text-primary">SOTA</span>
-              <span className="mt-1 block whitespace-nowrap font-mono text-[6px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">STATIC ANALYSIS</span>
+              <span className="font-mono text-[8px] font-semibold uppercase tracking-[0.1em] text-primary">STATIC ANALYSIS</span>
+              <span className="mt-1 block whitespace-nowrap font-mono text-[6px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">SOTA</span>
             </div>
           </div>
         </foreignObject>

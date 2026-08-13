@@ -28,8 +28,12 @@ function scrollOffset(container: HTMLElement, target: HTMLElement) {
   return target.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop;
 }
 
-function timelineDistance(track: HTMLElement) {
-  return Math.max(1, track.scrollHeight - track.clientHeight);
+function timelineMetrics(track: HTMLElement) {
+  const sticky = track.firstElementChild as HTMLElement | null;
+  const stickyTop = sticky ? Number.parseFloat(window.getComputedStyle(sticky).top) || 0 : 0;
+  const start = track.getBoundingClientRect().top + window.scrollY - stickyTop;
+  const distance = Math.max(1, track.offsetHeight - (sticky?.offsetHeight ?? window.innerHeight));
+  return { start, distance };
 }
 
 function withStageHolds(progress: number) {
@@ -798,7 +802,11 @@ export function UnifiedWorkbench() {
     const targetTimelineIndex = index;
     const track = scrollTrackRef.current;
     if (track) {
-      track.scrollTop = timelineDistance(track) * ((targetTimelineIndex + 0.02) / timeline.length);
+      const { start, distance } = timelineMetrics(track);
+      window.scrollTo({
+        top: start + distance * ((targetTimelineIndex + 0.02) / timeline.length),
+        behavior: "smooth",
+      });
     }
     setTimelineIndex(targetTimelineIndex);
     setTimelineProgress(0.02);
@@ -816,7 +824,8 @@ export function UnifiedWorkbench() {
       const transcript = transcriptRef.current;
       if (!track) return;
 
-      const progress = Math.max(0, Math.min(1, track.scrollTop / timelineDistance(track)));
+      const { start, distance } = timelineMetrics(track);
+      const progress = Math.max(0, Math.min(1, (window.scrollY - start) / distance));
       const position = progress * timeline.length;
       const nextIndex = Math.min(timeline.length - 1, Math.floor(position));
       const localProgress = nextIndex === timeline.length - 1
@@ -842,21 +851,19 @@ export function UnifiedWorkbench() {
     const schedule = () => {
       if (!frame) frame = window.requestAnimationFrame(sync);
     };
-    const track = scrollTrackRef.current;
-    track?.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
     sync();
     return () => {
-      track?.removeEventListener("scroll", schedule);
+      window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       if (frame) window.cancelAnimationFrame(frame);
     };
   }, []);
 
   return (
-    <div ref={scrollTrackRef} data-testid="demo-scroll-track" className="demo-scroll-track relative h-[calc(100vh-4rem)] min-h-[38rem] max-h-[48rem] overflow-y-auto overscroll-y-auto scrollbar-thin">
-      <div className="relative h-[720%]">
-      <div className="sticky top-0 flex h-[calc(100vh-4rem)] min-h-[38rem] max-h-[48rem] items-center">
+    <div ref={scrollTrackRef} data-testid="demo-scroll-track" className="demo-scroll-track relative h-[720vh]">
+      <div className="sticky top-16 flex h-[calc(100vh-4rem)] min-h-[38rem] max-h-[48rem] items-center">
         <div data-testid="unified-workbench" className="agent-ui mx-auto w-full max-w-[82rem] overflow-hidden rounded-[20px] border border-black/10 bg-white p-2 dark:border-border dark:bg-card">
       <div className="overflow-hidden rounded-[13px] border border-border bg-background">
         <div className="flex h-10 items-center border-b border-border bg-[#f0efec] px-3 dark:bg-code-header">
@@ -949,7 +956,6 @@ export function UnifiedWorkbench() {
       </div>
     </div>
       </div>
-    </div>
     </div>
   );
 }

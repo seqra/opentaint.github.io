@@ -258,7 +258,7 @@ export function ContinuousSecurity() {
 
         <div className="mx-auto mt-12 max-w-[72rem] text-center sm:mt-16">
           <h2 id="continuous-security-heading" className="section-heading">Turn one-off review into unlimited scans</h2>
-          <p className="mx-auto mt-6 max-w-[68ch] text-sm leading-7 text-muted-foreground">The flexibility of model reasoning and the consistency of formal program analysis combined.</p>
+          <p className="section-banner continuous-security-subline mx-auto mt-6 max-w-[68ch]">The flexibility of model reasoning and the consistency of formal program analysis combined</p>
         </div>
 
         <div className="value-card-grid mobile-card-rail mt-10 grid gap-6 sm:mt-12 lg:grid-cols-2" role="region" aria-label="OpenTaint product advantages" tabIndex={0}>

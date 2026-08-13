@@ -3,6 +3,22 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/jetbrains-mono-regular.woff") format("woff");
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/jetbrains-mono-bold.woff") format("woff");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
 @layer base {
   :root {
     color-scheme: light;
@@ -247,7 +263,7 @@
     display: block;
     min-height: 0;
     background-color: hsl(var(--background));
-    background-image: url("/pictures/report/trace-zoom-mobile-light.png");
+    background-image: url("/pictures/report/trace-zoom-mobile-light.webp");
     background-repeat: no-repeat;
     background-size: 260% auto;
   }
@@ -261,7 +277,7 @@
   }
 
   .dark .reported-finding-crop {
-    background-image: url("/pictures/report/trace-zoom-mobile-dark.png");
+    background-image: url("/pictures/report/trace-zoom-mobile-dark.webp");
   }
 
   @media (min-width: 640px) {
@@ -318,6 +334,10 @@
     .value-card-grid.mobile-card-rail,
     .cve-card-rail-compact.mobile-card-rail {
       grid-auto-columns: calc(100% - var(--spacing-06));
+      gap: var(--spacing-03);
+    }
+
+    .security-stat-rail.mobile-card-rail {
       gap: var(--spacing-03);
     }
   }
@@ -381,11 +401,15 @@
 
     .value-card-grid .bundle-system-column:first-child {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: var(--spacing-02);
     }
 
     .value-card-grid .bundle-system-column:first-child .bundle-system-kicker {
+      grid-column: 1 / -1;
+    }
+
+    .value-card-grid .bundle-file-skill {
       grid-column: 1 / -1;
     }
 
@@ -394,7 +418,7 @@
     }
 
     .value-card-grid .bundle-file {
-      min-height: 2.25rem;
+      min-height: 1.875rem;
       gap: var(--spacing-02);
       padding: var(--spacing-02);
     }
@@ -410,6 +434,13 @@
 
     .value-card-grid .bundle-file small {
       display: none;
+    }
+
+    .value-card-grid .bundle-file b,
+    .value-card-grid .bundle-result-card b {
+      overflow: visible;
+      font-size: 6.5px;
+      text-overflow: clip;
     }
 
     .value-card-grid .bundle-engine-panel {
@@ -449,6 +480,11 @@
     .value-card-grid .bundle-trace-line {
       display: none;
     }
+  }
+
+  .continuous-security-subline {
+    line-height: 1.5rem;
+    text-wrap: balance;
   }
 
   .theme-button {
@@ -1572,10 +1608,8 @@
   }
 
   .demo-scroll-track {
-    scrollbar-gutter: stable;
-    border-radius: 28px;
-    overflow-x: hidden;
-    mask-image: linear-gradient(to bottom, transparent 0, black var(--spacing-07), black calc(100% - var(--spacing-07)), transparent 100%);
+    margin-block: calc(var(--spacing-07) * -1);
+    padding-block: var(--spacing-07);
   }
 
   .demo-shadow-frame {
@@ -1583,11 +1617,14 @@
     margin-inline: calc(var(--spacing-07) * -1);
     padding-bottom: var(--spacing-07);
     padding-inline: var(--spacing-07);
-    filter: drop-shadow(0 28px 45px rgb(37 25 20 / 0.16));
   }
 
-  .dark .demo-shadow-frame {
-    filter: drop-shadow(0 28px 45px rgb(0 0 0 / 0.36));
+  .demo-shadow-frame .agent-ui {
+    box-shadow: 0 28px 45px rgb(37 25 20 / 0.16);
+  }
+
+  .dark .demo-shadow-frame .agent-ui {
+    box-shadow: 0 28px 45px rgb(0 0 0 / 0.36);
   }
 
   @media (min-width: 640px) {

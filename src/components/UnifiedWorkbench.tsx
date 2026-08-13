@@ -462,9 +462,11 @@ function ScanResults({ progress }: { progress: number }) {
           <div className="mt-5 flex items-center justify-between">
             <h3 className="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-foreground">2 candidate findings</h3>
           </div>
-          <div className="mt-3 grid min-h-0 flex-1 grid-rows-2 gap-3">
-            <ScanFinding title="Unauthenticated script execution" file="ScriptRuntime.java:11" path="POST /api/jobs → Context.eval" />
-            <ScanFinding title="Script execution in preview renderer" file="PreviewRenderer.java:11" path="POST /api/preview → Context.eval" />
+          <div className="mt-3 flex min-h-0 flex-1 items-center">
+            <div className="grid h-5/6 min-h-0 w-full grid-rows-2 gap-4">
+              <ScanFinding title="Unauthenticated script execution" file="ScriptRuntime.java:11" path="POST /api/jobs → Context.eval" />
+              <ScanFinding title="Script execution in preview renderer" file="PreviewRenderer.java:11" path="POST /api/preview → Context.eval" />
+            </div>
           </div>
         </div>
       </div>}

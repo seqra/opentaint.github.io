@@ -15,31 +15,31 @@ const roadmap = [
   <div class="mx-auto max-w-6xl">
     <div class="section-header">
       <p class="section-eyebrow">Analysis coverage</p>
-      <h2 id="technology-heading" class="section-heading">Supported languages and frameworks</h2>
+      <h2 id="technology-heading" class="section-heading !text-2xl sm:!text-[2.125rem] md:!text-[2.5rem] lg:!text-[2.875rem]">Supported languages and frameworks</h2>
     </div>
 
-    <div class="section-content overflow-hidden rounded-2xl border border-border-strong bg-background shadow-sm lg:grid lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+    <div class="section-content !mt-8 overflow-hidden rounded-2xl border border-border-strong bg-background shadow-sm sm:!mt-12 lg:!mt-16 lg:grid lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
       <section class="px-4 py-6 sm:px-8 sm:py-8 lg:border-r lg:border-border" aria-labelledby="technology-available-heading">
         <h3 id="technology-available-heading" class="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">Available now</h3>
 
-        <div class="mt-6 grid grid-cols-2 items-center gap-6 sm:mt-8 sm:gap-8" role="list" aria-label="Available analysis coverage">
-          <div class="flex min-w-0 flex-col items-center gap-4 text-center" role="listitem">
+        <div class="mt-5 grid grid-cols-2 items-start gap-3 sm:mt-8 sm:items-center sm:gap-8" role="list" aria-label="Available analysis coverage">
+          <div class="flex min-w-0 flex-col items-center gap-3 text-center sm:gap-4" role="listitem">
             <span class="flex items-center justify-center" aria-hidden="true">
-              <span class="flex h-16 w-16 items-center justify-center rounded-full border border-border bg-white shadow-sm">
-                <img src="/pictures/java-logo.svg" alt="" class="h-12 w-12 object-contain" />
+              <span class="flex h-14 w-14 items-center justify-center rounded-full border border-border bg-white shadow-sm sm:h-16 sm:w-16">
+                <img src="/pictures/java-logo.svg" alt="" class="h-10 w-10 object-contain sm:h-12 sm:w-12" />
               </span>
-              <span class="-ml-2 flex h-16 w-16 items-center justify-center rounded-full border border-border bg-white shadow-sm">
-                <img src="/pictures/kotlin-logo.svg" alt="" class="h-12 w-12 object-contain" />
+              <span class="-ml-2 flex h-14 w-14 items-center justify-center rounded-full border border-border bg-white shadow-sm sm:h-16 sm:w-16">
+                <img src="/pictures/kotlin-logo.svg" alt="" class="h-10 w-10 object-contain sm:h-12 sm:w-12" />
               </span>
             </span>
-            <span class="font-mono text-sm font-semibold text-foreground">Java + Kotlin</span>
+            <span class="font-mono text-xs font-semibold leading-5 text-foreground sm:text-sm">Java + Kotlin</span>
           </div>
 
-          <a href="/blog/spring-analyzer/" class="flex min-w-0 flex-col items-center gap-4 text-center text-foreground transition-colors hover:text-primary" role="listitem">
-            <span class="flex h-16 items-center justify-center" aria-hidden="true">
-              <img src="/pictures/spring-boot-logo.svg" alt="" class="h-12 w-auto max-w-[10rem]" />
+          <a href="/blog/spring-analyzer/" class="flex min-w-0 flex-col items-center gap-3 text-center text-foreground transition-colors hover:text-primary sm:gap-4" role="listitem">
+            <span class="flex h-14 w-full items-center justify-center sm:h-16" aria-hidden="true">
+              <img src="/pictures/spring-boot-logo.svg" alt="" class="h-auto w-full max-w-[7rem] object-contain sm:h-12 sm:w-auto sm:max-w-[10rem]" />
             </span>
-            <span class="font-mono text-sm font-semibold">Spring</span>
+            <span class="font-mono text-xs font-semibold leading-5 sm:text-sm">Spring</span>
           </a>
         </div>
       </section>
@@ -47,20 +47,20 @@ const roadmap = [
       <section class="border-t border-border bg-code-bg px-4 py-6 sm:px-8 sm:py-8 lg:border-t-0" aria-labelledby="technology-roadmap-heading">
         <h3 id="technology-roadmap-heading" class="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Roadmap</h3>
 
-        <ul class="mt-6 grid grid-cols-2 gap-6 sm:mt-8 sm:grid-cols-4 sm:gap-8" aria-label="Planned language support">
+        <ul class="mt-5 grid grid-cols-2 gap-x-3 gap-y-6 sm:mt-8 sm:grid-cols-4 sm:gap-8" aria-label="Planned language support">
           {roadmap.map((item) => (
-            <li class="flex min-w-0 flex-col items-center gap-4 text-center">
-              <span class="flex h-16 min-w-16 items-center justify-center" aria-hidden="true">
+            <li class="flex min-w-0 flex-col items-center gap-3 text-center sm:gap-4">
+              <span class="flex h-14 min-w-14 items-center justify-center sm:h-16 sm:min-w-16" aria-hidden="true">
                 {item.logos.map((logo, index) => (
                   <span class:list={[
-                    "flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-border bg-white shadow-sm",
+                    "flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-border bg-white shadow-sm sm:h-16 sm:w-16",
                     index > 0 && "-ml-2",
                   ]}>
-                    <img src={logo} alt="" class="h-12 w-12 object-contain" />
+                    <img src={logo} alt="" class="h-10 w-10 object-contain sm:h-12 sm:w-12" />
                   </span>
                 ))}
               </span>
-              <span class="font-mono text-xs font-semibold leading-5 text-foreground">{item.name}</span>
+              <span class="max-w-[8rem] font-mono text-[11px] font-semibold leading-4 text-foreground sm:text-xs sm:leading-5">{item.name}</span>
             </li>
           ))}
         </ul>

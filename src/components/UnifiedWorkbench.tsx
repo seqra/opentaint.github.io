@@ -32,6 +32,13 @@ function timelineDistance(track: HTMLElement) {
   return Math.max(1, track.scrollHeight - track.clientHeight);
 }
 
+function withStageHolds(progress: number) {
+  const hold = 0.125;
+  if (progress <= hold) return 0;
+  if (progress >= 1 - hold) return 1;
+  return (progress - hold) / (1 - hold * 2);
+}
+
 function UserPrompt({ children }: { children: ReactNode }) {
   return (
     <div className="rounded-[10px] bg-[#e8f0fb] px-4 py-3 text-[14px] leading-5 text-[#242b33] dark:bg-[hsl(var(--agent)/0.16)] dark:text-foreground">
@@ -325,7 +332,7 @@ function SpecificationTransformation({ activeArtifact }: { activeArtifact: numbe
   const isFactActive = (fact: string) => mapping.facts.includes(fact as never);
 
   return (
-    <div className="enact-map mx-auto mb-3 max-w-[40rem] rounded-[10px] border border-border bg-background p-3 font-mono" aria-label="Informal security knowledge transformed into formal specifications">
+    <div className="enact-map mx-auto mb-3 max-w-[34rem] rounded-[10px] border border-border bg-background p-3 font-mono" aria-label="Informal security knowledge transformed into formal specifications">
       <div className="enact-map-document">
         <span className="enact-map-file"><FileText aria-hidden="true" /> security-review.md</span>
         <span className={isFactActive("boundary") ? "is-active" : ""}>TRUST BOUNDARY</span>
@@ -922,7 +929,7 @@ export function UnifiedWorkbench() {
 
           <section className="min-h-0 min-w-0 overflow-hidden bg-background" aria-live="polite" aria-label={`${stages[activeStageIndex].label} output`}>
             <div key={timelineStage} className="demo-work-surface h-full min-h-0 overflow-hidden">
-              <WorkSurface stage={timelineStage} progress={timelineProgress} />
+              <WorkSurface stage={timelineStage} progress={withStageHolds(timelineProgress)} />
             </div>
           </section>
         </div>

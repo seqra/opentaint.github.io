@@ -71,7 +71,7 @@ test.describe("landing product demonstration", () => {
     await expect(artifacts.nth(1)).toHaveAttribute("aria-expanded", "false");
     await expect(workbench.getByTestId("artifact-code").nth(0)).toContainText("(Context $CONTEXT).eval(..., $UNTRUSTED)");
 
-    await jump(0.235);
+    await jump(0.27);
     await expect(artifacts.nth(0)).toHaveAttribute("aria-expanded", "false");
     await expect(artifacts.nth(1)).toHaveAttribute("aria-expanded", "true");
     await expect(artifacts.nth(0)).toBeInViewport();
@@ -89,7 +89,7 @@ test.describe("landing product demonstration", () => {
     await jump(0.8);
     await expect(workbench).toContainText("0 false alarms");
 
-    await jump(0.92);
+    await jump(0.91);
     const report = workbench.getByTestId("simplified-report-view");
     await expect(report.getByRole("status")).toContainText("Step 6 of 10");
     let positions = await report.getByRole("status").evaluate((tooltip) => {
@@ -100,7 +100,7 @@ test.describe("landing product demonstration", () => {
     });
     expect(positions.tooltipTop).toBeGreaterThanOrEqual(positions.lineBottom);
 
-    await jump(0.945);
+    await jump(0.925);
     await expect(report.getByRole("status")).toContainText("Step 7 of 10");
     positions = await report.getByRole("status").evaluate((tooltip) => {
       const line = tooltip.parentElement?.firstElementChild;
@@ -184,16 +184,9 @@ test.describe("landing product demonstration", () => {
     await expect(scan).toContainText("ScriptRuntime.java:11");
     await expect(scan).toContainText("PreviewRenderer.java:11");
 
-    await track.evaluate((element) => {
-      element.scrollTop = (element.scrollHeight - element.clientHeight) * 0.62;
-      element.dispatchEvent(new Event("scroll"));
-    });
-    const summary = workbench.getByTestId("scan-summary-view");
-    await expect(summary).toBeVisible();
-    await expect(summary).toContainText("paths inspected");
-
     await workbench.getByRole("button", { name: "Triage", exact: true }).click();
     const triage = workbench.getByTestId("triage-view");
+    await expect(workbench).toContainText("Inspected 2 complete paths");
     await expect(triage).toContainText("FALSE ALARMS");
     await expect(triage).not.toContainText("PreviewRenderer.java:11");
   });

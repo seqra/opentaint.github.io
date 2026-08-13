@@ -462,9 +462,9 @@
 
   .workflow-diagram-label {
     font-family: var(--font-mono);
-    font-size: 5px;
+    font-size: 8px;
     font-weight: 650;
-    letter-spacing: 0.025em;
+    letter-spacing: 0.015em;
     color: hsl(var(--foreground));
     white-space: nowrap;
   }
@@ -472,28 +472,32 @@
   .workflow-artifact-header {
     position: relative;
     display: flex;
-    height: var(--spacing-07);
-    align-items: center;
+    min-height: var(--spacing-09);
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: var(--spacing-02);
     border-bottom: 1px solid hsl(var(--border));
-    padding-left: var(--spacing-07);
+    padding-left: var(--spacing-03);
     padding-right: var(--spacing-03);
   }
 
+  .workflow-file-marks {
+    display: flex;
+    gap: var(--spacing-02);
+  }
+
   .workflow-file-mark {
-    position: absolute;
-    left: var(--spacing-03);
-    top: 50%;
-    transform: translateY(-50%);
     display: inline-flex;
-    min-width: 1.25rem;
-    height: 0.875rem;
+    min-width: var(--spacing-06);
+    height: var(--spacing-04);
     align-items: center;
     justify-content: center;
     border: 1px solid hsl(var(--brand) / 0.45);
     border-radius: 0.2rem;
     color: hsl(var(--brand));
     font-family: var(--font-mono);
-    font-size: 5px;
+    font-size: 6px;
     font-weight: 700;
     line-height: 1;
   }
@@ -506,6 +510,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
   }
 
   .workflow-stage-rail {
@@ -595,10 +600,12 @@
   }
 
   .workflow-spec-lines em,
-  .workflow-formal-spec em {
+  .workflow-formal-spec em,
+  .workflow-triage-lines em,
+  .workflow-dataflow-trace > span {
     color: hsl(var(--brand));
     font-family: var(--font-mono);
-    font-size: 5px;
+    font-size: 6px;
     font-style: normal;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -619,33 +626,70 @@
   }
 
   .workflow-dataflow-trace {
+    position: relative;
     display: flex;
     min-height: 5.5rem;
-    align-items: center;
-    justify-content: center;
+    align-items: stretch;
+    padding: var(--spacing-03);
   }
 
-  .workflow-dataflow-trace i {
-    position: relative;
-    width: var(--spacing-03);
-    height: var(--spacing-03);
-    border: 1px solid hsl(var(--brand));
-    border-radius: 999px;
-    background: hsl(var(--background));
+  .workflow-dataflow-trace svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
   }
 
-  .workflow-dataflow-trace i:not(:last-child) {
-    margin-right: var(--spacing-03);
+  .trace-muted-edge,
+  .trace-active-edge {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
-  .workflow-dataflow-trace i:not(:last-child)::after {
-    content: "";
+  .trace-muted-edge {
+    stroke: hsl(var(--border-strong));
+    stroke-width: 1;
+    opacity: 0.7;
+  }
+
+  .trace-active-edge {
+    stroke: hsl(var(--brand));
+    stroke-width: 2;
+    stroke-dasharray: 4 12;
+    animation: trace-flow 2.8s linear infinite;
+  }
+
+  .trace-source,
+  .trace-active-node,
+  .trace-sink {
+    fill: hsl(var(--brand));
+    stroke: hsl(var(--brand));
+    stroke-width: 1;
+  }
+
+  .trace-muted-node {
+    fill: hsl(var(--background));
+    stroke: hsl(var(--border-strong));
+    stroke-width: 1;
+  }
+
+  .workflow-dataflow-trace > span {
     position: absolute;
-    left: 100%;
-    top: calc(50% - 0.5px);
-    width: var(--spacing-03);
-    height: 1px;
-    background: hsl(var(--brand) / 0.5);
+    font-size: 5px;
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+
+  .trace-source-label { left: var(--spacing-03); top: var(--spacing-03); }
+  .trace-call-label { left: 38%; top: var(--spacing-03); color: hsl(var(--muted-foreground)) !important; }
+  .trace-return-label { left: 54%; bottom: var(--spacing-03); color: hsl(var(--muted-foreground)) !important; }
+  .trace-sink-label { right: var(--spacing-03); bottom: var(--spacing-03); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .trace-active-edge {
+      animation: none;
+      stroke-dasharray: none;
+    }
   }
 
   .workflow-triage-lines i {
@@ -700,29 +744,24 @@
     background: hsl(var(--border-strong));
   }
 
-  .bundle-graph {
-    position: relative;
+  .bundle-engine {
+    display: grid;
     width: 2.5rem;
-    height: 1.5rem;
-    background:
-      linear-gradient(28deg, transparent 47%, hsl(var(--brand) / 0.55) 48% 52%, transparent 53%) 0 0 / 50% 100%,
-      linear-gradient(-28deg, transparent 47%, hsl(var(--brand) / 0.55) 48% 52%, transparent 53%) 100% 0 / 50% 100%;
-    background-repeat: no-repeat;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-02);
   }
 
-  .bundle-graph i {
-    position: absolute;
-    width: 0.4rem;
-    height: 0.4rem;
-    border: 1px solid hsl(var(--brand));
+  .bundle-engine i {
+    aspect-ratio: 1;
+    border: 1px solid hsl(var(--border-strong));
     border-radius: 2px;
     background: hsl(var(--background));
   }
 
-  .bundle-graph i:nth-child(1) { left: 0; bottom: 0; }
-  .bundle-graph i:nth-child(2) { left: calc(50% - 0.2rem); top: 0; background: hsl(var(--brand)); }
-  .bundle-graph i:nth-child(3) { right: 0; bottom: 0; }
-  .bundle-graph i:nth-child(4) { left: calc(50% - 0.2rem); bottom: 0; }
+  .bundle-engine i.active {
+    border-color: hsl(var(--brand));
+    background: hsl(var(--brand) / 0.14);
+  }
 
   .bundle-model {
     display: flex;
@@ -763,6 +802,22 @@
   .bundle-trace i:not(:last-child) { margin-right: 0.5rem; }
 
   .bundle-caret { animation: bundle-caret 1s steps(1) infinite; }
+
+  .bundle-cli {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 650;
+    line-height: var(--spacing-05);
+    color: hsl(var(--brand));
+  }
+
+  .bundle-cli b {
+    color: hsl(var(--muted-foreground));
+    font-weight: 650;
+  }
 
   .workflow-loop-path {
     fill: none;
@@ -908,7 +963,7 @@
   .hero-signal-active-2 { animation-delay: -5s; }
 
   .quickstart-section {
-    padding-top: var(--spacing-10);
+    padding-top: var(--spacing-09);
   }
 
   .landing-sections > astro-island:has(> .quickstart-section) > .quickstart-section::before {
@@ -918,7 +973,7 @@
   .demo-section {
     background-color: hsl(var(--background));
     padding-top: var(--spacing-08);
-    padding-bottom: var(--spacing-10);
+    padding-bottom: var(--spacing-08);
     overflow: hidden;
   }
 
@@ -950,12 +1005,12 @@
     }
 
     .quickstart-section {
-      padding-top: var(--spacing-11);
+      padding-top: var(--spacing-09);
     }
 
     .demo-section {
       padding-top: var(--spacing-09);
-      padding-bottom: var(--spacing-11);
+      padding-bottom: var(--spacing-09);
     }
   }
 
@@ -971,12 +1026,12 @@
     }
 
     .quickstart-section {
-      padding-top: var(--spacing-11);
+      padding-top: var(--spacing-09);
     }
 
     .demo-section {
       padding-top: var(--spacing-10);
-      padding-bottom: var(--spacing-12);
+      padding-bottom: var(--spacing-10);
     }
   }
 
@@ -1474,6 +1529,10 @@
   0% { transform: translateX(-110%); opacity: 0; }
   25%, 70% { opacity: 1; }
   100% { transform: translateX(260%); opacity: 0; }
+}
+
+@keyframes trace-flow {
+  to { stroke-dashoffset: -16; }
 }
 
 @keyframes balance-breathe {

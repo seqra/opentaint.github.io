@@ -9,11 +9,14 @@ function VisualFrame({ children, label, className = "" }: { children: ReactNode;
   );
 }
 
-function ArtifactNode({ children, extension, title, className = "" }: { children: ReactNode; extension: string; title: string; className?: string }) {
+function ArtifactNode({ children, extension, title, className = "" }: { children: ReactNode; extension: string | readonly string[]; title: string; className?: string }) {
+  const extensions = typeof extension === "string" ? [extension] : extension;
   return (
     <div className={`workflow-diagram-node ${className}`}>
       <div className="workflow-artifact-header">
-        <span className="workflow-file-mark" aria-hidden="true">{extension}</span>
+        <span className="workflow-file-marks" aria-hidden="true">
+          {extensions.map((item) => <i className="workflow-file-mark" key={item}>{item}</i>)}
+        </span>
         <span className="workflow-diagram-label">{title}</span>
       </div>
       {children}
@@ -44,8 +47,8 @@ function InformalSpecNode() {
   return (
     <ArtifactNode title="INFORMAL SPEC" extension="md">
       <div className="workflow-spec-lines" aria-hidden="true">
-        <em>TRUST</em><span><i className="w-10" /><i className="w-12" /></span>
-        <em>PATTERN</em><span><i className="w-12" /><i className="w-8" /></span>
+        <em>TRUST BOUNDARY</em><span><i className="w-10" /><i className="w-12" /></span>
+        <em>VULNERABILITY PATTERN</em><span><i className="w-12" /><i className="w-8" /></span>
       </div>
     </ArtifactNode>
   );
@@ -55,8 +58,8 @@ function FormalSpecNode({ refined = false }: { refined?: boolean }) {
   return (
     <ArtifactNode title={refined ? "TUNED FORMAL SPEC" : "FORMAL SPEC"} extension="yml" className="border-primary/35">
       <div className="workflow-formal-spec" aria-hidden="true">
-        <em>RULE</em><span className="bg-primary" />
-        <em>MODEL</em><span className={refined ? "border border-emerald-700/30 bg-emerald-700/[0.09]" : "border border-primary/30 bg-primary/[0.08]"} />
+        <em>TAINT RULE</em><span className="bg-primary" />
+        <em>DEPENDENCY MODEL</em><span className={refined ? "border border-emerald-700/30 bg-emerald-700/[0.09]" : "border border-primary/30 bg-primary/[0.08]"} />
       </div>
     </ArtifactNode>
   );
@@ -64,7 +67,7 @@ function FormalSpecNode({ refined = false }: { refined?: boolean }) {
 
 function ScanInputNode() {
   return (
-    <ArtifactNode title="PROJECT + SPEC" extension="src">
+    <ArtifactNode title="PROJECT AND SPEC" extension={["src", "yml"]}>
       <div className="grid min-h-[5.5rem] grid-cols-[1fr_auto] items-center gap-2 px-3 py-3" aria-hidden="true">
         <div className="space-y-1.5">
           <span className="block h-1 w-12 rounded-full bg-border-strong" />
@@ -86,12 +89,25 @@ function DataflowTraceNode({ triaged = false }: { triaged?: boolean }) {
     <ArtifactNode title="DATAFLOW TRACES" extension="json">
       {triaged ? (
         <div className="workflow-triage-lines" aria-hidden="true">
-          <span><i className="bg-emerald-700 dark:bg-emerald-400" /><b className="w-9" /></span>
-          <span><i className="bg-primary" /><b className="w-6" /></span>
+          <em>CONFIRMED</em><span><i className="bg-emerald-700 dark:bg-emerald-400" /><b className="w-9" /></span>
+          <em>FALSE ALARM</em><span><i className="bg-primary" /><b className="w-6" /></span>
         </div>
       ) : (
         <div className="workflow-dataflow-trace" aria-hidden="true">
-          {Array.from({ length: 6 }, (_, index) => <i key={index} />)}
+          <svg viewBox="0 0 96 72" preserveAspectRatio="xMidYMid meet">
+            <path className="trace-muted-edge" d="M13 20 C25 20 24 11 37 11 M13 20 C25 20 25 36 37 36 M45 11 C58 11 57 23 68 23 M45 36 C57 36 57 23 68 23 M45 36 C58 36 57 55 69 55 M76 23 C84 23 84 36 89 36" />
+            <path className="trace-active-edge" d="M13 20 C25 20 25 36 37 36 M45 36 C57 36 57 23 68 23 M76 23 C84 23 84 36 89 36" />
+            <circle className="trace-source" cx="9" cy="20" r="4" />
+            <rect className="trace-muted-node" x="37" y="7" width="8" height="8" rx="2" />
+            <rect className="trace-active-node" x="37" y="32" width="8" height="8" rx="2" />
+            <rect className="trace-active-node" x="68" y="19" width="8" height="8" rx="2" />
+            <rect className="trace-muted-node" x="69" y="51" width="8" height="8" rx="2" />
+            <path className="trace-sink" d="m89 31 5 5-5 5-5-5z" />
+          </svg>
+          <span className="trace-source-label">SOURCE</span>
+          <span className="trace-call-label">CALL</span>
+          <span className="trace-return-label">RETURN</span>
+          <span className="trace-sink-label">SINK</span>
         </div>
       )}
     </ArtifactNode>
@@ -131,8 +147,8 @@ function TriagePreview() {
 }
 
 const cards = [
-  { number: "01", title: "Discover", description: "Extract trust boundaries and vulnerability patterns.", preview: <DiscoverPreview /> },
-  { number: "02", title: "Enact", description: "Turn what the review learned into formal specifications.", preview: <EnactPreview /> },
+  { number: "01", title: "Discover", description: "Learn trust boundaries and vulnerability patterns as an informal specification.", preview: <DiscoverPreview /> },
+  { number: "02", title: "Enact", description: "Enact the informal specification as taint rules and dependency models.", preview: <EnactPreview /> },
   { number: "03", title: "Scan", description: "Search the whole project with formal program analysis.", preview: <ScanPreview /> },
   { number: "04", title: "Triage", description: "Confirm findings and tune away false alarms.", preview: <TriagePreview /> },
 ] as const;
@@ -150,9 +166,9 @@ function BalanceVisual() {
         <circle cx="111" cy="224" r="4" fill="hsl(var(--background))" stroke="hsl(var(--brand))" strokeWidth="2" />
         <circle cx="409" cy="224" r="4" fill="hsl(var(--background))" stroke="hsl(var(--brand))" strokeWidth="2" />
       </svg>
-      <div className="absolute left-1/2 top-5 -translate-x-1/2 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[10px] font-semibold text-primary">FAST</span><span className="mt-1 block font-mono text-[7px] font-semibold uppercase tracking-[0.1em] text-foreground">SCAN SPEED</span></div>
-      <div className="absolute bottom-5 left-5 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[10px] font-semibold text-primary">MINIMAL</span><span className="mt-1 block font-mono text-[7px] font-semibold uppercase tracking-[0.1em] text-foreground">MISSED FINDINGS</span></div>
-      <div className="absolute bottom-5 right-5 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[10px] font-semibold text-primary">MINIMAL</span><span className="mt-1 block font-mono text-[7px] font-semibold uppercase tracking-[0.1em] text-foreground">FALSE ALARMS</span></div>
+      <div className="absolute left-1/2 top-5 -translate-x-1/2 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[9px] font-semibold text-primary">SCAN TIME</span><span className="mt-1 block font-mono text-[7px] font-semibold uppercase tracking-[0.1em] text-foreground">MINIMAL</span></div>
+      <div className="absolute bottom-5 left-5 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[9px] font-semibold text-primary">MISSED FINDINGS</span><span className="mt-1 block font-mono text-[7px] font-semibold uppercase tracking-[0.1em] text-foreground">MINIMAL</span></div>
+      <div className="absolute bottom-5 right-5 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[9px] font-semibold text-primary">FALSE ALARMS</span><span className="mt-1 block font-mono text-[7px] font-semibold uppercase tracking-[0.1em] text-foreground">MINIMAL</span></div>
       <div className="absolute left-1/2 top-[10rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/45 bg-background px-4 py-3 text-center shadow-[0_0_0_8px_hsl(var(--brand)/0.05)]"><span className="font-mono text-[8px] font-semibold uppercase tracking-[0.1em] text-primary">SOTA</span><span className="mt-1 block font-mono text-[6px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">STATIC ANALYSIS</span></div>
     </div>
   );
@@ -161,11 +177,11 @@ function BalanceVisual() {
 type BundleKind = "engine" | "rules" | "models" | "skills" | "cli" | "viewer";
 
 function BundleMark({ kind }: { kind: BundleKind }) {
-  if (kind === "engine") return <div className="bundle-graph"><i /><i /><i /><i /></div>;
+  if (kind === "engine") return <div className="bundle-engine">{Array.from({ length: 9 }, (_, index) => <i key={index} className={index === 2 || index === 4 || index === 6 ? "active" : ""} />)}</div>;
   if (kind === "rules") return <div className="bundle-code"><i className="w-7 bg-primary" /><i className="ml-2 w-5" /><i className="ml-2 w-8" /></div>;
   if (kind === "models") return <div className="bundle-model"><span>f()</span><b>→</b><span>g()</span></div>;
   if (kind === "skills") return <div className="bundle-code"><i className="w-8 bg-primary" /><i className="w-6" /><i className="w-9" /></div>;
-  if (kind === "cli") return <div className="font-mono text-[9px] font-semibold text-primary"><span className="text-muted-foreground">$</span> opentaint scan<span className="bundle-caret">_</span></div>;
+  if (kind === "cli") return <div className="bundle-cli"><span><b>$</b> opentaint</span><span>scan<span className="bundle-caret">_</span></span></div>;
   return <div className="bundle-trace"><i /><i /><i /><i /><i /></div>;
 }
 
@@ -180,18 +196,18 @@ const bundleItems = [
 
 function BundleVisual() {
   return (
-    <div className="value-visual relative min-h-[18rem] overflow-hidden rounded-[18px] border border-border bg-code-bg p-6" role="img" aria-label="The open-source OpenTaint bundle includes the engine, rules, dependency models, agent skills, CLI, report viewer, and CI integration">
+    <div className="value-visual relative min-h-[20rem] overflow-hidden rounded-[18px] border border-border bg-code-bg p-4 sm:p-6" role="img" aria-label="The open-source OpenTaint bundle includes the engine, rules, dependency models, agent skills, CLI, report viewer, and CI integration">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--brand)/0.08),transparent_58%)]" aria-hidden="true" />
       <div className="relative grid h-full min-h-[15rem] grid-cols-3 gap-3">
         {bundleItems.map(({ label, kind }, index) => (
           <div key={label} className={`bundle-tile flex flex-col items-center justify-center rounded-xl border bg-background text-center ${index === 0 ? "border-primary/50" : "border-border-strong"}`}>
             <BundleMark kind={kind} />
-            <span className="mt-3 font-mono text-[8px] font-semibold uppercase tracking-[0.09em] text-foreground">{label}</span>
+            <span className="mt-4 font-mono text-[9px] font-semibold uppercase tracking-[0.08em] text-foreground">{label}</span>
           </div>
         ))}
-        <div className="pointer-events-none absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-primary/45 bg-background shadow-[0_0_0_10px_hsl(var(--brand)/0.05)]">
-          <span className="font-mono text-[8px] font-bold uppercase tracking-[0.08em] text-primary">OPEN</span>
-          <span className="font-mono text-[7px] font-semibold uppercase tracking-[0.08em] text-foreground">SOURCE</span>
+        <div className="pointer-events-none absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-primary/45 bg-background shadow-[0_0_0_10px_hsl(var(--brand)/0.05)]">
+          <span className="font-mono text-[9px] font-bold uppercase tracking-[0.08em] text-primary">OPEN</span>
+          <span className="font-mono text-[8px] font-semibold uppercase tracking-[0.08em] text-foreground">SOURCE</span>
         </div>
       </div>
     </div>
@@ -216,15 +232,15 @@ export function ContinuousSecurity() {
         </div>
 
         <div className="mx-auto mt-16 max-w-[72rem] text-center">
-          <p className="section-eyebrow">The flexibility of model reasoning and the consistency of formal program analysis combined</p>
           <h2 id="continuous-security-heading" className="section-heading">Turn one-off review into unlimited scans</h2>
+          <p className="mx-auto mt-6 max-w-[68ch] text-sm leading-7 text-muted-foreground">The flexibility of model reasoning and the consistency of formal program analysis combined.</p>
         </div>
 
         <div className="mt-12 grid gap-6 lg:grid-cols-2">
           <article className="value-card overflow-hidden rounded-[24px] border border-border-strong bg-background p-4 shadow-sm sm:p-6">
             <BalanceVisual />
             <div className="px-2 pb-2 pt-6">
-              <h3 className="font-mono text-xl font-semibold leading-8 tracking-[-0.03em] text-foreground">Practical balance through state-of-the-art static analysis</h3>
+              <h3 className="font-mono text-xl font-semibold leading-8 tracking-[-0.03em] text-foreground">Practical balance through SOTA static analysis</h3>
               <p className="mt-3 max-w-[50ch] text-[12px] leading-5 text-muted-foreground">Minimize missed findings and false alarms without making whole-project analysis impractical.</p>
             </div>
           </article>

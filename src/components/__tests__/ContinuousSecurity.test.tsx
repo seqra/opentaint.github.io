@@ -10,7 +10,7 @@ describe("ContinuousSecurity", () => {
     const promise = screen.getByRole("heading", { level: 2 });
 
     expect(promise).toHaveTextContent("Turn one-off review into unlimited scans");
-    expect(screen.getByText("The flexibility of model reasoning and the consistency of formal program analysis combined")).toBeVisible();
+    expect(screen.getByText("The flexibility of model reasoning and the consistency of formal program analysis combined.")).toBeVisible();
     expect(workflow?.compareDocumentPosition(promise) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
@@ -34,8 +34,8 @@ describe("ContinuousSecurity", () => {
   it("keeps the visible workflow copy minimal", () => {
     render(<ContinuousSecurity />);
 
-    expect(screen.getByText("Extract trust boundaries and vulnerability patterns.")).toBeVisible();
-    expect(screen.getByText("Turn what the review learned into formal specifications.")).toBeVisible();
+    expect(screen.getByText("Learn trust boundaries and vulnerability patterns as an informal specification.")).toBeVisible();
+    expect(screen.getByText("Enact the informal specification as taint rules and dependency models.")).toBeVisible();
     expect(screen.getByText("Search the whole project with formal program analysis.")).toBeVisible();
     expect(screen.getByText("Confirm findings and tune away false alarms.")).toBeVisible();
     expect(screen.queryByText("The same review can produce different findings")).not.toBeInTheDocument();
@@ -44,7 +44,7 @@ describe("ContinuousSecurity", () => {
   it("shows the performance balance and the open-source bundle visually", () => {
     render(<ContinuousSecurity />);
 
-    expect(screen.getByRole("heading", { name: "Practical balance through state-of-the-art static analysis", level: 3 })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Practical balance through SOTA static analysis", level: 3 })).toBeVisible();
     expect(screen.getByText("Minimize missed findings and false alarms without making whole-project analysis impractical.")).toBeVisible();
     expect(screen.getByRole("img", { name: "OpenTaint balances scan speed, finding coverage, and precision" })).toBeVisible();
     expect(screen.getByRole("heading", { name: "Open source, batteries included", level: 3 })).toBeVisible();

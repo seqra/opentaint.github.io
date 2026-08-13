@@ -7,7 +7,7 @@ test.describe("landing product demonstration", () => {
     const workbench = page.getByTestId("unified-workbench");
     await workbench.scrollIntoViewIfNeeded();
     await expect(workbench.getByText("Review this application for unauthenticated code execution. Capture what you learn for future scans.")).toBeVisible();
-    await expect(workbench.getByRole("heading", { name: "Application security knowledge" })).toBeVisible();
+    await expect(workbench.getByRole("heading", { name: "Unauthenticated execution review" })).toBeVisible();
     const discovery = workbench.getByTestId("review-report-scroll");
     await expect(discovery.getByText("Trust boundary", { exact: true })).toBeVisible();
     await expect(discovery.getByText("Vulnerability pattern", { exact: true })).toBeVisible();
@@ -21,7 +21,7 @@ test.describe("landing product demonstration", () => {
 
     const sinkArtifact = workbench.getByRole("button", { name: /rules\/java\/lib\/generic\/graal-eval\.yaml/ });
     await expect(sinkArtifact).toHaveAttribute("aria-expanded", "true");
-    await sinkArtifact.click();
+    await sinkArtifact.evaluate((button: HTMLButtonElement) => button.click());
     await expect(sinkArtifact).toHaveAttribute("aria-expanded", "false");
 
     await workbench.getByRole("button", { name: "Scan", exact: true }).click();
@@ -71,7 +71,7 @@ test.describe("landing product demonstration", () => {
     await expect(artifacts.nth(1)).toHaveAttribute("aria-expanded", "false");
     await expect(workbench.getByTestId("artifact-code").nth(0)).toContainText("(Context $CONTEXT).eval(..., $UNTRUSTED)");
 
-    await jump(0.27);
+    await jump(0.255);
     await expect(artifacts.nth(0)).toHaveAttribute("aria-expanded", "false");
     await expect(artifacts.nth(1)).toHaveAttribute("aria-expanded", "true");
     await expect(artifacts.nth(0)).toBeInViewport();
@@ -89,7 +89,7 @@ test.describe("landing product demonstration", () => {
     await jump(0.8);
     await expect(workbench).toContainText("0 false alarms");
 
-    await jump(0.91);
+    await jump(0.872);
     const report = workbench.getByTestId("simplified-report-view");
     await expect(report.getByRole("status")).toContainText("Step 6 of 10");
     let positions = await report.getByRole("status").evaluate((tooltip) => {
@@ -100,7 +100,7 @@ test.describe("landing product demonstration", () => {
     });
     expect(positions.tooltipTop).toBeGreaterThanOrEqual(positions.lineBottom);
 
-    await jump(0.925);
+    await jump(0.882);
     await expect(report.getByRole("status")).toContainText("Step 7 of 10");
     positions = await report.getByRole("status").evaluate((tooltip) => {
       const line = tooltip.parentElement?.firstElementChild;

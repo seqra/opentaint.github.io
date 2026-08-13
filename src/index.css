@@ -929,8 +929,9 @@
     display: grid;
     width: 100%;
     max-width: 10.75rem;
+    height: 7rem;
     min-width: 0;
-    grid-template-rows: var(--spacing-06) repeat(4, 1.2rem);
+    grid-template-rows: var(--spacing-06) minmax(0, 1fr);
     align-content: center;
     gap: var(--spacing-02);
   }
@@ -943,7 +944,15 @@
     justify-self: start;
   }
 
-  .enact-map-document > span:not(.enact-map-file) {
+  .enact-map-facts {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--spacing-02);
+  }
+
+  .enact-map-facts > span {
     display: flex;
     min-height: 1.2rem;
     align-items: center;
@@ -961,14 +970,14 @@
       transform 240ms ease;
   }
 
-  .enact-map-document > span.is-active:not(.enact-map-file) {
+  .enact-map-facts > span.is-active {
     transform: translateX(var(--spacing-02));
     border-color: hsl(var(--brand) / 0.5);
     background: hsl(var(--brand) / 0.08);
     color: hsl(var(--brand));
   }
 
-  .enact-map-formal > span.is-active:not(.enact-map-file) {
+  .enact-map-formal .enact-map-facts > span.is-active {
     transform: translateX(calc(var(--spacing-02) * -1));
     background: hsl(var(--brand));
     color: hsl(var(--primary-foreground));
@@ -1114,7 +1123,7 @@
     display: grid;
     min-height: var(--spacing-10);
     flex: none;
-    grid-template-columns: auto minmax(var(--spacing-06), 1fr) auto minmax(var(--spacing-06), 1fr) auto minmax(var(--spacing-06), 1fr) auto minmax(var(--spacing-06), 1fr) auto;
+    grid-template-columns: minmax(2.75rem, auto) minmax(var(--spacing-03), 1fr) minmax(2.75rem, auto) minmax(var(--spacing-03), 1fr) minmax(2.75rem, auto) minmax(var(--spacing-03), 1fr) minmax(2.75rem, auto) minmax(var(--spacing-03), 1fr) minmax(2.75rem, auto);
     align-items: center;
     border-bottom: 1px solid hsl(var(--border));
     background: hsl(var(--background));
@@ -1123,17 +1132,15 @@
 
   .report-trace-node {
     display: grid;
-    min-width: 4.2rem;
-    grid-template-columns: var(--spacing-04) 1fr;
-    grid-template-rows: auto auto;
-    align-items: center;
-    column-gap: var(--spacing-02);
+    min-width: 0;
+    grid-template-rows: var(--spacing-04) auto;
+    justify-items: center;
+    text-align: center;
     color: hsl(var(--muted-foreground));
     transition: color 280ms ease, transform 280ms ease;
   }
 
   .report-trace-node > span {
-    grid-row: 1 / span 2;
     display: grid;
     width: var(--spacing-04);
     height: var(--spacing-04);
@@ -1154,18 +1161,10 @@
   }
 
   .report-trace-node b {
+    margin-top: var(--spacing-02);
     font-size: 6px;
     font-weight: 700;
     letter-spacing: 0.07em;
-    white-space: nowrap;
-  }
-
-  .report-trace-node small {
-    margin-top: var(--spacing-01);
-    overflow: hidden;
-    font-size: 5.5px;
-    line-height: 1;
-    text-overflow: ellipsis;
     white-space: nowrap;
   }
 
@@ -1188,14 +1187,10 @@
     transform: scale(1);
   }
 
-  .report-trace-node[data-sink="true"] > span {
-    border-radius: 0.15rem;
-    transform: rotate(45deg);
-  }
-
   .report-trace-edge {
     position: relative;
     height: 1px;
+    margin-top: calc(var(--spacing-04) / 2);
     overflow: hidden;
     background: hsl(var(--border-strong));
   }
@@ -1224,7 +1219,7 @@
       animation: none;
     }
 
-    .enact-map-document > span:not(.enact-map-file),
+    .enact-map-facts > span,
     .triage-causal-step,
     .triage-causal-rail > b > i,
     .report-trace-node,

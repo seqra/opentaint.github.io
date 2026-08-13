@@ -14,7 +14,7 @@ describe("UnifiedWorkbench", () => {
 
     expect(screen.getByText("Review this application for unauthenticated code execution. Capture what you learn for future scans.")).toBeVisible();
     expect(screen.getByText("Informal security knowledge")).toBeVisible();
-    expect(screen.getByRole("heading", { name: "Application security knowledge" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Unauthenticated execution review" })).toBeVisible();
     expect(screen.queryByText(/Conductor/i)).toBeNull();
     expect(screen.queryByText(/3\.23\.0/)).toBeNull();
   });
@@ -58,7 +58,7 @@ describe("UnifiedWorkbench", () => {
     expect(within(report).getByText("10/10")).toBeVisible();
     expect(within(report).getByRole("status")).toHaveTextContent("Step 10 of 10");
     expect(within(report).getByText("ScriptRuntime.java")).toBeVisible();
-    expect(within(report).getByRole("img", { name: /Dataflow trace progress: SINK, step 10 of 10/ })).toBeVisible();
+    expect(within(report).getByRole("img", { name: /Dataflow trace progress: EVAL, step 10 of 10/ })).toBeVisible();
     expect(within(report).queryByText("JobController.java")).not.toBeInTheDocument();
     expect(screen.getByText(/Untrusted HTTP input reaches a host-enabled GraalVM/)).toBeVisible();
     expect(screen.queryByText(/3\.23\.0/)).toBeNull();

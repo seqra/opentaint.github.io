@@ -33,10 +33,11 @@ function timelineDistance(track: HTMLElement) {
 }
 
 function withStageHolds(progress: number) {
-  const hold = 0.125;
-  if (progress <= hold) return 0;
-  if (progress >= 1 - hold) return 1;
-  return (progress - hold) / (1 - hold * 2);
+  const startHold = 0.125;
+  const finishHold = 0.45;
+  if (progress <= startHold) return 0;
+  if (progress >= 1 - finishHold) return 1;
+  return (progress - startHold) / (1 - startHold - finishHold);
 }
 
 function UserPrompt({ children }: { children: ReactNode }) {
@@ -164,8 +165,8 @@ function ReviewReport({ progress }: { progress: number }) {
         </div>
         <div ref={scrollRef} data-testid="review-report-scroll" className="min-h-0 flex-1 overflow-hidden px-8 py-8 xl:px-10">
         <article className="mx-auto max-w-[36rem] text-[13px] leading-6 text-[#443c38] dark:text-card-foreground">
-          <h3 className="text-[22px] font-semibold leading-8 tracking-[-0.025em] text-foreground">Application security knowledge</h3>
-          <p className="mt-2 text-muted-foreground">What the agent learned while reviewing the application.</p>
+          <h3 className="text-[22px] font-semibold leading-8 tracking-[-0.025em] text-foreground">Unauthenticated execution review</h3>
+          <p className="mt-2 text-muted-foreground">Security context captured from the reviewed request path.</p>
 
           <section className="mt-8 rounded-[10px] border border-primary/25 bg-primary/[0.05] p-4">
             <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-primary">Trust boundary</p>
@@ -191,7 +192,7 @@ function ReviewReport({ progress }: { progress: number }) {
         </div>
       </div>}
     >
-      Trust boundaries, vulnerability patterns, and opaque behavior captured in plain language.
+      Trust boundaries, vulnerability patterns, and opaque behavior in plain language.
     </SurfaceStory>
   );
 }
@@ -335,9 +336,11 @@ function SpecificationTransformation({ activeArtifact }: { activeArtifact: numbe
     <div className="enact-map mx-auto mb-3 max-w-[34rem] rounded-[10px] border border-border bg-background p-3 font-mono" aria-label="Informal security knowledge transformed into formal specifications">
       <div className="enact-map-document">
         <span className="enact-map-file"><FileText aria-hidden="true" /> security-review.md</span>
-        <span className={isFactActive("boundary") ? "is-active" : ""}>TRUST BOUNDARY</span>
-        <span className={isFactActive("pattern") ? "is-active" : ""}>VULNERABILITY PATTERN</span>
-        <span className={isFactActive("behavior") ? "is-active" : ""}>OPAQUE BEHAVIOR</span>
+        <div className="enact-map-facts">
+          <span className={isFactActive("boundary") ? "is-active" : ""}>TRUST BOUNDARY</span>
+          <span className={isFactActive("pattern") ? "is-active" : ""}>VULNERABILITY PATTERN</span>
+          <span className={isFactActive("behavior") ? "is-active" : ""}>OPAQUE BEHAVIOR</span>
+        </div>
       </div>
 
       <div className="enact-transform" aria-hidden="true">
@@ -347,10 +350,12 @@ function SpecificationTransformation({ activeArtifact }: { activeArtifact: numbe
 
       <div className="enact-map-document enact-map-formal">
         <span className="enact-map-file"><FileCode2 aria-hidden="true" /> formal-specification.yaml</span>
-        <span className={mapping.artifact === "sink" ? "is-active" : ""}>SINK RULE</span>
-        <span className={mapping.artifact === "source" ? "is-active" : ""}>SOURCE RULE</span>
-        <span className={mapping.artifact === "join" ? "is-active" : ""}>JOIN RULE</span>
-        <span className={mapping.artifact === "model" ? "is-active" : ""}>DEPENDENCY MODEL</span>
+        <div className="enact-map-facts">
+          <span className={mapping.artifact === "sink" ? "is-active" : ""}>SINK RULE</span>
+          <span className={mapping.artifact === "source" ? "is-active" : ""}>SOURCE RULE</span>
+          <span className={mapping.artifact === "join" ? "is-active" : ""}>JOIN RULE</span>
+          <span className={mapping.artifact === "model" ? "is-active" : ""}>DEPENDENCY MODEL</span>
+        </div>
       </div>
     </div>
   );
@@ -426,8 +431,8 @@ function ScanFinding({ title, file, path }: ScanFindingProps) {
 }
 
 function ScanResults({ progress }: { progress: number }) {
-  const completion = Math.max(18, Math.round(progress * 100));
-  const complete = progress > 0.68;
+  const completion = Math.max(0, Math.min(1, progress));
+  const complete = completion === 1;
 
   return (
     <SurfaceStory
@@ -439,11 +444,11 @@ function ScanResults({ progress }: { progress: number }) {
         </div>
         <div className="min-h-0 flex-1 overflow-hidden p-6">
           <div className="grid grid-cols-3 gap-3">
-            <div className="rounded-lg border border-border bg-background p-3"><span className="font-mono text-[9px] text-muted-foreground">SCOPE</span><b className="mt-1 block text-[12px] text-foreground">Whole project</b></div>
-            <div className="rounded-lg border border-border bg-background p-3"><span className="font-mono text-[9px] text-muted-foreground">ANALYSIS</span><b className="mt-1 block text-[12px] text-foreground">Formal dataflow</b></div>
-            <div className="rounded-lg border border-border bg-background p-3"><span className="font-mono text-[9px] text-muted-foreground">TIME</span><b className="mt-1 block text-[12px] text-foreground">3.8s</b></div>
+            <div className="rounded-lg border border-border bg-background p-3"><span className="font-mono text-[9px] text-muted-foreground">PROJECT MODEL</span><b className="mt-1 block text-[12px] text-foreground">Built</b></div>
+            <div className="rounded-lg border border-border bg-background p-3"><span className="font-mono text-[9px] text-muted-foreground">RULES + MODELS</span><b className="mt-1 block text-[12px] text-foreground">Loaded</b></div>
+            <div className="rounded-lg border border-border bg-background p-3"><span className="font-mono text-[9px] text-muted-foreground">TIME</span><b className="mt-1 block text-[12px] text-foreground">30s</b></div>
           </div>
-          <div className="mt-4 h-1 overflow-hidden rounded-full bg-border"><span className="block h-full bg-primary transition-[width] duration-300" style={{ width: `${completion}%` }} /></div>
+          <div className="mt-4 h-1 overflow-hidden rounded-full bg-border"><span className="block h-full origin-left bg-primary will-change-transform" style={{ transform: `scaleX(${completion})` }} /></div>
           <div className="mt-6 flex items-center justify-between">
             <h3 className="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-foreground">2 candidate findings</h3>
           </div>
@@ -550,11 +555,11 @@ export const flowSteps = [
 ] as const;
 
 const reportTraceNodes = [
-  { label: "HTTP INPUT", file: "JobController" },
-  { label: "SERVICE", file: "JobService" },
-  { label: "DISPATCH", file: "ScriptDispatcher" },
-  { label: "EVALUATE", file: "ExpressionEvaluator" },
-  { label: "SINK", file: "Context.eval", sink: true },
+  { label: "HTTP INPUT" },
+  { label: "SERVICE" },
+  { label: "DISPATCH" },
+  { label: "EVALUATE" },
+  { label: "EVAL" },
 ] as const;
 
 function ReportTraceMap({ stepIndex }: { stepIndex: number }) {
@@ -564,10 +569,9 @@ function ReportTraceMap({ stepIndex }: { stepIndex: number }) {
     <div className="report-trace-map" role="img" aria-label={`Dataflow trace progress: ${reportTraceNodes[activeNode].label}, step ${stepIndex + 1} of ${flowSteps.length}`}>
       {reportTraceNodes.map((node, index) => (
         <div className="contents" key={node.label}>
-          <div className="report-trace-node" data-state={index < activeNode ? "passed" : index === activeNode ? "active" : "pending"} data-sink={node.sink || undefined}>
+          <div className="report-trace-node" data-state={index < activeNode ? "passed" : index === activeNode ? "active" : "pending"}>
             <span><i /></span>
             <b>{node.label}</b>
-            <small>{node.file}</small>
           </div>
           {index < reportTraceNodes.length - 1 && (
             <span className="report-trace-edge" data-state={index < activeNode ? "passed" : index === activeNode ? "active" : "pending"} aria-hidden="true"><i /></span>
@@ -842,7 +846,7 @@ export function UnifiedWorkbench() {
 
   return (
     <div ref={scrollTrackRef} data-testid="demo-scroll-track" className="demo-scroll-track relative h-[calc(100vh-4rem)] min-h-[38rem] max-h-[48rem] overflow-y-auto overscroll-y-auto scrollbar-thin">
-      <div className="relative h-[520%]">
+      <div className="relative h-[720%]">
       <div className="sticky top-0 flex h-[calc(100vh-4rem)] min-h-[38rem] max-h-[48rem] items-center">
         <div data-testid="unified-workbench" className="agent-ui mx-auto w-full max-w-[82rem] overflow-hidden rounded-[20px] border border-black/10 bg-white p-2 dark:border-border dark:bg-card">
       <div className="overflow-hidden rounded-[13px] border border-border bg-background">
@@ -901,7 +905,7 @@ export function UnifiedWorkbench() {
 
               <AgentStage id="scan" setRef={(node) => { stageRefs.current[2] = node; }}>
                 <AgentText>I’ll apply the new specifications across the whole project.</AgentText>
-                <ToolActivity title="Ran OpenTaint scan" meta="3.8s" icon="search" defaultOpen>
+                <ToolActivity title="Ran OpenTaint scan" meta="30s" icon="search" defaultOpen>
                   <CommandCard><span className="text-[#2d8a4e] dark:text-[#8fc99f]">$</span> opentaint scan \{"\n"}    --project-model build/project-model \{"\n"}    --ruleset .opentaint/rules \{"\n"}    --passthrough-approximations .opentaint/model \{"\n"}    --output results/report.sarif \{"\n"}    --log-file opentaint.log</CommandCard>
                 </ToolActivity>
                 <AgentText>The scan found two paths into <code className="font-mono text-[12px] text-primary">Context.eval</code>. I’ll inspect both before accepting them.</AgentText>

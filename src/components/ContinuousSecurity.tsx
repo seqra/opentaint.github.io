@@ -147,10 +147,10 @@ function TriagePreview() {
 }
 
 const cards = [
-  { number: "01", title: "Discover", description: "Learn trust boundaries and vulnerability patterns as an informal specification.", preview: <DiscoverPreview /> },
-  { number: "02", title: "Enact", description: "Enact the informal specification as taint rules and dependency models.", preview: <EnactPreview /> },
-  { number: "03", title: "Scan", description: "Search the whole project with formal program analysis.", preview: <ScanPreview /> },
-  { number: "04", title: "Triage", description: "Confirm findings and tune away false alarms.", preview: <TriagePreview /> },
+  { title: "Discover", description: "Learn trust boundaries and vulnerability patterns as an informal specification.", preview: <DiscoverPreview /> },
+  { title: "Enact", description: "Enact the informal specification as taint rules and dependency models.", preview: <EnactPreview /> },
+  { title: "Scan", description: "Search the whole project with formal program analysis.", preview: <ScanPreview /> },
+  { title: "Triage", description: "Confirm findings and tune away false alarms.", preview: <TriagePreview /> },
 ] as const;
 
 function BalanceVisual() {
@@ -165,11 +165,18 @@ function BalanceVisual() {
         <circle cx="260" cy="59" r="4" fill="hsl(var(--background))" stroke="hsl(var(--brand))" strokeWidth="2" />
         <circle cx="111" cy="224" r="4" fill="hsl(var(--background))" stroke="hsl(var(--brand))" strokeWidth="2" />
         <circle cx="409" cy="224" r="4" fill="hsl(var(--background))" stroke="hsl(var(--brand))" strokeWidth="2" />
+        <foreignObject x="176" y="122" width="168" height="80">
+          <div className="flex h-full w-full items-center justify-center">
+            <div className="rounded-full border border-primary/45 bg-background px-4 py-3 text-center shadow-[0_0_0_8px_hsl(var(--brand)/0.05)]">
+              <span className="font-mono text-[8px] font-semibold uppercase tracking-[0.1em] text-primary">SOTA</span>
+              <span className="mt-1 block whitespace-nowrap font-mono text-[6px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">STATIC ANALYSIS</span>
+            </div>
+          </div>
+        </foreignObject>
       </svg>
       <div className="absolute left-1/2 top-5 -translate-x-1/2 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[9px] font-semibold text-primary">SCAN TIME</span><span className="mt-1 block font-mono text-[7px] font-semibold uppercase tracking-[0.1em] text-foreground">MINIMAL</span></div>
       <div className="absolute bottom-5 left-5 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[9px] font-semibold text-primary">MISSED FINDINGS</span><span className="mt-1 block font-mono text-[7px] font-semibold uppercase tracking-[0.1em] text-foreground">MINIMAL</span></div>
       <div className="absolute bottom-5 right-5 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[9px] font-semibold text-primary">FALSE ALARMS</span><span className="mt-1 block font-mono text-[7px] font-semibold uppercase tracking-[0.1em] text-foreground">MINIMAL</span></div>
-      <div className="absolute left-1/2 top-[59.5%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/45 bg-background px-4 py-3 text-center shadow-[0_0_0_8px_hsl(var(--brand)/0.05)]"><span className="font-mono text-[8px] font-semibold uppercase tracking-[0.1em] text-primary">SOTA</span><span className="mt-1 block whitespace-nowrap font-mono text-[6px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">STATIC ANALYSIS</span></div>
     </div>
   );
 }
@@ -207,11 +214,11 @@ function BundleVisual() {
           <div className="bundle-terminal-line"><b>$</b> opentaint scan<span className="bundle-caret">_</span></div>
           <div className="bundle-engine-flow">
             <span><i>01</i><b>Parse project</b><em>DONE</em></span>
-            <span><i>02</i><b>Build dataflow</b><em>DONE</em></span>
-            <span><i>03</i><b>Evaluate rules</b><em>DONE</em></span>
+            <span><i>02</i><b>Load rules</b><em>DONE</em></span>
+            <span><i>03</i><b>Start scan</b><em>DONE</em></span>
           </div>
           <div className="bundle-engine-meter"><i /></div>
-          <p className="bundle-engine-result"><b>1</b> complete trace</p>
+          <p className="bundle-engine-result"><b>3</b> complete traces</p>
         </section>
 
         <span className="bundle-system-arrow"><i /></span>
@@ -242,8 +249,7 @@ export function ContinuousSecurity() {
             <article key={card.title} className="workflow-card mobile-card-rail-item flex min-h-[25rem] flex-col overflow-hidden rounded-[24px] border border-border-strong bg-background shadow-sm">
               <div className="relative h-[16rem] p-4">{card.preview}</div>
               <div className="flex flex-1 flex-col px-6 pb-6 pt-2">
-                <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">{card.number}</p>
-                <h3 className="mt-2 font-mono text-2xl font-semibold tracking-[-0.04em] text-foreground">{card.title}</h3>
+                <h3 className="font-mono text-2xl font-semibold tracking-[-0.04em] text-foreground">{card.title}</h3>
                 <p className="mt-3 text-[11px] leading-5 text-muted-foreground">{card.description}</p>
               </div>
             </article>

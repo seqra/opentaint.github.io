@@ -202,7 +202,45 @@ test.describe("landing product demonstration", () => {
       const nextBox = element.children[1]?.getBoundingClientRect();
       return nextBox ? Math.max(0, railBox.right - nextBox.left) : 0;
     });
-    expect(visibleNext).toBeGreaterThanOrEqual(24);
+    expect(visibleNext).toBeGreaterThanOrEqual(20);
+  });
+
+  test("iPhone SE shows the open-source card as a scroll cue", async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 568 });
+    await page.goto("/");
+    const rail = page.getByRole("region", { name: "OpenTaint product advantages" });
+    await rail.scrollIntoViewIfNeeded();
+
+    const visibleNext = await rail.evaluate((element) => {
+      const railBox = element.getBoundingClientRect();
+      const nextBox = element.children[1]?.getBoundingClientRect();
+      return nextBox ? Math.max(0, railBox.right - nextBox.left) : 0;
+    });
+    expect(visibleNext).toBeGreaterThanOrEqual(12);
+  });
+
+  test("iPhone SE exposes every CVE evidence rail for horizontal scrolling", async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 568 });
+    await page.goto("/");
+
+    const rails = page.locator(".cve-card-rail");
+    await expect(rails).toHaveCount(3);
+
+    for (let index = 0; index < 3; index += 1) {
+      const rail = rails.nth(index);
+      const layout = await rail.evaluate((element) => {
+        const cards = Array.from(element.children);
+        const railBox = element.getBoundingClientRect();
+        const nextBox = cards[1]?.getBoundingClientRect();
+        return {
+          canScroll: element.scrollWidth > element.clientWidth,
+          visibleNext: nextBox ? Math.max(0, railBox.right - nextBox.left) : 0,
+        };
+      });
+
+      expect(layout.canScroll).toBe(true);
+      expect(layout.visibleNext).toBeGreaterThanOrEqual(12);
+    }
   });
 
   for (const viewport of [

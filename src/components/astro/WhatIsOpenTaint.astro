@@ -67,7 +67,7 @@ const traceSteps = [
           <span class="text-foreground">Agent reviews</span>
         </p>
 
-        <div class="mobile-card-rail mt-6 grid gap-6 sm:mt-8 lg:grid-cols-2" role="region" aria-label="Reviewed application code" tabindex="0">
+        <div class="cve-card-rail cve-card-rail-compact mobile-card-rail mt-6 grid gap-6 sm:mt-8 lg:grid-cols-2" role="region" aria-label="Reviewed application code" tabindex="0">
           <article class="reveal mobile-card-rail-item min-w-0 overflow-hidden rounded-xl border border-border-strong bg-code-bg">
             <div class="flex items-center justify-between border-b border-border bg-code-header px-4 py-3 font-mono text-[10px] text-muted-foreground">
               <span class="font-semibold text-foreground">WorkflowResource.java / Lambda.java</span>
@@ -114,7 +114,7 @@ const traceSteps = [
           <span class="text-foreground">Agent enacts</span>
         </p>
 
-        <div class="mobile-card-rail mt-6 grid gap-6 sm:mt-8 lg:grid-cols-2" role="region" aria-label="Formal security specifications" tabindex="0">
+        <div class="cve-card-rail cve-card-rail-compact mobile-card-rail mt-6 grid gap-6 sm:mt-8 lg:grid-cols-2" role="region" aria-label="Formal security specifications" tabindex="0">
           {artifacts.map((artifact) => (
             <article class="reveal mobile-card-rail-item flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong transition-colors duration-300 hover:border-primary/60 motion-reduce:transition-none">
               <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-border bg-code-header px-4 py-3">
@@ -134,7 +134,7 @@ const traceSteps = [
           <span class="text-foreground">Formal taint analysis searches</span>
         </p>
 
-        <div class="mobile-card-rail mt-6 grid items-stretch gap-6 sm:mt-8 lg:grid-cols-[1.5fr_0.5fr] lg:gap-10" role="region" aria-label="OpenTaint finding and reported trace" tabindex="0">
+        <div class="cve-card-rail cve-card-rail-compact mobile-card-rail mt-6 grid items-stretch gap-6 sm:mt-8 lg:grid-cols-[1.5fr_0.5fr] lg:gap-10" role="region" aria-label="OpenTaint finding and reported trace" tabindex="0">
           {/* Both panels are the same box: header strip, body, footer strip —
               so their borders, tops, and bottoms line up whatever the content
               inside them costs. */}

@@ -3,11 +3,15 @@ import { describe, expect, it } from "vitest";
 import { ContinuousSecurity } from "../ContinuousSecurity";
 
 describe("ContinuousSecurity", () => {
-  it("leads with the reusable-scan promise", () => {
+  it("places the reusable-scan promise after the workflow", () => {
     render(<ContinuousSecurity />);
 
-    expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("Turn one-off review into unlimited scans");
+    const workflow = screen.getByRole("heading", { name: "Triage", level: 3 }).closest(".workflow-card-grid");
+    const promise = screen.getByRole("heading", { level: 2 });
+
+    expect(promise).toHaveTextContent("Turn one-off review into unlimited scans");
     expect(screen.getByText("The flexibility of model reasoning and the consistency of formal program analysis combined")).toBeVisible();
+    expect(workflow?.compareDocumentPosition(promise) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it("shows the four-part OpenTaint workflow", () => {
@@ -30,10 +34,21 @@ describe("ContinuousSecurity", () => {
   it("keeps the visible workflow copy minimal", () => {
     render(<ContinuousSecurity />);
 
-    expect(screen.getByText("Model reasoning extracts an informal security specification from the project.")).toBeVisible();
-    expect(screen.getByText("Agents transform the informal specification into taint rules and dependency models.")).toBeVisible();
-    expect(screen.getByText("Formal program analysis searches the project using the formal specification.")).toBeVisible();
-    expect(screen.getByText("Agents review scan results and refine the specification to reduce false alarms.")).toBeVisible();
+    expect(screen.getByText("Extract trust boundaries and vulnerability patterns.")).toBeVisible();
+    expect(screen.getByText("Turn what the review learned into formal specifications.")).toBeVisible();
+    expect(screen.getByText("Search the whole project with formal program analysis.")).toBeVisible();
+    expect(screen.getByText("Confirm findings and tune away false alarms.")).toBeVisible();
     expect(screen.queryByText("The same review can produce different findings")).not.toBeInTheDocument();
+  });
+
+  it("shows the performance balance and the open-source bundle visually", () => {
+    render(<ContinuousSecurity />);
+
+    expect(screen.getByRole("heading", { name: "Practical balance through state-of-the-art static analysis", level: 3 })).toBeVisible();
+    expect(screen.getByText("Minimize missed findings and false alarms without making whole-project analysis impractical.")).toBeVisible();
+    expect(screen.getByRole("img", { name: "OpenTaint balances scan speed, finding coverage, and precision" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Open source, batteries included", level: 3 })).toBeVisible();
+    expect(screen.getByText("One open-source stack from agent review to CI.")).toBeVisible();
+    expect(screen.getByRole("img", { name: /open-source OpenTaint bundle/ })).toBeVisible();
   });
 });

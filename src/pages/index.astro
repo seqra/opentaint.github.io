@@ -72,7 +72,7 @@ const structuredData = [
       })),
   },
 ];
-const heroWorkflowFlowLines = createHeroFlowField();
+const heroWorkflowFlowLines = createHeroFlowField({ height: 1440 });
 ---
 
 <BaseLayout
@@ -87,14 +87,10 @@ const heroWorkflowFlowLines = createHeroFlowField();
       <div class="hero-workflow-group">
         <svg class="hero-workflow-signal-field" viewBox="0 0 1200 1440" preserveAspectRatio="none" aria-hidden="true">
           <g class="hero-signal-graph">
-            {[0, 720].map((offset) => (
-              <g transform={`translate(0 ${offset})`}>
-                {heroWorkflowFlowLines.map((line) => <path d={line.d}></path>)}
-                {heroWorkflowFlowLines.map((line, index) => line.active
-                  ? <path class:list={["hero-signal-active", `hero-signal-active-${index % 3}`]} d={line.d}></path>
-                  : null)}
-              </g>
-            ))}
+            {heroWorkflowFlowLines.map((line) => <path d={line.d}></path>)}
+            {heroWorkflowFlowLines.map((line, index) => line.active
+              ? <path class:list={["hero-signal-active", `hero-signal-active-${index % 3}`]} d={line.d}></path>
+              : null)}
           </g>
         </svg>
 

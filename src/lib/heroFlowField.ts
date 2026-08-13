@@ -7,8 +7,12 @@ export type HeroFlowLine = {
   active: boolean;
 };
 
+type FlowFieldOptions = {
+  height?: number;
+};
+
 const width = 1200;
-const height = 720;
+const defaultHeight = 720;
 const noiseScale = 0.0035;
 const stepLength = 3.5;
 const maxSteps = 64;
@@ -52,7 +56,7 @@ function catmullRomPath(points: Point[]) {
  * small repeated steps through the field. The seed keeps the published hero
  * stable across renders.
  */
-export function createHeroFlowField(): HeroFlowLine[] {
+export function createHeroFlowField({ height = defaultHeight }: FlowFieldOptions = {}): HeroFlowLine[] {
   const noise = new NoiseConstructor(58138);
   const lines: HeroFlowLine[] = [];
   let lineIndex = 0;

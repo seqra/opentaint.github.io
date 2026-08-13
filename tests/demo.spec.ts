@@ -191,6 +191,20 @@ test.describe("landing product demonstration", () => {
     await expect(triage).not.toContainText("PreviewRenderer.java:11");
   });
 
+  test("iPhone SE shows the next workflow card as a scroll cue", async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 568 });
+    await page.goto("/");
+    const rail = page.getByRole("region", { name: "OpenTaint workflow" });
+    await rail.scrollIntoViewIfNeeded();
+
+    const visibleNext = await rail.evaluate((element) => {
+      const railBox = element.getBoundingClientRect();
+      const nextBox = element.children[1]?.getBoundingClientRect();
+      return nextBox ? Math.max(0, railBox.right - nextBox.left) : 0;
+    });
+    expect(visibleNext).toBeGreaterThanOrEqual(24);
+  });
+
   for (const viewport of [
     { name: "phone", width: 375, height: 812 },
     { name: "Zenfone 7", width: 412, height: 915 },

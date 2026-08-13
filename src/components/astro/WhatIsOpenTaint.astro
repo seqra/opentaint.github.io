@@ -145,14 +145,12 @@ const traceSteps = [
 
             <a href="/reports/conductor-cve-2026-58138.html" class="group relative block flex-1 overflow-hidden bg-background">
               <span class="pointer-events-none absolute bottom-0 right-0 z-10 translate-y-full bg-primary px-3 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary-foreground transition-transform duration-300 ease-out group-hover:translate-y-0 group-focus-visible:translate-y-0 motion-reduce:transition-none">Open the report</span>
-              <picture>
-                <source media="(max-width: 639px)" srcset="/pictures/report/trace-zoom-mobile-light.png" />
-                <img src="/pictures/report/trace-zoom-light.png" alt="OpenTaint report zoomed into the vulnerable Context.eval call and the final steps of its 182-step taint trace" class="h-full min-h-[20rem] w-full object-cover object-center transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.015] sm:min-h-[24rem] dark:hidden" loading="lazy" width="2000" height="1340" />
-              </picture>
-              <picture class="hidden dark:block">
-                <source media="(max-width: 639px)" srcset="/pictures/report/trace-zoom-mobile-dark.png" />
-                <img src="/pictures/report/trace-zoom-dark.png" alt="OpenTaint report zoomed into the vulnerable Context.eval call and the final steps of its 182-step taint trace" class="h-full min-h-[20rem] w-full object-cover object-center transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.015] sm:min-h-[24rem]" loading="lazy" width="2000" height="1340" />
-              </picture>
+              <div class="reported-finding-mobile" role="img" aria-label="OpenTaint report focused on the vulnerable Context.eval call and the final taint-trace steps">
+                <span class="reported-finding-crop reported-finding-code"></span>
+                <span class="reported-finding-crop reported-finding-trace"></span>
+              </div>
+              <img src="/pictures/report/trace-zoom-light.png" alt="OpenTaint report zoomed into the vulnerable Context.eval call and the final steps of its 182-step taint trace" class="hidden h-full min-h-[24rem] w-full object-cover object-center transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.015] sm:block dark:sm:hidden" loading="lazy" width="2000" height="1340" />
+              <img src="/pictures/report/trace-zoom-dark.png" alt="OpenTaint report zoomed into the vulnerable Context.eval call and the final steps of its 182-step taint trace" class="hidden h-full min-h-[24rem] w-full object-cover object-center transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.015] dark:sm:block" loading="lazy" width="2000" height="1340" />
             </a>
 
             <p class="border-t border-border px-4 py-3 font-mono text-[11px] leading-5 text-muted-foreground">

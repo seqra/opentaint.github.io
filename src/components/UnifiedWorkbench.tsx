@@ -442,7 +442,7 @@ function ScanResults({ progress }: { progress: number }) {
           <span className="text-[11px] font-semibold text-foreground">OpenTaint scan</span>
           <span className="text-[9px] font-semibold text-[#2d8a4e] dark:text-[#79bd8f]">{complete ? "COMPLETE" : "ANALYZING"}</span>
         </div>
-        <div className="min-h-0 flex-1 overflow-hidden p-6">
+        <div className="flex min-h-0 flex-1 flex-col justify-center overflow-hidden p-6">
           <div className="grid grid-cols-3 gap-3">
             <div className="rounded-lg border border-border bg-background p-3"><span className="font-mono text-[9px] text-muted-foreground">PROJECT MODEL</span><b className="mt-1 block text-[12px] text-foreground">Built</b></div>
             <div className="rounded-lg border border-border bg-background p-3"><span className="font-mono text-[9px] text-muted-foreground">RULES + MODELS</span><b className="mt-1 block text-[12px] text-foreground">Loaded</b></div>
@@ -452,7 +452,7 @@ function ScanResults({ progress }: { progress: number }) {
           <div className="mt-6 flex items-center justify-between">
             <h3 className="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-foreground">2 candidate findings</h3>
           </div>
-          <div className="mt-3 grid gap-3 xl:grid-cols-2">
+          <div className="mt-3 grid min-h-[10rem] gap-3 xl:grid-cols-2">
             <ScanFinding title="Unauthenticated script execution" file="ScriptRuntime.java:11" path="POST /api/jobs → Context.eval" />
             <ScanFinding title="Script execution in preview renderer" file="PreviewRenderer.java:11" path="POST /api/preview → Context.eval" />
           </div>
@@ -694,6 +694,8 @@ function TriageView({ progress }: { progress: number }) {
 
 function FindingReport({ progress }: { progress: number }) {
   const [stepIndex, setStepIndex] = useState(0);
+  const codeScrollRef = useRef<HTMLDivElement>(null);
+  const currentRowRef = useRef<HTMLDivElement>(null);
   const currentStep = flowSteps[stepIndex];
   const activeFile = currentStep.file;
   const currentLine = currentStep.line;
@@ -707,6 +709,14 @@ function FindingReport({ progress }: { progress: number }) {
   useEffect(() => {
     move(Math.round(progress * (flowSteps.length - 1)));
   }, [progress]);
+
+  useEffect(() => {
+    const scroller = codeScrollRef.current;
+    const row = currentRowRef.current;
+    if (!scroller || !row) return;
+    const target = row.offsetTop - Math.max(16, (scroller.clientHeight - row.offsetHeight) / 2);
+    scroller.scrollTop = Math.max(0, Math.min(target, scroller.scrollHeight - scroller.clientHeight));
+  }, [activeFile, currentLine, stepIndex]);
 
   return (
     <SurfaceStory
@@ -728,14 +738,14 @@ function FindingReport({ progress }: { progress: number }) {
         </div>
       </div>
       <ReportTraceMap stepIndex={stepIndex} />
-      <div className="relative min-h-0 flex-1 overflow-auto py-4 scrollbar-thin">
-        <div className="min-w-[42rem] text-[12px] leading-6">
+      <div ref={codeScrollRef} className="relative min-h-0 flex-1 overflow-auto py-4 scrollbar-thin">
+        <div className="min-w-[42rem] pb-6 text-[12px] leading-6">
           {sourceFiles[activeFile].split("\n").map((code, index) => {
             const line = index + 1;
             const isCurrent = line === currentLine;
             const isSink = isCurrent && stepIndex === flowSteps.length - 1;
             return (
-              <div key={line} className="relative">
+              <div key={line} ref={isCurrent ? currentRowRef : undefined} className="relative">
                 <div className={["grid min-h-6 grid-cols-[2rem_3rem_1fr] px-3", isSink ? "bg-primary/20" : isCurrent ? "bg-blue-500/20" : ""].join(" ")}>
                   <span className={isSink ? "text-primary" : isCurrent ? "text-blue-500" : ""}>{isCurrent ? "▶" : ""}</span>
                   <span className="select-none pr-3 text-right text-[#b3a396] dark:text-[#5e4a4a]">{line}</span>
@@ -745,8 +755,7 @@ function FindingReport({ progress }: { progress: number }) {
                   <div
                     role="status"
                     className={[
-                      "absolute left-20 z-20 w-[28rem] max-w-[calc(100%-6rem)] rounded-lg border border-primary/30 bg-background/95 px-3 py-2 font-sans text-[11px] leading-4 text-foreground shadow-[0_8px_28px_rgba(37,25,20,0.2)] backdrop-blur-sm dark:bg-card/95",
-                      "top-full mt-2",
+                      "relative z-20 ml-20 mt-2 w-[28rem] max-w-[calc(100%-6rem)] rounded-lg border border-primary/30 bg-background/95 px-3 py-2 font-sans text-[11px] leading-4 text-foreground shadow-[0_8px_28px_rgba(37,25,20,0.2)] backdrop-blur-sm dark:bg-card/95",
                     ].join(" ")}
                   >
                     <div className="mb-1 flex items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.06em] text-muted-foreground">

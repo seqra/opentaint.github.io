@@ -250,7 +250,7 @@ export function ContinuousSecurity() {
               <div className="relative h-[16rem] p-4">{card.preview}</div>
               <div className="flex flex-1 flex-col px-6 pb-6 pt-2">
                 <h3 className="font-mono text-2xl font-semibold tracking-[-0.04em] text-foreground">{card.title}</h3>
-                <p className="mt-3 text-[11px] leading-5 text-muted-foreground">{card.description}</p>
+                <p className="mt-3 break-words text-[11px] leading-5 text-muted-foreground">{card.description}</p>
               </div>
             </article>
           ))}

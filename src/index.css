@@ -235,6 +235,41 @@
     @apply mt-8 sm:mt-12 lg:mt-16;
   }
 
+  .reported-finding-mobile {
+    display: grid;
+    min-height: 20rem;
+    grid-template-rows: 1fr 1fr;
+    gap: 1px;
+    background: hsl(var(--border));
+  }
+
+  .reported-finding-crop {
+    display: block;
+    min-height: 0;
+    background-color: hsl(var(--background));
+    background-image: url("/pictures/report/trace-zoom-mobile-light.png");
+    background-repeat: no-repeat;
+    background-size: 260% auto;
+  }
+
+  .reported-finding-code {
+    background-position: 72% 0;
+  }
+
+  .reported-finding-trace {
+    background-position: 0 100%;
+  }
+
+  .dark .reported-finding-crop {
+    background-image: url("/pictures/report/trace-zoom-mobile-dark.png");
+  }
+
+  @media (min-width: 640px) {
+    .reported-finding-mobile {
+      display: none;
+    }
+  }
+
   /* Repeated visual evidence becomes a native swipe rail on phones. The next
      card remains visible at the edge, so the interaction explains itself
      without adding another label or pagination control. */
@@ -278,6 +313,25 @@
     .value-card-grid .bundle-system-body {
       min-height: 15rem;
       padding-inline: var(--spacing-04);
+    }
+  }
+
+  @media (max-width: 374px) {
+    .workflow-card-grid.mobile-card-rail {
+      grid-auto-columns: calc(100% - var(--spacing-09));
+    }
+
+    .workflow-card-grid .workflow-card > :last-child {
+      padding-inline: var(--spacing-05);
+    }
+
+    .workflow-card-grid .workflow-card > :last-child p {
+      font-size: 10px;
+      line-height: 1.125rem;
+    }
+
+    .workflow-spec-lines em {
+      letter-spacing: 0.04em;
     }
   }
 
@@ -954,6 +1008,7 @@
 
   .enact-map-facts > span {
     display: flex;
+    flex: 1 1 0;
     min-height: 1.2rem;
     align-items: center;
     border: 1px solid hsl(var(--border));

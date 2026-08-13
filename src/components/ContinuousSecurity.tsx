@@ -183,23 +183,17 @@ function BalanceVisual() {
 
 function BundleVisual() {
   return (
-    <div className="bundle-system value-visual relative min-h-[20rem] overflow-hidden rounded-[18px] border border-border bg-code-bg" role="img" aria-label="The open-source OpenTaint bundle connects agent skills, taint rules, dependency models, the scan engine, report viewer, and CI integration">
-      <div className="bundle-window-bar" aria-hidden="true">
-        <span className="bundle-window-dots"><i /><i /><i /></span>
-        <span className="bundle-window-title">opentaint / security stack</span>
-        <span className="bundle-open-badge">OPEN SOURCE</span>
-      </div>
-
+    <div className="bundle-system value-visual relative min-h-[20rem] overflow-hidden rounded-[18px] border border-border bg-background" role="img" aria-label="The open-source OpenTaint bundle connects agent skills, taint rules, dependency models, formal analysis, report viewer, and CI integration">
       <div className="bundle-system-body" aria-hidden="true">
         <section className="bundle-system-column">
           <p className="bundle-system-kicker">SECURITY KNOWLEDGE</p>
           <div className="bundle-file bundle-file-skill">
             <span className="bundle-file-ext">md</span>
-            <span><b>appsec-agent</b><small>discover + enact</small></span>
+            <span><b>appsec-agent</b><small>discover and enact</small></span>
           </div>
           <div className="bundle-file">
             <span className="bundle-file-ext">yml</span>
-            <span><b>taint rules</b><small>sources + sinks</small></span>
+            <span><b>taint rules</b><small>sources and sinks</small></span>
           </div>
           <div className="bundle-file">
             <span className="bundle-file-ext">yml</span>

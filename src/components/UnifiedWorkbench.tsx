@@ -288,7 +288,7 @@ function YamlCode({ code }: { code: string }) {
 
 function ArtifactFrame({ path, kind, added, removed = 0, open, onToggle, children }: { path: string; kind: string; added: number; removed?: number; open: boolean; onToggle: () => void; children: ReactNode }) {
   return (
-    <article className="overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] shadow-sm dark:bg-code">
+    <article className={["flex min-h-0 w-full flex-col overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] shadow-sm dark:bg-code", open ? "flex-1" : "shrink-0"].join(" ")}>
       <button type="button" aria-expanded={open} onClick={onToggle} className="flex min-h-10 w-full items-center gap-2 bg-[#f0eeeb] px-3 text-left dark:bg-code-header">
         <ChevronDown className={["h-4 w-4 shrink-0 text-muted-foreground transition-transform", open ? "" : "-rotate-90"].join(" ")} strokeWidth={1.8} aria-hidden="true" />
         <FileCode2 className="h-3.5 w-3.5 text-primary" strokeWidth={1.7} aria-hidden="true" />
@@ -298,11 +298,11 @@ function ArtifactFrame({ path, kind, added, removed = 0, open, onToggle, childre
         <span className="font-mono text-[10px] text-[#c73a32] dark:text-[#ff746c]">-{removed}</span>
       </button>
       <div className={[
-        "grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none",
-        open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+        "grid min-h-0 transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none",
+        open ? "flex-1 grid-rows-[minmax(0,1fr)]" : "grid-rows-[0fr]",
       ].join(" ")}>
         <div className="min-h-0 overflow-hidden">
-          <div className="border-t border-border">{children}</div>
+          <div className="h-full border-t border-border">{children}</div>
         </div>
       </div>
     </article>
@@ -320,7 +320,7 @@ function Artifact({ path, kind, code, open, onToggle, scrollProgress = 0 }: { pa
 
   return (
     <ArtifactFrame path={path} kind={kind} added={code.split("\n").length} open={open} onToggle={onToggle}>
-      <div ref={codeScrollRef} data-testid="artifact-code-scroll" className="max-h-60 overflow-auto scrollbar-thin"><YamlCode code={code} /></div>
+      <div ref={codeScrollRef} data-testid="artifact-code-scroll" className="h-full overflow-auto scrollbar-thin"><YamlCode code={code} /></div>
     </ArtifactFrame>
   );
 }
@@ -383,11 +383,11 @@ function Specifications({ progress }: { progress: number }) {
   return (
     <SurfaceStory
       title="Formal security specifications"
-      window={<div data-testid="artifact-scroll" className="h-full overflow-hidden rounded-[10px] border border-border bg-[#f4f2ef] p-3 shadow-sm dark:bg-card">
+      window={<div data-testid="artifact-scroll" className="flex h-full min-h-0 flex-col overflow-hidden rounded-[10px] border border-border bg-[#f4f2ef] p-3 shadow-sm dark:bg-card">
         <SpecificationTransformation activeArtifact={activeArtifact} />
-        <div className="mx-auto max-w-[40rem] space-y-2">
+        <div className={["mx-auto flex min-h-0 w-full max-w-[40rem] flex-1 flex-col gap-2", openArtifact === -1 ? "justify-between" : ""].join(" ")}>
           {artifacts.map((artifact, index) => (
-            <div key={artifact.path}>
+            <div key={artifact.path} className={index === openArtifact ? "flex min-h-0 flex-1" : "shrink-0"}>
               <Artifact
                 {...artifact}
                 open={index === openArtifact}
@@ -415,21 +415,23 @@ type ScanFindingProps = {
 
 function ScanFinding({ title, file, path }: ScanFindingProps) {
   return (
-    <article className="rounded-[10px] border border-primary/35 bg-background p-4">
+    <article className="flex h-full min-h-0 flex-col rounded-[10px] border border-primary/35 bg-background p-4">
       <div className="flex items-center justify-between gap-3">
         <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-primary">CWE-94</span>
         <span className="font-mono text-[9px] text-muted-foreground">Candidate</span>
       </div>
-      <h4 className="mt-2 flex min-h-10 items-end text-[13px] font-semibold leading-5 text-foreground">{title}</h4>
+      <h4 className="mt-4 flex min-h-10 items-end text-[13px] font-semibold leading-5 text-foreground">{title}</h4>
       <p className="mt-2 font-mono text-[10px] text-muted-foreground">{file}</p>
-      <div className="mt-3 flex items-center gap-2" aria-hidden="true">
-        <span className="h-2 w-2 rounded-full bg-primary" />
-        <span className="h-px flex-1 bg-primary/35" />
-        <span className="h-2 w-2 rounded-sm border border-primary bg-primary/10" />
-        <span className="h-px flex-1 bg-primary/35" />
-        <span className="h-2 w-2 rotate-45 bg-primary" />
+      <div className="flex flex-1 flex-col justify-center pt-4">
+        <div className="flex items-center gap-2" aria-hidden="true">
+          <span className="h-2 w-2 rounded-full bg-primary" />
+          <span className="h-px flex-1 bg-primary/35" />
+          <span className="h-2 w-2 rounded-sm border border-primary bg-primary/10" />
+          <span className="h-px flex-1 bg-primary/35" />
+          <span className="h-2 w-2 rotate-45 bg-primary" />
+        </div>
+        <p className="mt-2 text-[10px] leading-4 text-muted-foreground">{path}</p>
       </div>
-      <p className="mt-2 text-[10px] leading-4 text-muted-foreground">{path}</p>
     </article>
   );
 }
@@ -446,8 +448,8 @@ function ScanResults({ progress }: { progress: number }) {
           <span className="text-[11px] font-semibold text-foreground">OpenTaint scan</span>
           <span className="text-[9px] font-semibold text-[#2d8a4e] dark:text-[#79bd8f]">{complete ? "COMPLETE" : "ANALYZING"}</span>
         </div>
-        <div className="flex min-h-0 flex-1 flex-col justify-center overflow-hidden p-5">
-          <div className="grid grid-cols-3 gap-2">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-5">
+          <div className="grid shrink-0 grid-cols-3 gap-2">
             <div className="rounded-lg border border-border bg-background p-4"><span className="font-mono text-[9px] text-muted-foreground">PROJECT MODEL</span><b className="mt-1 block text-[12px] text-foreground">Built</b></div>
             <div className="rounded-lg border border-border bg-background p-4"><span className="font-mono text-[9px] text-muted-foreground">RULES AND MODELS</span><b className="mt-1 block text-[12px] text-foreground">Loaded</b></div>
             <div className="rounded-lg border border-border bg-background p-4"><span className="font-mono text-[9px] text-muted-foreground">TIME</span><b className="mt-1 block text-[12px] text-foreground">30s</b></div>
@@ -456,7 +458,7 @@ function ScanResults({ progress }: { progress: number }) {
           <div className="mt-5 flex items-center justify-between">
             <h3 className="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-foreground">2 candidate findings</h3>
           </div>
-          <div className="mt-3 grid min-h-[10rem] grid-cols-2 gap-3">
+          <div className="mt-3 grid min-h-0 flex-1 grid-cols-2 gap-3">
             <ScanFinding title="Unauthenticated script execution" file="ScriptRuntime.java:11" path="POST /api/jobs → Context.eval" />
             <ScanFinding title="Script execution in preview renderer" file="PreviewRenderer.java:11" path="POST /api/preview → Context.eval" />
           </div>
@@ -734,14 +736,14 @@ function FindingReport({ progress }: { progress: number }) {
         </div>
       </div>
       <div data-testid="report-code-view" className="relative min-h-0 flex-1 overflow-hidden py-2">
-        <div className="text-[clamp(8px,0.75vw,10px)] leading-[1.45]">
+        <div className="text-[clamp(10.5px,0.85vw,12px)] leading-[1.4] tracking-[-0.025em]">
           {activeSourceLines.map((code, index) => {
             const line = index + 1;
             const isCurrent = line === currentLine;
             const isSink = isCurrent && stepIndex === flowSteps.length - 1;
             return (
               <div key={line} className="relative">
-                <div className={["grid min-h-[1.45em] grid-cols-[1.25rem_2rem_minmax(0,1fr)] px-2", isSink ? "bg-primary/20" : isCurrent ? "bg-blue-500/20" : ""].join(" ")}>
+                <div className={["grid min-h-[1.4em] grid-cols-[0.9rem_1.5rem_minmax(0,1fr)] px-1.5", isSink ? "bg-primary/20" : isCurrent ? "bg-blue-500/20" : ""].join(" ")}>
                   <span className={isSink ? "text-primary" : isCurrent ? "text-blue-500" : ""}>{isCurrent ? "▶" : ""}</span>
                   <span className="select-none pr-3 text-right text-[#b3a396] dark:text-[#5e4a4a]">{line}</span>
                   <span className="whitespace-pre"><JavaLine line={code} /></span>
@@ -750,11 +752,11 @@ function FindingReport({ progress }: { progress: number }) {
                   <div
                     role="status"
                     className={[
-                      "absolute left-12 right-3 z-20 rounded-lg border border-primary/30 bg-background/95 px-3 py-2 font-sans text-[9px] leading-[13px] text-foreground shadow-[0_8px_28px_rgba(37,25,20,0.2)] backdrop-blur-sm dark:bg-card/95",
+                      "absolute left-10 right-2 z-20 rounded-lg border border-primary/30 bg-background/95 px-3 py-2 font-sans text-[10.5px] leading-[15px] text-foreground shadow-[0_8px_28px_rgba(37,25,20,0.2)] backdrop-blur-sm dark:bg-card/95",
                       placeTooltipAbove ? "bottom-full mb-1" : "top-full mt-1",
                     ].join(" ")}
                   >
-                    <div className="mb-1 flex items-center justify-between gap-3 font-mono text-[8px] uppercase tracking-[0.04em] text-muted-foreground">
+                    <div className="mb-1 flex items-center justify-between gap-3 font-mono text-[9px] uppercase tracking-[0.04em] text-muted-foreground">
                       <span>Step {stepIndex + 1} of {flowSteps.length}</span>
                       <span>{currentStep.file}:{currentStep.line}</span>
                     </div>

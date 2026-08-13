@@ -13,7 +13,7 @@ describe("AnimatedHero", () => {
     expect(screen.getByText("Agentic", { selector: "span" })).toHaveClass("hero-prefix-word");
     expect(document.querySelector(".hero-prefix-slot")?.children).toHaveLength(3);
     expect(document.querySelector(".hero-title-column")?.textContent).toBe("ApplicationSecurityTesting");
-    expect(document.querySelector(".hero-signal-field")).toHaveAttribute("aria-hidden", "true");
+    expect(document.querySelector(".hero-signal-field")).toBeNull();
     expect(screen.getByRole("link", { name: "Install" })).toHaveAttribute("href", "#install");
     expect(screen.getByRole("link", { name: "Star" })).toHaveAttribute("href", "https://github.com/seqra/opentaint");
   });

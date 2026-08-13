@@ -333,7 +333,6 @@
   /* These sections form deliberate narrative groups rather than inheriting
      their paint from DOM position. The real-world review starts a new scope;
      engine proof and agent workflow share the following scope. */
-  .continuous-security-band,
   .landing-sections > .band.engine-proof-band,
   .landing-sections > .band.agent-skills-band {
     background-color: hsl(var(--background));
@@ -343,11 +342,53 @@
     isolation: isolate;
   }
 
+  .landing-sections > astro-island:has(> .continuous-security-band) > .continuous-security-band::before {
+    content: none;
+  }
+
   .security-debt-band,
   .real-world-band,
   .quickstart-section,
   .engine-proof-band {
     isolation: isolate;
+  }
+
+  .continuous-security-band,
+  .demo-section,
+  .quickstart-section {
+    background-color: hsl(var(--band));
+  }
+
+  .hero-workflow-group {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background-color: hsl(var(--band));
+  }
+
+  .hero-workflow-group .hero-band,
+  .hero-workflow-group .continuous-security-band {
+    background-color: transparent;
+  }
+
+  .hero-workflow-signal-field {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    color: hsl(var(--brand));
+    opacity: 0.31;
+    pointer-events: none;
+    mask-image: linear-gradient(to bottom, black, black 96%, transparent);
+  }
+
+  .dark .hero-workflow-signal-field {
+    opacity: 0.44;
+  }
+
+  .landing-sections > .band.security-debt-band {
+    background-color: hsl(var(--background));
   }
 
   /* Static, seeded Perlin flow fields sit at section scope. They add depth to
@@ -383,41 +424,6 @@
     opacity: 0.42;
   }
 
-  /* A seeded Perlin flow field held still behind the comparison section. The
-     internal story moves while the section background remains static. */
-  .continuous-security-noise {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    overflow: hidden;
-    color: hsl(var(--brand));
-    opacity: 0.1;
-    pointer-events: none;
-    mask-image: linear-gradient(to bottom, transparent, black 4%, black 96%, transparent);
-  }
-
-  .continuous-security-noise svg {
-    position: sticky;
-    top: 0;
-    display: block;
-    width: 100%;
-    height: 100svh;
-  }
-
-  .continuous-security-noise path {
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.25;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    vector-effect: non-scaling-stroke;
-    opacity: 0.42;
-  }
-
-  .dark .continuous-security-noise {
-    opacity: 0.12;
-  }
-
   .dark .section-flow-noise {
     opacity: 0.09;
   }
@@ -426,10 +432,89 @@
     opacity: 0.06;
   }
 
-  .continuous-security-scroll {
-    overscroll-behavior: auto;
-    scrollbar-color: hsl(var(--border-strong)) transparent;
-    scrollbar-width: thin;
+  .workflow-preview {
+    transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+    transform-origin: center top;
+  }
+
+  .workflow-card:hover .workflow-preview {
+    transform: translate3d(0, -4px, 0) scale(1.01);
+  }
+
+  .workflow-visual {
+    transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1), border-color 240ms ease;
+  }
+
+  .workflow-card:hover .workflow-visual {
+    transform: translate3d(0, -4px, 0);
+    border-color: hsl(var(--brand) / 0.42);
+  }
+
+  .workflow-diagram-node {
+    overflow: hidden;
+    border: 1px solid hsl(var(--border-strong));
+    border-radius: 0.75rem;
+    background: hsl(var(--background));
+    box-shadow: 0 8px 24px hsl(var(--foreground) / 0.07);
+  }
+
+  .workflow-diagram-label {
+    font-family: var(--font-mono);
+    font-size: 7px;
+    font-weight: 650;
+    letter-spacing: 0.06em;
+    color: hsl(var(--foreground));
+    white-space: nowrap;
+  }
+
+  .workflow-reasoning-node,
+  .workflow-engine-node {
+    position: relative;
+    display: flex;
+    height: 3.5rem;
+    width: 3.5rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid hsl(var(--brand) / 0.42);
+    border-radius: 9999px;
+    background: hsl(var(--background));
+    box-shadow: 0 0 0 8px hsl(var(--brand) / 0.055), 0 10px 28px hsl(var(--foreground) / 0.08);
+  }
+
+  .workflow-engine-node {
+    height: 4rem;
+    width: 4rem;
+  }
+
+  .workflow-connector-base,
+  .workflow-connector-signal {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.25;
+    stroke-linecap: round;
+  }
+
+  .workflow-connector-base {
+    opacity: 0.25;
+  }
+
+  .workflow-connector-signal {
+    stroke-width: 2;
+    stroke-dasharray: 7 28;
+    animation: workflow-signal 3.6s linear infinite;
+  }
+
+  .workflow-scan-ring {
+    animation: workflow-ring 12s linear infinite;
+  }
+
+  .workflow-loop-path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-dasharray: 4 6;
   }
 
   .landing-sections > .band.real-world-band {
@@ -547,25 +632,6 @@
     }
   }
 
-  .hero-signal-field {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    bottom: 0;
-    z-index: -1;
-    width: 100vw;
-    height: 100%;
-    transform: translateX(-50%);
-    color: hsl(var(--brand));
-    opacity: 0.26;
-    pointer-events: none;
-    mask-image: linear-gradient(to bottom, black, black 94%, transparent);
-  }
-
-  .dark .hero-signal-field {
-    opacity: 0.4;
-  }
-
   .hero-signal-graph path {
     fill: none;
     stroke: currentColor;
@@ -590,10 +656,33 @@
     padding-top: var(--spacing-10);
   }
 
+  .landing-sections > astro-island:has(> .quickstart-section) > .quickstart-section::before {
+    content: none;
+  }
+
   .demo-section {
-    background-color: hsl(var(--band));
-    padding-top: 0;
+    background-color: hsl(var(--background));
+    padding-top: var(--spacing-08);
     padding-bottom: var(--spacing-10);
+    overflow: hidden;
+  }
+
+  .demo-scroll-track {
+    scrollbar-gutter: stable;
+    border-radius: 28px;
+    overflow-x: hidden;
+    mask-image: linear-gradient(to bottom, transparent 0, black var(--spacing-07), black calc(100% - var(--spacing-07)), transparent 100%);
+  }
+
+  .demo-shadow-frame {
+    position: relative;
+    margin-inline: calc(var(--spacing-07) * -1);
+    padding-inline: var(--spacing-07);
+    filter: drop-shadow(0 28px 45px rgb(37 25 20 / 0.16));
+  }
+
+  .dark .demo-shadow-frame {
+    filter: drop-shadow(0 28px 45px rgb(0 0 0 / 0.36));
   }
 
   .demo-section::before {
@@ -610,7 +699,7 @@
     }
 
     .demo-section {
-      padding-top: 0;
+      padding-top: var(--spacing-09);
       padding-bottom: var(--spacing-11);
     }
   }
@@ -631,7 +720,7 @@
     }
 
     .demo-section {
-      padding-top: 0;
+      padding-top: var(--spacing-10);
       padding-bottom: var(--spacing-12);
     }
   }
@@ -1093,6 +1182,10 @@
   .hero-signal-active {
     animation: none;
   }
+
+  .workflow-preview {
+    transition: none;
+  }
 }
 
 @keyframes hero-prefix-cycle {
@@ -1106,6 +1199,14 @@
   /* One exact dash-pattern period makes the restart visually identical to the
      final frame, so the current never jumps as the animation cycles. */
   to { stroke-dashoffset: -64; }
+}
+
+@keyframes workflow-ring {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes workflow-signal {
+  to { stroke-dashoffset: -35; }
 }
 
 @keyframes demo-in-next {

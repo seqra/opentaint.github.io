@@ -36,6 +36,7 @@ describe("UnifiedWorkbench", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Scan" }));
     expect(screen.getByTestId("demo-hero-player")).toBeVisible();
+    expect(screen.getByText("Fast scans", { exact: true })).toBeVisible();
 
     fireEvent.click(screen.getByRole("button", { name: "Triage" }));
     expect(screen.getByText("Fewer false alarms")).toBeVisible();
@@ -46,6 +47,8 @@ describe("UnifiedWorkbench", () => {
     fireEvent.click(screen.getByRole("button", { name: "Report" }));
     const report = screen.getByTestId("simplified-report-view");
     expect(report).toBeVisible();
+    expect(screen.getByText("Detailed dataflow trace", { exact: true })).toBeVisible();
+    expect(screen.getByText("Formal proof of how untrusted data reaches the vulnerable operation.", { exact: true })).toBeVisible();
     expect(within(report).queryByRole("tablist")).not.toBeInTheDocument();
     expect(within(report).getByText("JobController.java")).toBeVisible();
     expect(screen.getByText('Method entry marks the 1st argument of "submit" as $UNTRUSTED')).toBeVisible();
@@ -66,4 +69,5 @@ describe("UnifiedWorkbench", () => {
     expect(screen.getByText(/opentaint summary results\/report\.sarif/)).toBeInTheDocument();
     expect(screen.getByText(/--show-findings --show-code-snippets/)).toBeInTheDocument();
   });
+
 });

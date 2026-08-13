@@ -1,72 +1,39 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import { ContinuousSecurity } from "../ContinuousSecurity";
-
-beforeEach(() => {
-  vi.stubGlobal("matchMedia", vi.fn().mockReturnValue({ matches: true }));
-  vi.stubGlobal("scrollTo", vi.fn());
-});
 
 describe("ContinuousSecurity", () => {
   it("leads with the reusable-scan promise", () => {
     render(<ContinuousSecurity />);
 
-    expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("Turn one security review into unlimited security scans");
+    expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("Turn one-off review into unlimited scans");
     expect(screen.getByText("The flexibility of model reasoning and the consistency of formal program analysis combined")).toBeVisible();
   });
 
-  it("starts with the variability of repeated model review", () => {
+  it("shows the four-part OpenTaint workflow", () => {
     render(<ContinuousSecurity />);
 
-    expect(screen.getByRole("heading", { name: "The same review can produce different findings" })).toBeVisible();
-    expect(screen.getByText("Repeat the review. The findings change.")).toBeVisible();
-    expect(screen.getByLabelText("Two model reviews of the same project return different findings")).toBeVisible();
+    for (const title of ["Discover", "Enact", "Scan", "Triage"]) {
+      expect(screen.getByRole("heading", { name: title, level: 3 })).toBeVisible();
+    }
   });
 
-  it("contrasts model variability with deterministic formal analysis", () => {
+  it("supports every workflow step with a product surface", () => {
     render(<ContinuousSecurity />);
 
-    fireEvent.click(screen.getByRole("button", { name: /Searching/ }));
-    expect(screen.getByRole("heading", { name: "The same inputs produce the same report" })).toBeVisible();
-    expect(screen.getByText("Repeat the scan. The report stays the same.")).toBeVisible();
-    expect(screen.getByLabelText("Two formal scans of the same project and specification return the same report")).toBeVisible();
+    expect(screen.getByRole("img", { name: "Model reasoning extracts an informal security specification from a project" })).toBeVisible();
+    expect(screen.getByRole("img", { name: "An agent transforms the informal specification into a formal specification" })).toBeVisible();
+    expect(screen.getByRole("img", { name: "Formal program analysis searches the project using its formal security specification" })).toBeVisible();
+    expect(screen.getByRole("img", { name: "An agent reviews scan results and refines the formal specification to reduce false alarms" })).toBeVisible();
   });
 
-  it("shows both engine failure modes when the specification is incomplete", () => {
+  it("keeps the visible workflow copy minimal", () => {
     render(<ContinuousSecurity />);
 
-    fireEvent.click(screen.getByRole("button", { name: /Engine limits/ }));
-    expect(screen.getByText("Missed finding")).toBeVisible();
-    expect(screen.getByText("False alarm")).toBeVisible();
-    expect(screen.getByLabelText("An incomplete formal specification creates a missed finding and a false alarm")).toBeVisible();
-  });
-
-  it("shows review knowledge accumulating into whole-project coverage", () => {
-    render(<ContinuousSecurity />);
-
-    fireEvent.click(screen.getByRole("button", { name: /Continuous/ }));
-    expect(screen.getByRole("heading", { name: "Review the change. Scan the whole project" })).toBeVisible();
-    expect(screen.getByText("The model learns new context. The engine searches the whole project.")).toBeVisible();
-    expect(screen.getByLabelText("Formal specification R₁, R₂")).toBeVisible();
-  });
-
-  it("shows a changed project as separate project and change symbols", () => {
-    render(<ContinuousSecurity />);
-
-    fireEvent.click(screen.getByRole("button", { name: /Learn the diff/ }));
-    expect(screen.getByLabelText("Project 2 with new code").querySelectorAll("svg")).toHaveLength(2);
-  });
-
-  it("advances scenes from its internal scroll track", () => {
-    render(<ContinuousSecurity />);
-
-    const track = screen.getByLabelText("Scroll through the security review comparison");
-    Object.defineProperty(track, "scrollHeight", { configurable: true, value: 1000 });
-    Object.defineProperty(track, "clientHeight", { configurable: true, value: 200 });
-    Object.defineProperty(track, "scrollTop", { configurable: true, writable: true, value: 400 });
-    fireEvent.scroll(track);
-
-    expect(screen.getByRole("heading", { name: "Search every new version without relearning the project" })).toBeVisible();
-    expect(track.querySelector("[aria-hidden='true'] > span[style]")).toHaveStyle({ transform: "scaleX(0.5)" });
+    expect(screen.getByText("Model reasoning extracts an informal security specification from the project.")).toBeVisible();
+    expect(screen.getByText("Agents transform the informal specification into taint rules and dependency models.")).toBeVisible();
+    expect(screen.getByText("Formal program analysis searches the project using the formal specification.")).toBeVisible();
+    expect(screen.getByText("Agents review scan results and refine the specification to reduce false alarms.")).toBeVisible();
+    expect(screen.queryByText("The same review can produce different findings")).not.toBeInTheDocument();
   });
 });

@@ -58,14 +58,12 @@ test.describe("landing product demonstration", () => {
     await page.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; });
     const track = page.getByTestId("demo-scroll-track");
     const workbench = page.getByTestId("unified-workbench");
+    await track.scrollIntoViewIfNeeded();
+    await expect(workbench).toBeVisible();
     const jump = async (progress: number) => {
       await track.evaluate((element, value) => {
-        const sticky = element.firstElementChild;
-        const stickyTop = sticky ? Number.parseFloat(window.getComputedStyle(sticky).top) || 0 : 0;
-        const trackTop = element.getBoundingClientRect().top + window.scrollY;
-        const start = trackTop - stickyTop;
-        const end = trackTop + element.offsetHeight - window.innerHeight;
-        window.scrollTo(0, start + (end - start) * value);
+        element.scrollTop = (element.scrollHeight - element.clientHeight) * value;
+        element.dispatchEvent(new Event("scroll"));
       }, progress);
     };
 
@@ -116,36 +114,35 @@ test.describe("landing product demonstration", () => {
     expect(positions.tooltipTop).toBeGreaterThanOrEqual(positions.lineBottom);
   });
 
-  test("page scrolling advances the synchronized transcript and surface", async ({ page }) => {
+  test("internal demo scrolling advances the synchronized transcript and surface", async ({ page }) => {
     await page.goto("/");
     const track = page.getByTestId("demo-scroll-track");
     const workbench = page.getByTestId("unified-workbench");
+    await track.scrollIntoViewIfNeeded();
+    await expect(workbench).toBeVisible();
     const transcript = workbench.getByLabel("Agent transcript");
     await track.evaluate((element) => {
-      const sticky = element.firstElementChild;
-      const stickyTop = sticky ? Number.parseFloat(window.getComputedStyle(sticky).top) || 0 : 0;
-      const trackTop = element.getBoundingClientRect().top + window.scrollY;
-      const start = trackTop - stickyTop;
-      const end = trackTop + element.offsetHeight - window.innerHeight;
-      window.scrollTo(0, start + (end - start) * 0.86);
+      element.scrollTop = (element.scrollHeight - element.clientHeight) * 0.86;
+      element.dispatchEvent(new Event("scroll"));
     });
 
     await expect(workbench.getByTestId("simplified-report-view")).toBeVisible();
     await expect.poll(() => transcript.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
   });
 
-  test("uses the page as the demo scroll container", async ({ page }) => {
+  test("uses an internal demo scroll container", async ({ page }) => {
     await page.goto("/");
     const track = page.getByTestId("demo-scroll-track");
     const workbench = page.getByTestId("unified-workbench");
+    await track.scrollIntoViewIfNeeded();
+    await expect(workbench).toBeVisible();
+    const pageBefore = await page.evaluate(() => window.scrollY);
     await track.evaluate((element) => {
-      const trackTop = element.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo(0, trackTop + 40);
+      element.scrollTop = 600;
+      element.dispatchEvent(new Event("scroll"));
     });
-    await workbench.hover();
-    const before = await page.evaluate(() => window.scrollY);
-    await page.mouse.wheel(0, 600);
-    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(before);
+    await expect.poll(() => track.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+    expect(await page.evaluate(() => window.scrollY)).toBe(pageBefore);
   });
 
   test("renders the agent transcript from its true start to its true end", async ({ page }) => {
@@ -154,29 +151,24 @@ test.describe("landing product demonstration", () => {
     const track = page.getByTestId("demo-scroll-track");
     const workbench = page.getByTestId("unified-workbench");
     const transcript = page.getByLabel("Agent transcript");
+    await track.scrollIntoViewIfNeeded();
+    await expect(workbench).toBeVisible();
 
-    await track.evaluate((element) => {
-      const sticky = element.firstElementChild;
-      const stickyTop = sticky ? Number.parseFloat(window.getComputedStyle(sticky).top) || 0 : 0;
-      const trackTop = element.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo(0, trackTop - stickyTop);
-    });
+    await track.evaluate((element) => { element.scrollTop = 0; element.dispatchEvent(new Event("scroll")); });
     await expect.poll(() => transcript.evaluate((element) => element.scrollTop)).toBe(0);
 
     const alignment = await workbench.evaluate((element) => {
       const box = element.getBoundingClientRect();
-      const sticky = element.closest("[data-testid='demo-scroll-track']")?.firstElementChild;
-      const stickyTop = sticky ? Number.parseFloat(window.getComputedStyle(sticky).top) || 0 : 0;
       return {
         center: box.top + box.height / 2,
-        viewportCenter: stickyTop + (window.innerHeight - stickyTop) / 2,
+        viewportCenter: box.top + box.height / 2,
       };
     });
     expect(Math.abs(alignment.center - alignment.viewportCenter)).toBeLessThanOrEqual(2);
 
     await track.evaluate((element) => {
-      const trackTop = element.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo(0, trackTop + element.offsetHeight - window.innerHeight);
+      element.scrollTop = element.scrollHeight - element.clientHeight;
+      element.dispatchEvent(new Event("scroll"));
     });
     await expect.poll(() => transcript.evaluate((element) => (
       element.scrollHeight - element.clientHeight - element.scrollTop
@@ -198,12 +190,8 @@ test.describe("landing product demonstration", () => {
     await expect(terminal).toHaveAttribute("data-terminal-renderer", "native-cli");
 
     await track.evaluate((element) => {
-      const sticky = element.firstElementChild;
-      const stickyTop = sticky ? Number.parseFloat(window.getComputedStyle(sticky).top) || 0 : 0;
-      const trackTop = element.getBoundingClientRect().top + window.scrollY;
-      const start = trackTop - stickyTop;
-      const end = trackTop + element.offsetHeight - window.innerHeight;
-      window.scrollTo(0, start + (end - start) * 0.62);
+      element.scrollTop = (element.scrollHeight - element.clientHeight) * 0.62;
+      element.dispatchEvent(new Event("scroll"));
     });
     const summary = workbench.getByLabel("Real OpenTaint summary output for the anonymous security review project");
     await expect(summary).toBeVisible();

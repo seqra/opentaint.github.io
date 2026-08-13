@@ -1,8 +1,6 @@
-import { createHeroFlowField } from "@/lib/heroFlowField";
 import { Download, Star } from "lucide-react";
 
 const heroPrefixes = ["Continuous", "Lean", "Agentic"];
-const heroFlowLines = createHeroFlowField();
 
 export function AnimatedHero() {
   return (
@@ -42,15 +40,6 @@ export function AnimatedHero() {
           </a>
         </div>
       </div>
-
-      <svg className="hero-signal-field" viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <g className="hero-signal-graph">
-          {heroFlowLines.map((line, index) => <path key={`flow-${index}`} d={line.d} />)}
-          {heroFlowLines.map((line, index) => line.active
-            ? <path key={`signal-${index}`} className={`hero-signal-active hero-signal-active-${index % 3}`} d={line.d} />
-            : null)}
-        </g>
-      </svg>
     </div>
   );
 }

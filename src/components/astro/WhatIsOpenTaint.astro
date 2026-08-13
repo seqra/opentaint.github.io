@@ -80,7 +80,7 @@ const traceSteps = [
 <span class="text-muted-foreground">83</span>    return workflowService.startWorkflow(request);
 <span class="text-muted-foreground">84</span>  &#125;
 
-<span class="text-emerald-700 dark:text-emerald-400">// Trust boundary: request data controls the script.</span>
+    <span class="text-emerald-700 dark:text-emerald-400">// Trust boundary: request data controls the script.</span>
 <span class="text-muted-foreground">68</span>  Map&lt;String, Object&gt; taskInput = task.getInputData();
 <span class="text-muted-foreground">71</span>  scriptExpression = (String) taskInput.get(
 <span class="text-muted-foreground">72</span>      <span class="text-primary">"scriptExpression"</span>);
@@ -93,8 +93,7 @@ const traceSteps = [
               <span class="font-semibold text-foreground">ScriptEvaluator.java</span>
               <span class="uppercase tracking-[0.12em]">evaluation path</span>
             </div>
-            <pre class="overflow-x-auto px-4 py-6 font-mono text-[10px] leading-6 text-foreground sm:px-6 sm:text-[11px]"><code><span class="text-emerald-700 dark:text-emerald-400">// Opaque external method behavior:</span>
-<span class="text-emerald-700 dark:text-emerald-400">// option() returns this builder.</span>
+            <pre class="overflow-x-auto px-4 py-6 font-mono text-[10px] leading-6 text-foreground sm:px-6 sm:text-[11px]"><code>    <span class="text-emerald-700 dark:text-emerald-400">// Opaque external method behavior: option() returns this builder.</span>
 <span class="text-muted-foreground">116</span> private static Context createNewContext() &#123;
 <span class="text-muted-foreground">117</span>   return Context.newBuilder(<span class="text-primary">"js"</span>)
 <span class="text-muted-foreground">118</span>     .<span class="text-primary">allowHostAccess(HostAccess.ALL)</span>
@@ -102,8 +101,7 @@ const traceSteps = [
 <span class="text-muted-foreground">120</span>     .build();
 <span class="text-muted-foreground">121</span> &#125;
 
-<span class="text-muted-foreground">201</span> <span class="text-emerald-700 dark:text-emerald-400">// Vulnerability pattern:</span>
-    <span class="text-emerald-700 dark:text-emerald-400">// untrusted script reaches a host-enabled evaluator.</span>
+    <span class="text-emerald-700 dark:text-emerald-400">// Vulnerability pattern: untrusted script reaches the evaluator.</span>
 <span class="text-muted-foreground">202</span> executorService.submit(
 <span class="text-muted-foreground">203</span>   () -&gt; context.<span class="text-primary">eval("js", script)</span>);</code></pre>
           </article>

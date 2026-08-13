@@ -26,44 +26,28 @@ test.describe("landing message", () => {
     await page.goto("/");
 
     await expect(page.getByText("As AI generates more code, security risk and review cost compound", { exact: true })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Turn one security review into unlimited security scans", level: 2 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Turn one-off review into unlimited scans", level: 2 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Fast scans. Fewer false alarms. Fewer missed findings" })).toHaveCount(0);
-    await expect(page.getByText("Open source, batteries included", { exact: true })).toBeVisible();
+    await expect(page.getByText("Everything you need, open source", { exact: true })).toBeVisible();
     await expect(page.getByText(/symbolic execution/i)).toHaveCount(0);
   });
 
-  test("shows formal coverage accumulating across reviews", async ({ page }) => {
+  test("shows the workflow immediately before the product demo", async ({ page }) => {
     await page.goto("/");
 
-    const comparison = page.getByRole("region", {
-      name: "Turn one security review into unlimited security scans",
+    const workflow = page.getByRole("region", {
+      name: "Turn one-off review into unlimited scans",
     });
-    const continuous = comparison.getByRole("button", { name: /Continuous/ });
-    await continuous.scrollIntoViewIfNeeded();
-    await expect(continuous).toBeVisible();
-    await expect(continuous.locator("xpath=ancestor::astro-island")).not.toHaveAttribute("ssr", "");
-    await continuous.click();
+    await expect(workflow.getByRole("heading", { name: "Discover", exact: true })).toBeVisible();
+    await expect(workflow.getByRole("heading", { name: "Enact", exact: true })).toBeVisible();
+    await expect(workflow.getByRole("heading", { name: "Scan", exact: true })).toBeVisible();
+    await expect(workflow.getByRole("heading", { name: "Triage", exact: true })).toBeVisible();
 
-    await expect(comparison.getByRole("heading", { name: "Review the change. Scan the whole project" })).toBeVisible();
-    await expect(comparison.getByLabel("Whole project with new code with formal specification R₁, R₂", { exact: true })).toBeVisible();
-    await expect(comparison.locator("[aria-live='polite']")).toContainText("The model learns new context. The engine searches the whole project.");
-  });
-
-  test("keeps the continuous-security story on an internal scroll track", async ({ page }) => {
-    await page.goto("/");
-
-    const track = page.getByLabel("Scroll through the security review comparison");
-    await track.scrollIntoViewIfNeeded();
-    const pageBefore = await page.evaluate(() => window.scrollY);
-    await track.evaluate((element) => {
-      const distance = element.scrollHeight - element.clientHeight;
-      element.scrollTop = distance * 0.44;
-      element.dispatchEvent(new Event("scroll"));
+    const immediatelyBeforeDemo = await workflow.evaluate((element) => {
+      const group = element.closest(".hero-workflow-group");
+      return group?.nextElementSibling?.classList.contains("demo-section");
     });
-
-    expect(await track.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
-    expect(await page.evaluate(() => window.scrollY)).toBe(pageBefore);
-    await expect(page.getByRole("heading", { name: "Search every new version without relearning the project" })).toBeVisible();
+    expect(immediatelyBeforeDemo).toBe(true);
   });
 
   test("groups the landing sections with intentional dividers and backgrounds", async ({ page }) => {
@@ -72,6 +56,9 @@ test.describe("landing message", () => {
     const styles = await page.evaluate(() => {
       const section = (id: string) => document.getElementById(id)?.closest("section") as HTMLElement;
       const continuous = section("continuous-security-heading");
+      const heroGroup = document.querySelector(".hero-workflow-group") as HTMLElement;
+      const quickstart = section("quickstart-heading");
+      const securityDebt = section("security-debt-heading");
       const realWorld = section("what-heading");
       const engine = section("proof-heading");
       const skills = section("agent-skills-heading");
@@ -80,6 +67,10 @@ test.describe("landing message", () => {
         continuousDivider: getComputedStyle(continuous, "::before").content,
         continuousOverflow: getComputedStyle(continuous).overflow,
         continuousBackground: getComputedStyle(continuous).backgroundColor,
+        heroGroupBackground: getComputedStyle(heroGroup).backgroundColor,
+        quickstartBackground: getComputedStyle(quickstart).backgroundColor,
+        securityDebtBackground: getComputedStyle(securityDebt).backgroundColor,
+        quickstartDivider: getComputedStyle(quickstart, "::before").content,
         realWorldBackground: getComputedStyle(realWorld).backgroundColor,
         engineBackground: getComputedStyle(engine).backgroundColor,
         engineOverflow: getComputedStyle(engine).overflow,
@@ -88,9 +79,12 @@ test.describe("landing message", () => {
       };
     });
 
-    expect(styles.continuousDivider).not.toBe("none");
+    expect(styles.continuousDivider).toBe("none");
     expect(styles.continuousOverflow).toBe("visible");
-    expect(styles.realWorldBackground).not.toBe(styles.continuousBackground);
+    expect(styles.continuousBackground).toBe("rgba(0, 0, 0, 0)");
+    expect(styles.heroGroupBackground).toBe(styles.quickstartBackground);
+    expect(styles.securityDebtBackground).not.toBe(styles.quickstartBackground);
+    expect(styles.quickstartDivider).toBe("none");
     expect(styles.engineBackground).toBe(styles.skillsBackground);
     expect(styles.engineOverflow).toBe("visible");
     expect(styles.skillsDivider).toBe("none");

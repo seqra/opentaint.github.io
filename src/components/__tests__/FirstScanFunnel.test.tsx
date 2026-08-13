@@ -14,7 +14,7 @@ describe("FirstScanFunnel", () => {
     expect(screen.getByText("npm install -g @seqra/opentaint")).toBeVisible();
     expect(screen.getByText("npx skills add https://github.com/seqra/opentaint")).toBeVisible();
     expect(screen.getByText("Run deep security scan and static triage with OpenTaint appsec-agent skill")).toBeVisible();
-    expect(screen.getByText("Open source, batteries included")).toBeVisible();
+    expect(screen.getByText("Everything you need, open source")).toBeVisible();
     expect(screen.queryByText(/Engine, rules, dependency models/)).not.toBeInTheDocument();
   });
 

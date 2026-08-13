@@ -31,12 +31,8 @@ function scrollOffset(container: HTMLElement, target: HTMLElement) {
   return target.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop;
 }
 
-function timelineBounds(track: HTMLElement, sticky: HTMLElement | null) {
-  const stickyTop = sticky ? Number.parseFloat(window.getComputedStyle(sticky).top) || 0 : 0;
-  const trackTop = track.getBoundingClientRect().top + window.scrollY;
-  const start = trackTop - stickyTop;
-  const end = trackTop + track.offsetHeight - window.innerHeight;
-  return { start, distance: Math.max(1, end - start) };
+function timelineDistance(track: HTMLElement) {
+  return Math.max(1, track.scrollHeight - track.clientHeight);
 }
 
 function UserPrompt({ children }: { children: ReactNode }) {
@@ -127,10 +123,10 @@ function AgentStage({
 
 function SurfaceStory({ title, children, window }: { title: string; children: string; window: ReactNode }) {
   return (
-    <div className="flex h-full min-h-0 flex-col bg-[#efeeeb] p-3 dark:bg-background">
-      <div className="mb-4 w-full shrink-0 px-2 text-center">
-        <p className="font-mono text-[15px] font-semibold leading-5 text-foreground">{title}</p>
-        <p className="mt-2 w-full text-[11px] leading-5 text-muted-foreground xl:whitespace-nowrap">{children}</p>
+    <div className="flex h-full min-h-0 flex-col bg-[#efeeeb] p-4 dark:bg-background">
+      <div className="mb-6 w-full shrink-0 px-3 pt-1 text-center">
+        <p className="font-mono text-[20px] font-semibold leading-7 tracking-[-0.035em] text-foreground xl:text-[22px]">{title}</p>
+        <p className="mx-auto mt-2 max-w-[46rem] text-[13px] leading-5 text-muted-foreground">{children}</p>
       </div>
       <div className="mx-auto min-h-0 w-full max-w-[42rem] flex-1">{window}</div>
     </div>
@@ -174,14 +170,14 @@ function ReviewReport({ progress }: { progress: number }) {
           <h4 className="mt-8 border-b border-border pb-2 text-[14px] font-semibold text-foreground">Summary</h4>
           <p className="mt-3">The public job endpoint accepts a script expression and passes it to a host-enabled GraalVM context. An unauthenticated request can therefore execute attacker-controlled JavaScript with host access.</p>
 
+          <h4 className="mt-8 border-b border-primary/30 pb-2 text-[14px] font-semibold text-primary">Trust boundary</h4>
+          <p className="mt-3 rounded-lg bg-primary/[0.07] px-3 py-3">The <code className="rounded bg-black/[0.05] px-1 py-0.5 font-mono text-[12px] dark:bg-white/[0.08]">script</code> query parameter crosses from an unauthenticated HTTP request into an interpreter configured with <code className="rounded bg-black/[0.05] px-1 py-0.5 font-mono text-[12px] dark:bg-white/[0.08]">HostAccess.ALL</code>.</p>
+
           <h4 className="mt-8 border-b border-border pb-2 text-[14px] font-semibold text-foreground">Evidence</h4>
           <div className="mt-3 overflow-hidden rounded-md border border-border bg-[#f9f7f5] font-mono dark:bg-code">
             <div className="border-b border-border px-3 py-2 text-[11px] text-muted-foreground">src/main/java/demo/app/execution/ScriptRuntime.java</div>
             <pre className="overflow-x-auto px-3 py-2 text-[11px] leading-5 text-[#44342c] dark:text-[var(--code-text)] scrollbar-thin"><code><span className="text-[#b3a396] dark:text-[var(--code-line-num)]">8</span>   try (Context context = Context.newBuilder(<span className="text-primary">&quot;js&quot;</span>){"\n"}<span className="text-[#b3a396] dark:text-[var(--code-line-num)]">9</span>       .allowHostAccess(HostAccess.ALL){"\n"}<span className="text-[#b3a396] dark:text-[var(--code-line-num)]">10</span>      .build()) {'{'}{"\n"}<span className="bg-primary/15 text-primary"><span className="text-primary">11</span>      context.eval(<span className="text-primary">&quot;js&quot;</span>, script);</span>{"\n"}<span className="text-[#b3a396] dark:text-[var(--code-line-num)]">12</span>  {'}'}</code></pre>
           </div>
-
-          <h4 className="mt-8 border-b border-border pb-2 text-[14px] font-semibold text-foreground">Trust boundary</h4>
-          <p className="mt-3">The <code className="rounded bg-black/[0.05] px-1 py-0.5 font-mono text-[12px] dark:bg-white/[0.08]">script</code> query parameter crosses from an unauthenticated HTTP request into an interpreter configured with <code className="rounded bg-black/[0.05] px-1 py-0.5 font-mono text-[12px] dark:bg-white/[0.08]">HostAccess.ALL</code>.</p>
 
           <h4 className="mt-8 border-b border-border pb-2 text-[14px] font-semibold text-foreground">Impact</h4>
           <p className="mt-3">An unauthenticated attacker can evaluate arbitrary JavaScript with access to host classes exposed by the embedded runtime.</p>
@@ -376,12 +372,12 @@ function CliRun({ progress }: { progress: number }) {
 function CliSummary({ progress }: { progress: number }) {
   return (
     <SurfaceStory
-      title="Fast scans"
+      title="Fewer missed findings"
       window={<div className="h-full overflow-hidden rounded-[10px] border border-border shadow-sm">
         <TerminalDemo scenario="security-summary" progress={progress} ariaLabel="Real OpenTaint summary output for the anonymous security review project" />
       </div>}
     >
-      Formal taint analysis searches without repeating model inference.
+      OpenTaint summary exposes the endpoint, finding, and complete code flow.
     </SurfaceStory>
   );
 }
@@ -564,7 +560,7 @@ function FindingReport({ progress }: { progress: number }) {
 
   return (
     <SurfaceStory
-      title="Fewer missed findings"
+      title="Detailed dataflow trace"
       window={<div data-testid="simplified-report-view" className="flex h-full flex-col overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] font-mono text-[#44342c] shadow-sm dark:bg-code dark:text-[var(--code-text)]">
       <div className="grid h-10 shrink-0 grid-cols-[minmax(0,1fr)_14rem] items-center border-b border-[#ded7d1] bg-[#f0eeeb] text-[11px] dark:border-border dark:bg-code-header">
         <div className="flex min-w-0 items-center gap-2 px-3">
@@ -616,7 +612,7 @@ function FindingReport({ progress }: { progress: number }) {
       </div>
       </div>}
     >
-      The report preserves the complete interprocedural path, one exact step at a time.
+      Formal proof of how untrusted data reaches the vulnerable operation.
     </SurfaceStory>
   );
 }
@@ -634,11 +630,8 @@ export function UnifiedWorkbench() {
   const [timelineIndex, setTimelineIndex] = useState(0);
   const [timelineProgress, setTimelineProgress] = useState(0);
   const scrollTrackRef = useRef<HTMLDivElement>(null);
-  const stickyRef = useRef<HTMLDivElement>(null);
   const transcriptRef = useRef<HTMLDivElement>(null);
   const stageRefs = useRef<Array<HTMLElement | null>>([]);
-  const navigationTargetRef = useRef<number | null>(null);
-  const navigationTimeoutRef = useRef<number | null>(null);
   const timelineStage = timeline[timelineIndex];
   const activeStageIndex = timelineStage === "summary"
     ? 2
@@ -646,7 +639,6 @@ export function UnifiedWorkbench() {
 
   const selectStage = (index: number) => {
     const targetTimelineIndex = index >= 3 ? index + 1 : index;
-    navigationTargetRef.current = targetTimelineIndex;
     setTimelineIndex(targetTimelineIndex);
     setTimelineProgress(0);
     const transcriptTarget = stageRefs.current[targetTimelineIndex];
@@ -655,19 +647,11 @@ export function UnifiedWorkbench() {
     }
     const track = scrollTrackRef.current;
     if (!track) return;
-    const { start, distance } = timelineBounds(track, stickyRef.current);
-    const targetTop = start + distance * ((targetTimelineIndex + 0.02) / timeline.length);
-    window.scrollTo({
+    const targetTop = timelineDistance(track) * ((targetTimelineIndex + 0.02) / timeline.length);
+    track.scrollTo({
       top: targetTop,
       behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
     });
-    if (navigationTimeoutRef.current) window.clearTimeout(navigationTimeoutRef.current);
-    navigationTimeoutRef.current = window.setTimeout(() => {
-      if (navigationTargetRef.current === targetTimelineIndex) {
-        navigationTargetRef.current = null;
-        window.dispatchEvent(new Event("scroll"));
-      }
-    }, 900);
   };
 
   useEffect(() => {
@@ -678,22 +662,12 @@ export function UnifiedWorkbench() {
       const transcript = transcriptRef.current;
       if (!track) return;
 
-      const { start, distance } = timelineBounds(track, stickyRef.current);
-      const progress = Math.max(0, Math.min(1, (window.scrollY - start) / distance));
+      const progress = Math.max(0, Math.min(1, track.scrollTop / timelineDistance(track)));
       const position = progress * timeline.length;
       const nextIndex = Math.min(timeline.length - 1, Math.floor(position));
       const localProgress = nextIndex === timeline.length - 1
         ? Math.min(1, position - nextIndex)
         : position - nextIndex;
-
-      const navigationTarget = navigationTargetRef.current;
-      if (navigationTarget !== null) {
-        setTimelineIndex(navigationTarget);
-        setTimelineProgress(0);
-        const navigationStage = stageRefs.current[navigationTarget];
-        if (transcript && navigationStage) transcript.scrollTop = scrollOffset(transcript, navigationStage);
-        return;
-      }
 
       setTimelineIndex((current) => current === nextIndex ? current : nextIndex);
       setTimelineProgress(localProgress);
@@ -703,7 +677,9 @@ export function UnifiedWorkbench() {
         const next = stageRefs.current[Math.min(timeline.length - 1, nextIndex + 1)];
         if (current) {
           const currentTop = scrollOffset(transcript, current);
-          const nextTop = next ? scrollOffset(transcript, next) : currentTop;
+          const nextTop = nextIndex === timeline.length - 1
+            ? transcript.scrollHeight - transcript.clientHeight
+            : next ? scrollOffset(transcript, next) : currentTop;
           transcript.scrollTop = currentTop + (nextTop - currentTop) * localProgress;
         }
       }
@@ -712,21 +688,22 @@ export function UnifiedWorkbench() {
     const schedule = () => {
       if (!frame) frame = window.requestAnimationFrame(sync);
     };
-    window.addEventListener("scroll", schedule, { passive: true });
+    const track = scrollTrackRef.current;
+    track?.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
     sync();
     return () => {
-      window.removeEventListener("scroll", schedule);
+      track?.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       if (frame) window.cancelAnimationFrame(frame);
-      if (navigationTimeoutRef.current) window.clearTimeout(navigationTimeoutRef.current);
     };
   }, []);
 
   return (
-    <div ref={scrollTrackRef} data-testid="demo-scroll-track" className="relative h-[620vh]">
-      <div ref={stickyRef} className="sticky top-16 flex h-[calc(100vh-4rem)] items-center">
-        <div data-testid="unified-workbench" className="agent-ui mx-auto w-full max-w-[82rem] overflow-hidden rounded-[20px] border border-black/10 bg-white p-2 shadow-[0_28px_90px_rgba(37,25,20,0.18)] dark:border-border dark:bg-card">
+    <div ref={scrollTrackRef} data-testid="demo-scroll-track" className="demo-scroll-track relative h-[calc(100vh-4rem)] min-h-[38rem] max-h-[48rem] overflow-y-auto overscroll-y-auto scrollbar-thin">
+      <div className="relative h-[620%]">
+      <div className="sticky top-0 flex h-[calc(100vh-4rem)] min-h-[38rem] max-h-[48rem] items-center">
+        <div data-testid="unified-workbench" className="agent-ui mx-auto w-full max-w-[82rem] overflow-hidden rounded-[20px] border border-black/10 bg-white p-2 dark:border-border dark:bg-card">
       <div className="overflow-hidden rounded-[13px] border border-border bg-background">
         <div className="flex h-10 items-center border-b border-border bg-[#f0efec] px-3 dark:bg-code-header">
           <div className="flex items-center gap-2">
@@ -735,7 +712,7 @@ export function UnifiedWorkbench() {
           </div>
         </div>
 
-        <div className="grid h-[calc(100vh-9rem)] min-h-[34rem] max-h-[42rem] grid-cols-[4.5rem_minmax(0,1fr)] grid-rows-[minmax(0,1fr)] md:grid-cols-[8.5rem_minmax(20rem,0.9fr)_minmax(0,1.1fr)] xl:grid-cols-[10rem_minmax(22rem,0.9fr)_minmax(0,1.1fr)]">
+        <div className="grid h-[calc(100vh-9rem)] min-h-[34rem] max-h-[42rem] grid-cols-[4.5rem_minmax(0,1fr)] grid-rows-[minmax(0,1fr)] md:grid-cols-[8.5rem_minmax(18rem,0.78fr)_minmax(0,1.22fr)] xl:grid-cols-[10rem_minmax(20rem,0.78fr)_minmax(0,1.22fr)]">
           <aside className="border-r border-border bg-[#f2f1ee] p-3 dark:bg-card" aria-label="Demo steps">
             <p className="px-2 pt-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">Session</p>
             <ol className="mt-4 space-y-1">
@@ -826,6 +803,7 @@ export function UnifiedWorkbench() {
       </div>
     </div>
       </div>
+    </div>
     </div>
   );
 }

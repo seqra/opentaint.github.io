@@ -2,6 +2,7 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import SiteHeader from "@/components/astro/SiteHeader.astro";
 import LandingFooter from "@/components/astro/LandingFooter.astro";
+import { createHeroFlowField } from "@/lib/heroFlowField";
 import { AnimatedHero } from "@/components/AnimatedHero";
 import { FirstScanFunnel } from "@/components/FirstScanFunnel";
 import Demo from "@/components/astro/Demo.astro";
@@ -71,6 +72,7 @@ const structuredData = [
       })),
   },
 ];
+const heroWorkflowFlowLines = createHeroFlowField({ dense: true });
 ---
 
 <BaseLayout
@@ -82,17 +84,28 @@ const structuredData = [
   <div class="min-h-screen bg-background flex flex-col">
     <SiteHeader />
     <main id="main" class="landing-sections flex-1 pt-16">
-      <section class="band hero-band">
-        <AnimatedHero />
-      </section>
+      <div class="hero-workflow-group">
+        <svg class="hero-workflow-signal-field" viewBox="0 0 1200 720" preserveAspectRatio="none" aria-hidden="true">
+          <g class="hero-signal-graph">
+            {heroWorkflowFlowLines.map((line, index) => <path d={line.d}></path>)}
+            {heroWorkflowFlowLines.map((line, index) => line.active
+              ? <path class:list={["hero-signal-active", `hero-signal-active-${index % 3}`]} d={line.d}></path>
+              : null)}
+          </g>
+        </svg>
+
+        <section class="band hero-band">
+          <AnimatedHero />
+        </section>
+
+        <TheEconomics />
+      </div>
 
       <Demo />
 
       <FirstScanFunnel client:load />
 
       <SecurityDebt />
-
-      <TheEconomics />
 
       <WhatIsOpenTaint />
 

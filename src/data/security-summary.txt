@@ -1,0 +1,32 @@
+╭─demo/app/execution/ScriptRuntime.java [1]─╮
+╰─┬─────────────────────────────────────────╯
+  └─ Fingerprint: ggAE7bbWSwRU
+     ├─ Rule: java.security.graaljs-code-injection [CWE-94]
+     ├─ Severity: ERROR
+     ├─ Location: demo/app/execution/ScriptRuntime.java:11
+     ├─ Message: Untrusted HTTP input reaches a host-enabled GraalVM Context.eval call.
+     ├─ Endpoints:
+     │  └─ POST /api/jobs (query: script)
+     │
+     └─ Code flow:
+        ├─ Method entry marks the 1st argument of "submit" as $UNTRUSTED
+        │  ├─ demo/app/api/JobController.java:17
+        │  └─ Code snippet
+        │     │      14     }
+        │     │      15
+        │     │      16     @PostMapping("/api/jobs")
+        │     │ >>   17     public String submit(@RequestParam("script") String script) {
+        │     │      18         jobService.submit(script);
+        │     │      19         return "accepted";
+        │     └────  20     }
+        │
+        └─ Untrusted HTTP input reaches a host-enabled GraalVM Context.eval call.
+           ├─ demo/app/execution/ScriptRuntime.java:11
+           └─ Code snippet
+              │       8         try (Context context = Context.newBuilder("js")
+              │       9                 .allowHostAccess(HostAccess.ALL)
+              │      10                 .build()) {
+              │ >>   11             context.eval("js", script);
+              │      12         }
+              │      13     }
+              └────  14 }

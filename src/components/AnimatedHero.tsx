@@ -1,111 +1,43 @@
-import { Check, Copy } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Download, Star } from "lucide-react";
 
-type InstallMethod = {
-  id: string;
-  label: string;
-  command: string;
-};
-
-const installMethods: InstallMethod[] = [
-  { id: "npm", label: "npm", command: "npm install -g @seqra/opentaint" },
-  { id: "curl", label: "curl", command: "curl -fsSL https://opentaint.org/install.sh | bash" },
-  { id: "skills", label: "skills", command: "npx skills add https://github.com/seqra/opentaint" },
-  { id: "brew", label: "brew", command: "brew install --cask seqra/tap/opentaint" },
-  { id: "windows", label: "powershell", command: "irm https://opentaint.org/install.ps1 | iex" },
-  { id: "docker", label: "docker", command: "docker pull ghcr.io/seqra/opentaint:latest" },
-];
+const heroPrefixes = ["Continuous", "Lean", "Agentic"];
 
 export function AnimatedHero() {
-  const [activeMethod, setActiveMethod] = useState(installMethods[0]?.id ?? "npm");
-  const [copied, setCopied] = useState(false);
-
-  const activeInstallMethod = useMemo(
-    () => installMethods.find((method) => method.id === activeMethod) ?? installMethods[0],
-    [activeMethod],
-  );
-
-  const copyCommand = async () => {
-    if (!activeInstallMethod) {
-      return;
-    }
-
-    await navigator.clipboard.writeText(activeInstallMethod.command);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1800);
-  };
-
   return (
-    <div className="mx-auto max-w-6xl">
-      <h1 className="font-mono text-[28px] font-bold tracking-tight text-foreground sm:text-[32px] md:text-[36px] md:leading-[1.2] lg:text-[38px] lg:leading-[1.15]">
-        The open source taint analysis engine for the AI era
-      </h1>
+    <div className="hero-composition relative z-0 mx-auto flex w-full max-w-[82rem] flex-1 flex-col text-center">
+      <div className="relative z-10">
+        <img src="/opentaint-header-light.svg" alt="OpenTaint" className="hero-wordmark mx-0 h-auto w-56 dark:hidden sm:w-64 lg:mx-auto lg:w-72" />
+        <img src="/opentaint-header-dark.svg" alt="" aria-hidden="true" className="hero-wordmark mx-0 hidden h-auto w-56 dark:block sm:w-64 lg:mx-auto lg:w-72" />
 
-      <p className="subheadline mt-6 max-w-none lg:mt-8">
-        <span className="block text-foreground">Formal program analysis for security agents.</span>
-        <span className="block">
-          AI agents review your application <span className="hero-mark">on demand</span>. OpenTaint scans it{" "}
-          <span className="hero-mark">on every change</span>.
-        </span>
-      </p>
+        <h1 className="hero-heading mx-0 mt-12 max-w-full text-left font-mono font-semibold text-foreground lg:mx-auto lg:text-center">
+          <span className="sr-only">Continuous, lean, and agentic application security testing</span>
+          <span aria-hidden="true" className="hero-title-lockup">
+            <span className="hero-prefix-slot relative block h-[1em] w-[10ch] shrink-0">
+              {heroPrefixes.map((prefix) => (
+                <span key={prefix} className="hero-prefix-word absolute inset-0 text-left text-primary lg:text-right">
+                  {prefix}
+                </span>
+              ))}
+            </span>
+            <span className="hero-title-column">
+              <span>Application</span>
+              <span>Security</span>
+              <span>Testing</span>
+            </span>
+          </span>
+        </h1>
 
-      <div className="mt-8 flex w-full flex-col gap-3 sm:hidden">
-        <a
-          href="https://github.com/seqra/opentaint#quick-start"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex h-10 w-full min-w-[44px] items-center justify-center rounded-lg bg-primary px-4 text-[17px] font-normal leading-[1.6] text-primary-foreground transition-colors hover:bg-primary/90"
-        >
-          Try OpenTaint
-        </a>
-        <a
-          href="https://github.com/seqra/opentaint"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex h-10 w-full min-w-[44px] items-center justify-center rounded-lg border border-border bg-secondary px-4 text-[17px] font-normal leading-[1.6] text-secondary-foreground transition-colors hover:border-border-strong"
-        >
-          Star on GitHub
-        </a>
-      </div>
+        <p className="section-banner hero-subline mx-0 mt-12 text-left lg:mx-auto lg:text-center">The open source taint analysis engine for the AI era</p>
 
-      <div className="mx-auto mt-10 hidden max-w-2xl text-left sm:block lg:mt-16">
-        <div className="overflow-hidden rounded-xl border border-panel-border bg-panel">
-          <div className="flex items-center gap-6 overflow-x-auto border-b border-panel-border px-4 py-3 scrollbar-thin lg:gap-8 lg:px-6 lg:py-4">
-            {installMethods.map((method) => {
-              const isActive = method.id === activeInstallMethod?.id;
-              return (
-                <button
-                  key={method.id}
-                  type="button"
-                  onClick={() => setActiveMethod(method.id)}
-                  className={[
-                    "font-mono text-xs font-medium uppercase tracking-[0.16em] transition-colors lg:text-[13px]",
-                    isActive ? "text-panel-accent" : "text-panel-foreground/70 hover:text-panel-accent",
-                  ].join(" ")}
-                >
-                  {method.label}
-                </button>
-              );
-            })}
-          </div>
-          <div className="flex items-center gap-3 px-4 py-3 lg:px-6 lg:py-4">
-            <code
-              role="button"
-              tabIndex={0}
-              onClick={copyCommand}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); copyCommand(); } }}
-              className="flex-1 cursor-pointer overflow-x-auto whitespace-nowrap rounded-lg px-1 font-mono text-[15px] text-panel-foreground/90 scrollbar-thin transition-colors hover:bg-panel-accent/10 hover:text-panel-foreground lg:text-base"
-            >
-              {activeInstallMethod?.command}
-            </code>
-            <button
-              type="button"
-              onClick={copyCommand}
-              className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-panel-foreground/15 px-3 py-2 font-mono text-xs text-panel-foreground/70 transition-colors hover:border-panel-foreground/35 hover:text-panel-foreground lg:px-4 lg:py-2 lg:text-[13px]"
-            >
-              {copied ? <Check className="h-3 w-3 text-panel-accent" /> : <Copy className="h-3 w-3" />}
-            </button>
-          </div>
+        <div className="mt-6 flex items-center justify-start gap-4 lg:justify-center">
+          <a href="#install" className="cta-pill hero-cta">
+            Install
+            <Download aria-hidden="true" className="h-5 w-5" />
+          </a>
+          <a href="https://github.com/seqra/opentaint" target="_blank" rel="noopener noreferrer" className="cta-pill cta-pill-secondary hero-cta">
+            Star
+            <Star aria-hidden="true" className="h-5 w-5" />
+          </a>
         </div>
       </div>
     </div>

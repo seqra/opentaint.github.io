@@ -1,23 +1,70 @@
-<section class="band text-center">
-  <h2 class="font-mono text-base font-semibold tracking-tight text-foreground sm:text-lg lg:text-xl">Supported languages and frameworks</h2>
-  <div class="mt-6 flex items-center gap-x-8 overflow-x-auto scrollbar-thin [&>*]:shrink-0 sm:flex-wrap sm:justify-center sm:gap-10 sm:overflow-visible lg:mt-8 lg:gap-12">
-    <img src="/pictures/java-logo.svg" alt="Java" class="h-10 w-10 sm:h-14 sm:w-14 lg:h-16 lg:w-16" />
-    <img src="/pictures/kotlin-logo.svg" alt="Kotlin" class="h-10 w-10 sm:h-14 sm:w-14 lg:h-16 lg:w-16" />
-    <img src="/pictures/spring-boot-logo.svg" alt="Spring Boot" class="h-10 w-auto sm:h-14 lg:h-16" />
-  </div>
+---
+const roadmap = [
+  { name: "Go", logos: ["/pictures/go-logo.svg"] },
+  { name: "Python", logos: ["/pictures/python-logo.svg"] },
+  { name: "C#", logos: ["/pictures/csharp-logo.svg"] },
+  {
+    name: "JavaScript + TypeScript",
+    logos: ["/pictures/javascript-logo.svg", "/pictures/typescript-logo.svg"],
+  },
+];
 
-  <p class="section-subtitle mx-auto mt-8 font-mono italic lg:mt-10">
-    <a href="/blog/spring-analyzer/" class="underline decoration-primary/30 underline-offset-4 transition-colors hover:text-primary">
-      The most thorough taint analysis engine for Spring apps
-    </a>
-  </p>
+---
 
-  <h2 class="mt-12 font-mono text-base font-semibold tracking-tight text-foreground sm:text-lg lg:mt-16 lg:text-xl">Roadmap</h2>
-  <div class="mt-4 flex items-center gap-x-8 overflow-x-auto scrollbar-thin [&>*]:shrink-0 sm:flex-wrap sm:justify-center sm:gap-10 sm:overflow-visible lg:mt-6 lg:gap-12">
-    <img src="/pictures/python-logo.svg" alt="Python" class="h-10 w-10 sm:h-14 sm:w-14 lg:h-16 lg:w-16" />
-    <img src="/pictures/go-logo.svg" alt="Go" class="h-10 w-10 sm:h-14 sm:w-14 lg:h-16 lg:w-16" />
-    <img src="/pictures/csharp-logo.svg" alt="C#" class="h-10 w-10 sm:h-14 sm:w-14 lg:h-16 lg:w-16" />
-    <img src="/pictures/javascript-logo.svg" alt="JavaScript" class="h-10 w-10 sm:h-14 sm:w-14 lg:h-16 lg:w-16" />
-    <img src="/pictures/typescript-logo.svg" alt="TypeScript" class="h-10 w-10 sm:h-14 sm:w-14 lg:h-16 lg:w-16" />
+<section class="band technology-band" aria-labelledby="technology-heading">
+  <div class="mx-auto max-w-6xl">
+    <div class="section-header">
+      <p class="section-eyebrow">Analysis coverage</p>
+      <h2 id="technology-heading" class="section-heading !text-2xl sm:!text-[2.125rem] md:!text-[2.5rem] lg:!text-[2.875rem]">Supported languages and frameworks</h2>
+    </div>
+
+    <div class="section-content !mt-8 overflow-hidden rounded-2xl border border-border-strong bg-background shadow-sm sm:!mt-12 lg:!mt-16 lg:grid lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+      <section class="px-4 py-6 sm:px-8 sm:py-8 lg:border-r lg:border-border" aria-labelledby="technology-available-heading">
+        <h3 id="technology-available-heading" class="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">Available now</h3>
+
+        <div class="mt-5 grid grid-cols-2 items-start gap-3 sm:mt-8 sm:items-center sm:gap-8" role="list" aria-label="Available analysis coverage">
+          <div class="flex min-w-0 flex-col items-center gap-3 text-center sm:gap-4" role="listitem">
+            <span class="flex items-center justify-center" aria-hidden="true">
+              <span class="flex h-14 w-14 items-center justify-center rounded-full border border-border bg-white shadow-sm sm:h-16 sm:w-16">
+                <img src="/pictures/java-logo.svg" alt="" class="h-10 w-10 object-contain sm:h-12 sm:w-12" />
+              </span>
+              <span class="-ml-2 flex h-14 w-14 items-center justify-center rounded-full border border-border bg-white shadow-sm sm:h-16 sm:w-16">
+                <img src="/pictures/kotlin-logo.svg" alt="" class="h-10 w-10 object-contain sm:h-12 sm:w-12" />
+              </span>
+            </span>
+            <span class="font-mono text-xs font-semibold leading-5 text-foreground sm:text-sm">Java + Kotlin</span>
+          </div>
+
+          <a href="/blog/spring-analyzer/" class="flex min-w-0 flex-col items-center gap-3 text-center text-foreground transition-colors hover:text-primary sm:gap-4" role="listitem">
+            <span class="flex h-14 w-full items-center justify-center sm:h-16" aria-hidden="true">
+              <img src="/pictures/spring-boot-logo.svg" alt="" class="h-auto w-full max-w-[7rem] object-contain sm:h-12 sm:w-auto sm:max-w-[10rem]" />
+            </span>
+            <span class="font-mono text-xs font-semibold leading-5 sm:text-sm">Spring</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="border-t border-border bg-code-bg px-4 py-6 sm:px-8 sm:py-8 lg:border-t-0" aria-labelledby="technology-roadmap-heading">
+        <h3 id="technology-roadmap-heading" class="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Roadmap</h3>
+
+        <ul class="mt-5 grid grid-cols-2 gap-x-3 gap-y-6 sm:mt-8 sm:grid-cols-4 sm:gap-8" aria-label="Planned language support">
+          {roadmap.map((item) => (
+            <li class="flex min-w-0 flex-col items-center gap-3 text-center sm:gap-4">
+              <span class="flex h-14 min-w-14 items-center justify-center sm:h-16 sm:min-w-16" aria-hidden="true">
+                {item.logos.map((logo, index) => (
+                  <span class:list={[
+                    "flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-border bg-white shadow-sm sm:h-16 sm:w-16",
+                    index > 0 && "-ml-2",
+                  ]}>
+                    <img src={logo} alt="" class="h-10 w-10 object-contain sm:h-12 sm:w-12" />
+                  </span>
+                ))}
+              </span>
+              <span class="max-w-[8rem] font-mono text-[11px] font-semibold leading-4 text-foreground sm:text-xs sm:leading-5">{item.name}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
   </div>
 </section>

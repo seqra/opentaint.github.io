@@ -2,12 +2,15 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import SiteHeader from "@/components/astro/SiteHeader.astro";
 import LandingFooter from "@/components/astro/LandingFooter.astro";
+import { createHeroFlowField } from "@/lib/heroFlowField";
 import { AnimatedHero } from "@/components/AnimatedHero";
+import { FirstScanFunnel } from "@/components/FirstScanFunnel";
 import Demo from "@/components/astro/Demo.astro";
-import WhatIsOpenTaint from "@/components/astro/WhatIsOpenTaint.astro";
-import SecurityDebt from "@/components/astro/SecurityDebt.astro";
-import EngineProof from "@/components/astro/EngineProof.astro";
 import TheEconomics from "@/components/astro/TheEconomics.astro";
+import SecurityDebt from "@/components/astro/SecurityDebt.astro";
+import WhatIsOpenTaint from "@/components/astro/WhatIsOpenTaint.astro";
+import EngineProof from "@/components/astro/EngineProof.astro";
+import AgentSkills from "@/components/astro/AgentSkills.astro";
 import SupportedTechnology from "@/components/astro/SupportedTechnology.astro";
 import FAQ from "@/components/astro/FAQ.astro";
 import { defaultKeywords, siteConfig } from "@/lib/site";
@@ -69,30 +72,46 @@ const structuredData = [
       })),
   },
 ];
+const heroWorkflowFlowLines = createHeroFlowField({ height: 1440 });
 ---
 
 <BaseLayout
-  title="OpenTaint | The Open Source Taint Analysis Engine for the AI Era"
-  description="Formal program analysis for security agents. AI agents review your application on demand. OpenTaint scans it on every change."
+  title="OpenTaint | Turn One Security Review into Unlimited Security Scans"
+  description="OpenTaint turns agent security reviews into taint rules and dependency models, then uses formal analysis to scan the whole codebase whenever a scan runs."
   keywords={defaultKeywords}
   structuredData={structuredData}
 >
   <div class="min-h-screen bg-background flex flex-col">
     <SiteHeader />
     <main id="main" class="landing-sections flex-1 pt-16">
-      <section class="band pt-12 pb-16 sm:pt-20 sm:pb-16 lg:pt-24 lg:pb-20">
-        <AnimatedHero client:load />
-      </section>
+      <div class="hero-workflow-group">
+        <svg class="hero-workflow-signal-field" viewBox="0 0 1200 1440" preserveAspectRatio="none" aria-hidden="true">
+          <g class="hero-signal-graph">
+            {heroWorkflowFlowLines.map((line) => <path d={line.d}></path>)}
+            {heroWorkflowFlowLines.map((line, index) => line.active
+              ? <path class:list={["hero-signal-active", `hero-signal-active-${index % 3}`]} d={line.d}></path>
+              : null)}
+          </g>
+        </svg>
+
+        <section class="band hero-band">
+          <AnimatedHero />
+        </section>
+
+        <TheEconomics />
+      </div>
 
       <Demo />
 
-      <WhatIsOpenTaint />
+      <FirstScanFunnel client:load />
 
       <SecurityDebt />
 
+      <WhatIsOpenTaint />
+
       <EngineProof />
 
-      <TheEconomics />
+      <AgentSkills />
 
       <SupportedTechnology />
 

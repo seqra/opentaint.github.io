@@ -1,60 +1,172 @@
 ---
-const pressures = [
-  {
-    title: "How long will you keep betting nobody will bother to exploit your code?",
-    description:
-      "As the codebase grows, defenders must review more paths while attackers need to find only one. OpenTaint traces untrusted data to dangerous operations, replacing assumptions with evidence about what is actually reachable.",
-    value: "Know what is reachable, not what seems likely.",
-  },
-  {
-    title: "Would you notice the agent slipping a vulnerability into code you never reviewed?",
-    description:
-      "Generated code can look complete and pass its tests while untrusted data crosses helpers, fields, and libraries on its way to a dangerous operation. OpenTaint reports the complete data-flow trace before merge.",
-    value: "Generate fast. Verify before merge.",
-  },
-  {
-    title: "Will tomorrow's security review catch what today's review found?",
-    description:
-      "A security agent can find a vulnerability once, then miss it on the next nondeterministic review. When you find a vulnerability, the OpenTaint agent enacts a versioned AST-pattern taint rule from it. The engine applies that rule on every scan, turning a one-time discovery into repeatable protection.",
-    value: "Make every security review executable.",
-  },
-  {
-    title: "How much money will you waste asking a security agent to review the same parts of your application again?",
-    description:
-      "Your first review already paid to map the attack surface, trust boundaries, vulnerabilities, and opaque code behavior. OpenTaint preserves that knowledge in AST-pattern taint rules and dependency models, so future reviews can focus on new context while the engine reuses what is already known on every scan.",
-    value: "Review on demand, scan on every change.",
-  },
+import PerlinBackdrop from "@/components/astro/PerlinBackdrop.astro";
+
+const generatedCodeTiles = Array.from({ length: 25 }, (_, index) => index < 11);
+
+const exploitTrend = [
+  { year: "2023", percent: 5, x: 50, y: 174 },
+  { year: "2024", percent: 14, x: 180, y: 132 },
+  { year: "2025", percent: 20, x: 310, y: 102 },
+  { year: "2026", percent: 31, x: 440, y: 50 },
 ];
+
+const reviewCircles = [
+  { cx: 245, cy: 75, label: "REVIEW 1", lx: 245, ly: -12 },
+  { cx: 287.8, cy: 106.1, label: "REVIEW 2", lx: 392, ly: 106.1 },
+  { cx: 271.5, cy: 156.4, label: "REVIEW 3", lx: 322, ly: 250 },
+  { cx: 218.5, cy: 156.4, label: "REVIEW 4", lx: 168, ly: 250 },
+  { cx: 202.2, cy: 106.1, label: "REVIEW 5", lx: 98, ly: 106.1 },
+];
+
+const reviewIntersectionCenter = {
+  x: reviewCircles.reduce((sum, circle) => sum + circle.cx, 0) / reviewCircles.length,
+  y: reviewCircles.reduce((sum, circle) => sum + circle.cy, 0) / reviewCircles.length,
+};
 ---
 
-<section class="band" aria-labelledby="security-debt-heading">
-  <div class="mx-auto max-w-6xl">
-    <div>
-      <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Why now</p>
-      <h2 id="security-debt-heading" class="section-heading mt-6">Application security is the new tech debt</h2>
-      <p class="section-subtitle max-w-[76ch]">
-        AI makes code cheaper to produce and harder to fully review. The security work that does not happen before merge accumulates in review queues, remediation backlogs, and production risk. Attackers automate discovery too, so every unreviewed path and unmodeled trust boundary compounds across releases — until an attacker forces repayment.
-      </p>
+<section class="band security-debt-band" aria-labelledby="security-debt-heading">
+  <PerlinBackdrop />
+  <div class="relative z-10 mx-auto max-w-[90rem]">
+    <div class="section-header max-w-6xl">
+      <p class="section-eyebrow">As AI generates more code, security risk and review cost compound</p>
+      <h2 id="security-debt-heading" class="section-heading lg:whitespace-nowrap">Application security is the new tech debt</h2>
     </div>
 
-    {/* One text edge per question: the number sits in a gutter, the body runs
-        in a single column, and only the conclusion breaks back out to the left. */}
-    <ul class="mt-10 grid border-y border-border-strong md:grid-cols-2 lg:mt-16" aria-labelledby="security-debt-heading">
-      {pressures.map((pressure, index) => (
-        <li class:list={[
-          "reveal grid grid-cols-[2.25rem_1fr] gap-y-3 py-8 md:py-8",
-          index !== pressures.length - 1 && "border-b border-border",
-          index === 2 && "md:border-b-0",
-          index % 2 === 0 ? "md:pr-10" : "md:border-l md:border-border md:pl-10",
-        ]}>
-          <span class="pt-1 font-mono text-[11px] font-semibold tracking-[0.14em] text-primary">0{index + 1}</span>
-          <h3 class="font-mono text-base font-semibold leading-7 text-foreground lg:text-[17px] lg:leading-[1.65]">{pressure.title}</h3>
+    <div class="section-content mobile-card-rail grid gap-6 lg:grid-cols-2" role="region" aria-label="Application security statistics" tabindex="0">
+      <article class="reveal mobile-card-rail-item flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
+        <header class="border-b border-border px-6 py-6 sm:px-8">
+          <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">01 / Generated code</p>
+          <h3 class="mt-3 max-w-[42ch] font-mono text-lg font-semibold leading-7 text-foreground sm:text-xl sm:leading-8">Would you notice the agent slipping a vulnerability into code you never reviewed?</h3>
+        </header>
 
-          <p class="col-start-2 max-w-[54ch] font-mono text-sm leading-7 text-muted-foreground">{pressure.description}</p>
+        <figure class="flex flex-1 flex-col bg-code-bg px-6 py-6 sm:px-8">
+          <figcaption class="font-mono">
+            <strong class="block text-5xl tracking-[-0.07em] text-foreground">44% of</strong>
+            <span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">AI-generated solutions contained a known security flaw</span>
+          </figcaption>
 
-          <p class="col-span-2 mt-2 self-end border-l-2 border-primary pl-3 font-mono text-xs font-semibold leading-5 text-foreground lg:text-sm lg:leading-6">{pressure.value}</p>
-        </li>
-      ))}
-    </ul>
+          <div class="mt-4 flex h-[13rem] items-center sm:mt-6 sm:h-[17rem]">
+            <svg class="h-auto max-h-full w-full" viewBox="0 0 490 230" role="img" aria-label="44 percent of code-generation tasks failed security tests without security-specific guidance">
+              {generatedCodeTiles.map((failed, index) => {
+                const x = 10 + (index % 5) * 96;
+                const y = 10 + Math.floor(index / 5) * 44;
+                return (
+                  <g>
+                    <rect x={x} y={y} width="86" height="34" rx="4" fill={failed ? "hsl(var(--brand) / 0.08)" : "hsl(var(--background))"} stroke={failed ? "hsl(var(--brand))" : "hsl(var(--border-strong))"} />
+                    <line x1={x + 8} y1={y + 13} x2={x + 72} y2={y + 13} stroke={failed ? "hsl(var(--brand))" : "hsl(var(--foreground) / 0.28)"} />
+                    <line x1={x + 8} y1={y + 21} x2={x + 48} y2={y + 21} stroke={failed ? "hsl(var(--brand))" : "hsl(var(--foreground) / 0.18)"} />
+                  </g>
+                );
+              })}
+            </svg>
+          </div>
+          <a href="https://www.veracode.com/resources/analyst-reports/2026-genai-code-security-report/" target="_blank" rel="noreferrer" class="mt-auto self-end font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Veracode 2026</a>
+        </figure>
+      </article>
+
+      <article class="reveal mobile-card-rail-item flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
+        <header class="border-b border-border px-6 py-6 sm:px-8">
+          <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">02 / Exploitation</p>
+          <h3 class="mt-3 max-w-[42ch] font-mono text-lg font-semibold leading-7 text-foreground sm:text-xl sm:leading-8">How long will you keep betting nobody will bother to exploit your code?</h3>
+        </header>
+
+        <figure class="flex flex-1 flex-col bg-code-bg px-4 py-6 sm:px-8">
+          <figcaption class="px-2 font-mono sm:px-0">
+            <strong class="block text-4xl tracking-[-0.06em] text-foreground sm:text-5xl">from 5% to 31%</strong>
+            <span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">breaches beginning with vulnerability exploitation</span>
+          </figcaption>
+          <p class="sr-only">Vulnerability exploitation became the leading breach entry point for the first time in 19 years.</p>
+
+          <div class="mt-4 flex h-[13rem] items-center sm:mt-6 sm:h-[17rem]">
+            <svg class="h-auto max-h-full w-full" viewBox="0 0 490 230" role="img" aria-label="Vulnerability exploitation as initial access rose from 5 percent in 2023 to 31 percent in 2026">
+              <defs>
+                <linearGradient id="exploit-area" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="hsl(var(--brand))" stop-opacity="0.2" />
+                  <stop offset="1" stop-color="hsl(var(--brand))" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+              <path d="M50 174 C95 165 137 145 180 132 C224 119 266 114 310 102 C355 90 397 67 440 50 L440 190 L50 190 Z" fill="url(#exploit-area)" />
+              <path d="M50 174 C95 165 137 145 180 132 C224 119 266 114 310 102 C355 90 397 67 440 50" fill="none" stroke="hsl(var(--brand))" stroke-width="3" stroke-linecap="round" />
+              <line x1="50" y1="190" x2="440" y2="190" stroke="hsl(var(--border-strong))" stroke-width="1" />
+              {exploitTrend.map((point) => (
+                <g>
+                  <circle cx={point.x} cy={point.y} r="6" fill="hsl(var(--background))" stroke="hsl(var(--brand))" stroke-width="3" />
+                  <text x={point.x} y={point.y - 15} text-anchor="middle" fill="hsl(var(--foreground))" font-size="13" font-weight="700">{point.percent}%</text>
+                  <text x={point.x} y="214" text-anchor="middle" fill="hsl(var(--muted-foreground))" font-size="11">{point.year}</text>
+                </g>
+              ))}
+            </svg>
+          </div>
+          <a href="https://www.verizon.com/about/news/breach-industry-wide-dbir-finds" target="_blank" rel="noreferrer" class="mt-auto self-end font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Verizon DBIR 2026</a>
+        </figure>
+      </article>
+
+      <article class="reveal mobile-card-rail-item flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
+        <header class="border-b border-border px-6 py-6 sm:px-8">
+          <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">03 / Repeatability</p>
+          <h3 class="mt-3 max-w-[42ch] font-mono text-lg font-semibold leading-7 text-foreground sm:text-xl sm:leading-8">Will tomorrow’s security review catch what today’s review found?</h3>
+        </header>
+
+        <figure class="flex flex-1 flex-col items-center bg-code-bg px-4 py-6 sm:px-8">
+          <figcaption class="w-full font-mono">
+            <strong class="block text-5xl tracking-[-0.07em] text-foreground">14% of</strong>
+            <span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">LLM-only findings recurred in all five runs on the same code and prompt</span>
+          </figcaption>
+          <p class="sr-only">These were reported issues outside the deterministic reference set, not independently confirmed vulnerabilities.</p>
+          <div class="mt-4 flex h-[13rem] w-full items-center sm:mt-6 sm:h-[17rem]">
+            <svg class="h-auto max-h-full w-full" viewBox="60 -20 370 280" role="img" aria-label="The exact overlap shared by all five identical reviews contains only 14 percent of unmatched LLM-reported issues">
+              <defs>
+                {reviewCircles.map((circle, index) => <clipPath id={`review-${index + 1}`}><circle cx={circle.cx} cy={circle.cy} r="72" /></clipPath>)}
+              </defs>
+              <g fill="hsl(var(--brand) / 0.025)" stroke="hsl(var(--brand) / 0.65)" stroke-width="2">
+                {reviewCircles.map((circle) => <circle cx={circle.cx} cy={circle.cy} r="72" />)}
+              </g>
+              <g clip-path="url(#review-1)"><g clip-path="url(#review-2)"><g clip-path="url(#review-3)"><g clip-path="url(#review-4)"><g clip-path="url(#review-5)">
+                <rect x="0" y="0" width="490" height="230" fill="hsl(var(--brand))" />
+              </g></g></g></g></g>
+              <g fill="hsl(var(--muted-foreground))" font-size="8" font-weight="700">
+                {reviewCircles.map((circle) => <text x={circle.lx} y={circle.ly} text-anchor="middle">{circle.label}</text>)}
+              </g>
+              <text x={reviewIntersectionCenter.x} y={reviewIntersectionCenter.y} text-anchor="middle" dominant-baseline="middle" fill="hsl(var(--background))" font-size="9" font-weight="700">ALL FIVE</text>
+            </svg>
+          </div>
+          <a href="https://snyk.io/blog/snyk-vulnbench-js-1-0-llm-security-review-repeatability/" target="_blank" rel="noreferrer" class="mt-auto self-end font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Snyk VulnBench</a>
+        </figure>
+      </article>
+
+      <article class="reveal mobile-card-rail-item flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
+        <header class="border-b border-border px-6 py-6 sm:px-8">
+          <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">04 / Model cost</p>
+          <h3 class="mt-3 max-w-[42ch] font-mono text-lg font-semibold leading-7 text-foreground sm:text-xl sm:leading-8">How much money will you waste on reviewing the same parts of your application?</h3>
+        </header>
+
+        <figure class="flex flex-1 flex-col bg-code-bg px-6 py-6 sm:px-8">
+          <figcaption class="font-mono">
+            <strong class="block text-4xl tracking-[-0.06em] text-foreground sm:text-5xl">$20K spent</strong>
+            <span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">across 1,000 security reviews</span>
+          </figcaption>
+
+          <div class="mt-4 flex h-[13rem] items-center sm:mt-6 sm:h-[17rem]">
+            <svg class="h-auto max-h-full w-full" viewBox="0 0 490 230" role="img" aria-label="One highlighted run among one thousand model runs found the critical OpenBSD vulnerability">
+              <defs>
+                <pattern id="search-runs" width="12.25" height="9.2" patternUnits="userSpaceOnUse">
+                  <circle cx="6.125" cy="4.6" r="1.45" fill="hsl(var(--muted-foreground) / 0.48)" />
+                </pattern>
+              </defs>
+              <rect width="490" height="230" fill="url(#search-runs)" />
+              <circle cx="104.125" cy="151.8" r="7" fill="hsl(var(--background))" stroke="hsl(var(--muted-foreground))" stroke-width="2" />
+              <circle cx="104.125" cy="151.8" r="3" fill="hsl(var(--muted-foreground))" />
+              <path d="M97 155 C72 165 49 178 28 194" fill="none" stroke="hsl(var(--muted-foreground))" stroke-width="1.5" />
+              <text x="10" y="211" fill="hsl(var(--muted-foreground))" font-size="9" font-weight="700">ONE SECURITY REVIEW</text>
+              <circle cx="288" cy="87" r="7" fill="hsl(var(--background))" stroke="hsl(var(--brand))" stroke-width="2" />
+              <circle cx="288" cy="87" r="3" fill="hsl(var(--brand))" />
+              <path d="M296 84 C337 67 379 51 429 38" fill="none" stroke="hsl(var(--brand))" stroke-width="1.5" />
+              <text x="480" y="35" text-anchor="end" fill="hsl(var(--brand))" font-size="9" font-weight="700">CRITICAL BUG FOUND</text>
+            </svg>
+          </div>
+          <a href="https://www.anthropic.com/research/mythos-preview" target="_blank" rel="noreferrer" class="mt-auto self-end font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Anthropic Mythos</a>
+        </figure>
+      </article>
+    </div>
   </div>
 </section>

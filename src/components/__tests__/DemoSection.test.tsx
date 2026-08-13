@@ -2,11 +2,6 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-libra
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DemoSection } from "../DemoSection";
 
-// asciinema is exercised in TerminalDemo.test.tsx; stub it here so the
-// Terminal slide mounts without loading the real player.
-vi.mock("asciinema-player", () => ({ create: () => ({ dispose: vi.fn() }) }));
-vi.mock("asciinema-player/dist/bundle/asciinema-player.css", () => ({}));
-
 // The agent slide's video plays via an effect on mount; jsdom has no media
 // playback, so stub it to keep the console clean.
 vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();

@@ -1,0 +1,18 @@
+rules:
+  - id: graal-eval
+    options:
+      lib: true
+    severity: NOTE
+    message: Script text reaches GraalVM evaluation
+    languages:
+      - java
+    patterns:
+      - pattern: |
+          (Context $CONTEXT).eval(..., $UNTRUSTED)
+      - focus-metavariable: $UNTRUSTED
+      - pattern-inside: |
+          Context $CONTEXT =
+            org.graalvm.polyglot.Context.newBuilder(...)
+              .allowHostAccess(org.graalvm.polyglot.HostAccess.ALL)
+              .build();
+          ...

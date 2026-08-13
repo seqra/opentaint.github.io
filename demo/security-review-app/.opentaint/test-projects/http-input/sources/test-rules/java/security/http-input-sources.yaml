@@ -1,0 +1,18 @@
+rules:
+  - id: http-input-sources
+    severity: ERROR
+    message: HTTP input reaches the test sink
+    metadata:
+      cwe: CWE-000
+      short-description: test join for HTTP input sources
+    languages:
+      - java
+    mode: join
+    join:
+      refs:
+        - rule: java/lib/spring/http-input.yaml#http-input
+          as: source
+        - rule: java/lib/test/generic-sink.yaml#generic-taint-sink
+          as: sink
+      on:
+        - 'source.$UNTRUSTED -> sink.$VALUE'

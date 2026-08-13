@@ -25,6 +25,8 @@ dist-ssr
 .vite/*
 /.astro
 /.sanity
+/test-results/
+/playwright-report/
 
 # Brainstorming visual companion
 .superpowers/

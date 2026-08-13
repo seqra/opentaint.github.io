@@ -1,9 +1,11 @@
 ---
+import PerlinBackdrop from "@/components/astro/PerlinBackdrop.astro";
+
 const proof = {
   href: "/blog/semgrep-vs-codeql-vs-opentaint",
   title: "Detection depth, compared",
   description:
-    "See Semgrep, CodeQL, and OpenTaint run against five progressively harder Java XSS cases, from direct returns to builders with virtual dispatch.",
+    "Compare Semgrep, CodeQL, and OpenTaint across five increasingly difficult Java XSS cases.",
 };
 
 /* Coverage matrix. Columns pair each tool with the analysis mode it was run in,
@@ -32,22 +34,23 @@ const coverageStates = {
 };
 ---
 
-<section class="band" aria-labelledby="proof-heading">
-  <div class="mx-auto max-w-6xl">
-    <div class="mx-auto max-w-3xl text-center">
-      <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">Show, don't tell</p>
-      <h2 id="proof-heading" class="section-heading mt-6">See what the engine catches</h2>
+<section class="band engine-proof-band" aria-labelledby="proof-heading">
+  <PerlinBackdrop class="section-flow-noise-soft" />
+  <div class="relative z-10 mx-auto max-w-6xl">
+    <div class="section-header">
+      <p class="section-eyebrow">Comparative results</p>
+      <h2 id="proof-heading" class="section-heading">See what the engine catches</h2>
     </div>
 
-    <div class="mt-10 grid gap-8 lg:mt-16 lg:grid-cols-[0.72fr_1.28fr] lg:items-center lg:gap-16">
+    <div class="section-content grid gap-6 sm:gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-center lg:gap-16">
       <div>
-        <p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">Five-case comparison</p>
+        <p class="section-banner">Five-case comparison</p>
         <h3 class="mt-4 font-mono text-xl font-semibold leading-8 text-foreground">{proof.title}</h3>
-        <p class="mt-4 max-w-[52ch] font-mono text-sm leading-7 text-muted-foreground lg:text-[15px]">{proof.description}</p>
+        <p class="mt-4 max-w-[52ch] font-mono text-sm leading-6 text-muted-foreground sm:leading-7 lg:text-[15px]">{proof.description}</p>
         <a href={proof.href} class="mt-6 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Read the comparison</a>
       </div>
 
-      <div class="reveal min-w-0 overflow-x-auto border border-border-strong bg-background scrollbar-thin">
+      <div class="reveal min-w-0 overflow-x-auto rounded-xl border border-border-strong bg-background scrollbar-thin" role="region" aria-label="Scrollable detection-depth comparison" tabindex="0">
         {/* Five verdict columns fit a 375px screen only if the cells stop
             padding and the labels shorten; past sm both come back. */}
         <table class="w-full table-fixed border-collapse font-mono text-left text-[10px] sm:table-auto sm:min-w-[560px] sm:text-xs">

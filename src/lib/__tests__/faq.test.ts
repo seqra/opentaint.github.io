@@ -13,7 +13,7 @@ describe("faq Q3 — AST-pattern rules answer", () => {
   });
 
   it("names formal inter-procedural dataflow analysis as the tracing layer", () => {
-    expect(q3?.answer).toMatch(/Formal inter-procedural dataflow analysis/);
+    expect(q3?.answer).toMatch(/Formal program analysis/);
     expect(q3?.answer).toMatch(/tainted values/);
   });
 

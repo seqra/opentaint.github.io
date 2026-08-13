@@ -1,24 +1,6 @@
 ---
 import { Code } from "astro-expressive-code/components";
-
-const discoveries = [
-  { label: "Trust boundary", text: "Unauthenticated workflow input reaches the script evaluators" },
-  { label: "Vulnerability pattern", text: "Untrusted text passed to <code>Context.eval()</code> on a context built with <code>allowAllAccess(true)</code>" },
-  { label: "Opaque behavior", text: "<code>Builder.option()</code> returns the same builder" },
-];
-
-const features = [
-  {
-    title: "Fast scans. Fewer false alarms. Fewer missed findings",
-    description:
-      "The engine runs formal inter-procedural dataflow analysis, applying taint rules and dependency models as it tracks tainted values across procedures, fields, aliases, async code, and persistence layers at scale.",
-  },
-  {
-    title: "Open source, batteries included",
-    description:
-      "Engine, AST-pattern rules, agent skills, and CI integrations ship as one stack under Apache 2.0 and MIT.",
-  },
-];
+import PerlinBackdrop from "@/components/astro/PerlinBackdrop.astro";
 
 /* Both artifacts come from the CVE-2026-58138 reproduction kit. Fully-qualified
    names are shortened to keep the lines readable; everything else is verbatim. */
@@ -68,48 +50,73 @@ const traceSteps = [
 ];
 ---
 
-<section class="band" aria-labelledby="what-heading">
-  <div class="mx-auto max-w-6xl">
-    <div class="text-center">
-      <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">What OpenTaint does</p>
-      <h2 id="what-heading" class="section-heading mt-6">Make every security review executable</h2>
-      <p class="section-subtitle mx-auto max-w-[62ch]">
-        The agent enacts AST-pattern taint rules from vulnerabilities and captures opaque code behavior as dependency models. Both become versioned, reviewable analysis artifacts.
-      </p>
-      <a href="/blog/conductor-rce-cve-2026-58138" class="mt-6 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Read the CVE-2026-58138 reproduction post</a>
+<section class="band real-world-band" aria-labelledby="what-heading">
+  <PerlinBackdrop class="section-flow-noise-soft" />
+  <div class="relative z-10 mx-auto max-w-6xl">
+    <div class="section-header">
+      <p class="section-eyebrow">A real-world review</p>
+      <h2 id="what-heading" class="section-heading">How OpenTaint found CVE-2026-58138</h2>
+      <a href="/blog/conductor-rce-cve-2026-58138" class="mt-6 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Read the CVE-2026-58138 reproduction post.</a>
     </div>
 
 
-    <figure class="mt-12 overflow-hidden border-y border-border-strong bg-background lg:mt-16" aria-labelledby="what-heading">
-      <div class="p-6 sm:p-6 lg:p-8">
+    <figure class="section-content overflow-hidden rounded-xl border border-border-strong bg-background" aria-labelledby="what-heading">
+      <div class="p-4 sm:p-6 lg:p-8">
         <p class="flex items-baseline gap-3 font-mono text-[11px] font-semibold uppercase tracking-[0.16em]">
           <span class="text-primary">01</span>
           <span class="text-foreground">Agent reviews</span>
         </p>
 
-        <div class="mt-6 grid md:mt-8 md:grid-cols-3">
-          {discoveries.map((item, index) => (
-            <div class:list={[
-              "reveal py-3 md:py-0",
-              index > 0 && "border-t border-border md:border-l md:border-t-0 md:pl-8",
-              index < discoveries.length - 1 && "md:pr-8",
-            ]}>
-              <p class="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground md:text-[11px]">{item.label}</p>
-              <p class="mt-2 max-w-[36ch] font-mono text-[13px] font-semibold leading-[1.5] text-foreground md:mt-3 md:text-[15px] md:leading-7" set:html={item.text}></p>
+        <div class="cve-card-rail cve-card-rail-compact mobile-card-rail mt-6 grid gap-6 sm:mt-8 lg:grid-cols-2" role="region" aria-label="Reviewed application code" tabindex="0">
+          <article class="reveal mobile-card-rail-item min-w-0 overflow-hidden rounded-xl border border-border-strong bg-code-bg">
+            <div class="flex items-center justify-between border-b border-border bg-code-header px-4 py-3 font-mono text-[10px] text-muted-foreground">
+              <span class="font-semibold text-foreground">WorkflowResource.java / Lambda.java</span>
+              <span class="uppercase tracking-[0.12em]">request path</span>
             </div>
-          ))}
+            <pre class="overflow-x-auto px-4 py-6 font-mono text-[10px] leading-6 text-foreground sm:px-6 sm:text-[11px]"><code>    <span class="text-emerald-700 dark:text-emerald-400">// Controller entry point.</span>
+<span class="text-muted-foreground">77</span>  @PostMapping(produces = TEXT_PLAIN_VALUE)
+<span class="text-muted-foreground">81</span>  public String startWorkflow(
+<span class="text-muted-foreground">82</span>      @RequestBody StartWorkflowRequest request) &#123;
+<span class="text-muted-foreground">83</span>    return workflowService.startWorkflow(request);
+<span class="text-muted-foreground">84</span>  &#125;
+
+    <span class="text-emerald-700 dark:text-emerald-400">// Trust boundary: request data controls the script.</span>
+<span class="text-muted-foreground">68</span>  Map&lt;String, Object&gt; taskInput = task.getInputData();
+<span class="text-muted-foreground">71</span>  scriptExpression = (String) taskInput.get(
+<span class="text-muted-foreground">72</span>      <span class="text-primary">"scriptExpression"</span>);
+<span class="text-muted-foreground">80</span>  Object result = ScriptEvaluator.eval(
+<span class="text-muted-foreground">81</span>      scriptExpression, taskInput);</code></pre>
+          </article>
+
+          <article class="reveal mobile-card-rail-item min-w-0 overflow-hidden rounded-xl border border-border-strong bg-code-bg">
+            <div class="flex items-center justify-between border-b border-border bg-code-header px-4 py-3 font-mono text-[10px] text-muted-foreground">
+              <span class="font-semibold text-foreground">ScriptEvaluator.java</span>
+              <span class="uppercase tracking-[0.12em]">evaluation path</span>
+            </div>
+            <pre class="overflow-x-auto px-4 py-6 font-mono text-[10px] leading-6 text-foreground sm:px-6 sm:text-[11px]"><code>    <span class="text-emerald-700 dark:text-emerald-400">// Opaque external method behavior: option() returns this builder.</span>
+<span class="text-muted-foreground">116</span> private static Context createNewContext() &#123;
+<span class="text-muted-foreground">117</span>   return Context.newBuilder(<span class="text-primary">"js"</span>)
+<span class="text-muted-foreground">118</span>     .<span class="text-primary">allowHostAccess(HostAccess.ALL)</span>
+<span class="text-muted-foreground">119</span>     .option("engine.WarnInterpreterOnly", "false")
+<span class="text-muted-foreground">120</span>     .build();
+<span class="text-muted-foreground">121</span> &#125;
+
+    <span class="text-emerald-700 dark:text-emerald-400">// Vulnerability pattern: untrusted script reaches the evaluator.</span>
+<span class="text-muted-foreground">202</span> executorService.submit(
+<span class="text-muted-foreground">203</span>   () -&gt; context.<span class="text-primary">eval("js", script)</span>);</code></pre>
+          </article>
         </div>
       </div>
 
-      <div class="border-t border-border p-6 sm:p-6 lg:p-8">
+      <div class="border-t border-border p-4 sm:p-6 lg:p-8">
         <p class="flex items-baseline gap-3 font-mono text-[11px] font-semibold uppercase tracking-[0.16em]">
           <span class="text-primary">02</span>
           <span class="text-foreground">Agent enacts</span>
         </p>
 
-        <div class="mt-8 grid gap-6 lg:grid-cols-2">
+        <div class="cve-card-rail cve-card-rail-compact mobile-card-rail mt-6 grid gap-6 sm:mt-8 lg:grid-cols-2" role="region" aria-label="Formal security specifications" tabindex="0">
           {artifacts.map((artifact) => (
-            <article class="reveal flex min-w-0 flex-col overflow-hidden border border-border-strong transition-colors duration-300 hover:border-primary/60 motion-reduce:transition-none">
+            <article class="reveal mobile-card-rail-item flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong transition-colors duration-300 hover:border-primary/60 motion-reduce:transition-none">
               <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-border bg-code-header px-4 py-3">
                 <span class="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">{artifact.label}</span>
                 <span class="font-mono text-[11px] text-muted-foreground">{artifact.file.split("/").pop()}</span>
@@ -121,25 +128,29 @@ const traceSteps = [
         </div>
       </div>
 
-      <div class="border-t border-border p-6 sm:p-6 lg:p-8">
+      <div class="border-t border-border p-4 sm:p-6 lg:p-8">
         <p class="flex items-baseline gap-3 font-mono text-[11px] font-semibold uppercase tracking-[0.16em]">
           <span class="text-primary">03</span>
-          <span class="text-foreground">OpenTaint scans every change</span>
+          <span class="text-foreground">Formal taint analysis searches</span>
         </p>
 
-        <div class="mt-8 grid items-stretch gap-8 lg:grid-cols-[1.5fr_0.5fr] lg:gap-10">
+        <div class="cve-card-rail cve-card-rail-compact mobile-card-rail mt-6 grid items-stretch gap-6 sm:mt-8 lg:grid-cols-[1.5fr_0.5fr] lg:gap-10" role="region" aria-label="OpenTaint finding and reported trace" tabindex="0">
           {/* Both panels are the same box: header strip, body, footer strip —
               so their borders, tops, and bottoms line up whatever the content
               inside them costs. */}
-          <figure class="reveal flex min-w-0 flex-col border border-border-strong">
+          <figure class="reveal mobile-card-rail-item flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong">
             <figcaption class="border-b border-border bg-code-header px-4 py-3 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">
               Reported finding
             </figcaption>
 
             <a href="/reports/conductor-cve-2026-58138.html" class="group relative block flex-1 overflow-hidden bg-background">
               <span class="pointer-events-none absolute bottom-0 right-0 z-10 translate-y-full bg-primary px-3 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary-foreground transition-transform duration-300 ease-out group-hover:translate-y-0 group-focus-visible:translate-y-0 motion-reduce:transition-none">Open the report</span>
-              <img src="/pictures/report/trace-light.webp" alt="OpenTaint report with the tainted script flow selected and its steps listed below the source" class="h-full w-full object-cover object-top transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.01] dark:hidden" loading="lazy" width="1600" height="1000" />
-              <img src="/pictures/report/trace-dark.webp" alt="OpenTaint report with the tainted script flow selected and its steps listed below the source" class="hidden h-full w-full object-cover object-top transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.01] dark:block" loading="lazy" width="1600" height="1000" />
+              <div class="reported-finding-mobile" role="img" aria-label="OpenTaint report focused on the vulnerable Context.eval call and the final taint-trace steps">
+                <span class="reported-finding-crop reported-finding-code"></span>
+                <span class="reported-finding-crop reported-finding-trace"></span>
+              </div>
+              <img src="/pictures/report/trace-zoom-light.png" alt="OpenTaint report zoomed into the vulnerable Context.eval call and the final steps of its 182-step taint trace" class="hidden h-full min-h-[24rem] w-full object-cover object-center transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.015] sm:block dark:sm:hidden" loading="lazy" width="2000" height="1340" />
+              <img src="/pictures/report/trace-zoom-dark.png" alt="OpenTaint report zoomed into the vulnerable Context.eval call and the final steps of its 182-step taint trace" class="hidden h-full min-h-[24rem] w-full object-cover object-center transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-[1.015] dark:sm:block" loading="lazy" width="2000" height="1340" />
             </a>
 
             <p class="border-t border-border px-4 py-3 font-mono text-[11px] leading-5 text-muted-foreground">
@@ -147,20 +158,20 @@ const traceSteps = [
             </p>
           </figure>
 
-          <div class="reveal flex min-w-0 flex-col border border-border-strong">
+          <div class="reveal mobile-card-rail-item flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong">
             <p class="border-b border-border bg-code-header px-4 py-3 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">
               Reported taint trace
             </p>
 
-            <ol class="trace flex-1 px-4 py-6 font-mono">
+            <ol class="trace flex flex-1 flex-col px-4 py-6 font-mono">
               {traceSteps.map((step, index) => (
-                <li class="trace-step relative pl-8">
+                <li class="trace-step relative flex-1 pl-8 last:flex-none">
                   <span class:list={[
                     "absolute left-0 top-[7px] h-2.5 w-2.5 border",
                     step.role === "Source" || step.role === "Sink" ? "border-primary bg-primary" : "border-border-strong bg-background",
                   ]} aria-hidden="true"></span>
                   {index < traceSteps.length - 1 && (
-                    <span class="trace-rail absolute -bottom-6 left-[4.5px] top-[17px] w-px bg-border-strong" aria-hidden="true"></span>
+                    <span class="trace-rail absolute -bottom-2 left-[4.5px] top-[17px] w-px bg-border-strong" aria-hidden="true"></span>
                   )}
                   <span class:list={[
                     "block text-[10px] uppercase tracking-[0.14em]",
@@ -173,19 +184,11 @@ const traceSteps = [
             </ol>
 
             <p class="border-t border-border px-4 py-3 font-mono text-[10px] leading-[1.6] text-muted-foreground">
-              182 steps in full, on the pull request that introduces the flow.
+              The complete trace spans 182 steps across the codebase.
             </p>
           </div>
         </div>
 
-        <ul class="mt-10 grid gap-x-16 gap-y-8 md:grid-cols-2 lg:mt-12">
-          {features.map((feature) => (
-            <li class="reveal">
-              <h3 class="font-mono text-[15px] font-semibold leading-6 text-foreground lg:text-base">{feature.title}</h3>
-              <p class="mt-2 max-w-[56ch] font-mono text-sm leading-7 text-muted-foreground">{feature.description}</p>
-            </li>
-          ))}
-        </ul>
       </div>
     </figure>
 

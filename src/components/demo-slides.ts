@@ -6,7 +6,7 @@ export type DemoSlide = {
   id: DemoSlideId;
   label: string;
   kind: "terminal" | "media" | "video";
-  // When true, the inner box uses the site background instead of the cast
+  // When true, the inner box uses the site background instead of the terminal
   // background. Set for media that carries its own (page-coloured) chrome,
   // e.g. the browser screenshot, so the box blends with the page at its corners.
   pageBackground?: boolean;

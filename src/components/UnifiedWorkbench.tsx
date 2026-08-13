@@ -21,9 +21,7 @@ const stages = [
   { id: "report", number: "05", label: "Report" },
 ] as const;
 
-type StageId = (typeof stages)[number]["id"];
-
-const timeline = ["review", "enact", "scan", "summary", "triage", "report"] as const;
+const timeline = ["review", "enact", "scan", "triage", "report"] as const;
 type TimelineId = (typeof timeline)[number];
 
 function scrollOffset(container: HTMLElement, target: HTMLElement) {
@@ -397,12 +395,11 @@ type ScanFindingProps = {
   title: string;
   file: string;
   path: string;
-  muted?: boolean;
 };
 
-function ScanFinding({ title, file, path, muted = false }: ScanFindingProps) {
+function ScanFinding({ title, file, path }: ScanFindingProps) {
   return (
-    <article className={["rounded-[10px] border bg-background p-4", muted ? "border-border opacity-75" : "border-primary/35"].join(" ")}>
+    <article className="rounded-[10px] border border-primary/35 bg-background p-4">
       <div className="flex items-center justify-between gap-3">
         <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-primary">CWE-94</span>
         <span className="font-mono text-[9px] text-muted-foreground">Candidate</span>
@@ -421,14 +418,14 @@ function ScanFinding({ title, file, path, muted = false }: ScanFindingProps) {
   );
 }
 
-function ScanResults({ progress, inspected = false }: { progress: number; inspected?: boolean }) {
-  const completion = inspected ? 100 : Math.max(18, Math.round(progress * 100));
-  const complete = inspected || progress > 0.68;
+function ScanResults({ progress }: { progress: number }) {
+  const completion = Math.max(18, Math.round(progress * 100));
+  const complete = progress > 0.68;
 
   return (
     <SurfaceStory
-      title={inspected ? "Complete paths" : "Fast scans"}
-      window={<div data-testid={inspected ? "scan-summary-view" : "scan-results-view"} className="flex h-full flex-col overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] shadow-sm dark:bg-card">
+      title="Fast scans"
+      window={<div data-testid="scan-results-view" className="flex h-full flex-col overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] shadow-sm dark:bg-card">
         <div className="flex h-10 shrink-0 items-center justify-between border-b border-border bg-[#f0eeeb] px-4 font-mono dark:bg-code-header">
           <span className="text-[11px] font-semibold text-foreground">OpenTaint scan</span>
           <span className="text-[9px] font-semibold text-[#2d8a4e] dark:text-[#79bd8f]">{complete ? "COMPLETE" : "ANALYZING"}</span>
@@ -442,16 +439,15 @@ function ScanResults({ progress, inspected = false }: { progress: number; inspec
           <div className="mt-4 h-1 overflow-hidden rounded-full bg-border"><span className="block h-full bg-primary transition-[width] duration-300" style={{ width: `${completion}%` }} /></div>
           <div className="mt-6 flex items-center justify-between">
             <h3 className="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-foreground">2 candidate findings</h3>
-            {inspected && <span className="font-mono text-[9px] text-muted-foreground">paths inspected</span>}
           </div>
           <div className="mt-3 grid gap-3 xl:grid-cols-2">
             <ScanFinding title="Unauthenticated script execution" file="ScriptRuntime.java:11" path="POST /api/jobs → Context.eval" />
-            <ScanFinding title="Script execution in preview renderer" file="PreviewRenderer.java:11" path="POST /api/preview → Context.eval" muted={inspected} />
+            <ScanFinding title="Script execution in preview renderer" file="PreviewRenderer.java:11" path="POST /api/preview → Context.eval" />
           </div>
         </div>
       </div>}
     >
-      {inspected ? "Every candidate includes the full path needed for triage." : "Formal program analysis searches the whole project in seconds."}
+      Formal program analysis searches the whole project in seconds.
     </SurfaceStory>
   );
 }
@@ -630,7 +626,7 @@ function TriageView({ progress }: { progress: number }) {
     <SurfaceStory
       title="Fewer false alarms"
       window={<div data-testid="triage-view" className="h-full overflow-hidden rounded-[10px] border border-border bg-[#f4f2ef] p-3 shadow-sm dark:bg-card">
-        <div className="mx-auto grid h-full max-w-[40rem] grid-rows-[minmax(0,1fr)_auto_minmax(12rem,0.72fr)] gap-2">
+        <div className="mx-auto grid h-full max-w-[40rem] grid-rows-[minmax(0,1fr)_auto_auto] gap-2">
           <div className="min-h-0 overflow-hidden">
             <ArtifactFrame
               path="rules/java/lib/generic/graal-eval.yaml"
@@ -651,7 +647,7 @@ function TriageView({ progress }: { progress: number }) {
             <span className="triage-causal-step"><i />REMOVE NOISE</span>
           </div>
 
-          <section className="min-h-0 overflow-hidden rounded-[10px] border border-border bg-background">
+          <section className="overflow-hidden rounded-[10px] border border-border bg-background">
             <div className="flex h-10 items-center justify-between border-b border-border bg-[#f0eeeb] px-4 font-mono dark:bg-code-header">
               <span className="text-[11px] font-semibold text-foreground">Rescan results</span>
               <span className="text-[9px] font-semibold text-[#2d8a4e] dark:text-[#79bd8f]">{rescanned ? "RULE TUNED" : "REFINING RULE"}</span>
@@ -765,7 +761,6 @@ function WorkSurface({ stage, progress }: { stage: TimelineId; progress: number 
   if (stage === "review") return <ReviewReport progress={progress} />;
   if (stage === "enact") return <Specifications progress={progress} />;
   if (stage === "scan") return <ScanResults progress={progress} />;
-  if (stage === "summary") return <ScanResults progress={progress} inspected />;
   if (stage === "triage") return <TriageView progress={progress} />;
   return <FindingReport progress={progress} />;
 }
@@ -777,12 +772,10 @@ export function UnifiedWorkbench() {
   const transcriptRef = useRef<HTMLDivElement>(null);
   const stageRefs = useRef<Array<HTMLElement | null>>([]);
   const timelineStage = timeline[timelineIndex];
-  const activeStageIndex = timelineStage === "summary"
-    ? 2
-    : stages.findIndex((stage) => stage.id === timelineStage);
+  const activeStageIndex = stages.findIndex((stage) => stage.id === timelineStage);
 
   const selectStage = (index: number) => {
-    const targetTimelineIndex = index >= 3 ? index + 1 : index;
+    const targetTimelineIndex = index;
     const track = scrollTrackRef.current;
     if (track) {
       track.scrollTop = timelineDistance(track) * ((targetTimelineIndex + 0.02) / timeline.length);
@@ -842,7 +835,7 @@ export function UnifiedWorkbench() {
 
   return (
     <div ref={scrollTrackRef} data-testid="demo-scroll-track" className="demo-scroll-track relative h-[calc(100vh-4rem)] min-h-[38rem] max-h-[48rem] overflow-y-auto overscroll-y-auto scrollbar-thin">
-      <div className="relative h-[620%]">
+      <div className="relative h-[520%]">
       <div className="sticky top-0 flex h-[calc(100vh-4rem)] min-h-[38rem] max-h-[48rem] items-center">
         <div data-testid="unified-workbench" className="agent-ui mx-auto w-full max-w-[82rem] overflow-hidden rounded-[20px] border border-black/10 bg-white p-2 dark:border-border dark:bg-card">
       <div className="overflow-hidden rounded-[13px] border border-border bg-background">
@@ -907,19 +900,16 @@ export function UnifiedWorkbench() {
                 <AgentText>The scan found two paths into <code className="font-mono text-[12px] text-primary">Context.eval</code>. I’ll inspect both before accepting them.</AgentText>
               </AgentStage>
 
-              <AgentStage id="summary" setRef={(node) => { stageRefs.current[3] = node; }}>
+              <AgentStage id="triage" setRef={(node) => { stageRefs.current[3] = node; }}>
                 <ToolActivity title="Inspected 2 complete paths" activity={["JobController → ScriptRuntime", "PreviewController → PreviewRenderer"]} meta="2 candidates" icon="search" defaultOpen />
                 <AgentText>The job path is exploitable. The preview path uses a restricted context and is a false alarm.</AgentText>
-              </AgentStage>
-
-              <AgentStage id="triage" setRef={(node) => { stageRefs.current[4] = node; }}>
                 <AgentText>I’ll require the evaluated context to be built with <code className="font-mono text-[12px] text-primary">HostAccess.ALL</code>.</AgentText>
                 <ToolActivity title="Refined graal-eval.yaml" activity={["Correlated $CONTEXT", "Required HostAccess.ALL"]} added={6} removed={0} icon="file" defaultOpen />
                 <ToolActivity title="Rescanned the project" activity={["Kept ScriptRuntime.java:11", "Removed PreviewRenderer.java:11"]} meta="1 finding, 0 false alarms" icon="check" defaultOpen />
                 <AgentText>The refined rule keeps the confirmed path and no longer reports the preview path.</AgentText>
               </AgentStage>
 
-              <AgentStage id="report" setRef={(node) => { stageRefs.current[5] = node; }}>
+              <AgentStage id="report" setRef={(node) => { stageRefs.current[4] = node; }}>
                 <AgentText>Review complete. OpenTaint reproduced the finding as a 10-step path from <code className="font-mono text-[12px]">POST /api/jobs</code> to <code className="font-mono text-[12px] text-primary">Context.eval</code>.</AgentText>
                 <ToolActivity title="Opened results/report.sarif" activity={["1 error", "1 affected file", "1 triggered rule"]} icon="file" defaultOpen />
                 <div className="mt-4 rounded-md border border-border bg-background px-4 py-3 text-[12px] leading-5">
@@ -930,7 +920,7 @@ export function UnifiedWorkbench() {
             </div>
           </section>
 
-          <section className="min-h-0 min-w-0 overflow-hidden bg-background" aria-live="polite" aria-label={`${timelineStage === "summary" ? "Summary" : stages[activeStageIndex].label} output`}>
+          <section className="min-h-0 min-w-0 overflow-hidden bg-background" aria-live="polite" aria-label={`${stages[activeStageIndex].label} output`}>
             <div key={timelineStage} className="demo-work-surface h-full min-h-0 overflow-hidden">
               <WorkSurface stage={timelineStage} progress={timelineProgress} />
             </div>

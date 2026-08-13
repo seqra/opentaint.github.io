@@ -1,29 +1,15 @@
 
+@import "@fontsource-variable/jetbrains-mono/wght.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: "JetBrains Mono";
-  src: url("/fonts/jetbrains-mono-regular.woff") format("woff");
-  font-style: normal;
-  font-weight: 400 600;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "JetBrains Mono";
-  src: url("/fonts/jetbrains-mono-bold.woff") format("woff");
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-}
-
 @layer base {
   :root {
     color-scheme: light;
-    --font-sans: "JetBrains Mono", ui-monospace, monospace;
-    --font-mono: "JetBrains Mono", monospace;
+    --font-sans: "JetBrains Mono Variable", ui-monospace, monospace;
+    --font-mono: "JetBrains Mono Variable", monospace;
 
     /* IBM Carbon spacing scale. Layout whitespace uses these discrete tokens;
        responsive layouts step between tokens instead of interpolating values. */
@@ -447,16 +433,14 @@
       padding: var(--spacing-03);
     }
 
-    .value-card-grid .bundle-engine-flow {
+    .value-card-grid .bundle-analysis-flow {
       margin-top: var(--spacing-02);
     }
 
-    .value-card-grid .bundle-engine-flow > span {
-      min-height: 1.15rem;
-    }
-
-    .value-card-grid .bundle-engine-meter {
-      margin-top: var(--spacing-02);
+    .value-card-grid .bundle-analysis-inputs b {
+      overflow: visible;
+      font-size: 6px;
+      text-overflow: clip;
     }
 
     .value-card-grid .bundle-engine-result {
@@ -675,20 +659,11 @@
     opacity: 0.045;
   }
 
-  .section-flow-noise svg {
+  .section-flow-noise img {
     display: block;
     width: 100%;
     height: 100%;
-  }
-
-  .section-flow-noise path {
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.25;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    vector-effect: non-scaling-stroke;
-    opacity: 0.42;
+    object-fit: cover;
   }
 
   .dark .section-flow-noise {
@@ -991,8 +966,6 @@
     animation: balance-breathe 5.5s ease-in-out infinite;
   }
 
-  .bundle-caret { animation: bundle-caret 1s steps(1) infinite; }
-
   .bundle-system { font-family: var(--font-mono); }
 
   .bundle-window-bar {
@@ -1088,18 +1061,67 @@
     box-shadow: 0 0 0 5px hsl(var(--brand) / 0.035);
   }
 
-  .bundle-terminal-line { white-space: nowrap; font-size: 8px; font-weight: 650; color: hsl(var(--brand)); }
-  .bundle-terminal-line b { color: hsl(var(--muted-foreground)); }
+  .bundle-analysis-inputs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-02);
+  }
 
-  .bundle-engine-flow { margin-top: var(--spacing-04); border-top: 1px solid hsl(var(--border)); }
-  .bundle-engine-flow > span { display: grid; grid-template-columns: 1.15rem 1fr auto; align-items: center; gap: var(--spacing-02); min-height: 1.65rem; border-bottom: 1px solid hsl(var(--border)); }
-  .bundle-engine-flow i { font-size: 5px; font-style: normal; color: hsl(var(--muted-foreground)); }
-  .bundle-engine-flow b { font-size: 6px; font-weight: 600; color: hsl(var(--foreground)); }
-  .bundle-engine-flow em { font-size: 5px; font-style: normal; font-weight: 700; color: hsl(142 53% 33%); }
+  .bundle-analysis-inputs > span {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: var(--spacing-02);
+    border: 1px solid hsl(var(--border));
+    border-radius: 6px;
+    padding: var(--spacing-02);
+  }
 
-  .bundle-engine-meter { height: 2px; margin-top: var(--spacing-04); overflow: hidden; border-radius: 999px; background: hsl(var(--border)); }
-  .bundle-engine-meter i { display: block; width: 100%; height: 100%; background: hsl(var(--brand)); }
-  .bundle-engine-result { margin-top: var(--spacing-03); font-size: 6px; color: hsl(var(--muted-foreground)); }
+  .bundle-analysis-inputs i {
+    display: grid;
+    width: 1.1rem;
+    height: 1.1rem;
+    flex: none;
+    place-items: center;
+    border-radius: 3px;
+    background: hsl(var(--brand) / 0.1);
+    font-size: 5px;
+    font-style: normal;
+    color: hsl(var(--brand));
+  }
+
+  .bundle-analysis-inputs b {
+    overflow: hidden;
+    font-size: 5.5px;
+    font-weight: 650;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .bundle-analysis-flow {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: var(--spacing-02);
+    margin-top: var(--spacing-03);
+  }
+
+  .bundle-analysis-flow > span {
+    height: 1px;
+    background: hsl(var(--brand) / 0.48);
+  }
+
+  .bundle-analysis-flow b {
+    border: 1px solid hsl(var(--brand) / 0.35);
+    border-radius: 999px;
+    padding: var(--spacing-02) var(--spacing-03);
+    font-size: 5px;
+    line-height: 1.35;
+    text-align: center;
+    color: hsl(var(--brand));
+  }
+
+  .bundle-engine-result { margin-top: var(--spacing-03); font-size: 6px; text-align: center; color: hsl(var(--muted-foreground)); }
   .bundle-engine-result b { color: hsl(var(--brand)); }
 
   .bundle-result-icon,
@@ -1123,8 +1145,8 @@
 
   .enact-map {
     display: grid;
-    min-height: 8.5rem;
-    grid-template-columns: minmax(0, 10.75rem) var(--spacing-10) minmax(0, 10.75rem);
+    min-height: 9rem;
+    grid-template-columns: minmax(0, 1fr) minmax(var(--spacing-10), 7rem) minmax(0, 1fr);
     align-items: center;
     justify-content: center;
     gap: var(--spacing-03);
@@ -1134,8 +1156,8 @@
   .enact-map-document {
     display: grid;
     width: 100%;
-    max-width: 10.75rem;
-    height: 7rem;
+    max-width: none;
+    height: 7.5rem;
     min-width: 0;
     grid-template-rows: var(--spacing-06) minmax(0, 1fr);
     align-content: center;
@@ -1161,13 +1183,13 @@
   .enact-map-facts > span {
     display: flex;
     flex: 1 1 0;
-    min-height: 1.2rem;
+    min-height: 1.35rem;
     align-items: center;
     border: 1px solid hsl(var(--border));
     border-radius: 0.25rem;
     padding-inline: var(--spacing-03);
     color: hsl(var(--muted-foreground));
-    font-size: 6px;
+    font-size: 7px;
     font-weight: 700;
     letter-spacing: 0.06em;
     transition:
@@ -1197,7 +1219,7 @@
     gap: var(--spacing-02);
     overflow: hidden;
     color: hsl(var(--foreground));
-    font-size: 7px;
+    font-size: 8px;
     font-weight: 650;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1332,7 +1354,7 @@
     flex: none;
     grid-template-columns: minmax(2.75rem, auto) minmax(var(--spacing-03), 1fr) minmax(2.75rem, auto) minmax(var(--spacing-03), 1fr) minmax(2.75rem, auto) minmax(var(--spacing-03), 1fr) minmax(2.75rem, auto) minmax(var(--spacing-03), 1fr) minmax(2.75rem, auto);
     align-items: center;
-    border-bottom: 1px solid hsl(var(--border));
+    border-top: 1px solid hsl(var(--border));
     background: hsl(var(--background));
     padding-inline: var(--spacing-05);
   }
@@ -1575,6 +1597,7 @@
     stroke-dasharray: 12 52;
     stroke-dashoffset: 0;
     opacity: 1;
+    will-change: stroke-dashoffset;
   }
 
   .hero-signal-active-1 { animation-delay: -2.5s; }
@@ -2084,12 +2107,16 @@
     animation: hero-prefix-cycle 6.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
   }
 
+  .hero-prefix-word:first-child {
+    animation-delay: -0.26s;
+  }
+
   .hero-prefix-word:nth-child(2) {
-    animation-delay: -4.4s;
+    animation-delay: 1.94s;
   }
 
   .hero-prefix-word:nth-child(3) {
-    animation-delay: -2.2s;
+    animation-delay: 4.14s;
   }
 
   .hero-signal-active {
@@ -2126,17 +2153,16 @@
   }
 
   .balance-shape,
-  .bundle-caret,
   .workflow-operation-arrow i {
     animation: none;
   }
 }
 
 @keyframes hero-prefix-cycle {
-  0%, 28% { opacity: 1; transform: none; }
-  33%, 95% { opacity: 0; transform: translate3d(0, -0.2em, 0); }
-  95.01% { opacity: 0; transform: translate3d(0, 0.2em, 0); }
-  100% { opacity: 1; transform: none; }
+  0% { opacity: 0; transform: translate3d(0, 0.14em, 0); }
+  4%, 26% { opacity: 1; transform: none; }
+  30% { opacity: 0; transform: translate3d(0, -0.14em, 0); }
+  30.01%, 100% { opacity: 0; transform: translate3d(0, 0.14em, 0); }
 }
 
 @keyframes hero-signal-flow {
@@ -2179,11 +2205,6 @@
 @keyframes balance-breathe {
   0%, 100% { opacity: 0.7; transform: scale(0.985); }
   50% { opacity: 1; transform: scale(1); }
-}
-
-@keyframes bundle-caret {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0; }
 }
 
 @keyframes demo-in-next {

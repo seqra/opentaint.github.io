@@ -211,13 +211,15 @@ function BundleVisual() {
 
         <section className="bundle-system-column bundle-engine-panel">
           <p className="bundle-system-kicker">FORMAL ANALYSIS</p>
-          <div className="bundle-terminal-line"><b>$</b> opentaint scan<span className="bundle-caret">_</span></div>
-          <div className="bundle-engine-flow">
-            <span><i>01</i><b>Parse project</b><em>DONE</em></span>
-            <span><i>02</i><b>Load rules</b><em>DONE</em></span>
-            <span><i>03</i><b>Start scan</b><em>DONE</em></span>
+          <div className="bundle-analysis-inputs">
+            <span><i>src</i><b>Project model</b></span>
+            <span><i>yml</i><b>Security spec</b></span>
           </div>
-          <div className="bundle-engine-meter"><i /></div>
+          <div className="bundle-analysis-flow">
+            <span />
+            <b>INTERPROCEDURAL<br />DATAFLOW</b>
+            <span />
+          </div>
           <p className="bundle-engine-result"><b>3</b> complete traces</p>
         </section>
 

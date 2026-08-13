@@ -28,20 +28,24 @@ const round = (value: number) => Math.round(value * 10) / 10;
 function catmullRomPath(points: Point[]) {
   if (points.length < 2) return "";
 
-  /* Every other simulation point is enough to preserve the flow field's
-     silhouette. Quadratic mid-point smoothing keeps the curves fluid while
-     cutting the landing document's inline SVG data by roughly two thirds. */
-  const sampled = points.filter((_, index) => index % 2 === 0 || index === points.length - 1);
-  const commands = [`M${round(sampled[0].x)} ${round(sampled[0].y)}`];
-  for (let index = 1; index < sampled.length - 1; index += 1) {
-    const current = sampled[index];
-    const next = sampled[index + 1];
+  const commands = [`M${round(points[0].x)} ${round(points[0].y)}`];
+  for (let index = 0; index < points.length - 1; index += 1) {
+    const previous = points[index - 1] ?? points[index];
+    const current = points[index];
+    const next = points[index + 1];
+    const following = points[index + 2] ?? next;
+    const controlOne = {
+      x: current.x + (next.x - previous.x) / 6,
+      y: current.y + (next.y - previous.y) / 6,
+    };
+    const controlTwo = {
+      x: next.x - (following.x - current.x) / 6,
+      y: next.y - (following.y - current.y) / 6,
+    };
     commands.push(
-      `Q${round(current.x)} ${round(current.y)} ${round((current.x + next.x) / 2)} ${round((current.y + next.y) / 2)}`,
+      `C${round(controlOne.x)} ${round(controlOne.y)} ${round(controlTwo.x)} ${round(controlTwo.y)} ${round(next.x)} ${round(next.y)}`,
     );
   }
-  const last = sampled[sampled.length - 1];
-  commands.push(`L${round(last.x)} ${round(last.y)}`);
 
   return commands.join(" ");
 }

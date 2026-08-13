@@ -87,9 +87,9 @@ const heroWorkflowFlowLines = createHeroFlowField({ height: 1440 });
       <div class="hero-workflow-group">
         <svg class="hero-workflow-signal-field" viewBox="0 0 1200 1440" preserveAspectRatio="none" aria-hidden="true">
           <g class="hero-signal-graph">
-            {heroWorkflowFlowLines.map((line, index) => <path id={`hero-flow-${index}`} d={line.d}></path>)}
+            {heroWorkflowFlowLines.map((line) => <path d={line.d}></path>)}
             {heroWorkflowFlowLines.map((line, index) => line.active
-              ? <use class:list={["hero-signal-active", `hero-signal-active-${index % 3}`]} href={`#hero-flow-${index}`}></use>
+              ? <path class:list={["hero-signal-active", `hero-signal-active-${index % 3}`]} d={line.d}></path>
               : null)}
           </g>
         </svg>
@@ -103,7 +103,7 @@ const heroWorkflowFlowLines = createHeroFlowField({ height: 1440 });
 
       <Demo />
 
-      <FirstScanFunnel client:load />
+      <FirstScanFunnel client:visible />
 
       <SecurityDebt />
 

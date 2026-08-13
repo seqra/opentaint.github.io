@@ -1,4 +1,8 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Locator } from "@playwright/test";
+
+async function waitForDemo(workbench: Locator) {
+  await expect(workbench).toHaveAttribute("data-demo-ready", "true");
+}
 
 test.describe("landing product demonstration", () => {
   test("travels through one security-review session and its synchronized surfaces", async ({ page }) => {
@@ -6,6 +10,9 @@ test.describe("landing product demonstration", () => {
 
     const workbench = page.getByTestId("unified-workbench");
     await workbench.scrollIntoViewIfNeeded();
+    await waitForDemo(workbench);
+    await workbench.getByRole("button", { name: "Discovery", exact: true }).click();
+    await expect(workbench.getByRole("button", { name: "Discovery", exact: true })).toHaveAttribute("aria-current", "step");
     await expect(workbench.getByText("Review this application for unauthenticated code execution. Capture what you learn for future scans.")).toBeVisible();
     await expect(workbench.getByRole("heading", { name: "Unauthenticated execution review" })).toBeVisible();
     const discovery = workbench.getByTestId("review-report-scroll");
@@ -58,6 +65,7 @@ test.describe("landing product demonstration", () => {
     const workbench = page.getByTestId("unified-workbench");
     await track.scrollIntoViewIfNeeded();
     await expect(workbench).toBeVisible();
+    await waitForDemo(workbench);
     const jump = async (progress: number) => {
       await track.evaluate((element, value) => {
         const sticky = element.firstElementChild as HTMLElement;
@@ -120,6 +128,7 @@ test.describe("landing product demonstration", () => {
     const workbench = page.getByTestId("unified-workbench");
     await track.scrollIntoViewIfNeeded();
     await expect(workbench).toBeVisible();
+    await waitForDemo(workbench);
     const transcript = workbench.getByLabel("Agent transcript");
     await track.evaluate((element) => {
       const sticky = element.firstElementChild as HTMLElement;
@@ -139,6 +148,7 @@ test.describe("landing product demonstration", () => {
     const workbench = page.getByTestId("unified-workbench");
     await track.scrollIntoViewIfNeeded();
     await expect(workbench).toBeVisible();
+    await waitForDemo(workbench);
     const result = await track.evaluate((element) => {
       const sticky = element.firstElementChild as HTMLElement;
       const stickyTop = Number.parseFloat(getComputedStyle(sticky).top) || 0;
@@ -161,6 +171,7 @@ test.describe("landing product demonstration", () => {
     const transcript = page.getByLabel("Agent transcript");
     await track.scrollIntoViewIfNeeded();
     await expect(workbench).toBeVisible();
+    await waitForDemo(workbench);
 
     await track.evaluate((element) => {
       const sticky = element.firstElementChild as HTMLElement;
@@ -194,6 +205,7 @@ test.describe("landing product demonstration", () => {
     const track = page.getByTestId("demo-scroll-track");
     const workbench = page.getByTestId("unified-workbench");
     await workbench.scrollIntoViewIfNeeded();
+    await waitForDemo(workbench);
 
     await workbench.getByRole("button", { name: "Scan", exact: true }).click();
     const scan = workbench.getByTestId("scan-results-view");

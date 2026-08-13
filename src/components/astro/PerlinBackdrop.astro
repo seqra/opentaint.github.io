@@ -1,14 +1,7 @@
 ---
-import { createHeroFlowField } from "@/lib/heroFlowField";
-
 const { class: className = "" } = Astro.props;
-const lines = createHeroFlowField();
 ---
 
 <div class:list={["section-flow-noise", className]} aria-hidden="true">
-  <svg viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid slice">
-    <g>
-      {lines.map((line) => <path d={line.d}></path>)}
-    </g>
-  </svg>
+  <img src="/section-flow-field.svg" alt="" loading="lazy" decoding="async" />
 </div>

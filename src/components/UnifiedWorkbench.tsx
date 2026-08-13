@@ -337,7 +337,7 @@ function SpecificationTransformation({ activeArtifact }: { activeArtifact: numbe
   const isFactActive = (fact: string) => mapping.facts.includes(fact as never);
 
   return (
-    <div className="enact-map mx-auto mb-3 max-w-[34rem] rounded-[10px] border border-border bg-background p-3 font-mono" aria-label="Informal security knowledge transformed into formal specifications">
+    <div className="enact-map mx-auto mb-3 max-w-[40rem] rounded-[10px] border border-border bg-background p-3 font-mono" aria-label="Informal security knowledge transformed into formal specifications">
       <div className="enact-map-document">
         <span className="enact-map-file"><FileText aria-hidden="true" /> security-review.md</span>
         <div className="enact-map-facts">
@@ -446,17 +446,17 @@ function ScanResults({ progress }: { progress: number }) {
           <span className="text-[11px] font-semibold text-foreground">OpenTaint scan</span>
           <span className="text-[9px] font-semibold text-[#2d8a4e] dark:text-[#79bd8f]">{complete ? "COMPLETE" : "ANALYZING"}</span>
         </div>
-        <div className="flex min-h-0 flex-1 flex-col justify-center overflow-hidden p-6">
-          <div className="grid grid-cols-3 gap-3">
-            <div className="rounded-lg border border-border bg-background p-3"><span className="font-mono text-[9px] text-muted-foreground">PROJECT MODEL</span><b className="mt-1 block text-[12px] text-foreground">Built</b></div>
-            <div className="rounded-lg border border-border bg-background p-3"><span className="font-mono text-[9px] text-muted-foreground">RULES + MODELS</span><b className="mt-1 block text-[12px] text-foreground">Loaded</b></div>
-            <div className="rounded-lg border border-border bg-background p-3"><span className="font-mono text-[9px] text-muted-foreground">TIME</span><b className="mt-1 block text-[12px] text-foreground">30s</b></div>
+        <div className="flex min-h-0 flex-1 flex-col justify-center overflow-hidden p-5">
+          <div className="grid grid-cols-3 gap-2">
+            <div className="rounded-lg border border-border bg-background p-4"><span className="font-mono text-[9px] text-muted-foreground">PROJECT MODEL</span><b className="mt-1 block text-[12px] text-foreground">Built</b></div>
+            <div className="rounded-lg border border-border bg-background p-4"><span className="font-mono text-[9px] text-muted-foreground">RULES AND MODELS</span><b className="mt-1 block text-[12px] text-foreground">Loaded</b></div>
+            <div className="rounded-lg border border-border bg-background p-4"><span className="font-mono text-[9px] text-muted-foreground">TIME</span><b className="mt-1 block text-[12px] text-foreground">30s</b></div>
           </div>
-          <div className="mt-4 h-1 overflow-hidden rounded-full bg-border"><span className="block h-full origin-left bg-primary will-change-transform" style={{ transform: `scaleX(${completion})` }} /></div>
-          <div className="mt-6 flex items-center justify-between">
+          <div className="mt-3 h-1 overflow-hidden rounded-full bg-border"><span className="block h-full origin-left bg-primary will-change-transform" style={{ transform: `scaleX(${completion})` }} /></div>
+          <div className="mt-5 flex items-center justify-between">
             <h3 className="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-foreground">2 candidate findings</h3>
           </div>
-          <div className="mt-3 grid min-h-[10rem] gap-3 xl:grid-cols-2">
+          <div className="mt-3 grid min-h-[10rem] grid-cols-2 gap-3">
             <ScanFinding title="Unauthenticated script execution" file="ScriptRuntime.java:11" path="POST /api/jobs → Context.eval" />
             <ScanFinding title="Script execution in preview renderer" file="PreviewRenderer.java:11" path="POST /api/preview → Context.eval" />
           </div>
@@ -698,12 +698,12 @@ function TriageView({ progress }: { progress: number }) {
 
 function FindingReport({ progress }: { progress: number }) {
   const [stepIndex, setStepIndex] = useState(0);
-  const codeScrollRef = useRef<HTMLDivElement>(null);
-  const currentRowRef = useRef<HTMLDivElement>(null);
   const currentStep = flowSteps[stepIndex];
   const activeFile = currentStep.file;
   const currentLine = currentStep.line;
   const stepMessage = currentStep.message;
+  const activeSourceLines = sourceFiles[activeFile].split("\n");
+  const placeTooltipAbove = currentLine > activeSourceLines.length / 2;
 
   const move = (next: number) => {
     const bounded = Math.max(0, Math.min(flowSteps.length - 1, next));
@@ -713,14 +713,6 @@ function FindingReport({ progress }: { progress: number }) {
   useEffect(() => {
     move(Math.round(progress * (flowSteps.length - 1)));
   }, [progress]);
-
-  useEffect(() => {
-    const scroller = codeScrollRef.current;
-    const row = currentRowRef.current;
-    if (!scroller || !row) return;
-    const target = row.offsetTop - Math.max(16, (scroller.clientHeight - row.offsetHeight) / 2);
-    scroller.scrollTop = Math.max(0, Math.min(target, scroller.scrollHeight - scroller.clientHeight));
-  }, [activeFile, currentLine, stepIndex]);
 
   return (
     <SurfaceStory
@@ -741,16 +733,15 @@ function FindingReport({ progress }: { progress: number }) {
           <span className="ml-1 inline-flex w-[5ch] shrink-0 justify-end whitespace-nowrap tabular-nums text-[#76665d] dark:text-muted-foreground">{stepIndex + 1}/{flowSteps.length}</span>
         </div>
       </div>
-      <ReportTraceMap stepIndex={stepIndex} />
-      <div ref={codeScrollRef} className="relative min-h-0 flex-1 overflow-auto py-4 scrollbar-thin">
-        <div className="min-w-[42rem] pb-6 text-[12px] leading-6">
-          {sourceFiles[activeFile].split("\n").map((code, index) => {
+      <div data-testid="report-code-view" className="relative min-h-0 flex-1 overflow-hidden py-2">
+        <div className="text-[clamp(8px,0.75vw,10px)] leading-[1.45]">
+          {activeSourceLines.map((code, index) => {
             const line = index + 1;
             const isCurrent = line === currentLine;
             const isSink = isCurrent && stepIndex === flowSteps.length - 1;
             return (
-              <div key={line} ref={isCurrent ? currentRowRef : undefined} className="relative">
-                <div className={["grid min-h-6 grid-cols-[2rem_3rem_1fr] px-3", isSink ? "bg-primary/20" : isCurrent ? "bg-blue-500/20" : ""].join(" ")}>
+              <div key={line} className="relative">
+                <div className={["grid min-h-[1.45em] grid-cols-[1.25rem_2rem_minmax(0,1fr)] px-2", isSink ? "bg-primary/20" : isCurrent ? "bg-blue-500/20" : ""].join(" ")}>
                   <span className={isSink ? "text-primary" : isCurrent ? "text-blue-500" : ""}>{isCurrent ? "▶" : ""}</span>
                   <span className="select-none pr-3 text-right text-[#b3a396] dark:text-[#5e4a4a]">{line}</span>
                   <span className="whitespace-pre"><JavaLine line={code} /></span>
@@ -759,10 +750,11 @@ function FindingReport({ progress }: { progress: number }) {
                   <div
                     role="status"
                     className={[
-                      "relative z-20 ml-20 mt-2 w-[28rem] max-w-[calc(100%-6rem)] rounded-lg border border-primary/30 bg-background/95 px-3 py-2 font-sans text-[11px] leading-4 text-foreground shadow-[0_8px_28px_rgba(37,25,20,0.2)] backdrop-blur-sm dark:bg-card/95",
+                      "absolute left-12 right-3 z-20 rounded-lg border border-primary/30 bg-background/95 px-3 py-2 font-sans text-[9px] leading-[13px] text-foreground shadow-[0_8px_28px_rgba(37,25,20,0.2)] backdrop-blur-sm dark:bg-card/95",
+                      placeTooltipAbove ? "bottom-full mb-1" : "top-full mt-1",
                     ].join(" ")}
                   >
-                    <div className="mb-1 flex items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.06em] text-muted-foreground">
+                    <div className="mb-1 flex items-center justify-between gap-3 font-mono text-[8px] uppercase tracking-[0.04em] text-muted-foreground">
                       <span>Step {stepIndex + 1} of {flowSteps.length}</span>
                       <span>{currentStep.file}:{currentStep.line}</span>
                     </div>
@@ -774,6 +766,7 @@ function FindingReport({ progress }: { progress: number }) {
           })}
         </div>
       </div>
+      <ReportTraceMap stepIndex={stepIndex} />
       </div>}
     >
       Formal proof of how untrusted data reaches the vulnerable operation.
@@ -790,6 +783,7 @@ function WorkSurface({ stage, progress }: { stage: TimelineId; progress: number 
 }
 
 export function UnifiedWorkbench() {
+  const [ready, setReady] = useState(false);
   const [timelineIndex, setTimelineIndex] = useState(0);
   const [timelineProgress, setTimelineProgress] = useState(0);
   const scrollTrackRef = useRef<HTMLDivElement>(null);
@@ -797,6 +791,8 @@ export function UnifiedWorkbench() {
   const stageRefs = useRef<Array<HTMLElement | null>>([]);
   const timelineStage = timeline[timelineIndex];
   const activeStageIndex = stages.findIndex((stage) => stage.id === timelineStage);
+
+  useEffect(() => setReady(true), []);
 
   const selectStage = (index: number) => {
     const targetTimelineIndex = index;
@@ -864,7 +860,7 @@ export function UnifiedWorkbench() {
   return (
     <div ref={scrollTrackRef} data-testid="demo-scroll-track" className="demo-scroll-track relative h-[720vh]">
       <div className="sticky top-16 flex h-[calc(100vh-4rem)] min-h-[38rem] max-h-[48rem] items-center">
-        <div data-testid="unified-workbench" className="agent-ui mx-auto w-full max-w-[82rem] overflow-hidden rounded-[20px] border border-black/10 bg-white p-2 dark:border-border dark:bg-card">
+        <div data-testid="unified-workbench" data-demo-ready={ready ? "true" : "false"} className="agent-ui mx-auto w-full max-w-[82rem] overflow-hidden rounded-[20px] border border-black/10 bg-white p-2 dark:border-border dark:bg-card">
       <div className="overflow-hidden rounded-[13px] border border-border bg-background">
         <div className="flex h-10 items-center border-b border-border bg-[#f0efec] px-3 dark:bg-code-header">
           <div className="flex items-center gap-2">
@@ -873,7 +869,7 @@ export function UnifiedWorkbench() {
           </div>
         </div>
 
-        <div className="grid h-[calc(100vh-9rem)] min-h-[34rem] max-h-[42rem] grid-cols-[4.5rem_minmax(0,1fr)] grid-rows-[minmax(0,1fr)] md:grid-cols-[8.5rem_minmax(18rem,0.78fr)_minmax(0,1.22fr)] xl:grid-cols-[10rem_minmax(20rem,0.78fr)_minmax(0,1.22fr)]">
+        <div className="grid h-[calc(100vh-9rem)] min-h-[34rem] max-h-[42rem] grid-cols-[4.5rem_minmax(0,1fr)] grid-rows-[minmax(0,1fr)] md:grid-cols-[8.5rem_minmax(0,1fr)] lg:grid-cols-[8.5rem_minmax(18rem,0.78fr)_minmax(0,1.22fr)] xl:grid-cols-[10rem_minmax(20rem,0.78fr)_minmax(0,1.22fr)]">
           <aside className="border-r border-border bg-[#f2f1ee] p-3 dark:bg-card" aria-label="Demo steps">
             <p className="px-2 pt-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">Session</p>
             <ol className="mt-4 space-y-1">
@@ -898,7 +894,7 @@ export function UnifiedWorkbench() {
             </ol>
           </aside>
 
-          <section className="hidden min-w-0 border-r border-border bg-[#fbfaf8] dark:bg-background md:block" aria-label="Coding agent session">
+          <section className="hidden min-w-0 border-r border-border bg-[#fbfaf8] dark:bg-background lg:block" aria-label="Coding agent session">
             <div
               ref={transcriptRef}
               className="h-full min-w-0 overflow-hidden"

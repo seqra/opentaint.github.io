@@ -168,8 +168,8 @@ function BalanceVisual() {
         <foreignObject x="176" y="122" width="168" height="80">
           <div className="flex h-full w-full items-center justify-center">
             <div className="rounded-full border border-primary/45 bg-background px-4 py-3 text-center shadow-[0_0_0_8px_hsl(var(--brand)/0.05)]">
-              <span className="font-mono text-[8px] font-semibold uppercase tracking-[0.1em] text-primary">SOTA</span>
-              <span className="mt-1 block whitespace-nowrap font-mono text-[6px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">STATIC ANALYSIS</span>
+              <span className="font-mono text-[8px] font-semibold uppercase tracking-[0.1em] text-primary">STATIC ANALYSIS</span>
+              <span className="mt-1 block whitespace-nowrap font-mono text-[6px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">SOTA</span>
             </div>
           </div>
         </foreignObject>
@@ -183,23 +183,17 @@ function BalanceVisual() {
 
 function BundleVisual() {
   return (
-    <div className="bundle-system value-visual relative min-h-[20rem] overflow-hidden rounded-[18px] border border-border bg-code-bg" role="img" aria-label="The open-source OpenTaint bundle connects agent skills, taint rules, dependency models, the scan engine, report viewer, and CI integration">
-      <div className="bundle-window-bar" aria-hidden="true">
-        <span className="bundle-window-dots"><i /><i /><i /></span>
-        <span className="bundle-window-title">opentaint / security stack</span>
-        <span className="bundle-open-badge">OPEN SOURCE</span>
-      </div>
-
+    <div className="bundle-system value-visual relative min-h-[20rem] overflow-hidden rounded-[18px] border border-border bg-background" role="img" aria-label="The open-source OpenTaint bundle connects agent skills, taint rules, dependency models, formal analysis, report viewer, and CI integration">
       <div className="bundle-system-body" aria-hidden="true">
         <section className="bundle-system-column">
           <p className="bundle-system-kicker">SECURITY KNOWLEDGE</p>
           <div className="bundle-file bundle-file-skill">
             <span className="bundle-file-ext">md</span>
-            <span><b>appsec-agent</b><small>discover + enact</small></span>
+            <span><b>appsec-agent</b><small>discover and enact</small></span>
           </div>
           <div className="bundle-file">
             <span className="bundle-file-ext">yml</span>
-            <span><b>taint rules</b><small>sources + sinks</small></span>
+            <span><b>taint rules</b><small>sources and sinks</small></span>
           </div>
           <div className="bundle-file">
             <span className="bundle-file-ext">yml</span>
@@ -211,13 +205,15 @@ function BundleVisual() {
 
         <section className="bundle-system-column bundle-engine-panel">
           <p className="bundle-system-kicker">FORMAL ANALYSIS</p>
-          <div className="bundle-terminal-line"><b>$</b> opentaint scan<span className="bundle-caret">_</span></div>
-          <div className="bundle-engine-flow">
-            <span><i>01</i><b>Parse project</b><em>DONE</em></span>
-            <span><i>02</i><b>Load rules</b><em>DONE</em></span>
-            <span><i>03</i><b>Start scan</b><em>DONE</em></span>
+          <div className="bundle-analysis-inputs">
+            <span><i>src</i><b>Project model</b></span>
+            <span><i>yml</i><b>Security spec</b></span>
           </div>
-          <div className="bundle-engine-meter"><i /></div>
+          <div className="bundle-analysis-flow">
+            <span />
+            <b>INTERPROCEDURAL<br />DATAFLOW</b>
+            <span />
+          </div>
           <p className="bundle-engine-result"><b>3</b> complete traces</p>
         </section>
 
@@ -258,7 +254,7 @@ export function ContinuousSecurity() {
 
         <div className="mx-auto mt-12 max-w-[72rem] text-center sm:mt-16">
           <h2 id="continuous-security-heading" className="section-heading">Turn one-off review into unlimited scans</h2>
-          <p className="mx-auto mt-6 max-w-[68ch] text-sm leading-7 text-muted-foreground">The flexibility of model reasoning and the consistency of formal program analysis combined.</p>
+          <p className="section-banner continuous-security-subline mx-auto mt-6 max-w-[68ch]">The flexibility of model reasoning and the consistency of formal program analysis combined</p>
         </div>
 
         <div className="value-card-grid mobile-card-rail mt-10 grid gap-6 sm:mt-12 lg:grid-cols-2" role="region" aria-label="OpenTaint product advantages" tabIndex={0}>

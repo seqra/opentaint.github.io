@@ -10,7 +10,7 @@ describe("ContinuousSecurity", () => {
     const promise = screen.getByRole("heading", { level: 2 });
 
     expect(promise).toHaveTextContent("Turn one-off review into unlimited scans");
-    expect(screen.getByText("The flexibility of model reasoning and the consistency of formal program analysis combined.")).toBeVisible();
+    expect(screen.getByText("The flexibility of model reasoning and the consistency of formal program analysis combined")).toBeVisible();
     expect(workflow?.compareDocumentPosition(promise) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 

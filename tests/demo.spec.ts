@@ -1,4 +1,8 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Locator } from "@playwright/test";
+
+async function waitForDemo(workbench: Locator) {
+  await expect(workbench).toHaveAttribute("data-demo-ready", "true");
+}
 
 test.describe("landing product demonstration", () => {
   test("travels through one security-review session and its synchronized surfaces", async ({ page }) => {
@@ -6,6 +10,9 @@ test.describe("landing product demonstration", () => {
 
     const workbench = page.getByTestId("unified-workbench");
     await workbench.scrollIntoViewIfNeeded();
+    await waitForDemo(workbench);
+    await workbench.getByRole("button", { name: "Discovery", exact: true }).click();
+    await expect(workbench.getByRole("button", { name: "Discovery", exact: true })).toHaveAttribute("aria-current", "step");
     await expect(workbench.getByText("Review this application for unauthenticated code execution. Capture what you learn for future scans.")).toBeVisible();
     await expect(workbench.getByRole("heading", { name: "Unauthenticated execution review" })).toBeVisible();
     const discovery = workbench.getByTestId("review-report-scroll");
@@ -58,10 +65,14 @@ test.describe("landing product demonstration", () => {
     const workbench = page.getByTestId("unified-workbench");
     await track.scrollIntoViewIfNeeded();
     await expect(workbench).toBeVisible();
+    await waitForDemo(workbench);
     const jump = async (progress: number) => {
       await track.evaluate((element, value) => {
-        element.scrollTop = (element.scrollHeight - element.clientHeight) * value;
-        element.dispatchEvent(new Event("scroll"));
+        const sticky = element.firstElementChild as HTMLElement;
+        const stickyTop = Number.parseFloat(getComputedStyle(sticky).top) || 0;
+        const start = element.getBoundingClientRect().top + window.scrollY - stickyTop;
+        const distance = element.offsetHeight - sticky.offsetHeight;
+        window.scrollTo(0, start + distance * value);
       }, progress);
     };
 
@@ -111,35 +122,45 @@ test.describe("landing product demonstration", () => {
     expect(positions.tooltipTop).toBeGreaterThanOrEqual(positions.lineBottom);
   });
 
-  test("internal demo scrolling advances the synchronized transcript and surface", async ({ page }) => {
+  test("global page scrolling advances the synchronized transcript and surface", async ({ page }) => {
     await page.goto("/");
     const track = page.getByTestId("demo-scroll-track");
     const workbench = page.getByTestId("unified-workbench");
     await track.scrollIntoViewIfNeeded();
     await expect(workbench).toBeVisible();
+    await waitForDemo(workbench);
     const transcript = workbench.getByLabel("Agent transcript");
     await track.evaluate((element) => {
-      element.scrollTop = (element.scrollHeight - element.clientHeight) * 0.86;
-      element.dispatchEvent(new Event("scroll"));
+      const sticky = element.firstElementChild as HTMLElement;
+      const stickyTop = Number.parseFloat(getComputedStyle(sticky).top) || 0;
+      const start = element.getBoundingClientRect().top + window.scrollY - stickyTop;
+      const distance = element.offsetHeight - sticky.offsetHeight;
+      window.scrollTo(0, start + distance * 0.86);
     });
 
     await expect(workbench.getByTestId("simplified-report-view")).toBeVisible();
     await expect.poll(() => transcript.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
   });
 
-  test("uses an internal demo scroll container", async ({ page }) => {
+  test("uses the page scrollbar instead of a nested demo scrollbar", async ({ page }) => {
     await page.goto("/");
     const track = page.getByTestId("demo-scroll-track");
     const workbench = page.getByTestId("unified-workbench");
     await track.scrollIntoViewIfNeeded();
     await expect(workbench).toBeVisible();
-    const pageBefore = await page.evaluate(() => window.scrollY);
-    await track.evaluate((element) => {
-      element.scrollTop = 600;
-      element.dispatchEvent(new Event("scroll"));
+    await waitForDemo(workbench);
+    const result = await track.evaluate((element) => {
+      const sticky = element.firstElementChild as HTMLElement;
+      const stickyTop = Number.parseFloat(getComputedStyle(sticky).top) || 0;
+      const start = element.getBoundingClientRect().top + window.scrollY - stickyTop;
+      const target = start + 600;
+      const before = window.scrollY;
+      window.scrollTo(0, target);
+      return { before, target };
     });
-    await expect.poll(() => track.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
-    expect(await page.evaluate(() => window.scrollY)).toBe(pageBefore);
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeCloseTo(result.target, 0);
+    expect(await page.evaluate(() => window.scrollY)).not.toBe(result.before);
+    expect(await track.evaluate((element) => element.scrollTop)).toBe(0);
   });
 
   test("renders the agent transcript from its true start to its true end", async ({ page }) => {
@@ -150,8 +171,13 @@ test.describe("landing product demonstration", () => {
     const transcript = page.getByLabel("Agent transcript");
     await track.scrollIntoViewIfNeeded();
     await expect(workbench).toBeVisible();
+    await waitForDemo(workbench);
 
-    await track.evaluate((element) => { element.scrollTop = 0; element.dispatchEvent(new Event("scroll")); });
+    await track.evaluate((element) => {
+      const sticky = element.firstElementChild as HTMLElement;
+      const stickyTop = Number.parseFloat(getComputedStyle(sticky).top) || 0;
+      window.scrollTo(0, element.getBoundingClientRect().top + window.scrollY - stickyTop);
+    });
     await expect.poll(() => transcript.evaluate((element) => element.scrollTop)).toBe(0);
 
     const alignment = await workbench.evaluate((element) => {
@@ -164,8 +190,10 @@ test.describe("landing product demonstration", () => {
     expect(Math.abs(alignment.center - alignment.viewportCenter)).toBeLessThanOrEqual(2);
 
     await track.evaluate((element) => {
-      element.scrollTop = element.scrollHeight - element.clientHeight;
-      element.dispatchEvent(new Event("scroll"));
+      const sticky = element.firstElementChild as HTMLElement;
+      const stickyTop = Number.parseFloat(getComputedStyle(sticky).top) || 0;
+      const start = element.getBoundingClientRect().top + window.scrollY - stickyTop;
+      window.scrollTo(0, start + element.offsetHeight - sticky.offsetHeight);
     });
     await expect.poll(() => transcript.evaluate((element) => (
       element.scrollHeight - element.clientHeight - element.scrollTop
@@ -177,6 +205,7 @@ test.describe("landing product demonstration", () => {
     const track = page.getByTestId("demo-scroll-track");
     const workbench = page.getByTestId("unified-workbench");
     await workbench.scrollIntoViewIfNeeded();
+    await waitForDemo(workbench);
 
     await workbench.getByRole("button", { name: "Scan", exact: true }).click();
     const scan = workbench.getByTestId("scan-results-view");

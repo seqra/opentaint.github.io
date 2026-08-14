@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 const stages = [
-  { id: "review", number: "01", label: "Discovery" },
+  { id: "review", number: "01", label: "Discover" },
   { id: "enact", number: "02", label: "Enact" },
   { id: "scan", number: "03", label: "Scan" },
   { id: "triage", number: "04", label: "Triage" },
@@ -28,8 +28,12 @@ function scrollOffset(container: HTMLElement, target: HTMLElement) {
   return target.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop;
 }
 
-function timelineDistance(track: HTMLElement) {
-  return Math.max(1, track.scrollHeight - track.clientHeight);
+function timelineMetrics(track: HTMLElement) {
+  const sticky = track.firstElementChild as HTMLElement | null;
+  const stickyTop = sticky ? Number.parseFloat(window.getComputedStyle(sticky).top) || 0 : 0;
+  const start = track.getBoundingClientRect().top + window.scrollY - stickyTop;
+  const distance = Math.max(1, track.offsetHeight - (sticky?.offsetHeight ?? window.innerHeight));
+  return { start, distance };
 }
 
 function withStageHolds(progress: number) {
@@ -268,11 +272,11 @@ passThrough:
 
 function YamlCode({ code }: { code: string }) {
   return (
-    <pre data-testid="artifact-code" className="overflow-x-auto py-2 text-[12.5px] leading-5 text-[#44342c] dark:text-[var(--code-text)] scrollbar-thin" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace' }}><code>
+    <pre data-testid="artifact-code" className="min-h-full overflow-x-auto bg-[#2d8a4e]/[0.08] py-2 text-[12.5px] leading-5 text-[#44342c] dark:bg-[#79bd8f]/[0.08] dark:text-[var(--code-text)] scrollbar-thin" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace' }}><code>
       {code.split("\n").map((line, index) => {
         const key = /^(\s*(?:-\s+)?)([\w-]+):(.*)$/.exec(line);
         return (
-          <span key={index} className="grid min-w-max grid-cols-[2rem_1fr] bg-[#2d8a4e]/[0.08] px-2 dark:bg-[#79bd8f]/[0.08]">
+          <span key={index} className="grid min-w-max grid-cols-[2rem_1fr] px-2">
             <span className="select-none pr-2 text-right text-[#b3a396] dark:text-[#5e4a4a]">{index + 1}</span>
             <span className="whitespace-pre">{key ? <>{key[1]}<span className="text-primary">{key[2]}</span>:{key[3]}</> : line || " "}</span>
           </span>
@@ -284,7 +288,7 @@ function YamlCode({ code }: { code: string }) {
 
 function ArtifactFrame({ path, kind, added, removed = 0, open, onToggle, children }: { path: string; kind: string; added: number; removed?: number; open: boolean; onToggle: () => void; children: ReactNode }) {
   return (
-    <article className="overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] shadow-sm dark:bg-code">
+    <article className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] shadow-sm dark:bg-code">
       <button type="button" aria-expanded={open} onClick={onToggle} className="flex min-h-10 w-full items-center gap-2 bg-[#f0eeeb] px-3 text-left dark:bg-code-header">
         <ChevronDown className={["h-4 w-4 shrink-0 text-muted-foreground transition-transform", open ? "" : "-rotate-90"].join(" ")} strokeWidth={1.8} aria-hidden="true" />
         <FileCode2 className="h-3.5 w-3.5 text-primary" strokeWidth={1.7} aria-hidden="true" />
@@ -294,11 +298,11 @@ function ArtifactFrame({ path, kind, added, removed = 0, open, onToggle, childre
         <span className="font-mono text-[10px] text-[#c73a32] dark:text-[#ff746c]">-{removed}</span>
       </button>
       <div className={[
-        "grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none",
-        open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+        "grid min-h-0 transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none",
+        open ? "flex-1 grid-rows-[minmax(0,1fr)]" : "grid-rows-[0fr]",
       ].join(" ")}>
         <div className="min-h-0 overflow-hidden">
-          <div className="border-t border-border">{children}</div>
+          <div className="h-full border-t border-border">{children}</div>
         </div>
       </div>
     </article>
@@ -316,7 +320,7 @@ function Artifact({ path, kind, code, open, onToggle, scrollProgress = 0 }: { pa
 
   return (
     <ArtifactFrame path={path} kind={kind} added={code.split("\n").length} open={open} onToggle={onToggle}>
-      <div ref={codeScrollRef} data-testid="artifact-code-scroll" className="max-h-60 overflow-auto scrollbar-thin"><YamlCode code={code} /></div>
+      <div ref={codeScrollRef} data-testid="artifact-code-scroll" className="h-full overflow-auto scrollbar-thin"><YamlCode code={code} /></div>
     </ArtifactFrame>
   );
 }
@@ -333,7 +337,7 @@ function SpecificationTransformation({ activeArtifact }: { activeArtifact: numbe
   const isFactActive = (fact: string) => mapping.facts.includes(fact as never);
 
   return (
-    <div className="enact-map mx-auto mb-3 max-w-[34rem] rounded-[10px] border border-border bg-background p-3 font-mono" aria-label="Informal security knowledge transformed into formal specifications">
+    <div className="enact-map mx-auto mb-3 max-w-[40rem] rounded-[10px] border border-border bg-background p-3 font-mono" aria-label="Informal security knowledge transformed into formal specifications">
       <div className="enact-map-document">
         <span className="enact-map-file"><FileText aria-hidden="true" /> security-review.md</span>
         <div className="enact-map-facts">
@@ -365,10 +369,9 @@ function Specifications({ progress }: { progress: number }) {
   const position = Math.min(3.999, Math.max(0, progress) * 4);
   const activeArtifact = Math.floor(position);
   const artifactProgress = position - activeArtifact;
-  const automaticArtifact = artifactProgress < 0.9 ? activeArtifact : -1;
   const codeScrollProgress = Math.max(0, Math.min(1, (artifactProgress - 0.1) / 0.72));
   const [manualState, setManualState] = useState<{ stage: number; artifact: number } | null>(null);
-  const openArtifact = manualState?.stage === activeArtifact ? manualState.artifact : automaticArtifact;
+  const openArtifact = manualState?.stage === activeArtifact ? manualState.artifact : activeArtifact;
   const artifacts = [
     { path: "rules/java/lib/generic/graal-eval.yaml", kind: "Library sink", code: sinkRule },
     { path: "rules/java/lib/spring/http-input.yaml", kind: "Library source", code: sourceRule },
@@ -379,20 +382,23 @@ function Specifications({ progress }: { progress: number }) {
   return (
     <SurfaceStory
       title="Formal security specifications"
-      window={<div data-testid="artifact-scroll" className="h-full overflow-hidden rounded-[10px] border border-border bg-[#f4f2ef] p-3 shadow-sm dark:bg-card">
+      window={<div data-testid="artifact-scroll" className="flex h-full min-h-0 flex-col overflow-hidden rounded-[10px] border border-border bg-[#f4f2ef] p-3 shadow-sm dark:bg-card">
         <SpecificationTransformation activeArtifact={activeArtifact} />
-        <div className="mx-auto max-w-[40rem] space-y-2">
+        <div className="artifact-stack mx-auto min-h-0 w-full max-w-[40rem] flex-1" data-open-artifact={openArtifact < 0 ? "none" : openArtifact}>
           {artifacts.map((artifact, index) => (
-            <div key={artifact.path}>
-              <Artifact
-                {...artifact}
-                open={index === openArtifact}
-                scrollProgress={index === activeArtifact ? codeScrollProgress : 0}
-                onToggle={() => setManualState({
-                  stage: activeArtifact,
-                  artifact: openArtifact === index ? -1 : index,
-                })}
-              />
+            <div key={artifact.path} className="contents">
+              <div className="artifact-stack-item min-h-0">
+                <Artifact
+                  {...artifact}
+                  open={index === openArtifact}
+                  scrollProgress={index === activeArtifact ? codeScrollProgress : 0}
+                  onToggle={() => setManualState({
+                    stage: activeArtifact,
+                    artifact: openArtifact === index ? -1 : index,
+                  })}
+                />
+              </div>
+              {index < artifacts.length - 1 && <span className="artifact-stack-spacer" aria-hidden="true" />}
             </div>
           ))}
         </div>
@@ -411,21 +417,25 @@ type ScanFindingProps = {
 
 function ScanFinding({ title, file, path }: ScanFindingProps) {
   return (
-    <article className="rounded-[10px] border border-primary/35 bg-background p-4">
-      <div className="flex items-center justify-between gap-3">
-        <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-primary">CWE-94</span>
-        <span className="font-mono text-[9px] text-muted-foreground">Candidate</span>
+    <article className="grid h-full min-h-0 grid-cols-[minmax(0,1.05fr)_minmax(9rem,0.95fr)] overflow-hidden rounded-[10px] border border-primary/35 bg-background">
+      <div className="flex min-h-0 flex-col justify-center px-4 py-3.5">
+        <div className="flex items-center justify-between gap-3">
+          <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-primary">CWE-94</span>
+          <span className="font-mono text-[9px] text-muted-foreground">Candidate</span>
+        </div>
+        <h4 className="mt-3 text-[13px] font-semibold leading-5 text-foreground">{title}</h4>
+        <p className="mt-2 font-mono text-[10px] text-muted-foreground">{file}</p>
       </div>
-      <h4 className="mt-2 flex min-h-10 items-end text-[13px] font-semibold leading-5 text-foreground">{title}</h4>
-      <p className="mt-2 font-mono text-[10px] text-muted-foreground">{file}</p>
-      <div className="mt-3 flex items-center gap-2" aria-hidden="true">
-        <span className="h-2 w-2 rounded-full bg-primary" />
-        <span className="h-px flex-1 bg-primary/35" />
-        <span className="h-2 w-2 rounded-sm border border-primary bg-primary/10" />
-        <span className="h-px flex-1 bg-primary/35" />
-        <span className="h-2 w-2 rotate-45 bg-primary" />
+      <div className="flex min-h-0 flex-col justify-center border-l border-primary/15 bg-primary/[0.025] px-4 py-3.5 dark:bg-primary/[0.045]">
+        <div className="flex items-center gap-2" aria-hidden="true">
+          <span className="h-2 w-2 rounded-full bg-primary" />
+          <span className="h-px flex-1 bg-primary/35" />
+          <span className="h-2 w-2 rounded-sm border border-primary bg-primary/10" />
+          <span className="h-px flex-1 bg-primary/35" />
+          <span className="h-2 w-2 rotate-45 bg-primary" />
+        </div>
+        <p className="mt-2 text-[10px] leading-4 text-muted-foreground">{path}</p>
       </div>
-      <p className="mt-2 text-[10px] leading-4 text-muted-foreground">{path}</p>
     </article>
   );
 }
@@ -442,19 +452,21 @@ function ScanResults({ progress }: { progress: number }) {
           <span className="text-[11px] font-semibold text-foreground">OpenTaint scan</span>
           <span className="text-[9px] font-semibold text-[#2d8a4e] dark:text-[#79bd8f]">{complete ? "COMPLETE" : "ANALYZING"}</span>
         </div>
-        <div className="flex min-h-0 flex-1 flex-col justify-center overflow-hidden p-6">
-          <div className="grid grid-cols-3 gap-3">
-            <div className="rounded-lg border border-border bg-background p-3"><span className="font-mono text-[9px] text-muted-foreground">PROJECT MODEL</span><b className="mt-1 block text-[12px] text-foreground">Built</b></div>
-            <div className="rounded-lg border border-border bg-background p-3"><span className="font-mono text-[9px] text-muted-foreground">RULES + MODELS</span><b className="mt-1 block text-[12px] text-foreground">Loaded</b></div>
-            <div className="rounded-lg border border-border bg-background p-3"><span className="font-mono text-[9px] text-muted-foreground">TIME</span><b className="mt-1 block text-[12px] text-foreground">30s</b></div>
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-5">
+          <div className="grid shrink-0 grid-cols-3 gap-2">
+            <div className="rounded-lg border border-border bg-background p-4"><span className="font-mono text-[9px] text-muted-foreground">PROJECT MODEL</span><b className="mt-1 block text-[12px] text-foreground">Built</b></div>
+            <div className="rounded-lg border border-border bg-background p-4"><span className="font-mono text-[9px] text-muted-foreground">RULES AND MODELS</span><b className="mt-1 block text-[12px] text-foreground">Loaded</b></div>
+            <div className="rounded-lg border border-border bg-background p-4"><span className="font-mono text-[9px] text-muted-foreground">TIME</span><b className="mt-1 block text-[12px] text-foreground">30s</b></div>
           </div>
-          <div className="mt-4 h-1 overflow-hidden rounded-full bg-border"><span className="block h-full origin-left bg-primary will-change-transform" style={{ transform: `scaleX(${completion})` }} /></div>
-          <div className="mt-6 flex items-center justify-between">
+          <div className="mt-3 h-1 overflow-hidden rounded-full bg-border"><span className="block h-full origin-left bg-primary will-change-transform" style={{ transform: `scaleX(${completion})` }} /></div>
+          <div className="mt-5 flex items-center justify-between">
             <h3 className="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-foreground">2 candidate findings</h3>
           </div>
-          <div className="mt-3 grid min-h-[10rem] gap-3 xl:grid-cols-2">
-            <ScanFinding title="Unauthenticated script execution" file="ScriptRuntime.java:11" path="POST /api/jobs → Context.eval" />
-            <ScanFinding title="Script execution in preview renderer" file="PreviewRenderer.java:11" path="POST /api/preview → Context.eval" />
+          <div className="mt-3 flex min-h-0 flex-1 items-center">
+            <div className="grid h-5/6 min-h-0 w-full grid-rows-2 gap-4">
+              <ScanFinding title="Unauthenticated script execution" file="ScriptRuntime.java:11" path="POST /api/jobs → Context.eval" />
+              <ScanFinding title="Script execution in preview renderer" file="PreviewRenderer.java:11" path="POST /api/preview → Context.eval" />
+            </div>
           </div>
         </div>
       </div>}
@@ -694,12 +706,12 @@ function TriageView({ progress }: { progress: number }) {
 
 function FindingReport({ progress }: { progress: number }) {
   const [stepIndex, setStepIndex] = useState(0);
-  const codeScrollRef = useRef<HTMLDivElement>(null);
-  const currentRowRef = useRef<HTMLDivElement>(null);
   const currentStep = flowSteps[stepIndex];
   const activeFile = currentStep.file;
   const currentLine = currentStep.line;
   const stepMessage = currentStep.message;
+  const activeSourceLines = sourceFiles[activeFile].split("\n");
+  const placeTooltipAbove = currentLine > activeSourceLines.length / 2;
 
   const move = (next: number) => {
     const bounded = Math.max(0, Math.min(flowSteps.length - 1, next));
@@ -709,14 +721,6 @@ function FindingReport({ progress }: { progress: number }) {
   useEffect(() => {
     move(Math.round(progress * (flowSteps.length - 1)));
   }, [progress]);
-
-  useEffect(() => {
-    const scroller = codeScrollRef.current;
-    const row = currentRowRef.current;
-    if (!scroller || !row) return;
-    const target = row.offsetTop - Math.max(16, (scroller.clientHeight - row.offsetHeight) / 2);
-    scroller.scrollTop = Math.max(0, Math.min(target, scroller.scrollHeight - scroller.clientHeight));
-  }, [activeFile, currentLine, stepIndex]);
 
   return (
     <SurfaceStory
@@ -737,16 +741,15 @@ function FindingReport({ progress }: { progress: number }) {
           <span className="ml-1 inline-flex w-[5ch] shrink-0 justify-end whitespace-nowrap tabular-nums text-[#76665d] dark:text-muted-foreground">{stepIndex + 1}/{flowSteps.length}</span>
         </div>
       </div>
-      <ReportTraceMap stepIndex={stepIndex} />
-      <div ref={codeScrollRef} className="relative min-h-0 flex-1 overflow-auto py-4 scrollbar-thin">
-        <div className="min-w-[42rem] pb-6 text-[12px] leading-6">
-          {sourceFiles[activeFile].split("\n").map((code, index) => {
+      <div data-testid="report-code-view" className="relative min-h-0 flex-1 overflow-hidden py-2">
+        <div className="text-[clamp(10.5px,0.85vw,12px)] leading-[1.4] tracking-[-0.025em]">
+          {activeSourceLines.map((code, index) => {
             const line = index + 1;
             const isCurrent = line === currentLine;
             const isSink = isCurrent && stepIndex === flowSteps.length - 1;
             return (
-              <div key={line} ref={isCurrent ? currentRowRef : undefined} className="relative">
-                <div className={["grid min-h-6 grid-cols-[2rem_3rem_1fr] px-3", isSink ? "bg-primary/20" : isCurrent ? "bg-blue-500/20" : ""].join(" ")}>
+              <div key={line} className="relative">
+                <div className={["grid min-h-[1.4em] grid-cols-[0.9rem_1.5rem_minmax(0,1fr)] px-1.5", isSink ? "bg-primary/20" : isCurrent ? "bg-blue-500/20" : ""].join(" ")}>
                   <span className={isSink ? "text-primary" : isCurrent ? "text-blue-500" : ""}>{isCurrent ? "▶" : ""}</span>
                   <span className="select-none pr-3 text-right text-[#b3a396] dark:text-[#5e4a4a]">{line}</span>
                   <span className="whitespace-pre"><JavaLine line={code} /></span>
@@ -755,10 +758,11 @@ function FindingReport({ progress }: { progress: number }) {
                   <div
                     role="status"
                     className={[
-                      "relative z-20 ml-20 mt-2 w-[28rem] max-w-[calc(100%-6rem)] rounded-lg border border-primary/30 bg-background/95 px-3 py-2 font-sans text-[11px] leading-4 text-foreground shadow-[0_8px_28px_rgba(37,25,20,0.2)] backdrop-blur-sm dark:bg-card/95",
+                      "absolute left-10 right-2 z-20 rounded-lg border border-primary/30 bg-background/95 px-3 py-2 font-sans text-[10.5px] leading-[15px] text-foreground shadow-[0_8px_28px_rgba(37,25,20,0.2)] backdrop-blur-sm dark:bg-card/95",
+                      placeTooltipAbove ? "bottom-full mb-1" : "top-full mt-1",
                     ].join(" ")}
                   >
-                    <div className="mb-1 flex items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.06em] text-muted-foreground">
+                    <div className="mb-1 flex items-center justify-between gap-3 font-mono text-[9px] uppercase tracking-[0.04em] text-muted-foreground">
                       <span>Step {stepIndex + 1} of {flowSteps.length}</span>
                       <span>{currentStep.file}:{currentStep.line}</span>
                     </div>
@@ -770,6 +774,7 @@ function FindingReport({ progress }: { progress: number }) {
           })}
         </div>
       </div>
+      <ReportTraceMap stepIndex={stepIndex} />
       </div>}
     >
       Formal proof of how untrusted data reaches the vulnerable operation.
@@ -786,6 +791,7 @@ function WorkSurface({ stage, progress }: { stage: TimelineId; progress: number 
 }
 
 export function UnifiedWorkbench() {
+  const [ready, setReady] = useState(false);
   const [timelineIndex, setTimelineIndex] = useState(0);
   const [timelineProgress, setTimelineProgress] = useState(0);
   const scrollTrackRef = useRef<HTMLDivElement>(null);
@@ -794,11 +800,17 @@ export function UnifiedWorkbench() {
   const timelineStage = timeline[timelineIndex];
   const activeStageIndex = stages.findIndex((stage) => stage.id === timelineStage);
 
+  useEffect(() => setReady(true), []);
+
   const selectStage = (index: number) => {
     const targetTimelineIndex = index;
     const track = scrollTrackRef.current;
     if (track) {
-      track.scrollTop = timelineDistance(track) * ((targetTimelineIndex + 0.02) / timeline.length);
+      const { start, distance } = timelineMetrics(track);
+      window.scrollTo({
+        top: start + distance * ((targetTimelineIndex + 0.02) / timeline.length),
+        behavior: "smooth",
+      });
     }
     setTimelineIndex(targetTimelineIndex);
     setTimelineProgress(0.02);
@@ -816,7 +828,8 @@ export function UnifiedWorkbench() {
       const transcript = transcriptRef.current;
       if (!track) return;
 
-      const progress = Math.max(0, Math.min(1, track.scrollTop / timelineDistance(track)));
+      const { start, distance } = timelineMetrics(track);
+      const progress = Math.max(0, Math.min(1, (window.scrollY - start) / distance));
       const position = progress * timeline.length;
       const nextIndex = Math.min(timeline.length - 1, Math.floor(position));
       const localProgress = nextIndex === timeline.length - 1
@@ -842,22 +855,20 @@ export function UnifiedWorkbench() {
     const schedule = () => {
       if (!frame) frame = window.requestAnimationFrame(sync);
     };
-    const track = scrollTrackRef.current;
-    track?.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
     sync();
     return () => {
-      track?.removeEventListener("scroll", schedule);
+      window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       if (frame) window.cancelAnimationFrame(frame);
     };
   }, []);
 
   return (
-    <div ref={scrollTrackRef} data-testid="demo-scroll-track" className="demo-scroll-track relative h-[calc(100vh-4rem)] min-h-[38rem] max-h-[48rem] overflow-y-auto overscroll-y-auto scrollbar-thin">
-      <div className="relative h-[720%]">
-      <div className="sticky top-0 flex h-[calc(100vh-4rem)] min-h-[38rem] max-h-[48rem] items-center">
-        <div data-testid="unified-workbench" className="agent-ui mx-auto w-full max-w-[82rem] overflow-hidden rounded-[20px] border border-black/10 bg-white p-2 dark:border-border dark:bg-card">
+    <div ref={scrollTrackRef} data-testid="demo-scroll-track" className="demo-scroll-track relative h-[720vh]">
+      <div className="sticky top-16 flex h-[calc(100vh-4rem)] min-h-[38rem] max-h-[48rem] items-center">
+        <div data-testid="unified-workbench" data-demo-ready={ready ? "true" : "false"} className="agent-ui mx-auto w-full max-w-[82rem] overflow-hidden rounded-[20px] border border-black/10 bg-white p-2 dark:border-border dark:bg-card">
       <div className="overflow-hidden rounded-[13px] border border-border bg-background">
         <div className="flex h-10 items-center border-b border-border bg-[#f0efec] px-3 dark:bg-code-header">
           <div className="flex items-center gap-2">
@@ -866,7 +877,7 @@ export function UnifiedWorkbench() {
           </div>
         </div>
 
-        <div className="grid h-[calc(100vh-9rem)] min-h-[34rem] max-h-[42rem] grid-cols-[4.5rem_minmax(0,1fr)] grid-rows-[minmax(0,1fr)] md:grid-cols-[8.5rem_minmax(18rem,0.78fr)_minmax(0,1.22fr)] xl:grid-cols-[10rem_minmax(20rem,0.78fr)_minmax(0,1.22fr)]">
+        <div className="grid h-[calc(100vh-9rem)] min-h-[34rem] max-h-[42rem] grid-cols-[4.5rem_minmax(0,1fr)] grid-rows-[minmax(0,1fr)] md:grid-cols-[8.5rem_minmax(0,1fr)] lg:grid-cols-[8.5rem_minmax(18rem,0.78fr)_minmax(0,1.22fr)] xl:grid-cols-[10rem_minmax(20rem,0.78fr)_minmax(0,1.22fr)]">
           <aside className="border-r border-border bg-[#f2f1ee] p-3 dark:bg-card" aria-label="Demo steps">
             <p className="px-2 pt-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">Session</p>
             <ol className="mt-4 space-y-1">
@@ -891,7 +902,7 @@ export function UnifiedWorkbench() {
             </ol>
           </aside>
 
-          <section className="hidden min-w-0 border-r border-border bg-[#fbfaf8] dark:bg-background md:block" aria-label="Coding agent session">
+          <section className="hidden min-w-0 border-r border-border bg-[#fbfaf8] dark:bg-background lg:block" aria-label="Coding agent session">
             <div
               ref={transcriptRef}
               className="h-full min-w-0 overflow-hidden"
@@ -949,7 +960,6 @@ export function UnifiedWorkbench() {
       </div>
     </div>
       </div>
-    </div>
     </div>
   );
 }

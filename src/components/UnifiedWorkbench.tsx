@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 const stages = [
-  { id: "review", number: "01", label: "Discovery" },
+  { id: "review", number: "01", label: "Discover" },
   { id: "enact", number: "02", label: "Enact" },
   { id: "scan", number: "03", label: "Scan" },
   { id: "triage", number: "04", label: "Triage" },

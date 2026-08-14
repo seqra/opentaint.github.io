@@ -73,6 +73,11 @@ const structuredData = [
   },
 ];
 const heroWorkflowFlowLines = createHeroFlowField({ height: 1440 });
+const heroWorkflowBasePath = heroWorkflowFlowLines.map((line) => line.d).join(" ");
+const heroWorkflowActivePaths = Array.from({ length: 3 }, (_, phase) => heroWorkflowFlowLines
+  .filter((line, index) => line.active && index % 3 === phase)
+  .map((line) => line.d)
+  .join(" "));
 ---
 
 <BaseLayout
@@ -85,12 +90,12 @@ const heroWorkflowFlowLines = createHeroFlowField({ height: 1440 });
     <SiteHeader />
     <main id="main" class="landing-sections flex-1 pt-16">
       <div class="hero-workflow-group">
-        <svg class="hero-workflow-signal-field" viewBox="0 0 1200 1440" preserveAspectRatio="none" aria-hidden="true">
+        <svg class="hero-workflow-signal-field is-flowing" viewBox="0 0 1200 1440" preserveAspectRatio="none" aria-hidden="true">
           <g class="hero-signal-graph">
-            {heroWorkflowFlowLines.map((line) => <path d={line.d}></path>)}
-            {heroWorkflowFlowLines.map((line, index) => line.active
-              ? <path class:list={["hero-signal-active", `hero-signal-active-${index % 3}`]} d={line.d}></path>
-              : null)}
+            <path class="hero-signal-base" d={heroWorkflowBasePath}></path>
+            {heroWorkflowActivePaths.map((path, phase) => (
+              <path class:list={["hero-signal-active", `hero-signal-active-${phase}`]} d={path}></path>
+            ))}
           </g>
         </svg>
 
@@ -122,4 +127,15 @@ const heroWorkflowFlowLines = createHeroFlowField({ height: 1440 });
       </div>
     </main>
   </div>
+  <script>
+    const signalField = document.querySelector<SVGElement>(".hero-workflow-signal-field");
+
+    if (signalField && "IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(([entry]) => {
+        signalField.classList.toggle("is-flowing", entry.isIntersecting);
+      }, { rootMargin: "160px 0px" });
+
+      observer.observe(signalField);
+    }
+  </script>
 </BaseLayout>

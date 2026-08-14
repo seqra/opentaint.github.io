@@ -1714,9 +1714,9 @@
     opacity: 1;
   }
 
-  .hero-signal-active-0 { animation-delay: 0s; }
-  .hero-signal-active-1 { animation-delay: -2.5s; }
-  .hero-signal-active-2 { animation-delay: -5s; }
+  .hero-signal-graph .hero-signal-active-0 { stroke-dashoffset: 0; }
+  .hero-signal-graph .hero-signal-active-1 { stroke-dashoffset: -21.333; }
+  .hero-signal-graph .hero-signal-active-2 { stroke-dashoffset: -42.667; }
 
   .quickstart-section {
     padding-top: var(--spacing-09);
@@ -2234,16 +2234,6 @@
     animation-delay: 4.14s;
   }
 
-  .hero-workflow-signal-field .hero-signal-active {
-    animation: hero-signal-flow 6.4s linear infinite;
-    animation-play-state: paused;
-  }
-
-  .hero-workflow-signal-field.is-flowing .hero-signal-active {
-    animation-play-state: running;
-    will-change: stroke-dashoffset;
-  }
-
   .demo-slide-in-next {
     animation: demo-in-next 0.34s cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -2265,10 +2255,6 @@
     display: none;
   }
 
-  .hero-signal-active {
-    animation: none;
-  }
-
   .workflow-preview {
     transition: none;
   }
@@ -2284,12 +2270,6 @@
   4%, 26% { opacity: 1; transform: none; }
   30% { opacity: 0; transform: translate3d(0, -0.14em, 0); }
   30.01%, 100% { opacity: 0; transform: translate3d(0, 0.14em, 0); }
-}
-
-@keyframes hero-signal-flow {
-  /* One exact dash-pattern period makes the restart visually identical to the
-     final frame, so the current never jumps as the animation cycles. */
-  to { stroke-dashoffset: -64; }
 }
 
 @keyframes enact-transform-flow {

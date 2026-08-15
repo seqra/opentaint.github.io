@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import satori from "satori";
 import { Resvg } from "@resvg/resvg-js";
 import { readFile } from "node:fs/promises";
+import { createHeroFlowField } from "@/lib/heroFlowField";
 
 export const OG_WIDTH = 1200;
 export const OG_HEIGHT = 630;
@@ -29,6 +30,18 @@ const HEADER_SVG = `<svg width="211" height="39" viewBox="0 0 211 39" fill="none
 const HEADER_WIDTH = 422;
 const HEADER_HEIGHT = 78;
 const headerDataUri = `data:image/svg+xml;base64,${Buffer.from(HEADER_SVG).toString("base64")}`;
+
+const ogFlowLines = createHeroFlowField({ height: OG_HEIGHT });
+const ogFlowBasePath = ogFlowLines.map((line) => line.d).join(" ");
+const ogFlowActivePaths = Array.from({ length: 3 }, (_, phase) => ogFlowLines
+  .filter((line, index) => line.active && index % 3 === phase)
+  .map((line) => line.d)
+  .join(" "));
+const OG_FLOW_SVG = `<svg width="${OG_WIDTH}" height="${OG_HEIGHT}" viewBox="0 0 ${OG_WIDTH} ${OG_HEIGHT}" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="${ogFlowBasePath}" stroke="#E52929" stroke-opacity="0.18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+${ogFlowActivePaths.map((path, phase) => `<path d="${path}" stroke="#F03A3A" stroke-opacity="0.58" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="12 52" stroke-dashoffset="${phase * -21.333}"/>`).join("\n")}
+</svg>`;
+const ogFlowDataUri = `data:image/svg+xml;base64,${Buffer.from(OG_FLOW_SVG).toString("base64")}`;
 
 let fontBold: ArrayBuffer | null = null;
 let fontRegular: ArrayBuffer | null = null;
@@ -68,6 +81,7 @@ function img(src: string, width: number, height: number): ReactNode {
 
 function shell(
   background: string,
+  backgroundArt: string | undefined,
   ...contentChildren: (ReactNode | string)[]
 ): ReactNode {
   return h("div", {
@@ -110,6 +124,13 @@ function shell(
         "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.03) 1px, transparent 0)",
       backgroundSize: "32px 32px",
     }),
+    ...(backgroundArt ? [h("div", {
+      display: "flex",
+      position: "absolute",
+      inset: "0",
+      width: "100%",
+      height: "100%",
+    }, img(backgroundArt, OG_WIDTH, OG_HEIGHT))] : []),
     h("div", { display: "flex", alignItems: "center" },
       img(headerDataUri, HEADER_WIDTH, HEADER_HEIGHT),
     ),
@@ -130,6 +151,7 @@ export function buildPostImage(
 
   return shell(
     background,
+    ogFlowDataUri,
     h("div", {
       display: "flex",
       fontSize: "46px",
@@ -175,6 +197,7 @@ export function buildSiteImage(
 ): ReactNode {
   return shell(
     background,
+    ogFlowDataUri,
     ...(tagline ? [h("div", {
       display: "flex",
       fontSize: "18px",

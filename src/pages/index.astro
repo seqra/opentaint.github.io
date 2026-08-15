@@ -33,7 +33,7 @@ const structuredData = [
     sameAs: [
       siteConfig.github,
       siteConfig.discord,
-      "https://twitter.com/seqradev",
+      "https://x.com/seqradev",
     ],
   },
   {
@@ -42,7 +42,7 @@ const structuredData = [
     name: siteConfig.title,
     applicationCategory: "DeveloperApplication",
     operatingSystem: "Linux, macOS, Windows",
-    description: "The open source taint analysis engine for the AI era. Powered by formal inter-procedural dataflow analysis. Customizable and self-hosted, built so AI agents drive your application security analysis without burning tokens on every scan. An AI-ready open source alternative to Semgrep Pro and CodeQL.",
+    description: siteConfig.description,
     url: siteConfig.url,
     downloadUrl: "https://github.com/seqra/opentaint/releases",
     license: "https://www.apache.org/licenses/LICENSE-2.0",
@@ -81,8 +81,9 @@ const heroWorkflowActivePaths = Array.from({ length: 3 }, (_, phase) => heroWork
 ---
 
 <BaseLayout
-  title="OpenTaint | Turn One Security Review into Unlimited Security Scans"
-  description="OpenTaint turns agent security reviews into taint rules and dependency models, then uses formal analysis to scan the whole codebase whenever a scan runs."
+  title="OpenTaint | The Open Source Taint Analysis Engine for the AI Era"
+  description={siteConfig.description}
+  imageAlt={`OpenTaint — ${siteConfig.tagline}. ${siteConfig.ogTagline}.`}
   keywords={defaultKeywords}
   structuredData={structuredData}
 >

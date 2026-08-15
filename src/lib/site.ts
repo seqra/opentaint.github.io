@@ -1,6 +1,8 @@
 export const siteConfig = {
   title: "OpenTaint",
-  description: "Formal program analysis for security agents. AI agents review your application on demand. OpenTaint scans it on every change.",
+  tagline: "The open source taint analysis engine for the AI era",
+  description: "Turn one-off review into unlimited scans with the open source taint analysis engine that combines model reasoning with formal program analysis.",
+  ogTagline: "Turn one-off review into unlimited scans",
   url: "https://opentaint.org",
   author: "Seqra Team",
   twitter: "@seqradev",
@@ -21,6 +23,7 @@ export const defaultKeywords = [
   "formal dataflow analysis",
   "AI agent security",
   "security agents",
+  "agentic application security testing",
   "taint analysis engine",
   "open source sast",
   "application security debt",

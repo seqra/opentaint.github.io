@@ -4,7 +4,7 @@ import { buildSiteImage, renderOgImage, ogResponse } from "@/lib/og";
 
 export const GET: APIRoute = async () => {
   const png = await renderOgImage(
-    buildSiteImage(siteConfig.description),
+    buildSiteImage(siteConfig.ogTagline, siteConfig.tagline),
   );
   return ogResponse(png);
 };

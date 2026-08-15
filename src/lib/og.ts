@@ -169,11 +169,22 @@ export function buildPostImage(
 }
 
 export function buildSiteImage(
-  tagline: string,
+  headline: string,
+  tagline?: string,
   background: string = OG_BACKGROUND,
 ): ReactNode {
   return shell(
     background,
+    ...(tagline ? [h("div", {
+      display: "flex",
+      fontSize: "18px",
+      fontWeight: 700,
+      color: "#CA2121",
+      lineHeight: 1.4,
+      letterSpacing: "0.02em",
+      marginTop: "auto",
+      marginBottom: "20px",
+    }, tagline)] : []),
     h("div", {
       display: "flex",
       fontSize: "46px",
@@ -181,9 +192,9 @@ export function buildSiteImage(
       color: "#ffffff",
       lineHeight: 1.15,
       letterSpacing: "-0.03em",
-      marginTop: "auto",
+      marginTop: tagline ? "0" : "auto",
       maxWidth: "1000px",
-    }, tagline),
+    }, headline),
 
     h("div", {
       display: "flex",

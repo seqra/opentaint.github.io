@@ -3,6 +3,7 @@ export const siteConfig = {
   tagline: "The open source taint analysis engine for the AI era",
   description: "Turn one-off review into unlimited scans with the open source taint analysis engine that allows to combine model reasoning with formal program analysis.",
   ogTagline: "Turn one-off review into unlimited scans",
+  ogVersion: "20260816",
   url: "https://opentaint.org",
   author: "Seqra Team",
   twitter: "@seqradev",

@@ -17,6 +17,7 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
+const ogImage = `${siteConfig.url}/og/${post.slug}.png?v=${siteConfig.ogVersion}`;
 
 let Content: any = null;
 let headings: { depth: number; slug: string; text: string }[] = [];
@@ -56,7 +57,7 @@ const blogPostingSchema = {
       url: `${siteConfig.url}/apple-touch-icon.png`,
     },
   },
-  image: `${siteConfig.url}/og/${post.slug}.png`,
+  image: ogImage,
   url: post.canonicalUrl,
   mainEntityOfPage: post.canonicalUrl,
 };
@@ -87,7 +88,7 @@ const breadcrumbSchema = {
 };
 ---
 
-<BaseLayout title={post.title} description={post.description} canonical={post.canonicalUrl} image={`${siteConfig.url}/og/${post.slug}.png`} keywords={post.keywords} structuredData={[blogPostingSchema, breadcrumbSchema]} ogType="article" articlePublishedTime={post.date} articleModifiedTime={post.updatedDate || post.date}>
+<BaseLayout title={post.title} description={post.description} canonical={post.canonicalUrl} image={ogImage} keywords={post.keywords} structuredData={[blogPostingSchema, breadcrumbSchema]} ogType="article" articlePublishedTime={post.date} articleModifiedTime={post.updatedDate || post.date}>
   <div class="min-h-screen bg-background flex flex-col">
     <SiteHeader />
     <main id="main" class="flex-1 pt-28 xl:pt-16">{/* pt-28 clears the header plus the mobile TOC bar — a measured offset, not a ladder step. */}

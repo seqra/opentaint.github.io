@@ -1,6 +1,6 @@
 ---
 import "@/index.css";
-import { siteConfig } from "@/lib/site";
+import { ogImageUrl, siteConfig } from "@/lib/site";
 import ConsentInit from "@/components/astro/ConsentInit.astro";
 import ConsentBanner from "@/components/astro/ConsentBanner.astro";
 
@@ -23,7 +23,7 @@ const {
   description = siteConfig.description,
   canonical,
   keywords = [],
-  image = `${siteConfig.url}/og/index.png?v=${siteConfig.ogVersion}`,
+  image = ogImageUrl("index"),
   imageAlt,
   noIndex = false,
   structuredData = [],
@@ -64,6 +64,9 @@ const dataBlocks = Array.isArray(structuredData) ? structuredData : [structuredD
     <meta property="og:type" content={resolvedOgType} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:image" content={image} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={resolvedImageAlt} />
     <meta property="og:site_name" content={siteConfig.title} />
     {articlePublishedTime && <meta property="article:published_time" content={articlePublishedTime} />}

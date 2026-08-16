@@ -5,7 +5,7 @@ import SiteHeader from "@/components/astro/SiteHeader.astro";
 import LandingFooter from "@/components/astro/LandingFooter.astro";
 import BlogPostView from "@/components/astro/BlogPostView.astro";
 import { getPosts } from "@/lib/content";
-import { siteConfig } from "@/lib/site";
+import { ogImageUrl, siteConfig } from "@/lib/site";
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -17,7 +17,7 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const ogImage = `${siteConfig.url}/og/${post.slug}.png?v=${siteConfig.ogVersion}`;
+const ogImage = ogImageUrl(post.slug);
 
 let Content: any = null;
 let headings: { depth: number; slug: string; text: string }[] = [];

@@ -1,15 +1,21 @@
+const deploymentRevision = process.env.GITHUB_SHA || "dev";
+
 export const siteConfig = {
   title: "OpenTaint",
   tagline: "The open source taint analysis engine for the AI era",
   description: "Turn one-off review into unlimited scans with the open source taint analysis engine that allows to combine model reasoning with formal program analysis.",
   ogTagline: "Turn one-off review into unlimited scans",
-  ogVersion: "20260816",
+  ogVersion: deploymentRevision.slice(0, 12),
   url: "https://opentaint.org",
   author: "Seqra Team",
   twitter: "@seqradev",
   github: "https://github.com/seqra/opentaint",
   discord: "https://discord.gg/6BXDfbP4p9",
 } as const;
+
+export function ogImageUrl(name: string) {
+  return `${siteConfig.url}/og/${name}.png?v=${siteConfig.ogVersion}`;
+}
 
 export const defaultKeywords = [
   "spring sast",

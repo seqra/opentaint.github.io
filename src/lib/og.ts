@@ -195,6 +195,8 @@ export function buildSiteImage(
   tagline?: string,
   background: string = OG_BACKGROUND,
 ): ReactNode {
+  const taglineWords = tagline?.split(" ") ?? [];
+
   return shell(
     background,
     ogFlowDataUri,
@@ -207,7 +209,11 @@ export function buildSiteImage(
       letterSpacing: "0.02em",
       marginTop: "auto",
       marginBottom: "20px",
-    }, tagline)] : []),
+    }, ...taglineWords.map((word, index) => h("span", {
+      display: "flex",
+      color: word === "one-off" || word === "unlimited" ? "#CA2121" : "#ffffff",
+      marginLeft: index === 0 ? "0" : "11px",
+    }, word)))] : []),
     h("div", {
       display: "flex",
       fontSize: "46px",

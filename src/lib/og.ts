@@ -29,9 +29,11 @@ const HEADER_SVG = `<svg width="211" height="39" viewBox="0 0 211 39" fill="none
 
 const HEADER_WIDTH = 422;
 const HEADER_HEIGHT = 78;
+const CENTER_LOGO_WIDTH = 528;
+const CENTER_LOGO_HEIGHT = 98;
 const headerDataUri = `data:image/svg+xml;base64,${Buffer.from(HEADER_SVG).toString("base64")}`;
 
-const ogFlowLines = createHeroFlowField({ height: OG_HEIGHT });
+const ogFlowLines = createHeroFlowField({ height: OG_HEIGHT, noiseOffset: 0.06 });
 const ogFlowBasePath = ogFlowLines.map((line) => line.d).join(" ");
 const ogFlowActivePaths = Array.from({ length: 3 }, (_, phase) => ogFlowLines
   .filter((line, index) => line.active && index % 3 === phase)
@@ -82,6 +84,7 @@ function img(src: string, width: number, height: number): ReactNode {
 function shell(
   background: string,
   backgroundArt: string | undefined,
+  logoPlacement: "header" | "center",
   ...contentChildren: (ReactNode | string)[]
 ): ReactNode {
   return h("div", {
@@ -131,8 +134,26 @@ function shell(
       width: "100%",
       height: "100%",
     }, img(backgroundArt, OG_WIDTH, OG_HEIGHT))] : []),
-    h("div", { display: "flex", alignItems: "center" },
-      img(headerDataUri, HEADER_WIDTH, HEADER_HEIGHT),
+    h("div", logoPlacement === "center" ? {
+      display: "flex",
+      position: "absolute",
+      top: "0",
+      right: "0",
+      bottom: "0",
+      left: "0",
+      width: "100%",
+      height: "100%",
+      alignItems: "center",
+      justifyContent: "center",
+    } : {
+      display: "flex",
+      alignItems: "center",
+    },
+      img(
+        headerDataUri,
+        logoPlacement === "center" ? CENTER_LOGO_WIDTH : HEADER_WIDTH,
+        logoPlacement === "center" ? CENTER_LOGO_HEIGHT : HEADER_HEIGHT,
+      ),
     ),
     ...contentChildren,
   );
@@ -152,6 +173,7 @@ export function buildPostImage(
   return shell(
     background,
     ogFlowDataUri,
+    "header",
     h("div", {
       display: "flex",
       fontSize: "46px",
@@ -190,57 +212,11 @@ export function buildPostImage(
   );
 }
 
-export function buildSiteImage(
-  headline: string,
-  tagline?: string,
-  background: string = OG_BACKGROUND,
-): ReactNode {
-  const taglineWords = tagline?.split(" ") ?? [];
-
+export function buildSiteImage(background: string = OG_BACKGROUND): ReactNode {
   return shell(
     background,
     ogFlowDataUri,
-    ...(tagline ? [h("div", {
-      display: "flex",
-      fontSize: "18px",
-      fontWeight: 700,
-      color: "#CA2121",
-      lineHeight: 1.4,
-      letterSpacing: "0.02em",
-      marginTop: "auto",
-      marginBottom: "20px",
-    }, ...taglineWords.map((word, index) => h("span", {
-      display: "flex",
-      color: word === "one-off" || word === "unlimited" ? "#CA2121" : "#ffffff",
-      marginLeft: index === 0 ? "0" : "11px",
-    }, word)))] : []),
-    h("div", {
-      display: "flex",
-      fontSize: "46px",
-      fontWeight: 700,
-      color: "#ffffff",
-      lineHeight: 1.15,
-      letterSpacing: "-0.03em",
-      marginTop: tagline ? "0" : "auto",
-      maxWidth: "1000px",
-    }, headline),
-
-    h("div", {
-      display: "flex",
-      justifyContent: "flex-end",
-      alignItems: "center",
-      marginTop: "28px",
-      paddingTop: "20px",
-      borderTop: "1px solid rgba(255,255,255,0.08)",
-    },
-      h("div", {
-        display: "flex",
-        fontSize: "14px",
-        fontWeight: 400,
-        color: "#52525b",
-        letterSpacing: "0.05em",
-      }, "opentaint.org"),
-    ),
+    "center",
   );
 }
 

@@ -9,6 +9,7 @@ export type HeroFlowLine = {
 
 type FlowFieldOptions = {
   height?: number;
+  noiseOffset?: number;
 };
 
 const width = 1200;
@@ -56,7 +57,10 @@ function catmullRomPath(points: Point[]) {
  * small repeated steps through the field. The seed keeps the published hero
  * stable across renders.
  */
-export function createHeroFlowField({ height = defaultHeight }: FlowFieldOptions = {}): HeroFlowLine[] {
+export function createHeroFlowField({
+  height = defaultHeight,
+  noiseOffset = 0,
+}: FlowFieldOptions = {}): HeroFlowLine[] {
   const noise = new NoiseConstructor(58138);
   const lines: HeroFlowLine[] = [];
   let lineIndex = 0;
@@ -66,7 +70,10 @@ export function createHeroFlowField({ height = defaultHeight }: FlowFieldOptions
     let { x, y } = start;
 
     for (let step = 0; step < maxSteps; step += 1) {
-      const distortion = noise.perlin2(x * noiseScale, y * noiseScale);
+      const distortion = noise.perlin2(
+        x * noiseScale + noiseOffset,
+        y * noiseScale + noiseOffset * 0.7,
+      );
       const angle = distortion * Math.PI * 1.35 + (direction === -1 ? Math.PI : 0);
       x += Math.cos(angle) * stepLength;
       y += Math.sin(angle) * stepLength;

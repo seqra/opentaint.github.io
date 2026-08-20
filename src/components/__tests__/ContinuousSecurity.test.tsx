@@ -3,15 +3,18 @@ import { describe, expect, it } from "vitest";
 import { ContinuousSecurity } from "../ContinuousSecurity";
 
 describe("ContinuousSecurity", () => {
-  it("places the reusable-scan promise after the workflow", () => {
+  it("places the product advantages before the workflow promise and cards", () => {
     render(<ContinuousSecurity />);
 
     const workflow = screen.getByRole("heading", { name: "Triage", level: 3 }).closest(".workflow-card-grid");
-    const promise = screen.getByRole("heading", { level: 2 });
+    const promise = screen.getByRole("heading", { name: "Turn one-off review into unlimited scans", level: 2 });
+    const firstAdvantage = screen.getByRole("heading", { name: "Lean specs, continuous scans", level: 3 });
 
+    expect(screen.getByText("Build security knowledge once, then scan every change with fast formal analysis")).toBeVisible();
     expect(promise).toHaveTextContent("Turn one-off review into unlimited scans");
     expect(screen.getByText("The flexibility of model reasoning and the consistency of formal program analysis combined")).toBeVisible();
-    expect(workflow?.compareDocumentPosition(promise) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(firstAdvantage.compareDocumentPosition(promise) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(promise.compareDocumentPosition(workflow as Node) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it("shows the four-part OpenTaint workflow", () => {
@@ -43,10 +46,16 @@ describe("ContinuousSecurity", () => {
     expect(screen.queryByText("The same review can produce different findings")).not.toBeInTheDocument();
   });
 
-  it("shows the performance balance and the open-source bundle visually", () => {
+  it("shows the continuous loop, performance balance, and open-source bundle visually", () => {
     render(<ContinuousSecurity />);
 
-    expect(screen.getByRole("heading", { name: "Practical balance through SOTA static analysis", level: 3 })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Lean specs, continuous scans", level: 3 })).toBeVisible();
+    expect(screen.getByText("Grow a formal specification from each reviewed diff, then run it against every future project change.")).toBeVisible();
+    const leanVisual = screen.getByRole("img", { name: /Lean reusable specifications power continuous formal scans/ });
+    expect(leanVisual).toBeVisible();
+    expect(leanVisual).toHaveTextContent("LEAN SPEC");
+    expect(leanVisual).toHaveTextContent("CONTINUOUS SCANS");
+    expect(screen.getByRole("heading", { name: "Practical SOTA static analysis", level: 3 })).toBeVisible();
     expect(screen.getByText("Minimize missed findings and false alarms without making whole-project analysis impractical.")).toBeVisible();
     const balanceVisual = screen.getByRole("img", { name: "OpenTaint balances scan speed, finding coverage, and precision" });
     expect(balanceVisual).toBeVisible();
@@ -57,6 +66,9 @@ describe("ContinuousSecurity", () => {
     expect(balanceVisual).not.toHaveTextContent("MINIMAL");
     expect(screen.getByRole("heading", { name: "Open source, batteries included", level: 3 })).toBeVisible();
     expect(screen.getByText("Engine, rules, models, agent skills, CLI, viewer, and CI integrations — all open source and built to work together.")).toBeVisible();
-    expect(screen.getByRole("img", { name: /open-source OpenTaint bundle/ })).toBeVisible();
+    const openSourceVisual = screen.getByRole("img", { name: /OpenTaint open-source components/ });
+    expect(openSourceVisual).toBeVisible();
+    expect(openSourceVisual).toHaveTextContent("Analysis engine");
+    expect(openSourceVisual).toHaveTextContent("CLI + CI");
   });
 });

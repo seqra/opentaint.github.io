@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Bot, Braces, Check, FileCode2, Monitor, Terminal } from "lucide-react";
 
 function VisualFrame({ children, label, className = "" }: { children: ReactNode; label: string; className?: string }) {
   return (
@@ -156,23 +157,17 @@ const cards = [
 function BalanceVisual() {
   return (
     <div className="value-visual relative min-h-[20rem] overflow-hidden rounded-[18px] border border-border bg-code-bg" role="img" aria-label="OpenTaint balances scan speed, finding coverage, and precision">
-      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 520 290" aria-hidden="true">
-        <path d="M260 42 L86 238 L434 238 Z" fill="none" stroke="hsl(var(--border-strong))" strokeWidth="1" />
-        <path d="M260 78 L133 215 L387 215 Z" fill="none" stroke="hsl(var(--border))" strokeWidth="1" />
-        <path d="M260 114 L180 192 L340 192 Z" fill="none" stroke="hsl(var(--border))" strokeWidth="1" />
-        <path d="M260 162 L260 42 M260 162 L86 238 M260 162 L434 238" fill="none" stroke="hsl(var(--border))" strokeWidth="1" />
-        <path className="balance-shape" d="M260 59 L111 224 L409 224 Z" fill="hsl(var(--brand) / 0.075)" stroke="hsl(var(--brand))" strokeWidth="2" strokeLinejoin="round" />
-        <circle cx="260" cy="59" r="4" fill="hsl(var(--background))" stroke="hsl(var(--brand))" strokeWidth="2" />
-        <circle cx="111" cy="224" r="4" fill="hsl(var(--background))" stroke="hsl(var(--brand))" strokeWidth="2" />
-        <circle cx="409" cy="224" r="4" fill="hsl(var(--background))" stroke="hsl(var(--brand))" strokeWidth="2" />
-        <foreignObject x="182" y="138" width="156" height="48">
-          <div className="flex h-full w-full items-center justify-center">
-            <div className="rounded-full border border-primary/45 bg-background px-4 py-2 text-center shadow-[0_0_0_8px_hsl(var(--brand)/0.05)]">
-              <span className="whitespace-nowrap font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-primary">STATIC ANALYSIS</span>
-            </div>
-          </div>
-        </foreignObject>
+      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 520 420" aria-hidden="true">
+        <path d="M260 48 L60 350 L460 350 Z" fill="none" stroke="hsl(var(--border-strong))" strokeWidth="1" />
+        <path d="M260 102 L118 322 L402 322 Z" fill="none" stroke="hsl(var(--border))" strokeWidth="1" />
+        <path d="M260 158 L174 294 L346 294 Z" fill="none" stroke="hsl(var(--border))" strokeWidth="1" />
+        <path d="M260 224 L260 48 M260 224 L60 350 M260 224 L460 350" fill="none" stroke="hsl(var(--border))" strokeWidth="1" />
+        <path className="balance-shape" d="M260 70 L85 336 L435 336 Z" fill="hsl(var(--brand) / 0.075)" stroke="hsl(var(--brand))" strokeWidth="2" strokeLinejoin="round" />
+        <circle cx="260" cy="70" r="5" fill="hsl(var(--background))" stroke="hsl(var(--brand))" strokeWidth="2" />
+        <circle cx="85" cy="336" r="5" fill="hsl(var(--background))" stroke="hsl(var(--brand))" strokeWidth="2" />
+        <circle cx="435" cy="336" r="5" fill="hsl(var(--background))" stroke="hsl(var(--brand))" strokeWidth="2" />
       </svg>
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/45 bg-background px-4 py-2 text-center shadow-[0_0_0_8px_hsl(var(--brand)/0.05)]"><span className="whitespace-nowrap font-mono text-xs font-semibold uppercase tracking-[0.08em] text-primary">STATIC ANALYSIS</span></div>
       <div className="balance-axis balance-time absolute left-1/2 top-5 -translate-x-1/2 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[11px] font-semibold leading-[1.25] text-primary">FAST SCAN TIME</span></div>
       <div className="balance-axis balance-missed absolute bottom-5 left-5 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[11px] font-semibold leading-[1.25] text-primary">FEWER MISSED <br />FINDINGS</span></div>
       <div className="balance-axis balance-false absolute bottom-5 right-5 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[11px] font-semibold leading-[1.25] text-primary">FEWER FALSE <br />ALARMS</span></div>
@@ -180,56 +175,52 @@ function BalanceVisual() {
   );
 }
 
-function BundleVisual() {
+function ContinuousLeanVisual() {
   return (
-    <div className="bundle-system value-visual relative min-h-[20rem] overflow-hidden rounded-[18px] border border-border bg-background" role="img" aria-label="The open-source OpenTaint bundle connects agent skills, taint rules, dependency models, formal analysis, report viewer, and CI integration">
-      <div className="bundle-system-body" aria-hidden="true">
-        <section className="bundle-system-column">
-          <p className="bundle-system-kicker">SECURITY KNOWLEDGE</p>
-          <div className="bundle-file bundle-file-skill">
-            <span className="bundle-file-ext">md</span>
-            <span><b>appsec-agent</b><small>discover and enact</small></span>
-          </div>
-          <div className="bundle-file">
-            <span className="bundle-file-ext">yml</span>
-            <span><b>taint rules</b><small>sources and sinks</small></span>
-          </div>
-          <div className="bundle-file">
-            <span className="bundle-file-ext">yml</span>
-            <span><b>dependency models</b><small>opaque methods</small></span>
+    <div className="lean-cycle value-visual relative min-h-[20rem] overflow-hidden rounded-[18px] border border-border bg-code-bg" role="img" aria-label="Lean reusable specifications power continuous formal scans">
+      <div className="lean-cycle-body" aria-hidden="true">
+        <section className="lean-cycle-panel lean-cycle-spec">
+          <p>LEAN SPEC</p>
+          <div className="lean-cycle-simple-flow">
+            <div className="lean-cycle-input"><span>DIFF</span><i>+</i><span>INFORMAL SPEC</span></div>
+            <b>→</b>
+            <div className="lean-cycle-output lean-cycle-stacked">FORMAL SPEC</div>
           </div>
         </section>
 
-        <span className="bundle-system-arrow"><i /></span>
+        <div className="lean-cycle-connector"><i /></div>
 
-        <section className="bundle-system-column bundle-engine-panel">
-          <p className="bundle-system-kicker">FORMAL ANALYSIS</p>
-          <div className="bundle-analysis-inputs">
-            <span><i>src</i><b>Project model</b></span>
-            <span><i>yml</i><b>Security spec</b></span>
-          </div>
-          <div className="bundle-analysis-flow">
-            <span />
-            <b>INTERPROCEDURAL<br />DATAFLOW</b>
-            <span />
-          </div>
-          <p className="bundle-engine-result"><b>3</b> complete traces</p>
-        </section>
-
-        <span className="bundle-system-arrow"><i /></span>
-
-        <section className="bundle-system-column">
-          <p className="bundle-system-kicker">RESULTS</p>
-          <div className="bundle-result-card bundle-report-card">
-            <span className="bundle-result-icon">{`{ }`}</span>
-            <span><b>Report viewer</b><small>report.sarif trace</small></span>
-          </div>
-          <div className="bundle-trace-line"><i /><i /><i /><i /><i /></div>
-          <div className="bundle-result-card bundle-ci-card">
-            <span className="bundle-check">✓</span>
-            <span><b>Security scan</b><small>CI check passed</small></span>
+        <section className="lean-cycle-panel lean-cycle-scan">
+          <p>CONTINUOUS SCANS</p>
+          <div className="lean-cycle-simple-flow">
+            <div className="lean-cycle-input"><span>FUTURE CHANGE</span><i>+</i><span>FORMAL SPEC</span></div>
+            <b>→</b>
+            <div className="lean-cycle-output lean-cycle-passed">SCAN <span>✓</span></div>
           </div>
         </section>
+      </div>
+    </div>
+  );
+}
+
+const openSourceParts = [
+  { label: "Analysis engine", Icon: Braces },
+  { label: "Rules + models", Icon: FileCode2 },
+  { label: "Agent skills", Icon: Bot },
+  { label: "CLI + CI", Icon: Terminal },
+  { label: "Report viewer", Icon: Monitor },
+] as const;
+
+function OpenSourceVisual() {
+  return (
+    <div className="open-source-visual value-visual relative min-h-[20rem] overflow-hidden rounded-[18px] border border-border bg-code-bg" role="img" aria-label="OpenTaint open-source components included in one repository">
+      <div className="open-parts-body" aria-hidden="true">
+        <div className="open-parts-heading"><Braces /><b>OPEN SOURCE</b></div>
+        <ul className="open-parts-list">
+          {openSourceParts.map(({ label, Icon }) => (
+            <li key={label}><span className="open-part-icon"><Icon /></span><b>{label}</b><span className="open-part-check"><Check /></span></li>
+          ))}
+        </ul>
       </div>
     </div>
   );
@@ -239,7 +230,39 @@ export function ContinuousSecurity() {
   return (
     <section className="band continuous-security-band" aria-labelledby="continuous-security-heading">
       <div className="relative z-10 mx-auto max-w-[96rem]">
-        <div className="workflow-card-grid mobile-card-rail grid gap-4 md:grid-cols-2 min-[1440px]:-mx-8 min-[1440px]:grid-cols-4" role="region" aria-label="OpenTaint workflow" tabIndex={0}>
+        <div>
+          <p className="mx-auto max-w-[64ch] text-center font-mono text-base leading-7 text-foreground sm:text-lg sm:leading-8">Build security knowledge once, then scan every change with fast formal analysis</p>
+          <div className="value-card-grid mobile-card-rail mt-10 grid gap-6 sm:mt-12 lg:grid-cols-3" role="region" aria-label="OpenTaint product advantages" tabIndex={0}>
+            <article className="value-card mobile-card-rail-item overflow-hidden rounded-[24px] border border-border-strong bg-background p-4 shadow-sm sm:p-6">
+              <ContinuousLeanVisual />
+              <div className="px-2 pb-2 pt-6">
+                <h3 className="font-mono text-xl font-semibold leading-8 tracking-[-0.03em] text-foreground">Lean specs, continuous scans</h3>
+                <p className="mt-3 w-full text-sm leading-6 text-muted-foreground sm:text-[15px]">Grow a formal specification from each reviewed diff, then run it against every future project change.</p>
+              </div>
+            </article>
+            <article className="value-card mobile-card-rail-item overflow-hidden rounded-[24px] border border-border-strong bg-background p-4 shadow-sm sm:p-6">
+              <BalanceVisual />
+              <div className="px-2 pb-2 pt-6">
+                <h3 className="font-mono text-xl font-semibold leading-8 tracking-[-0.03em] text-foreground">Practical SOTA static analysis</h3>
+                <p className="mt-3 w-full text-sm leading-6 text-muted-foreground sm:text-[15px]">Minimize missed findings and false alarms without making whole-project analysis impractical.</p>
+              </div>
+            </article>
+            <article className="value-card mobile-card-rail-item overflow-hidden rounded-[24px] border border-border-strong bg-background p-4 shadow-sm sm:p-6">
+              <OpenSourceVisual />
+              <div className="px-2 pb-2 pt-6">
+                <h3 className="font-mono text-xl font-semibold leading-8 tracking-[-0.03em] text-foreground">Open source, batteries included</h3>
+                <p className="mt-3 w-full text-sm leading-6 text-muted-foreground sm:text-[15px]">Engine, rules, models, agent skills, CLI, viewer, and CI integrations — all open source and built to work together.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div className="mx-auto mt-16 max-w-[72rem] text-center sm:mt-20">
+          <h2 id="continuous-security-heading" className="section-heading">Turn one-off review into unlimited scans</h2>
+          <p className="section-banner continuous-security-subline mx-auto mt-6 max-w-[68ch]">The flexibility of model reasoning and the consistency of formal program analysis combined</p>
+        </div>
+
+        <div className="workflow-card-grid mobile-card-rail mt-10 grid gap-4 md:grid-cols-2 min-[1440px]:-mx-8 min-[1440px]:grid-cols-4 sm:mt-12" role="region" aria-label="OpenTaint workflow" tabIndex={0}>
           {cards.map((card) => (
             <article key={card.title} className="workflow-card mobile-card-rail-item flex min-h-[25rem] flex-col overflow-hidden rounded-[24px] border border-border-strong bg-background shadow-sm">
               <div className="relative h-[18rem] p-2">{card.preview}</div>
@@ -251,28 +274,6 @@ export function ContinuousSecurity() {
               </div>
             </article>
           ))}
-        </div>
-
-        <div className="mx-auto mt-12 max-w-[72rem] text-center sm:mt-16">
-          <h2 id="continuous-security-heading" className="section-heading">Turn one-off review into unlimited scans</h2>
-          <p className="section-banner continuous-security-subline mx-auto mt-6 max-w-[68ch]">The flexibility of model reasoning and the consistency of formal program analysis combined</p>
-        </div>
-
-        <div className="value-card-grid mobile-card-rail mt-10 grid gap-6 sm:mt-12 lg:grid-cols-2" role="region" aria-label="OpenTaint product advantages" tabIndex={0}>
-          <article className="value-card mobile-card-rail-item overflow-hidden rounded-[24px] border border-border-strong bg-background p-4 shadow-sm sm:p-6">
-            <BalanceVisual />
-            <div className="px-2 pb-2 pt-6">
-              <h3 className="font-mono text-xl font-semibold leading-8 tracking-[-0.03em] text-foreground">Practical balance through SOTA static analysis</h3>
-              <p className="mt-3 w-full text-sm leading-6 text-muted-foreground sm:text-[15px]">Minimize missed findings and false alarms without making whole-project analysis impractical.</p>
-            </div>
-          </article>
-          <article className="value-card mobile-card-rail-item overflow-hidden rounded-[24px] border border-border-strong bg-background p-4 shadow-sm sm:p-6">
-            <BundleVisual />
-            <div className="px-2 pb-2 pt-6">
-              <h3 className="font-mono text-xl font-semibold leading-8 tracking-[-0.03em] text-foreground">Open source, batteries included</h3>
-              <p className="mt-3 w-full text-sm leading-6 text-muted-foreground sm:text-[15px]">Engine, rules, models, agent skills, CLI, viewer, and CI integrations — all open source and built to work together.</p>
-            </div>
-          </article>
         </div>
       </div>
     </section>

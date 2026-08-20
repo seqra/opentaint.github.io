@@ -52,6 +52,7 @@ describe("ContinuousSecurity", () => {
     expect(balanceVisual).toHaveTextContent("FEWER MISSED FINDINGS");
     expect(balanceVisual).toHaveTextContent("FEWER FALSE ALARMS");
     expect(balanceVisual).not.toHaveTextContent("SOTA");
+    expect(balanceVisual).not.toHaveTextContent("MINIMAL");
     expect(screen.getByRole("heading", { name: "Open source, batteries included", level: 3 })).toBeVisible();
     expect(screen.getByText("Engine, rules, models, agent skills, CLI, viewer, and CI integrations — all open source and built to work together.")).toBeVisible();
     expect(screen.getByRole("img", { name: /open-source OpenTaint bundle/ })).toBeVisible();

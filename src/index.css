@@ -452,22 +452,29 @@
       line-height: 1.125rem;
     }
 
-    .workflow-spec-lines em {
-      letter-spacing: 0.04em;
+    .workflow-card-grid .workflow-spec-lines em {
+      letter-spacing: -0.01em;
     }
 
-    .workflow-stage-rail {
+    .workflow-card-grid .workflow-spec-lines,
+    .workflow-card-grid .workflow-formal-spec,
+    .workflow-card-grid .workflow-triage-lines {
+      gap: var(--spacing-02);
+      padding: var(--spacing-03);
+    }
+
+    .workflow-card-grid .workflow-stage-rail {
       inset: var(--spacing-03);
-      grid-template-columns: minmax(0, 5rem) minmax(var(--spacing-06), 1fr) minmax(0, 5rem);
+      grid-template-columns: minmax(0, 5.0625rem) minmax(var(--spacing-06), 1fr) minmax(0, 5.0625rem);
     }
 
-    .workflow-diagram-node {
-      width: 5rem;
+    .workflow-card-grid .workflow-diagram-node {
+      width: 5.0625rem;
     }
 
-    .workflow-operation-label {
-      font-size: 8px;
-      letter-spacing: 0.04em;
+    .workflow-card-grid .workflow-operation-label {
+      font-size: 9px;
+      letter-spacing: 0;
     }
 
     .value-card-grid .balance-axis {
@@ -476,10 +483,6 @@
 
     .value-card-grid .balance-axis > span:first-child {
       font-size: 10px;
-    }
-
-    .value-card-grid .balance-axis > span:last-child {
-      font-size: 7px;
     }
 
     .value-card-grid .balance-missed {
@@ -719,7 +722,7 @@
   }
 
   .workflow-diagram-node {
-    width: 7rem;
+    width: 6.75rem;
     min-width: 0;
     overflow: hidden;
     border: 1px solid hsl(var(--border-strong));
@@ -730,7 +733,7 @@
 
   .workflow-diagram-label {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 650;
     line-height: 1.2;
     letter-spacing: 0;
@@ -765,7 +768,7 @@
     border-radius: 0.2rem;
     color: hsl(var(--brand));
     font-family: var(--font-mono);
-    font-size: 7px;
+    font-size: 8px;
     font-weight: 700;
     line-height: 1;
   }
@@ -785,7 +788,7 @@
     position: absolute;
     inset: var(--spacing-04);
     display: grid;
-    grid-template-columns: minmax(0, 7rem) minmax(var(--spacing-07), 1fr) minmax(0, 7rem);
+    grid-template-columns: minmax(0, 6.75rem) minmax(var(--spacing-07), 1fr) minmax(0, 6.75rem);
     align-items: center;
   }
 
@@ -795,9 +798,9 @@
     left: 50%;
     transform: translateX(-50%);
     font-family: var(--font-mono);
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.04em;
     color: hsl(var(--brand));
   }
 
@@ -873,7 +876,7 @@
   .workflow-dataflow-trace > span {
     color: hsl(var(--brand));
     font-family: var(--font-mono);
-    font-size: 7px;
+    font-size: 8px;
     font-style: normal;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -943,7 +946,7 @@
 
   .workflow-dataflow-trace > span {
     position: absolute;
-    font-size: 5px;
+    font-size: 7px;
     letter-spacing: 0.04em;
     line-height: 1;
   }

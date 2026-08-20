@@ -46,7 +46,12 @@ describe("ContinuousSecurity", () => {
 
     expect(screen.getByRole("heading", { name: "Practical balance through SOTA static analysis", level: 3 })).toBeVisible();
     expect(screen.getByText("Minimize missed findings and false alarms without making whole-project analysis impractical.")).toBeVisible();
-    expect(screen.getByRole("img", { name: "OpenTaint balances scan speed, finding coverage, and precision" })).toBeVisible();
+    const balanceVisual = screen.getByRole("img", { name: "OpenTaint balances scan speed, finding coverage, and precision" });
+    expect(balanceVisual).toBeVisible();
+    expect(balanceVisual).toHaveTextContent("FAST SCAN TIME");
+    expect(balanceVisual).toHaveTextContent("FEWER MISSED FINDINGS");
+    expect(balanceVisual).toHaveTextContent("FEWER FALSE ALARMS");
+    expect(balanceVisual).not.toHaveTextContent("SOTA");
     expect(screen.getByRole("heading", { name: "Open source, batteries included", level: 3 })).toBeVisible();
     expect(screen.getByText("Engine, rules, models, agent skills, CLI, viewer, and CI integrations — all open source and built to work together.")).toBeVisible();
     expect(screen.getByRole("img", { name: /open-source OpenTaint bundle/ })).toBeVisible();

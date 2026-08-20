@@ -200,7 +200,7 @@
   }
 
   .section-heading {
-    @apply font-mono text-[1.75rem] font-semibold text-foreground sm:text-[2.125rem] md:text-[2.5rem] lg:text-[2.875rem];
+    @apply font-mono text-[2rem] font-semibold text-foreground sm:text-[2.25rem] md:text-[2.625rem] lg:text-[3rem];
     line-height: 1.1;
     letter-spacing: -0.032em;
   }
@@ -215,18 +215,24 @@
   }
 
   .section-eyebrow {
-    @apply text-xs tracking-[0.18em];
+    @apply text-[13px] tracking-[0.18em] lg:text-sm;
   }
 
   .section-banner {
-    @apply text-[11px] tracking-[0.16em];
+    @apply text-xs tracking-[0.16em] lg:text-[13px];
   }
 
   .hero-subline {
     max-width: 48rem;
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     line-height: 1.5rem;
     letter-spacing: 0.08em;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-subline {
+      font-size: 1rem;
+    }
   }
 
   .section-header > .section-heading:not(:first-child) {
@@ -450,16 +456,30 @@
       letter-spacing: 0.04em;
     }
 
+    .workflow-stage-rail {
+      inset: var(--spacing-03);
+      grid-template-columns: minmax(0, 5rem) minmax(var(--spacing-06), 1fr) minmax(0, 5rem);
+    }
+
+    .workflow-diagram-node {
+      width: 5rem;
+    }
+
+    .workflow-operation-label {
+      font-size: 8px;
+      letter-spacing: 0.04em;
+    }
+
     .value-card-grid .balance-axis {
       padding: var(--spacing-02) var(--spacing-03);
     }
 
     .value-card-grid .balance-axis > span:first-child {
-      font-size: 7px;
+      font-size: 10px;
     }
 
     .value-card-grid .balance-axis > span:last-child {
-      font-size: 6px;
+      font-size: 7px;
     }
 
     .value-card-grid .balance-missed {
@@ -699,7 +719,7 @@
   }
 
   .workflow-diagram-node {
-    width: 6.5rem;
+    width: 7rem;
     min-width: 0;
     overflow: hidden;
     border: 1px solid hsl(var(--border-strong));
@@ -710,17 +730,17 @@
 
   .workflow-diagram-label {
     font-family: var(--font-mono);
-    font-size: 8px;
+    font-size: 10px;
     font-weight: 650;
-    letter-spacing: 0.015em;
+    line-height: 1.2;
+    letter-spacing: 0;
     color: hsl(var(--foreground));
-    white-space: nowrap;
   }
 
   .workflow-artifact-header {
     position: relative;
     display: flex;
-    min-height: var(--spacing-09);
+    min-height: var(--spacing-10);
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
@@ -745,7 +765,7 @@
     border-radius: 0.2rem;
     color: hsl(var(--brand));
     font-family: var(--font-mono);
-    font-size: 6px;
+    font-size: 7px;
     font-weight: 700;
     line-height: 1;
   }
@@ -753,7 +773,7 @@
   .workflow-operation-node {
     position: relative;
     display: flex;
-    height: var(--spacing-09);
+    height: var(--spacing-10);
     min-width: 0;
     flex-direction: column;
     align-items: center;
@@ -763,9 +783,9 @@
 
   .workflow-stage-rail {
     position: absolute;
-    inset: var(--spacing-05);
+    inset: var(--spacing-04);
     display: grid;
-    grid-template-columns: minmax(0, 6.5rem) minmax(var(--spacing-07), 1fr) minmax(0, 6.5rem);
+    grid-template-columns: minmax(0, 7rem) minmax(var(--spacing-07), 1fr) minmax(0, 7rem);
     align-items: center;
   }
 
@@ -775,9 +795,9 @@
     left: 50%;
     transform: translateX(-50%);
     font-family: var(--font-mono);
-    font-size: 6px;
+    font-size: 9px;
     font-weight: 700;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     color: hsl(var(--brand));
   }
 
@@ -853,7 +873,7 @@
   .workflow-dataflow-trace > span {
     color: hsl(var(--brand));
     font-family: var(--font-mono);
-    font-size: 6px;
+    font-size: 7px;
     font-style: normal;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -1663,8 +1683,8 @@
   /* Carbon expressive headings scale fluidly between breakpoints. This keeps
      the hero hierarchy continuous instead of stepping backward at lg. */
   .hero-heading {
-    font-size: clamp(1.75rem, calc(1.2rem + 2.3vw), 3rem);
-    line-height: clamp(2.25rem, calc(1.7rem + 2.3vw), 3.125rem);
+    font-size: clamp(2rem, calc(1.3rem + 2.5vw), 3.375rem);
+    line-height: clamp(2.5rem, calc(1.8rem + 2.5vw), 3.5rem);
     letter-spacing: 0;
   }
 
@@ -1682,7 +1702,11 @@
     text-align: left;
   }
 
-  @media (min-width: 1024px) {
+  @media (min-width: 1280px) {
+    .hero-heading {
+      font-size: min(3.375rem, calc((100vw - 8rem) / 22.7));
+    }
+
     .hero-title-lockup {
       flex-direction: row;
       align-items: center;
@@ -2056,7 +2080,7 @@
   }
 
   .section-title {
-    @apply font-mono text-[1.75rem] font-semibold text-foreground sm:text-[2.125rem] md:text-[2.5rem] lg:text-[2.875rem];
+    @apply font-mono text-[2rem] font-semibold text-foreground sm:text-[2.25rem] md:text-[2.625rem] lg:text-[3rem];
     line-height: 1.1;
     letter-spacing: -0.032em;
   }

@@ -167,16 +167,15 @@ function BalanceVisual() {
         <circle cx="409" cy="224" r="4" fill="hsl(var(--background))" stroke="hsl(var(--brand))" strokeWidth="2" />
         <foreignObject x="176" y="122" width="168" height="80">
           <div className="flex h-full w-full items-center justify-center">
-            <div className="rounded-full border border-primary/45 bg-background px-4 py-3 text-center shadow-[0_0_0_8px_hsl(var(--brand)/0.05)]">
-              <span className="font-mono text-[8px] font-semibold uppercase tracking-[0.1em] text-primary">STATIC ANALYSIS</span>
-              <span className="mt-1 block whitespace-nowrap font-mono text-[6px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">SOTA</span>
+            <div className="rounded-full border border-primary/45 bg-background px-6 py-3 text-center shadow-[0_0_0_8px_hsl(var(--brand)/0.05)]">
+              <span className="whitespace-nowrap font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-primary">STATIC ANALYSIS</span>
             </div>
           </div>
         </foreignObject>
       </svg>
-      <div className="balance-axis balance-time absolute left-1/2 top-5 -translate-x-1/2 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[9px] font-semibold text-primary">SCAN TIME</span><span className="mt-1 block font-mono text-[7px] font-semibold uppercase tracking-[0.1em] text-foreground">MINIMAL</span></div>
-      <div className="balance-axis balance-missed absolute bottom-5 left-5 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[9px] font-semibold text-primary">MISSED FINDINGS</span><span className="mt-1 block font-mono text-[7px] font-semibold uppercase tracking-[0.1em] text-foreground">MINIMAL</span></div>
-      <div className="balance-axis balance-false absolute bottom-5 right-5 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[9px] font-semibold text-primary">FALSE ALARMS</span><span className="mt-1 block font-mono text-[7px] font-semibold uppercase tracking-[0.1em] text-foreground">MINIMAL</span></div>
+      <div className="balance-axis balance-time absolute left-1/2 top-5 -translate-x-1/2 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[11px] font-semibold leading-[1.25] text-primary">FAST SCAN TIME</span><span className="mt-1 block font-mono text-[8px] font-semibold uppercase tracking-[0.1em] text-foreground">MINIMAL</span></div>
+      <div className="balance-axis balance-missed absolute bottom-5 left-5 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[11px] font-semibold leading-[1.25] text-primary">FEWER MISSED <br />FINDINGS</span><span className="mt-1 block font-mono text-[8px] font-semibold uppercase tracking-[0.1em] text-foreground">MINIMAL</span></div>
+      <div className="balance-axis balance-false absolute bottom-5 right-5 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[11px] font-semibold leading-[1.25] text-primary">FEWER FALSE <br />ALARMS</span><span className="mt-1 block font-mono text-[8px] font-semibold uppercase tracking-[0.1em] text-foreground">MINIMAL</span></div>
     </div>
   );
 }
@@ -246,7 +245,7 @@ export function ContinuousSecurity() {
               <div className="relative h-[16rem] p-4">{card.preview}</div>
               <div className="flex flex-1 flex-col px-6 pb-6 pt-2">
                 <h3 className="font-mono text-2xl font-semibold tracking-[-0.04em] text-foreground">{card.title}</h3>
-                <p className="mt-3 break-words text-[11px] leading-5 text-muted-foreground">{card.description}</p>
+                <p className="mt-3 break-words text-sm leading-6 text-muted-foreground">{card.description}</p>
               </div>
             </article>
           ))}
@@ -262,14 +261,14 @@ export function ContinuousSecurity() {
             <BalanceVisual />
             <div className="px-2 pb-2 pt-6">
               <h3 className="font-mono text-xl font-semibold leading-8 tracking-[-0.03em] text-foreground">Practical balance through SOTA static analysis</h3>
-              <p className="mt-3 w-full text-[12px] leading-5 text-muted-foreground">Minimize missed findings and false alarms without making whole-project analysis impractical.</p>
+              <p className="mt-3 w-full text-sm leading-6 text-muted-foreground sm:text-[15px]">Minimize missed findings and false alarms without making whole-project analysis impractical.</p>
             </div>
           </article>
           <article className="value-card mobile-card-rail-item overflow-hidden rounded-[24px] border border-border-strong bg-background p-4 shadow-sm sm:p-6">
             <BundleVisual />
             <div className="px-2 pb-2 pt-6">
               <h3 className="font-mono text-xl font-semibold leading-8 tracking-[-0.03em] text-foreground">Open source, batteries included</h3>
-              <p className="mt-3 w-full text-[12px] leading-5 text-muted-foreground">Engine, rules, models, agent skills, CLI, viewer, and CI integrations — all open source and built to work together.</p>
+              <p className="mt-3 w-full text-sm leading-6 text-muted-foreground sm:text-[15px]">Engine, rules, models, agent skills, CLI, viewer, and CI integrations — all open source and built to work together.</p>
             </div>
           </article>
         </div>

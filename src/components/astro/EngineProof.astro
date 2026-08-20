@@ -45,15 +45,15 @@ const coverageStates = {
     <div class="section-content grid gap-6 sm:gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-center lg:gap-16">
       <div>
         <p class="section-banner">Five-case comparison</p>
-        <h3 class="mt-4 font-mono text-xl font-semibold leading-8 text-foreground">{proof.title}</h3>
-        <p class="mt-4 max-w-[52ch] font-mono text-sm leading-6 text-muted-foreground sm:leading-7 lg:text-[15px]">{proof.description}</p>
-        <a href={proof.href} class="mt-6 inline-flex font-mono text-sm font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground">Read the comparison</a>
+        <h3 class="mt-4 font-mono text-[1.375rem] font-semibold leading-8 text-foreground sm:text-2xl">{proof.title}</h3>
+        <p class="mt-4 max-w-[52ch] font-mono text-[15px] leading-7 text-muted-foreground lg:text-base">{proof.description}</p>
+        <a href={proof.href} class="mt-6 inline-flex font-mono text-[15px] font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground lg:text-base">Read the comparison</a>
       </div>
 
       <div class="reveal min-w-0 overflow-x-auto rounded-xl border border-border-strong bg-background scrollbar-thin" role="region" aria-label="Scrollable detection-depth comparison" tabindex="0">
         {/* Five verdict columns fit a 375px screen only if the cells stop
             padding and the labels shorten; past sm both come back. */}
-        <table class="w-full table-fixed border-collapse font-mono text-left text-[10px] sm:table-auto sm:min-w-[560px] sm:text-xs">
+        <table class="w-full table-fixed border-collapse font-mono text-left text-[11px] sm:table-auto sm:min-w-[560px] sm:text-[13px]">
           <caption class="sr-only">XSS detection depth by tool and analysis mode across five Java test cases</caption>
           <thead>
             <tr class="text-muted-foreground">
@@ -65,7 +65,7 @@ const coverageStates = {
             <tr class="border-b border-border-strong text-muted-foreground">
               {coverageColumns.map((column) => (
                 <th scope="col" class:list={[
-                  "border-l border-border px-1 py-3 text-center text-[9px] font-normal sm:px-4 sm:text-[11px]",
+                  "border-l border-border px-1 py-3 text-center text-[10px] font-normal sm:px-4 sm:text-xs",
                   column.accent && "bg-primary/5",
                 ]}><span class="sm:hidden">{column.mode === "taint rules" ? "taint" : "pattern"}</span><span class="hidden sm:inline">{column.mode}</span></th>
               ))}
@@ -92,7 +92,7 @@ const coverageStates = {
             ))}
           </tbody>
         </table>
-        <p class="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border px-2 py-3 font-mono text-[10px] leading-5 text-muted-foreground sm:gap-x-6 sm:px-4 sm:text-[11px]">
+        <p class="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border px-2 py-3 font-mono text-[11px] leading-5 text-muted-foreground sm:gap-x-6 sm:px-4 sm:text-xs">
           {Object.values(coverageStates).map((state) => (
             <span class="flex items-center gap-2">
               <span aria-hidden="true" class:list={["inline-block h-[10px] w-[10px] border border-current", state.fill]}></span>

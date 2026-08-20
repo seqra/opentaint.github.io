@@ -42,8 +42,8 @@ function CopyButton({ id, value, copiedId, onCopy }: CopyProps) {
 function StageLabel({ number, children }: { number: string; children: string }) {
   return (
     <div className="flex items-start gap-3 text-left sm:items-center">
-      <span className="font-mono text-[10px] font-semibold text-primary">{number}</span>
-      <h3 className="font-mono text-xs font-semibold text-foreground sm:text-sm">{children}</h3>
+      <span className="font-mono text-xs font-semibold text-primary">{number}</span>
+      <h3 className="font-mono text-sm font-semibold leading-6 text-foreground sm:text-[15px]">{children}</h3>
     </div>
   );
 }
@@ -62,7 +62,7 @@ function CommandLine({ id, value, prompt = false, copiedId, onCopy }: CopyProps 
             onCopy(id, value);
           }
         }}
-        className="min-w-0 flex-1 cursor-pointer whitespace-pre-wrap break-words rounded px-1 font-mono text-xs leading-5 text-panel-foreground/90 transition-colors hover:bg-panel-accent/10 hover:text-panel-foreground sm:text-sm"
+        className="min-w-0 flex-1 cursor-pointer whitespace-pre-wrap break-words rounded px-1 font-mono text-[13px] leading-6 text-panel-foreground/90 transition-colors hover:bg-panel-accent/10 hover:text-panel-foreground sm:text-[15px]"
       >
         {value}
       </code>
@@ -111,7 +111,7 @@ export function FirstScanFunnel() {
                           setCopiedId(null);
                         }}
                         className={[
-                          "h-12 shrink-0 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] transition-colors sm:text-xs",
+                          "h-12 shrink-0 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors sm:text-[13px]",
                           active ? "text-panel-accent" : "text-panel-foreground/60 hover:text-panel-accent",
                         ].join(" ")}
                       >

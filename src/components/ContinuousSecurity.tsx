@@ -56,7 +56,7 @@ function InformalSpecNode() {
 
 function FormalSpecNode({ refined = false }: { refined?: boolean }) {
   return (
-    <ArtifactNode title={refined ? "TUNED FORMAL SPEC" : "FORMAL SPEC"} extension="yml" className="border-primary/35">
+    <ArtifactNode title="FORMAL SPEC" extension="yml" className="border-primary/35">
       <div className="workflow-formal-spec" aria-hidden="true">
         <em>TAINT RULE</em><span className={refined ? "border border-emerald-700 bg-emerald-700 dark:border-emerald-400 dark:bg-emerald-400" : "bg-primary"} />
         <em>DEPENDENCY MODEL</em><span className={refined ? "border border-emerald-700/30 bg-emerald-700/[0.09]" : "border border-primary/30 bg-primary/[0.08]"} />
@@ -147,10 +147,10 @@ function TriagePreview() {
 }
 
 const cards = [
-  { title: "Discover", description: "Learn trust boundaries and vulnerability patterns as an informal specification.", preview: <DiscoverPreview /> },
-  { title: "Enact", description: "Enact the informal specification as taint rules and dependency models.", preview: <EnactPreview /> },
-  { title: "Scan", description: "Search the whole project with formal program analysis.", preview: <ScanPreview /> },
-  { title: "Triage", description: "Confirm findings and tune away false alarms.", preview: <TriagePreview /> },
+  { title: "Discover", description: ["Discover trust boundaries and", "vulnerability patterns."], preview: <DiscoverPreview /> },
+  { title: "Enact", description: ["Enact security knowledge as", "rules and dependency models."], preview: <EnactPreview /> },
+  { title: "Scan", description: ["Search the whole project with formal program analysis."], preview: <ScanPreview /> },
+  { title: "Triage", description: ["Confirm findings and tune away false alarms."], preview: <TriagePreview /> },
 ] as const;
 
 function BalanceVisual() {
@@ -239,13 +239,15 @@ export function ContinuousSecurity() {
   return (
     <section className="band continuous-security-band" aria-labelledby="continuous-security-heading">
       <div className="relative z-10 mx-auto max-w-[96rem]">
-        <div className="workflow-card-grid mobile-card-rail grid gap-4 md:grid-cols-2 xl:grid-cols-4" role="region" aria-label="OpenTaint workflow" tabIndex={0}>
+        <div className="workflow-card-grid mobile-card-rail grid gap-4 md:grid-cols-2 min-[1440px]:-mx-8 min-[1440px]:grid-cols-4" role="region" aria-label="OpenTaint workflow" tabIndex={0}>
           {cards.map((card) => (
             <article key={card.title} className="workflow-card mobile-card-rail-item flex min-h-[25rem] flex-col overflow-hidden rounded-[24px] border border-border-strong bg-background shadow-sm">
-              <div className="relative h-[16rem] p-4">{card.preview}</div>
+              <div className="relative h-[18rem] p-2">{card.preview}</div>
               <div className="flex flex-1 flex-col px-6 pb-6 pt-2">
                 <h3 className="font-mono text-2xl font-semibold tracking-[-0.04em] text-foreground">{card.title}</h3>
-                <p className="mt-3 break-words text-sm leading-6 text-muted-foreground">{card.description}</p>
+                <p className="mt-3 break-words text-sm leading-6 text-muted-foreground">
+                  {card.description.map((line) => <span className="block" key={line}>{line}</span>)}
+                </p>
               </div>
             </article>
           ))}

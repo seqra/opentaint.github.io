@@ -34,8 +34,10 @@ describe("ContinuousSecurity", () => {
   it("keeps the visible workflow copy minimal", () => {
     render(<ContinuousSecurity />);
 
-    expect(screen.getByText("Learn trust boundaries and vulnerability patterns as an informal specification.")).toBeVisible();
-    expect(screen.getByText("Enact the informal specification as taint rules and dependency models.")).toBeVisible();
+    expect(screen.getByText("Discover trust boundaries and")).toBeVisible();
+    expect(screen.getByText("vulnerability patterns.")).toBeVisible();
+    expect(screen.getByText("Enact security knowledge as")).toBeVisible();
+    expect(screen.getByText("rules and dependency models.")).toBeVisible();
     expect(screen.getByText("Search the whole project with formal program analysis.")).toBeVisible();
     expect(screen.getByText("Confirm findings and tune away false alarms.")).toBeVisible();
     expect(screen.queryByText("The same review can produce different findings")).not.toBeInTheDocument();

@@ -230,7 +230,7 @@ export function ContinuousSecurity() {
     <section className="band continuous-security-band" aria-labelledby="continuous-security-heading">
       <div className="relative z-10 mx-auto max-w-[96rem]">
         <div>
-          <div className="value-card-grid mobile-card-rail grid gap-6 lg:grid-cols-3" role="region" aria-label="OpenTaint product advantages" tabIndex={0}>
+          <div className="value-card-grid mobile-card-rail grid gap-6 md:grid-cols-2 xl:grid-cols-3" role="region" aria-label="OpenTaint product advantages" tabIndex={0}>
             <article className="value-card mobile-card-rail-item overflow-hidden rounded-[24px] border border-border-strong bg-background p-4 shadow-sm sm:p-6">
               <ContinuousLeanVisual />
               <div className="px-2 pb-2 pt-6">
@@ -260,7 +260,7 @@ export function ContinuousSecurity() {
           </div>
         </div>
 
-        <div className="workflow-card-grid mobile-card-rail mt-16 grid gap-4 md:grid-cols-2 min-[1440px]:-mx-8 min-[1440px]:grid-cols-4 sm:mt-20" role="region" aria-label="OpenTaint workflow" tabIndex={0}>
+        <div className="workflow-card-grid mobile-card-rail mt-16 grid gap-4 md:grid-cols-2 min-[1440px]:-mx-12 min-[1440px]:grid-cols-4 sm:mt-20" role="region" aria-label="OpenTaint workflow" tabIndex={0}>
           {cards.map((card) => (
             <article key={card.title} className="workflow-card mobile-card-rail-item flex min-h-[25rem] flex-col overflow-hidden rounded-[24px] border border-border-strong bg-background shadow-sm">
               <div className="relative h-[18rem] p-3">{card.preview}</div>

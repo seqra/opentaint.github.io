@@ -297,6 +297,7 @@
       grid-template-columns: none !important;
       gap: var(--spacing-04);
       overflow-x: auto;
+      overflow-y: hidden;
       overscroll-behavior-inline: contain;
       scroll-padding-inline: 0;
       scroll-snap-type: inline mandatory;

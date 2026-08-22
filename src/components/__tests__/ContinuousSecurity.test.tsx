@@ -3,18 +3,21 @@ import { describe, expect, it } from "vitest";
 import { ContinuousSecurity } from "../ContinuousSecurity";
 
 describe("ContinuousSecurity", () => {
-  it("places the product advantages before the workflow promise and cards", () => {
+  it("places each visual group before its supporting promise", () => {
     render(<ContinuousSecurity />);
 
     const workflow = screen.getByRole("heading", { name: "Triage", level: 3 }).closest(".workflow-card-grid");
     const promise = screen.getByRole("heading", { name: "Turn one-off review into unlimited scans", level: 2 });
     const firstAdvantage = screen.getByRole("heading", { name: "Lean specs, continuous scans", level: 3 });
+    const valuePromise = screen.getByRole("heading", { name: "The open source taint analysis engine for the AI era", level: 2 });
 
-    expect(screen.getByText("Build security knowledge once, then scan every change with fast formal analysis")).toBeVisible();
+    expect(valuePromise).toBeVisible();
+    expect(screen.getByText("Lean specifications, practical SOTA analysis, and an open-source stack built to work together")).toBeVisible();
     expect(promise).toHaveTextContent("Turn one-off review into unlimited scans");
-    expect(screen.getByText("The flexibility of model reasoning and the consistency of formal program analysis combined")).toBeVisible();
-    expect(firstAdvantage.compareDocumentPosition(promise) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(promise.compareDocumentPosition(workflow as Node) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(screen.queryByText("The flexibility of model reasoning and the consistency of formal program analysis combined")).not.toBeInTheDocument();
+    expect(firstAdvantage.compareDocumentPosition(valuePromise) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(valuePromise.compareDocumentPosition(workflow as Node) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect((workflow as Node).compareDocumentPosition(promise) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it("shows the four-part OpenTaint workflow", () => {
@@ -69,6 +72,6 @@ describe("ContinuousSecurity", () => {
     const openSourceVisual = screen.getByRole("img", { name: /OpenTaint open-source components/ });
     expect(openSourceVisual).toBeVisible();
     expect(openSourceVisual).toHaveTextContent("Analysis engine");
-    expect(openSourceVisual).toHaveTextContent("CLI + CI");
+    expect(openSourceVisual).toHaveTextContent("CLI and CI");
   });
 });

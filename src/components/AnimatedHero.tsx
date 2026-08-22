@@ -27,7 +27,9 @@ export function AnimatedHero() {
           </span>
         </h1>
 
-        <p className="section-banner hero-subline mx-0 mt-12 text-left lg:mx-auto lg:text-center">The open source taint analysis engine for the AI era</p>
+        <p className="section-banner hero-subline mx-0 mt-12 max-w-[68ch] text-left lg:mx-auto lg:text-center">
+          The flexibility of model reasoning and the consistency of formal program analysis combined
+        </p>
 
         <div className="mt-6 flex items-center justify-start gap-4 lg:justify-center">
           <a href="#install" className="cta-pill hero-cta">

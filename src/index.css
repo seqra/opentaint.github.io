@@ -1029,6 +1029,33 @@
     animation: balance-breathe 5.5s ease-in-out infinite;
   }
 
+  .balance-point {
+    position: absolute;
+    z-index: 1;
+    width: 10px;
+    height: 10px;
+    transform: translate(-50%, -50%);
+    border: 2px solid hsl(var(--brand));
+    border-radius: 999px;
+    background: hsl(var(--background));
+    pointer-events: none;
+  }
+
+  .balance-point-top {
+    top: 22.62%;
+    left: 50%;
+  }
+
+  .balance-point-left {
+    top: 70.24%;
+    left: 3.85%;
+  }
+
+  .balance-point-right {
+    top: 70.24%;
+    left: 96.15%;
+  }
+
   .lean-cycle {
     font-family: var(--font-mono);
   }
@@ -1233,12 +1260,22 @@
 
   .lean-cycle-input {
     flex-direction: column;
-    gap: var(--spacing-01);
+    overflow: hidden;
+    padding: 0;
   }
 
-  .lean-cycle-input i {
-    color: hsl(var(--brand));
-    font-style: normal;
+  .lean-cycle-input span {
+    display: flex;
+    width: 100%;
+    min-height: 0;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-02);
+  }
+
+  .lean-cycle-input span + span {
+    border-top: 1px solid hsl(var(--border));
   }
 
   .lean-cycle-output {
@@ -1685,31 +1722,8 @@
     inset: var(--spacing-04);
     display: grid;
     min-height: 0;
-    grid-template-rows: auto minmax(0, 1fr);
-    gap: var(--spacing-04);
+    grid-template-rows: minmax(0, 1fr);
     font-family: var(--font-mono);
-  }
-
-  .open-parts-heading {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-03);
-    border: 1px solid hsl(var(--brand) / 0.35);
-    border-radius: 10px;
-    background: hsl(var(--background));
-    padding: var(--spacing-03) var(--spacing-04);
-    color: hsl(var(--brand));
-  }
-
-  .open-parts-heading svg {
-    width: var(--spacing-06);
-    height: var(--spacing-06);
-    stroke-width: 1.7;
-  }
-
-  .open-parts-heading b {
-    font-size: 12px;
-    letter-spacing: 0.1em;
   }
 
   .open-parts-list {
@@ -1769,10 +1783,6 @@
   @media (min-width: 640px) {
     .open-parts-body {
       inset: var(--spacing-05);
-    }
-
-    .open-parts-heading b {
-      font-size: 13px;
     }
 
     .open-parts-list li b {

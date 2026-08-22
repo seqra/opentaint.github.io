@@ -157,17 +157,17 @@ const cards = [
 function BalanceVisual() {
   return (
     <div className="value-visual relative min-h-[20rem] overflow-hidden rounded-[18px] border border-border bg-code-bg" role="img" aria-label="OpenTaint balances scan speed, finding coverage, and precision">
-      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 520 420" aria-hidden="true">
-        <path d="M260 48 L60 350 L460 350 Z" fill="none" stroke="hsl(var(--border-strong))" strokeWidth="1" />
-        <path d="M260 102 L118 322 L402 322 Z" fill="none" stroke="hsl(var(--border))" strokeWidth="1" />
-        <path d="M260 158 L174 294 L346 294 Z" fill="none" stroke="hsl(var(--border))" strokeWidth="1" />
-        <path d="M260 224 L260 48 M260 224 L60 350 M260 224 L460 350" fill="none" stroke="hsl(var(--border))" strokeWidth="1" />
-        <path className="balance-shape" d="M260 70 L85 336 L435 336 Z" fill="hsl(var(--brand) / 0.075)" stroke="hsl(var(--brand))" strokeWidth="2" strokeLinejoin="round" />
-        <circle cx="260" cy="70" r="5" fill="hsl(var(--background))" stroke="hsl(var(--brand))" strokeWidth="2" />
-        <circle cx="85" cy="336" r="5" fill="hsl(var(--background))" stroke="hsl(var(--brand))" strokeWidth="2" />
-        <circle cx="435" cy="336" r="5" fill="hsl(var(--background))" stroke="hsl(var(--brand))" strokeWidth="2" />
+      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 520 420" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M260 80 L5 305 L515 305 Z" fill="none" stroke="hsl(var(--border-strong))" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+        <path d="M260 130 L80 285 L440 285 Z" fill="none" stroke="hsl(var(--border))" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+        <path d="M260 180 L155 265 L365 265 Z" fill="none" stroke="hsl(var(--border))" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+        <path d="M260 210 L260 80 M260 210 L5 305 M260 210 L515 305" fill="none" stroke="hsl(var(--border))" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+        <path className="balance-shape" d="M260 95 L20 295 L500 295 Z" fill="hsl(var(--brand) / 0.075)" stroke="hsl(var(--brand))" strokeWidth="2" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
       </svg>
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/45 bg-background px-4 py-2 text-center shadow-[0_0_0_8px_hsl(var(--brand)/0.05)]"><span className="whitespace-nowrap font-mono text-xs font-semibold uppercase tracking-[0.08em] text-primary">STATIC ANALYSIS</span></div>
+      <span className="balance-point balance-point-top" aria-hidden="true" />
+      <span className="balance-point balance-point-left" aria-hidden="true" />
+      <span className="balance-point balance-point-right" aria-hidden="true" />
+      <div className="absolute left-1/2 top-[54.3%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/45 bg-background px-2 py-1 text-center shadow-[0_0_0_6px_hsl(var(--brand)/0.05)]"><span className="whitespace-nowrap font-mono text-xs font-semibold uppercase tracking-normal text-primary">STATIC ANALYSIS</span></div>
       <div className="balance-axis balance-time absolute left-1/2 top-5 -translate-x-1/2 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[11px] font-semibold leading-[1.25] text-primary">FAST SCAN TIME</span></div>
       <div className="balance-axis balance-missed absolute bottom-5 left-5 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[11px] font-semibold leading-[1.25] text-primary">FEWER MISSED <br />FINDINGS</span></div>
       <div className="balance-axis balance-false absolute bottom-5 right-5 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[11px] font-semibold leading-[1.25] text-primary">FEWER FALSE <br />ALARMS</span></div>
@@ -182,7 +182,7 @@ function ContinuousLeanVisual() {
         <section className="lean-cycle-panel lean-cycle-spec">
           <p>LEAN SPEC</p>
           <div className="lean-cycle-simple-flow">
-            <div className="lean-cycle-input"><span>DIFF</span><i>+</i><span>INFORMAL SPEC</span></div>
+            <div className="lean-cycle-input"><span>DIFF</span><span>INFORMAL SPEC</span></div>
             <b>→</b>
             <div className="lean-cycle-output lean-cycle-stacked">FORMAL SPEC</div>
           </div>
@@ -193,7 +193,7 @@ function ContinuousLeanVisual() {
         <section className="lean-cycle-panel lean-cycle-scan">
           <p>CONTINUOUS SCANS</p>
           <div className="lean-cycle-simple-flow">
-            <div className="lean-cycle-input"><span>FUTURE CHANGE</span><i>+</i><span>FORMAL SPEC</span></div>
+            <div className="lean-cycle-input"><span>FUTURE CHANGE</span><span>FORMAL SPEC</span></div>
             <b>→</b>
             <div className="lean-cycle-output lean-cycle-passed">SCAN <span>✓</span></div>
           </div>
@@ -205,9 +205,9 @@ function ContinuousLeanVisual() {
 
 const openSourceParts = [
   { label: "Analysis engine", Icon: Braces },
-  { label: "Rules + models", Icon: FileCode2 },
+  { label: "Rules and models", Icon: FileCode2 },
   { label: "Agent skills", Icon: Bot },
-  { label: "CLI + CI", Icon: Terminal },
+  { label: "CLI and CI", Icon: Terminal },
   { label: "Report viewer", Icon: Monitor },
 ] as const;
 
@@ -215,7 +215,6 @@ function OpenSourceVisual() {
   return (
     <div className="open-source-visual value-visual relative min-h-[20rem] overflow-hidden rounded-[18px] border border-border bg-code-bg" role="img" aria-label="OpenTaint open-source components included in one repository">
       <div className="open-parts-body" aria-hidden="true">
-        <div className="open-parts-heading"><Braces /><b>OPEN SOURCE</b></div>
         <ul className="open-parts-list">
           {openSourceParts.map(({ label, Icon }) => (
             <li key={label}><span className="open-part-icon"><Icon /></span><b>{label}</b><span className="open-part-check"><Check /></span></li>
@@ -231,8 +230,7 @@ export function ContinuousSecurity() {
     <section className="band continuous-security-band" aria-labelledby="continuous-security-heading">
       <div className="relative z-10 mx-auto max-w-[96rem]">
         <div>
-          <p className="mx-auto max-w-[64ch] text-center font-mono text-base leading-7 text-foreground sm:text-lg sm:leading-8">Build security knowledge once, then scan every change with fast formal analysis</p>
-          <div className="value-card-grid mobile-card-rail mt-10 grid gap-6 sm:mt-12 lg:grid-cols-3" role="region" aria-label="OpenTaint product advantages" tabIndex={0}>
+          <div className="value-card-grid mobile-card-rail grid gap-6 lg:grid-cols-3" role="region" aria-label="OpenTaint product advantages" tabIndex={0}>
             <article className="value-card mobile-card-rail-item overflow-hidden rounded-[24px] border border-border-strong bg-background p-4 shadow-sm sm:p-6">
               <ContinuousLeanVisual />
               <div className="px-2 pb-2 pt-6">
@@ -255,17 +253,17 @@ export function ContinuousSecurity() {
               </div>
             </article>
           </div>
+
+          <div className="mx-auto mt-12 max-w-[72rem] text-center sm:mt-16">
+            <h2 className="section-heading">The open source taint analysis engine for the AI era</h2>
+            <p className="section-banner mx-auto mt-6 max-w-[68ch]">Lean specifications, practical SOTA analysis, and an open-source stack built to work together</p>
+          </div>
         </div>
 
-        <div className="mx-auto mt-16 max-w-[72rem] text-center sm:mt-20">
-          <h2 id="continuous-security-heading" className="section-heading">Turn one-off review into unlimited scans</h2>
-          <p className="section-banner continuous-security-subline mx-auto mt-6 max-w-[68ch]">The flexibility of model reasoning and the consistency of formal program analysis combined</p>
-        </div>
-
-        <div className="workflow-card-grid mobile-card-rail mt-10 grid gap-4 md:grid-cols-2 min-[1440px]:-mx-8 min-[1440px]:grid-cols-4 sm:mt-12" role="region" aria-label="OpenTaint workflow" tabIndex={0}>
+        <div className="workflow-card-grid mobile-card-rail mt-16 grid gap-4 md:grid-cols-2 min-[1440px]:-mx-8 min-[1440px]:grid-cols-4 sm:mt-20" role="region" aria-label="OpenTaint workflow" tabIndex={0}>
           {cards.map((card) => (
             <article key={card.title} className="workflow-card mobile-card-rail-item flex min-h-[25rem] flex-col overflow-hidden rounded-[24px] border border-border-strong bg-background shadow-sm">
-              <div className="relative h-[18rem] p-2">{card.preview}</div>
+              <div className="relative h-[18rem] p-3">{card.preview}</div>
               <div className="flex flex-1 flex-col px-6 pb-6 pt-2">
                 <h3 className="font-mono text-2xl font-semibold tracking-[-0.04em] text-foreground">{card.title}</h3>
                 <p className="mt-3 break-words text-sm leading-6 text-muted-foreground">
@@ -274,6 +272,10 @@ export function ContinuousSecurity() {
               </div>
             </article>
           ))}
+        </div>
+
+        <div className="mx-auto mt-12 max-w-[72rem] text-center sm:mt-16">
+          <h2 id="continuous-security-heading" className="section-heading">Turn one-off review into unlimited scans</h2>
         </div>
       </div>
     </section>

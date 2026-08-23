@@ -1038,7 +1038,6 @@
   }
 
   .balance-shape {
-    transform-origin: center;
     animation: balance-breathe 5.5s ease-in-out infinite;
   }
 
@@ -1052,21 +1051,6 @@
     border-radius: 999px;
     background: hsl(var(--background));
     pointer-events: none;
-  }
-
-  .balance-point-top {
-    top: 22.62%;
-    left: 50%;
-  }
-
-  .balance-point-left {
-    top: 70.24%;
-    left: 3.85%;
-  }
-
-  .balance-point-right {
-    top: 70.24%;
-    left: 96.15%;
   }
 
   .lean-cycle {

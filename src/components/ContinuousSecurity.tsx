@@ -154,20 +154,62 @@ const cards = [
   { title: "Triage", description: ["Confirm findings and tune away false alarms."], preview: <TriagePreview /> },
 ] as const;
 
+type BalancePoint = { x: number; y: number };
+
+const balanceGeometry = {
+  width: 520,
+  height: 420,
+  center: { x: 260, y: 210 },
+  outer: [{ x: 260, y: 80 }, { x: 5, y: 305 }, { x: 515, y: 305 }],
+  guideScales: [1, 0.68, 0.38],
+  activeScale: 0.78,
+} as const;
+
+function scaleBalanceTriangle(scale: number): BalancePoint[] {
+  const { center, outer } = balanceGeometry;
+  return outer.map(({ x, y }) => ({
+    x: center.x + (x - center.x) * scale,
+    y: center.y + (y - center.y) * scale,
+  }));
+}
+
+function serializeBalancePoints(points: BalancePoint[]) {
+  const formatCoordinate = (value: number) => Number(value.toFixed(3));
+  return points.map(({ x, y }) => `${formatCoordinate(x)},${formatCoordinate(y)}`).join(" ");
+}
+
+function positionInBalanceViewBox({ x, y }: BalancePoint) {
+  return {
+    left: `${(x / balanceGeometry.width) * 100}%`,
+    top: `${(y / balanceGeometry.height) * 100}%`,
+  };
+}
+
+const balanceGuideTriangles = balanceGeometry.guideScales.map(scaleBalanceTriangle);
+const balanceActiveTriangle = scaleBalanceTriangle(balanceGeometry.activeScale);
+
 function BalanceVisual() {
+  const { width, height, center, outer } = balanceGeometry;
+
   return (
     <div className="value-visual relative min-h-[20rem] overflow-hidden rounded-[18px] border border-border bg-code-bg" role="img" aria-label="OpenTaint balances scan speed, finding coverage, and precision">
-      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 520 420" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M260 80 L5 305 L515 305 Z" fill="none" stroke="hsl(var(--border-strong))" strokeWidth="1" vectorEffect="non-scaling-stroke" />
-        <path d="M260 130 L80 285 L440 285 Z" fill="none" stroke="hsl(var(--border))" strokeWidth="1" vectorEffect="non-scaling-stroke" />
-        <path d="M260 180 L155 265 L365 265 Z" fill="none" stroke="hsl(var(--border))" strokeWidth="1" vectorEffect="non-scaling-stroke" />
-        <path d="M260 210 L260 80 M260 210 L5 305 M260 210 L515 305" fill="none" stroke="hsl(var(--border))" strokeWidth="1" vectorEffect="non-scaling-stroke" />
-        <path className="balance-shape" d="M260 95 L20 295 L500 295 Z" fill="hsl(var(--brand) / 0.075)" stroke="hsl(var(--brand))" strokeWidth="2" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+      <svg className="absolute inset-0 h-full w-full" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" aria-hidden="true" data-balance-center={`${center.x},${center.y}`}>
+        {balanceGuideTriangles.map((points, index) => (
+          <polygon key={balanceGeometry.guideScales[index]} data-balance-guide={index === 0 ? "outer" : "inner"} points={serializeBalancePoints(points)} fill="none" stroke={index === 0 ? "hsl(var(--border-strong))" : "hsl(var(--border))"} strokeWidth="1" vectorEffect="non-scaling-stroke" />
+        ))}
+        {outer.map(({ x, y }) => (
+          <line key={`${x}-${y}`} x1={center.x} y1={center.y} x2={x} y2={y} stroke="hsl(var(--border))" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+        ))}
       </svg>
-      <span className="balance-point balance-point-top" aria-hidden="true" />
-      <span className="balance-point balance-point-left" aria-hidden="true" />
-      <span className="balance-point balance-point-right" aria-hidden="true" />
-      <div className="absolute left-1/2 top-[54.3%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/45 bg-background px-2 py-1 text-center shadow-[0_0_0_6px_hsl(var(--brand)/0.05)]"><span className="whitespace-nowrap font-mono text-xs font-semibold uppercase tracking-normal text-primary">STATIC ANALYSIS</span></div>
+      <div className="balance-shape absolute inset-0" style={{ transformOrigin: `${(center.x / width) * 100}% ${(center.y / height) * 100}%` }} aria-hidden="true">
+        <svg className="absolute inset-0 h-full w-full" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none">
+          <polygon data-balance-active="true" points={serializeBalancePoints(balanceActiveTriangle)} fill="hsl(var(--brand) / 0.075)" stroke="hsl(var(--brand))" strokeWidth="2" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+        </svg>
+        {balanceActiveTriangle.map(({ x, y }, index) => (
+          <span key={`${x}-${y}`} className="balance-point" data-balance-dot={index} style={positionInBalanceViewBox({ x, y })} />
+        ))}
+      </div>
+      <div className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/45 bg-background px-2 py-1 text-center shadow-[0_0_0_6px_hsl(var(--brand)/0.05)]" data-balance-center-label style={positionInBalanceViewBox(center)}><span className="whitespace-nowrap font-mono text-xs font-semibold uppercase tracking-normal text-primary">SOTA</span></div>
       <div className="balance-axis balance-time absolute left-1/2 top-5 -translate-x-1/2 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[11px] font-semibold leading-[1.25] text-primary">FAST SCAN TIME</span></div>
       <div className="balance-axis balance-missed absolute bottom-5 left-5 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[11px] font-semibold leading-[1.25] text-primary">FEWER MISSED <br />FINDINGS</span></div>
       <div className="balance-axis balance-false absolute bottom-5 right-5 rounded-md border border-border-strong bg-background px-3 py-2 text-center"><span className="block font-mono text-[11px] font-semibold leading-[1.25] text-primary">FEWER FALSE <br />ALARMS</span></div>

@@ -50,7 +50,7 @@ async function getLocalPosts(): Promise<Post[]> {
       ...summary,
       body: "",
       bodyFormat: "mdx",
-      canonicalUrl: `${siteConfig.url}/blog/${entry.id}`,
+      canonicalUrl: `${siteConfig.url}/blog/${entry.id}/`,
       keywords: entry.data.keywords,
       author: entry.data.author,
       updatedDate: entry.data.updatedDate,

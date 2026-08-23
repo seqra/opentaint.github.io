@@ -22,7 +22,7 @@ const breadcrumbSchema = {
       "@type": "ListItem",
       position: 2,
       name: "Blog",
-      item: `${siteConfig.url}/blog`,
+      item: `${siteConfig.url}/blog/`,
     },
   ],
 };
@@ -52,7 +52,7 @@ const breadcrumbSchema = {
             {posts.map((post) => (
               <article class="border-b border-border py-6 last:border-0 lg:py-6">
                 <h2 class="font-mono text-base font-medium text-foreground lg:text-[17px]">
-                  <a href={`/blog/${post.slug}`} class="transition-colors hover:text-primary">
+                  <a href={`/blog/${post.slug}/`} class="transition-colors hover:text-primary">
                     {post.title}
                   </a>
                 </h2>

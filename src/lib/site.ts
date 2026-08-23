@@ -3,7 +3,7 @@ const deploymentRevision = process.env.GITHUB_SHA || "dev";
 export const siteConfig = {
   title: "OpenTaint",
   tagline: "The open source taint analysis engine for the AI era",
-  description: "Turn one-off review into unlimited scans with the open source taint analysis engine that allows to combine model reasoning with formal program analysis.",
+  description: "OpenTaint is the open source engine that turns agent-led security reviews into repeatable vulnerability checks for every pull request and CI/CD build.",
   ogVersion: deploymentRevision.slice(0, 12),
   url: "https://opentaint.org",
   author: "Seqra Team",
@@ -17,6 +17,19 @@ export function ogImageUrl(name: string) {
 }
 
 export const defaultKeywords = [
+  "security code review",
+  "agentic security review",
+  "find vulnerabilities in source code",
+  "continuous vulnerability checks",
+  "CI/CD vulnerability scanning",
+  "SAST CI/CD",
+  "pull request security scanning",
+  "taint analysis",
+  "taint analysis tools",
+  "taint flow analysis",
+  "taint checking",
+  "java taint analysis",
+  "kotlin taint analysis",
   "spring sast",
   "java static analysis",
   "kotlin security analyzer",

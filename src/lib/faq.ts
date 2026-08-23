@@ -6,8 +6,20 @@ export type FaqItem = {
 
 export const faqItems: readonly FaqItem[] = [
   {
+    question: "What is taint analysis?",
+    answer: "Taint analysis is a static program-analysis technique that tracks data from untrusted sources, through assignments and function calls, to security-sensitive sinks. A finding is reported when tainted data can reach a sink without passing through a valid sanitizer. It is commonly used to detect injection, path traversal, SSRF, XSS, and related data-flow vulnerabilities.",
+  },
+  {
     question: "What is OpenTaint?",
-    answer: "OpenTaint is an open source taint analysis engine for agentic application security testing. Agents turn review knowledge into AST-pattern taint rules and dependency models. OpenTaint applies that formal specification across the codebase with deterministic program analysis.",
+    answer: "OpenTaint is the open source engine for continuous, lean, and agentic application security testing. It turns knowledge from agent-led security reviews into AST-pattern taint rules and dependency models, then applies that formal specification across the codebase with deterministic program analysis.",
+  },
+  {
+    question: "How does OpenTaint work in CI/CD?",
+    answer: "OpenTaint runs repeatable vulnerability checks on pull requests and CI/CD builds through its GitHub Actions and GitLab CI integrations. It produces SARIF results that can be uploaded to GitHub Code Security or processed by other pipeline tools. The same rules and program models run on every change, so agents do not need to rediscover known application behavior on each review.",
+  },
+  {
+    question: "Can developers run the same security checks locally and in CI?",
+    answer: "Yes. Developers can run OpenTaint from the CLI, inspect complete source-to-sink traces in SARIF or the report viewer, and refine readable YAML rules locally. GitHub Actions and GitLab CI use the same engine, rules, and program models for repeatable pipeline checks.",
   },
   {
     question: "What vulnerabilities does OpenTaint detect?",

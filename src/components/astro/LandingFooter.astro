@@ -4,13 +4,14 @@ import { consentCopy } from "@/lib/consent-copy";
 const links = [
   { href: "https://github.com/seqra/opentaint", label: "GitHub", external: true },
   { href: "https://discord.gg/6BXDfbP4p9", label: "Discord", external: true },
-  { href: "/blog", label: "Blog", external: false },
+  { href: "/taint-analysis/", label: "Taint analysis guide", external: false },
+  { href: "/blog/", label: "Blog", external: false },
   { href: "mailto:seqradev@gmail.com", label: "Contact", external: false },
 ];
 ---
 
 <footer>
-  <div class="footer-links grid grid-cols-2 sm:grid-cols-4">
+  <div class="footer-links grid grid-cols-2 sm:grid-cols-5">
     {links.map((link) => (
       <a
         href={link.href}

@@ -31,13 +31,14 @@ describe("ContinuousSecurity", () => {
     expect(screen.getByRole("img", { name: "An agent reviews scan results and refines the formal specification to reduce false alarms" })).toBeVisible();
   });
 
-  it("keeps the visible workflow copy minimal", () => {
+  it("connects the workflow from security review to repeatable CI checks", () => {
     render(<ContinuousSecurity />);
 
-    expect(screen.getByText("Learn trust boundaries and vulnerability patterns as an informal specification.")).toBeVisible();
-    expect(screen.getByText("Enact the informal specification as taint rules and dependency models.")).toBeVisible();
-    expect(screen.getByText("Search the whole project with formal program analysis.")).toBeVisible();
-    expect(screen.getByText("Confirm findings and tune away false alarms.")).toBeVisible();
+    expect(screen.getByText("Find application-specific trust boundaries and vulnerability patterns in an agent-led security review.")).toBeVisible();
+    expect(screen.getByText("Preserve review knowledge as taint rules and dependency models that can run again.")).toBeVisible();
+    expect(screen.getByText("Run deterministic vulnerability checks across the whole project on every change in CI/CD.")).toBeVisible();
+    expect(screen.getByText("Confirm findings, tune away false alarms, and retain each refinement for future scans.")).toBeVisible();
+    expect(screen.getByText(/Every security review becomes reusable vulnerability coverage/)).toBeVisible();
     expect(screen.queryByText("The same review can produce different findings")).not.toBeInTheDocument();
   });
 
@@ -48,7 +49,8 @@ describe("ContinuousSecurity", () => {
     expect(screen.getByText("Minimize missed findings and false alarms without making whole-project analysis impractical.")).toBeVisible();
     expect(screen.getByRole("img", { name: "OpenTaint balances scan speed, finding coverage, and precision" })).toBeVisible();
     expect(screen.getByRole("heading", { name: "Open source, batteries included", level: 3 })).toBeVisible();
-    expect(screen.getByText("Engine, rules, models, agent skills, CLI, viewer, and CI integrations — all open source and built to work together.")).toBeVisible();
+    expect(screen.getByText(/Built for developers: run checks locally and in CI/)).toBeVisible();
+    expect(screen.getByText(/Engine, CLI, viewer, and integrations work together, all open source/)).toBeVisible();
     expect(screen.getByRole("img", { name: /open-source OpenTaint bundle/ })).toBeVisible();
   });
 });

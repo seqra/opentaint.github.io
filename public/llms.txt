@@ -1,0 +1,21 @@
+# OpenTaint
+
+> OpenTaint is the open source engine for continuous, lean, and agentic application security testing. It turns agent-led security reviews into repeatable vulnerability checks for every change.
+
+Security agents use OpenTaint skills to discover application-specific trust boundaries and vulnerability patterns, then preserve that review knowledge as taint rules and dependency models. OpenTaint applies those artifacts with deterministic program analysis instead of asking a model to rediscover the same facts on every scan.
+
+OpenTaint integrates with GitHub Actions and GitLab CI to run repeatable vulnerability checks and produce SARIF results on pull requests and CI/CD builds. It tracks untrusted values from sources to security-sensitive sinks across methods, fields, framework code, async boundaries, and persistence.
+
+OpenTaint currently supports Java and Kotlin, with deep Spring support. Python, Go, C#, JavaScript, and TypeScript are on the roadmap and are not yet supported.
+
+The core engine is Apache 2.0 licensed. The CLI, CI integrations, and rules are MIT licensed and may be used on public, private, and commercial codebases.
+
+## Primary resources
+
+- [Taint analysis guide](https://opentaint.org/taint-analysis/): Definition, source-to-sink model, analysis depth, and tool evaluation criteria.
+- [Documentation](https://github.com/seqra/opentaint/blob/main/docs/README.md): Installation, configuration, rules, and CLI usage.
+- [Source code](https://github.com/seqra/opentaint): OpenTaint repository.
+- [Semgrep vs. CodeQL vs. OpenTaint](https://opentaint.org/blog/semgrep-vs-codeql-vs-opentaint/): Java XSS analysis-depth comparison.
+- [Taint analysis for Spring](https://opentaint.org/blog/spring-analyzer/): Dependency injection and persistence analysis examples.
+- [CVE-2026-58138 case study](https://opentaint.org/blog/conductor-rce-cve-2026-58138/): Reproducible real-world finding and rule.
+- [AppSec Agent](https://opentaint.org/blog/appsec-agent/): How agent review produces reusable rules and dependency models.

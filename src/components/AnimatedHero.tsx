@@ -28,6 +28,9 @@ export function AnimatedHero() {
         </h1>
 
         <p className="section-banner hero-subline mx-0 mt-12 text-left lg:mx-auto lg:text-center">The open source taint analysis engine for the AI era</p>
+        <p className="mx-0 mt-6 max-w-3xl text-left font-mono text-sm leading-7 text-muted-foreground lg:mx-auto lg:text-center lg:text-base">
+          Find vulnerabilities with agent-led security reviews. Preserve what the agent learns as rules and program models, then run deterministic checks on every change in CI/CD.
+        </p>
 
         <div className="mt-6 flex items-center justify-start gap-4 lg:justify-center">
           <a href="#install" className="cta-pill hero-cta">

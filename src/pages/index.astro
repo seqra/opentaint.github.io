@@ -8,6 +8,7 @@ import { FirstScanFunnel } from "@/components/FirstScanFunnel";
 import Demo from "@/components/astro/Demo.astro";
 import TheEconomics from "@/components/astro/TheEconomics.astro";
 import SecurityDebt from "@/components/astro/SecurityDebt.astro";
+import TaintAnalysisExplainer from "@/components/astro/TaintAnalysisExplainer.astro";
 import WhatIsOpenTaint from "@/components/astro/WhatIsOpenTaint.astro";
 import EngineProof from "@/components/astro/EngineProof.astro";
 import AgentSkills from "@/components/astro/AgentSkills.astro";
@@ -41,11 +42,22 @@ const structuredData = [
     "@type": "SoftwareApplication",
     name: siteConfig.title,
     applicationCategory: "DeveloperApplication",
+    applicationSubCategory: "Agentic application security testing and static analysis",
     operatingSystem: "Linux, macOS, Windows",
     description: siteConfig.description,
     url: siteConfig.url,
     downloadUrl: "https://github.com/seqra/opentaint/releases",
     license: "https://www.apache.org/licenses/LICENSE-2.0",
+    isAccessibleForFree: true,
+    codeRepository: siteConfig.github,
+    featureList: [
+      "Agent-led application security reviews",
+      "Repeatable vulnerability checks in CI/CD",
+      "GitHub Actions and GitLab CI integrations",
+      "Inter-procedural taint analysis",
+      "Cross-endpoint and persistence flow tracking",
+      "Semgrep-compatible AST-pattern rules",
+    ],
     offers: {
       "@type": "Offer",
       price: "0",
@@ -81,7 +93,7 @@ const heroWorkflowActivePaths = Array.from({ length: 3 }, (_, phase) => heroWork
 ---
 
 <BaseLayout
-  title="OpenTaint | The Open Source Taint Analysis Engine for the AI Era"
+  title="OpenTaint: Continuous Vulnerability Checks from Security Reviews"
   description={siteConfig.description}
   imageAlt="OpenTaint"
   keywords={defaultKeywords}
@@ -112,6 +124,8 @@ const heroWorkflowActivePaths = Array.from({ length: 3 }, (_, phase) => heroWork
       <FirstScanFunnel client:visible />
 
       <SecurityDebt />
+
+      <TaintAnalysisExplainer />
 
       <WhatIsOpenTaint />
 

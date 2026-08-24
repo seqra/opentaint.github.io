@@ -10,6 +10,17 @@ const blog = defineCollection({
     updatedDate: z.string().optional(),
     keywords: z.array(z.string()).optional(),
     author: z.string().optional(),
+    contentType: z
+      .enum(["Guide", "Technical guide", "Workflow guide", "Benchmark", "Case study", "Technical note"])
+      .default("Technical note"),
+    faqs: z
+      .array(
+        z.object({
+          question: z.string(),
+          answer: z.string(),
+        }),
+      )
+      .optional(),
   }),
 });
 

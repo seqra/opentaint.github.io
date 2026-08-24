@@ -28,7 +28,7 @@ describe("SEO and answer-engine content", () => {
   it("keeps the generic-query guide linked from the landing page", () => {
     const landing = readFileSync("src/components/astro/TaintAnalysisExplainer.astro", "utf8");
     expect(landing).toContain("What is taint analysis?");
-    expect(landing).toContain('href="/taint-analysis/"');
+    expect(landing).toContain('href="/blog/what-is-taint-analysis/"');
   });
 
   it("publishes an llms.txt entity summary", () => {
@@ -36,6 +36,6 @@ describe("SEO and answer-engine content", () => {
     expect(llms).toContain("OpenTaint is the open source engine for continuous, lean, and agentic application security testing");
     expect(llms).toContain("repeatable vulnerability checks");
     expect(llms).toContain("GitHub Actions and GitLab CI");
-    expect(llms).toContain("https://opentaint.org/taint-analysis/");
+    expect(llms).toContain("https://opentaint.org/blog/what-is-taint-analysis/");
   });
 });

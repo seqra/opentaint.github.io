@@ -12,7 +12,7 @@ The core engine is Apache 2.0 licensed. The CLI, CI integrations, and rules are 
 
 ## Primary resources
 
-- [Taint analysis guide](https://opentaint.org/taint-analysis/): Definition, source-to-sink model, analysis depth, and tool evaluation criteria.
+- [Taint analysis guide](https://opentaint.org/blog/what-is-taint-analysis/): Definition, source-to-sink model, analysis depth, and tool evaluation criteria.
 - [Documentation](https://github.com/seqra/opentaint/blob/main/docs/README.md): Installation, configuration, rules, and CLI usage.
 - [Source code](https://github.com/seqra/opentaint): OpenTaint repository.
 - [Semgrep vs. CodeQL vs. OpenTaint](https://opentaint.org/blog/semgrep-vs-codeql-vs-opentaint/): Java XSS analysis-depth comparison.

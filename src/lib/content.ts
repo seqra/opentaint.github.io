@@ -6,6 +6,8 @@ export type PostSummary = {
   title: string;
   description: string;
   date: string;
+  updatedDate?: string;
+  contentType: "Guide" | "Technical guide" | "Workflow guide" | "Benchmark" | "Case study" | "Technical note";
 };
 
 export type Post = PostSummary & {
@@ -14,7 +16,7 @@ export type Post = PostSummary & {
   canonicalUrl: string;
   keywords?: string[];
   author?: string;
-  updatedDate?: string;
+  faqs?: { question: string; answer: string }[];
   entry?: CollectionEntry<"blog">;
 };
 
@@ -24,6 +26,8 @@ function normalizeSummary(record: {
   description?: string;
   publishedAt?: string;
   date?: string;
+  updatedDate?: string;
+  contentType?: PostSummary["contentType"];
 }): PostSummary {
   const date = record.publishedAt || record.date || new Date().toISOString();
 
@@ -32,6 +36,8 @@ function normalizeSummary(record: {
     title: record.title || record.slug,
     description: record.description || "",
     date,
+    updatedDate: record.updatedDate,
+    contentType: record.contentType || "Technical note",
   };
 }
 
@@ -44,6 +50,8 @@ async function getLocalPosts(): Promise<Post[]> {
       title: entry.data.title,
       description: entry.data.description,
       date: entry.data.date,
+      updatedDate: entry.data.updatedDate,
+      contentType: entry.data.contentType,
     });
 
     return {
@@ -53,7 +61,7 @@ async function getLocalPosts(): Promise<Post[]> {
       canonicalUrl: `${siteConfig.url}/blog/${entry.id}/`,
       keywords: entry.data.keywords,
       author: entry.data.author,
-      updatedDate: entry.data.updatedDate,
+      faqs: entry.data.faqs,
       entry,
     } satisfies Post;
   });

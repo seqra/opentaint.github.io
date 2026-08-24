@@ -7,7 +7,7 @@ export async function GET(context: APIContext) {
   const posts = await getPostSummaries();
 
   return rss({
-    title: `${siteConfig.title} Research`,
+    title: `${siteConfig.title} Blog`,
     description: "Application-security guides, benchmarks, case studies, and technical research from OpenTaint.",
     site: context.site ?? siteConfig.url,
     items: posts.map((post) => ({

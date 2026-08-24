@@ -16,6 +16,7 @@ test.describe("landing message", () => {
     await expect(page.getByText("$DATA = $REQ.get(...);", { exact: true })).toBeVisible();
     await expect(page.getByText("$TEMPLATE.render($DATA);", { exact: true })).toBeVisible();
     await expect(page.getByText("CI/CD VULNERABILITY GATE", { exact: true })).toBeVisible();
+    await expect(page.locator(".best-worlds-visual")).not.toContainText("·");
     await expect(page.locator(".best-worlds-scroll-cue")).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "Five-minute quickstart" })).toBeVisible();
     await expect(page.getByText("Run your first agentic application security test in 5 minutes", { exact: true })).toHaveCount(0);
@@ -40,8 +41,8 @@ test.describe("landing message", () => {
 
     expect(Math.abs(layout.heroBottom - layout.visualTop)).toBeLessThanOrEqual(1);
     expect(layout.visualTop).toBeLessThan(layout.viewportHeight);
-    expect(layout.visualTop).toBeLessThan(layout.viewportHeight - 80);
-    expect(layout.visualTop).toBeGreaterThan(layout.viewportHeight - 112);
+    expect(layout.visualTop).toBeLessThan(layout.viewportHeight - 128);
+    expect(layout.visualTop).toBeGreaterThan(layout.viewportHeight - 160);
     expect(layout.visualHeight).toBeGreaterThanOrEqual(layout.viewportHeight - 80);
   });
 

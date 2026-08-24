@@ -37,8 +37,8 @@
         </div>
 
         <div class="reasoning-inference">
-          <span>PROJECT-SPECIFIC SSTI PATTERN</span>
-          <p>Spring request data reaches the <code>template engine</code></p>
+          <span>CODE CONTEXT + SECURITY REVIEW</span>
+          <p>Project-specific <code>rules and dependency models</code></p>
         </div>
       </article>
 
@@ -53,29 +53,34 @@
           <section class="best-worlds-code-panel best-worlds-application-code" aria-label="Spring application code with the taint source, transformation, and sink highlighted">
             <header><span>SPRING APPLICATION CODE</span><i>PreviewController.java</i></header>
             <pre><code><span>@PostMapping("/preview")</span>
-<span>String preview(HttpServletRequest req) {</span>
-<span class="code-line-source">  var data = req.getParameter(</span>
-<span class="code-line-source">      "template");</span>
-<span class="code-line-transform">  var view = data.strip();</span>
+<span class="code-line-source">String preview(PreviewDto dto) &#123;</span>
+<span class="code-line-transform">  var view = dto.template().strip();</span>
 <span class="code-line-soft">  audit("preview_requested");</span>
 <span class="code-line-sink">  return engine.process(view,</span>
 <span class="code-line-sink">      context);</span>
-<span>}</span></code></pre>
+<span>&#125;</span></code></pre>
           </section>
 
           <div class="best-worlds-code-key">
-            <strong><span>$DATA</span> → <span>$TAINTED</span></strong>
+            <strong><span>$UNTRUSTED</span></strong>
             <b>METAVARIABLES ARE DATA TAINT MARKS</b>
           </div>
 
+          <div class="best-worlds-dependency-model" aria-label="Dependency model propagating taint through String strip">
+            <strong>DEPENDENCY MODEL</strong>
+            <code>java.lang.String#strip&nbsp;&nbsp; this → result</code>
+          </div>
+
           <section class="best-worlds-code-panel best-worlds-formal-code" aria-label="Formal SSTI specification expressed with metavariables">
-            <header><span>FORMAL SPECIFICATION</span><i>security/ssti.yml</i></header>
-            <pre><code><span><em>- pattern:</em> |</span>
-<span>    <b class="code-meta-data">$DATA</b> = <b class="code-meta-source">$REQ</b>.getParameter(...);</span>
-<span class="code-line-ellipsis">    ...</span>
-<span>    <b class="code-meta-data">$TAINTED</b> = <b class="code-meta-data">$DATA</b>.strip();</span>
-<span class="code-line-ellipsis">    ...</span>
-<span>    <b class="code-meta-sink">$ENGINE</b>.process(<b class="code-meta-data">$TAINTED</b>, ...);</span></code></pre>
+            <header><span>FORMAL SPECIFICATION</span><i>source → sink</i></header>
+            <pre><code><span><em># source</em></span>
+<span>@<b class="code-meta-source">$ANNOTATION</b>(...)</span>
+<span><b class="code-meta-data">$RETURNTYPE</b> <b class="code-meta-data">$METHODNAME</b>(...,</span>
+<span>  <b class="code-meta-data">$TYPE</b> <b class="code-meta-source">$UNTRUSTED</b>, ...) &#123;</span>
+<span class="code-line-ellipsis">  ...</span>
+<span>&#125;</span>
+<span><em># sink</em></span>
+<span><b class="code-meta-sink">$ENGINE</b>.process(<b class="code-meta-source">$UNTRUSTED</b>, ...);</span></code></pre>
           </section>
         </div>
       </article>
@@ -87,23 +92,27 @@
         </header>
 
         <p class="best-worlds-outcome best-worlds-analysis-outcome">
-          <strong>One rule. Every path. Every change.</strong>
-          <span>The same security decision across the whole project.</span>
+          <strong>Enforces security knowledge across the whole codebase</strong>
         </p>
 
-        <div class="analysis-path" aria-label="A formally analyzed source-to-sink path">
-          <span class="analysis-path-node analysis-path-source"><i>SOURCE</i>req.getParameter(...)</span>
-          <b></b>
-          <span class="analysis-path-node analysis-path-transform"><i>TRANSFORM</i>data.strip()</span>
-          <b></b>
-          <span class="analysis-path-node analysis-path-sink"><i>SINK</i>engine.process(view)</span>
+        <div class="analysis-coverage" aria-label="Whole-project formal program analysis coverage">
+          <header>WHOLE-PROJECT DATA FLOW</header>
+          <div>
+            <span>METHODS</span>
+            <span>FIELDS</span>
+            <span>DEPENDENCIES</span>
+            <span>STORAGE</span>
+          </div>
+          <footer>
+            <span>ONE FORMAL SPECIFICATION</span>
+            <b>ALL MATCHING PATHS</b>
+          </footer>
         </div>
 
-        <div class="analysis-runs" aria-label="The same security rule applied to every code change">
-          <header><span>CI/CD VULNERABILITY GATE</span><b>EVERY CHANGE</b></header>
-          <div class="analysis-run-blocked"><span>PR #184</span><b>BLOCKED / 1 SSTI PATH</b><i>×</i></div>
-          <div><span>PR #185</span><b>PASSED / 0 PATHS</b><i>✓</i></div>
-          <div><span>main</span><b>GATE ACTIVE</b><i>✓</i></div>
+        <div class="analysis-repeatability" aria-label="Deterministic results wherever OpenTaint runs">
+          <strong>SAME CODE + SAME SPECIFICATION</strong>
+          <span>= SAME RESULT</span>
+          <div><b>LOCAL</b><b>PULL REQUEST</b><b>CI/CD</b></div>
         </div>
       </article>
     </div>

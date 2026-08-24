@@ -843,7 +843,7 @@
   }
 
   .best-worlds-side {
-    min-height: 44rem;
+    min-height: 40rem;
     justify-content: space-between;
     gap: var(--spacing-05);
     border-radius: 18px;
@@ -866,7 +866,7 @@
     margin-top: var(--spacing-04);
     color: hsl(var(--foreground));
     font-family: var(--font-mono);
-    font-size: clamp(1.8rem, 2.4vw, 2.15rem);
+    font-size: clamp(1.5rem, 1.8vw, 1.8rem);
     font-weight: 500;
     letter-spacing: -0.045em;
     line-height: 1.12;
@@ -879,13 +879,6 @@
 
   .best-worlds-analysis .best-worlds-side-heading strong {
     color: hsl(var(--brand));
-  }
-
-  .analysis-runs {
-    overflow: hidden;
-    border: 1px solid hsl(var(--border));
-    border-radius: 12px;
-    background: hsl(var(--code-bg));
   }
 
   .best-worlds-outcome {
@@ -910,15 +903,6 @@
 
   .best-worlds-analysis-outcome strong {
     display: block;
-  }
-
-  .best-worlds-analysis-outcome span {
-    display: block;
-    margin-top: var(--spacing-03);
-    color: hsl(var(--foreground));
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 1.4;
   }
 
   .reasoning-inference {
@@ -1176,6 +1160,31 @@
     font-weight: 750;
   }
 
+  .best-worlds-dependency-model {
+    display: flex;
+    min-height: var(--spacing-10);
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-04);
+    border: 1px solid hsl(var(--agent) / 0.28);
+    border-radius: 10px;
+    background: hsl(var(--agent) / 0.045);
+    padding-inline: var(--spacing-04);
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+
+  .best-worlds-dependency-model strong {
+    color: hsl(var(--muted-foreground));
+    letter-spacing: 0.08em;
+  }
+
+  .best-worlds-dependency-model code {
+    color: hsl(var(--agent));
+    font-size: 13px;
+    font-weight: 750;
+  }
+
   .best-worlds-formal-code em,
   .code-meta-sink {
     color: hsl(var(--brand));
@@ -1193,89 +1202,94 @@
     font-weight: 800;
   }
 
-  .analysis-path {
-    display: grid;
-    justify-items: stretch;
-    padding-inline: var(--spacing-04);
-  }
-
-  .analysis-path-node {
-    display: flex;
-    min-height: var(--spacing-09);
-    align-items: center;
-    justify-content: space-between;
+  .analysis-coverage,
+  .analysis-repeatability {
+    overflow: hidden;
     border: 1px solid hsl(var(--border));
-    border-radius: 9px;
+    border-radius: 12px;
     background: hsl(var(--code-bg));
-    padding-inline: var(--spacing-04);
-    color: hsl(var(--foreground));
     font-family: var(--font-mono);
-    font-size: 12px;
-    font-weight: 650;
   }
 
-  .analysis-path-node i {
-    color: hsl(var(--muted-foreground));
-    font-size: 12px;
-    font-style: normal;
+  .analysis-coverage > header {
+    border-bottom: 1px solid hsl(var(--border));
+    padding: var(--spacing-04);
+    color: hsl(var(--brand));
+    font-size: 14px;
     font-weight: 750;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
+    text-align: center;
   }
 
-  .analysis-path-source { border-color: hsl(var(--agent) / 0.4); }
-  .analysis-path-transform { border-color: hsl(var(--agent) / 0.22); }
-  .analysis-path-sink { border-color: hsl(var(--brand) / 0.5); }
-  .analysis-path-source i { color: hsl(var(--agent)); }
-  .analysis-path-sink i { color: hsl(var(--brand)); }
-
-  .analysis-path > b {
-    width: 1px;
-    height: var(--spacing-05);
-    justify-self: center;
-    background: hsl(var(--border-strong));
+  .analysis-coverage > div {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-03);
+    padding: var(--spacing-04);
   }
 
-  .analysis-runs > div {
+  .analysis-coverage > div span {
     display: grid;
     min-height: var(--spacing-09);
-    grid-template-columns: minmax(0, 0.7fr) minmax(0, 1fr) auto;
-    align-items: center;
-    gap: var(--spacing-03);
-    padding-inline: var(--spacing-04);
-    font-family: var(--font-mono);
-    font-size: 12px;
-  }
-
-  .analysis-runs > header {
-    display: flex;
-    min-height: var(--spacing-09);
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid hsl(var(--border));
-    padding-inline: var(--spacing-04);
-    font-family: var(--font-mono);
+    place-items: center;
+    border: 1px solid hsl(var(--border));
+    border-radius: 8px;
+    color: hsl(var(--foreground));
     font-size: 12px;
     font-weight: 750;
-    letter-spacing: 0.08em;
   }
 
-  .analysis-runs > header span {
+  .analysis-coverage > footer {
+    display: grid;
+    gap: var(--spacing-02);
+    border-top: 1px solid hsl(var(--border));
+    padding: var(--spacing-04);
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .analysis-coverage > footer span {
     color: hsl(var(--muted-foreground));
   }
 
-  .analysis-runs > header b {
+  .analysis-coverage > footer b {
     color: hsl(var(--brand));
   }
 
-  .analysis-runs > div + div {
+  .analysis-repeatability {
+    display: grid;
+    gap: var(--spacing-03);
+    padding-top: var(--spacing-05);
+    text-align: center;
+  }
+
+  .analysis-repeatability > strong {
+    color: hsl(var(--muted-foreground));
+    font-size: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  .analysis-repeatability > span {
+    color: hsl(var(--brand));
+    font-size: 18px;
+    font-weight: 800;
+  }
+
+  .analysis-repeatability > div {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     border-top: 1px solid hsl(var(--border));
   }
 
-  .analysis-runs span { color: hsl(var(--foreground)); font-weight: 700; }
-  .analysis-runs b { color: hsl(var(--muted-foreground)); font-size: 12px; letter-spacing: 0.05em; }
-  .analysis-runs i { color: hsl(142 53% 36%); font-size: 13px; font-style: normal; }
-  .analysis-runs .analysis-run-blocked b,
-  .analysis-runs .analysis-run-blocked i { color: hsl(var(--brand)); }
+  .analysis-repeatability > div b {
+    padding: var(--spacing-04) var(--spacing-02);
+    color: hsl(var(--foreground));
+    font-size: 12px;
+  }
+
+  .analysis-repeatability > div b + b {
+    border-left: 1px solid hsl(var(--border));
+  }
 
   @media (max-width: 1100px) {
     .best-worlds-stage {
@@ -1341,7 +1355,7 @@
 
     .best-worlds-side-heading h3 {
       max-width: 18ch;
-      font-size: 1.5rem;
+      font-size: 1.35rem;
     }
 
   }
@@ -1379,6 +1393,13 @@
     .best-worlds-code-key {
       flex-direction: column;
       gap: var(--spacing-03);
+    }
+
+    .best-worlds-dependency-model {
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      padding-block: var(--spacing-03);
     }
   }
 

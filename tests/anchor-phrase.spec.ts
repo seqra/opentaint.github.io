@@ -13,17 +13,26 @@ test.describe("landing message", () => {
     await expect(page.getByRole("heading", { name: "The consistency of formal program analysis", level: 3 })).toBeVisible();
     await expect(page.getByText("FORMAL SPECIFICATION", { exact: true })).toBeVisible();
     await expect(page.getByText("security/ssti.yml", { exact: true })).toBeVisible();
-    await expect(page.getByText('const tpl = req.get("template");', { exact: true })).toBeVisible();
-    await expect(page.getByText("return engine.render(tpl, ctx);", { exact: true })).toBeVisible();
-    await expect(page.getByText("$DATA = $REQ.get(...);", { exact: true })).toBeVisible();
-    await expect(page.getByText("$TEMPLATE.render($DATA, ...);", { exact: true })).toBeVisible();
-    await expect(page.getByText("UNDERSTANDS CONTEXT", { exact: true })).toBeVisible();
-    await expect(page.getByText("DISCOVERS WHAT IS UNIQUE", { exact: true })).toBeVisible();
-    await expect(page.getByText("WHOLE PROJECT", { exact: true })).toBeVisible();
-    await expect(page.getByText("REPEATABLE", { exact: true })).toBeVisible();
+    await expect(page.getByText("PreviewController.java", { exact: true })).toBeVisible();
+    await expect(page.getByText("var view = data.strip();", { exact: true })).toBeVisible();
+    await expect(page.getByText("$DATA = $REQ.getParameter(...);", { exact: true })).toBeVisible();
+    await expect(page.getByText("$TAINTED = $DATA.strip();", { exact: true })).toBeVisible();
+    await expect(page.getByText("$ENGINE.process($TAINTED, ...);", { exact: true })).toBeVisible();
+    await expect(page.locator(".best-worlds-formal-code .code-line-ellipsis")).toHaveText(["...", "..."]);
+    await expect(page.getByText("METAVARIABLES ARE DATA TAINT MARKS", { exact: true })).toBeVisible();
+    await expect(page.getByText("Adapts security knowledge to your application", { exact: true })).toBeVisible();
+    await expect(page.getByText("One rule. Every path. Every change.", { exact: true })).toBeVisible();
+    await expect(page.getByText("INTERPRETS INTENT", { exact: true })).toBeVisible();
+    await expect(page.getByText("FINDS APP-SPECIFIC RISK", { exact: true })).toBeVisible();
     await expect(page.getByText("CI/CD VULNERABILITY GATE", { exact: true })).toBeVisible();
     await expect(page.locator(".best-worlds-visual")).not.toContainText("·");
     await expect(page.locator(".best-worlds-scroll-cue")).toHaveCount(0);
+    const smallestVisualType = await page.locator(".best-worlds-visual").evaluate((visual) =>
+      Math.min(...Array.from(visual.querySelectorAll("*")).filter((element) =>
+        element.textContent?.trim() && (element as HTMLElement).offsetParent !== null
+      ).map((element) => Number.parseFloat(getComputedStyle(element).fontSize)))
+    );
+    expect(smallestVisualType).toBeGreaterThanOrEqual(12);
     await expect(page.getByRole("heading", { name: "Five-minute quickstart" })).toBeVisible();
     await expect(page.getByText("Run your first agentic application security test in 5 minutes", { exact: true })).toHaveCount(0);
     await expect(page.getByText("Run deep security scan and static triage with OpenTaint appsec-agent skill", { exact: true })).toBeVisible();

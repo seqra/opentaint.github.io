@@ -26,15 +26,19 @@
           <h3>The flexibility of <strong>model reasoning</strong></h3>
         </header>
 
+        <p class="best-worlds-outcome best-worlds-reasoning-outcome">
+          Adapts security knowledge to your application
+        </p>
+
         <div class="best-worlds-values" aria-label="Values of model reasoning">
-          <div><i>01</i><span><b>UNDERSTANDS CONTEXT</b><small>Application intent and trust boundaries</small></span></div>
-          <div><i>02</i><span><b>DISCOVERS WHAT IS UNIQUE</b><small>Project-specific sources and sinks</small></span></div>
-          <div><i>03</i><span><b>LEARNS FROM REVIEW</b><small>Security knowledge refined through triage</small></span></div>
+          <div><i>01</i><span><b>INTERPRETS INTENT</b><small>Routes, framework conventions, and trust boundaries</small></span></div>
+          <div><i>02</i><span><b>FINDS APP-SPECIFIC RISK</b><small>Unique sources, sinks, and data transformations</small></span></div>
+          <div><i>03</i><span><b>LEARNS FROM REVIEW</b><small>Each discovery becomes reusable security knowledge</small></span></div>
         </div>
 
         <div class="reasoning-inference">
-          <span>VULNERABILITY PATTERN FOUND / SSTI</span>
-          <p>User-controlled template reaches the <code>template engine</code></p>
+          <span>PROJECT-SPECIFIC SSTI PATTERN</span>
+          <p>Spring request data reaches the <code>template engine</code></p>
         </div>
       </article>
 
@@ -46,26 +50,32 @@
         </header>
 
         <div class="best-worlds-code-map">
-          <section class="best-worlds-code-panel best-worlds-application-code" aria-label="Application code with the security-relevant source and sink highlighted">
-            <header><span>APPLICATION CODE</span><i>preview</i></header>
-            <pre><code><span>function preview(req) {</span>
-<span class="code-line-source">  const tpl = req.get("template");</span>
-<span class="code-line-soft">  const ctx = buildContext();</span>
+          <section class="best-worlds-code-panel best-worlds-application-code" aria-label="Spring application code with the taint source, transformation, and sink highlighted">
+            <header><span>SPRING APPLICATION CODE</span><i>PreviewController.java</i></header>
+            <pre><code><span>@PostMapping("/preview")</span>
+<span>String preview(HttpServletRequest req) {</span>
+<span class="code-line-source">  var data = req.getParameter(</span>
+<span class="code-line-source">      "template");</span>
+<span class="code-line-transform">  var view = data.strip();</span>
 <span class="code-line-soft">  audit("preview_requested");</span>
-<span class="code-line-sink">  return engine.render(tpl, ctx);</span>
+<span class="code-line-sink">  return engine.process(view,</span>
+<span class="code-line-sink">      context);</span>
 <span>}</span></code></pre>
           </section>
 
-          <div class="best-worlds-code-key" aria-hidden="true">
-            <span><i></i>SOURCE</span><b>ABSTRACT WITH METAVARIABLES</b><span><i></i>SINK</span>
+          <div class="best-worlds-code-key">
+            <strong><span>$DATA</span> → <span>$TAINTED</span></strong>
+            <b>METAVARIABLES ARE DATA TAINT MARKS</b>
           </div>
 
           <section class="best-worlds-code-panel best-worlds-formal-code" aria-label="Formal SSTI specification expressed with metavariables">
             <header><span>FORMAL SPECIFICATION</span><i>security/ssti.yml</i></header>
             <pre><code><span><em>- pattern:</em> |</span>
-<span>    <b class="code-meta-data">$DATA</b> = <b class="code-meta-source">$REQ</b>.get(...);</span>
-<span class="code-line-soft">    ...</span>
-<span>    <b class="code-meta-sink">$TEMPLATE</b>.render(<b class="code-meta-data">$DATA</b>, ...);</span></code></pre>
+<span>    <b class="code-meta-data">$DATA</b> = <b class="code-meta-source">$REQ</b>.getParameter(...);</span>
+<span class="code-line-ellipsis">    ...</span>
+<span>    <b class="code-meta-data">$TAINTED</b> = <b class="code-meta-data">$DATA</b>.strip();</span>
+<span class="code-line-ellipsis">    ...</span>
+<span>    <b class="code-meta-sink">$ENGINE</b>.process(<b class="code-meta-data">$TAINTED</b>, ...);</span></code></pre>
           </section>
         </div>
       </article>
@@ -76,16 +86,17 @@
           <h3>The consistency of <strong>formal program analysis</strong></h3>
         </header>
 
-        <div class="best-worlds-analysis-values" aria-label="Values of formal program analysis">
-          <span>WHOLE PROJECT</span><span>REPEATABLE</span><span>EVERY CHANGE</span>
-        </div>
+        <p class="best-worlds-outcome best-worlds-analysis-outcome">
+          <strong>One rule. Every path. Every change.</strong>
+          <span>The same security decision across the whole project.</span>
+        </p>
 
         <div class="analysis-path" aria-label="A formally analyzed source-to-sink path">
-          <span class="analysis-path-node analysis-path-source"><i>SOURCE</i>request.get("template")</span>
+          <span class="analysis-path-node analysis-path-source"><i>SOURCE</i>req.getParameter(...)</span>
           <b></b>
-          <span class="analysis-path-node"><i>CALL</i>preview.render(data)</span>
+          <span class="analysis-path-node analysis-path-transform"><i>TRANSFORM</i>data.strip()</span>
           <b></b>
-          <span class="analysis-path-node analysis-path-sink"><i>SINK</i>template.render(data)</span>
+          <span class="analysis-path-node analysis-path-sink"><i>SINK</i>engine.process(view)</span>
         </div>
 
         <div class="analysis-runs" aria-label="The same security rule applied to every code change">

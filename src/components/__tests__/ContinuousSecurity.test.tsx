@@ -3,20 +3,19 @@ import { describe, expect, it } from "vitest";
 import { ContinuousSecurity } from "../ContinuousSecurity";
 
 describe("ContinuousSecurity", () => {
-  it("places each visual group before its supporting promise", () => {
+  it("gives the product advantages a heading before their visuals", () => {
     render(<ContinuousSecurity />);
 
     const workflow = screen.getByRole("heading", { name: "Triage", level: 3 }).closest(".workflow-card-grid");
     const promise = screen.getByRole("heading", { name: "Turn one-off review into unlimited scans", level: 2 });
-    const firstAdvantage = screen.getByRole("heading", { name: "Lean specs, continuous scans", level: 3 });
-    const valuePromise = screen.getByRole("heading", { name: "The open source taint analysis engine for the AI era", level: 2 });
+    const firstAdvantage = screen.getByRole("heading", { name: "Spec-driven code search", level: 3 });
+    const valueHeading = screen.getByRole("heading", { name: "Simple specifications. Deep analysis. Open source.", level: 2 });
 
-    expect(valuePromise).toBeVisible();
-    expect(screen.getByText("Lean specifications, practical SOTA analysis, and an open-source stack built to work together")).toBeVisible();
+    expect(valueHeading).toBeVisible();
     expect(promise).toHaveTextContent("Turn one-off review into unlimited scans");
     expect(screen.queryByText("The flexibility of model reasoning and the consistency of formal program analysis combined")).not.toBeInTheDocument();
-    expect(firstAdvantage.compareDocumentPosition(valuePromise) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(valuePromise.compareDocumentPosition(workflow as Node) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(valueHeading.compareDocumentPosition(firstAdvantage) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(firstAdvantage.compareDocumentPosition(workflow as Node) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect((workflow as Node).compareDocumentPosition(promise) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
@@ -49,15 +48,16 @@ describe("ContinuousSecurity", () => {
     expect(screen.queryByText("The same review can produce different findings")).not.toBeInTheDocument();
   });
 
-  it("shows the continuous loop, performance balance, and open-source bundle visually", () => {
+  it("shows AST-pattern search, performance balance, and the open-source bundle visually", () => {
     render(<ContinuousSecurity />);
 
-    expect(screen.getByRole("heading", { name: "Lean specs, continuous scans", level: 3 })).toBeVisible();
-    expect(screen.getByText("Grow a formal specification from each reviewed diff, then run it against every future project change.")).toBeVisible();
-    const leanVisual = screen.getByRole("img", { name: /Lean reusable specifications power continuous formal scans/ });
-    expect(leanVisual).toBeVisible();
-    expect(leanVisual).toHaveTextContent("LEAN SPEC");
-    expect(leanVisual).toHaveTextContent("CONTINUOUS SCANS");
+    expect(screen.getByRole("heading", { name: "Spec-driven code search", level: 3 })).toBeVisible();
+    expect(screen.getByText("Express security behavior as readable AST patterns, then search the whole project with formal data-flow analysis.")).toBeVisible();
+    const astPatternVisual = screen.getByRole("img", { name: /readable AST-pattern security specification/ });
+    expect(astPatternVisual).toBeVisible();
+    expect(astPatternVisual).toHaveTextContent("AST-PATTERN SPEC");
+    expect(astPatternVisual).toHaveTextContent("PROJECT MATCHES");
+    expect(astPatternVisual).toHaveTextContent("$DB.execute($DATA)");
     expect(screen.getByRole("heading", { name: "Practical SOTA static analysis", level: 3 })).toBeVisible();
     expect(screen.getByText("Minimize missed findings and false alarms without making whole-project analysis impractical.")).toBeVisible();
     const balanceVisual = screen.getByRole("img", { name: "OpenTaint balances scan speed, finding coverage, and precision" });

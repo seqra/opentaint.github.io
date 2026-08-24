@@ -217,28 +217,26 @@ function BalanceVisual() {
   );
 }
 
-function ContinuousLeanVisual() {
+function AstPatternVisual() {
   return (
-    <div className="lean-cycle value-visual relative min-h-[20rem] overflow-hidden rounded-[18px] border border-border bg-code-bg" role="img" aria-label="Lean reusable specifications power continuous formal scans">
-      <div className="lean-cycle-body" aria-hidden="true">
-        <section className="lean-cycle-panel lean-cycle-spec">
-          <p>LEAN SPEC</p>
-          <div className="lean-cycle-simple-flow">
-            <div className="lean-cycle-input"><span>DIFF</span><span>INFORMAL SPEC</span></div>
-            <b>→</b>
-            <div className="lean-cycle-output lean-cycle-stacked">FORMAL SPEC</div>
+    <div className="ast-pattern-visual value-visual relative min-h-[20rem] overflow-hidden rounded-[18px] border border-border bg-code-bg" role="img" aria-label="A readable AST-pattern security specification drives whole-project code search">
+      <div className="ast-pattern-body" aria-hidden="true">
+        <section className="ast-pattern-spec">
+          <header><span>yml</span><b>AST-PATTERN SPEC</b></header>
+          <div className="ast-pattern-code">
+            <p><em>sources:</em></p>
+            <p><span>- pattern:</span> $REQ.get(...)</p>
+            <p><em>sinks:</em></p>
+            <p><span>- pattern:</span> $DB.execute($DATA)</p>
           </div>
         </section>
 
-        <div className="lean-cycle-connector"><i /></div>
+        <div className="ast-pattern-search"><span>SEARCH</span><i /></div>
 
-        <section className="lean-cycle-panel lean-cycle-scan">
-          <p>CONTINUOUS SCANS</p>
-          <div className="lean-cycle-simple-flow">
-            <div className="lean-cycle-input"><span>FUTURE CHANGE</span><span>FORMAL SPEC</span></div>
-            <b>→</b>
-            <div className="lean-cycle-output lean-cycle-passed">SCAN <span>✓</span></div>
-          </div>
+        <section className="ast-pattern-matches">
+          <header><b>PROJECT MATCHES</b><span>2</span></header>
+          <div><i>src</i><span><b>QueryService.java</b><small>source → sink path</small></span><em>MATCH</em></div>
+          <div><i>src</i><span><b>ReportDao.kt</b><small>source → sink path</small></span><em>MATCH</em></div>
         </section>
       </div>
     </div>
@@ -272,12 +270,16 @@ export function ContinuousSecurity() {
     <section className="band continuous-security-band" aria-labelledby="continuous-security-heading">
       <div className="relative z-10 mx-auto max-w-[96rem]">
         <div>
-          <div className="value-card-grid mobile-card-rail grid gap-6 md:grid-cols-2 xl:grid-cols-3" role="region" aria-label="OpenTaint product advantages" tabIndex={0}>
+          <div className="section-header">
+            <h2 id="product-advantages-heading" className="section-heading">Simple specifications. Deep analysis. Open source.</h2>
+          </div>
+
+          <div className="value-card-grid mobile-card-rail mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3 sm:mt-16" role="region" aria-labelledby="product-advantages-heading" tabIndex={0}>
             <article className="value-card mobile-card-rail-item overflow-hidden rounded-[24px] border border-border-strong bg-background p-4 shadow-sm sm:p-6">
-              <ContinuousLeanVisual />
+              <AstPatternVisual />
               <div className="px-2 pb-2 pt-6">
-                <h3 className="font-mono text-xl font-semibold leading-8 tracking-[-0.03em] text-foreground">Lean specs, continuous scans</h3>
-                <p className="mt-3 w-full text-sm leading-6 text-muted-foreground sm:text-[15px]">Grow a formal specification from each reviewed diff, then run it against every future project change.</p>
+                <h3 className="font-mono text-xl font-semibold leading-8 tracking-[-0.03em] text-foreground">Spec-driven code search</h3>
+                <p className="mt-3 w-full text-sm leading-6 text-muted-foreground sm:text-[15px]">Express security behavior as readable AST patterns, then search the whole project with formal data-flow analysis.</p>
               </div>
             </article>
             <article className="value-card mobile-card-rail-item overflow-hidden rounded-[24px] border border-border-strong bg-background p-4 shadow-sm sm:p-6">
@@ -296,10 +298,6 @@ export function ContinuousSecurity() {
             </article>
           </div>
 
-          <div className="mx-auto mt-12 max-w-[72rem] text-center sm:mt-16">
-            <h2 className="section-heading">The open source taint analysis engine for the AI era</h2>
-            <p className="section-banner mx-auto mt-6 max-w-[68ch]">Lean specifications, practical SOTA analysis, and an open-source stack built to work together</p>
-          </div>
         </div>
 
         <div className="workflow-card-grid mobile-card-rail mt-16 grid gap-4 md:grid-cols-2 min-[1440px]:-mx-12 min-[1440px]:grid-cols-4 sm:mt-20" role="region" aria-label="OpenTaint workflow" tabIndex={0}>

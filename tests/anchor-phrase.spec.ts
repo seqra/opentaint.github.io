@@ -9,9 +9,39 @@ test.describe("landing message", () => {
       name: "Continuous, lean, and agentic application security testing",
       level: 1,
     })).toBeVisible();
+    await expect(page.getByRole("heading", {
+      name: "The flexibility of model reasoning and the consistency of formal program analysis combined",
+      level: 2,
+    })).toBeVisible();
+    await expect(page.getByRole("img", {
+      name: /Model reasoning discovers application-specific security behavior/,
+    })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Five-minute quickstart" })).toBeVisible();
     await expect(page.getByText("Run your first agentic application security test in 5 minutes", { exact: true })).toHaveCount(0);
     await expect(page.getByText("Run deep security scan and static triage with OpenTaint appsec-agent skill", { exact: true })).toBeVisible();
+  });
+
+  test("reveals a thin edge of the full-screen approach visual below the hero", async ({ page }) => {
+    await page.goto("/");
+
+    const layout = await page.evaluate(() => {
+      const hero = document.querySelector(".hero-band") as HTMLElement;
+      const visual = document.querySelector(".best-worlds-stage") as HTMLElement;
+      const heroBox = hero.getBoundingClientRect();
+      const visualBox = visual.getBoundingClientRect();
+      return {
+        viewportHeight: window.innerHeight,
+        heroBottom: heroBox.bottom,
+        visualTop: visualBox.top,
+        visualHeight: visualBox.height,
+      };
+    });
+
+    expect(Math.abs(layout.heroBottom - layout.visualTop)).toBeLessThanOrEqual(1);
+    expect(layout.visualTop).toBeLessThan(layout.viewportHeight);
+    expect(layout.visualTop).toBeLessThan(layout.viewportHeight - 80);
+    expect(layout.visualTop).toBeGreaterThan(layout.viewportHeight - 112);
+    expect(layout.visualHeight).toBeGreaterThanOrEqual(layout.viewportHeight - 80);
   });
 
   test("frames the product proof with the real Conductor review", async ({ page }) => {
@@ -28,7 +58,7 @@ test.describe("landing message", () => {
     await expect(page.getByText("As AI generates more code, security risk and review cost compound", { exact: true })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Turn one-off review into unlimited scans", level: 2 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Fast scans. Fewer false alarms. Fewer missed findings" })).toHaveCount(0);
-    await expect(page.getByText("Everything you need, open source", { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Open source, batteries included", level: 3 })).toBeVisible();
     await expect(page.getByText(/symbolic execution/i)).toHaveCount(0);
   });
 

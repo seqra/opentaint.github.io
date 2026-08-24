@@ -9,6 +9,7 @@ const landingFiles = [
   "src/components/UnifiedWorkbench.tsx",
   "src/components/astro/AgentPipeline.astro",
   "src/components/astro/AgentSkills.astro",
+  "src/components/astro/BestOfBothWorlds.astro",
   "src/components/astro/Demo.astro",
   "src/components/astro/EngineProof.astro",
   "src/components/astro/FAQ.astro",

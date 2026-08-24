@@ -25,10 +25,11 @@ describe("SEO and answer-engine content", () => {
     expect(item?.answer).toMatch(/GitHub Actions and GitLab CI/);
   });
 
-  it("keeps the generic-query guide linked from the landing page", () => {
-    const landing = readFileSync("src/components/astro/TaintAnalysisExplainer.astro", "utf8");
-    expect(landing).toContain("What is taint analysis?");
-    expect(landing).toContain('href="/blog/what-is-taint-analysis/"');
+  it("publishes the generic-query guide in the blog without duplicating it on the landing page", () => {
+    const guide = readFileSync("src/content/blog/what-is-taint-analysis.mdx", "utf8");
+    const landing = readFileSync("src/pages/index.astro", "utf8");
+    expect(guide).toContain('title: "What Is Taint Analysis?');
+    expect(landing).not.toContain("TaintAnalysisExplainer");
   });
 
   it("publishes an llms.txt entity summary", () => {

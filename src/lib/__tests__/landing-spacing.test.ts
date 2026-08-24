@@ -18,7 +18,6 @@ const landingFiles = [
   "src/components/astro/WhatIsOpenTaint.astro",
   "src/components/astro/SiteHeader.astro",
   "src/components/astro/SupportedTechnology.astro",
-  "src/components/astro/TaintAnalysisExplainer.astro",
 ] as const;
 
 const carbonTailwindSteps = new Set([

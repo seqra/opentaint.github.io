@@ -1,67 +1,80 @@
-<section class="best-worlds-stage" aria-labelledby="best-worlds-heading">
-  <div class="best-worlds-scroll-cue" aria-hidden="true"><span></span></div>
+<section class="best-worlds-stage" aria-labelledby="best-worlds-heading" aria-describedby="best-worlds-description">
+  <h2 id="best-worlds-heading" class="sr-only">
+    The flexibility of model reasoning and the consistency of formal program analysis combined
+  </h2>
+  <p id="best-worlds-description" class="sr-only">
+    OpenTaint turns application-specific security reasoning into a readable, versioned specification, then applies it with repeatable formal analysis on every code change.
+  </p>
 
   <div class="best-worlds-inner">
-    <header class="best-worlds-header">
-      <h2 id="best-worlds-heading" class="section-heading">
-        The flexibility of model reasoning and the consistency of formal program analysis combined
-      </h2>
-    </header>
+    <div class="best-worlds-visual">
+      <div class="best-worlds-toolbar" aria-hidden="true">
+        <span><i></i> OPENTAINT ANALYSIS PIPELINE</span>
+        <span>SPEC-DRIVEN</span>
+      </div>
 
-    <div
-      class="best-worlds-visual"
-      role="img"
-      aria-label="Model reasoning discovers application-specific security behavior, OpenTaint preserves it as a specification, and formal program analysis enforces it consistently"
-    >
       <svg class="best-worlds-flow" viewBox="0 0 1200 560" preserveAspectRatio="none" aria-hidden="true">
-        <path class="best-worlds-flow-muted" d="M48 88 C260 88 332 280 520 280 M48 280 C270 280 340 280 520 280 M48 472 C260 472 332 280 520 280" />
-        <path class="best-worlds-flow-active" d="M48 88 C260 88 332 280 520 280 M48 280 C270 280 340 280 520 280 M48 472 C260 472 332 280 520 280" />
-        <path class="best-worlds-flow-muted" d="M680 280 C868 280 940 88 1152 88 M680 280 C860 280 930 280 1152 280 M680 280 C868 280 940 472 1152 472" />
-        <path class="best-worlds-flow-active best-worlds-flow-active-reverse" d="M680 280 C868 280 940 88 1152 88 M680 280 C860 280 930 280 1152 280 M680 280 C868 280 940 472 1152 472" />
+        <path class="best-worlds-flow-muted" d="M355 294 H515 M685 294 H845" />
+        <path class="best-worlds-flow-active" d="M355 294 H515 M685 294 H845" />
       </svg>
+      <span class="best-worlds-flow-label best-worlds-flow-label-left" aria-hidden="true">ENCODE</span>
+      <span class="best-worlds-flow-label best-worlds-flow-label-right" aria-hidden="true">ENFORCE</span>
 
-      <div class="best-worlds-side best-worlds-reasoning">
-        <div class="best-worlds-side-heading">
-          <span class="best-worlds-glyph" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M9.5 4.5a3 3 0 0 1 5 2.2 3 3 0 0 1 2.8 4.6 3.2 3.2 0 0 1-1.2 5.7 3 3 0 0 1-4.1 2.2A3 3 0 0 1 7.9 17a3.2 3.2 0 0 1-1.2-5.7 3 3 0 0 1 2.8-4.6Z"/><path d="M12 5v14M8.5 8.5c1 .2 1.8.8 2.2 1.7M15.5 8.5c-1 .2-1.8.8-2.2 1.7M8.2 14.2c1.1-.1 2 .3 2.6 1.2M15.8 14.2c-1.1-.1-2 .3-2.6 1.2"/></svg>
-          </span>
-          <span><small>ADAPTIVE</small><b>Model reasoning</b></span>
-        </div>
-        <div class="best-worlds-signals">
-          <span>Application context</span>
-          <span>Developer intent</span>
-          <span>Trust boundaries</span>
-        </div>
-        <p>DISCOVER WHAT MATTERS</p>
-      </div>
+      <article class="best-worlds-side best-worlds-reasoning">
+        <header class="best-worlds-side-heading">
+          <small>ADAPTIVE DISCOVERY</small>
+          <h3>The flexibility of <strong>model reasoning</strong></h3>
+        </header>
 
-      <div class="best-worlds-core">
-        <span class="best-worlds-core-mark">OT</span>
-        <strong>OpenTaint</strong>
-        <div class="best-worlds-core-steps">
-          <span>DISCOVER</span><i></i><span>SPECIFY</span><i></i><span>ENFORCE</span>
+        <div class="reasoning-context" aria-label="Application context considered by model reasoning">
+          <div class="reasoning-context-bar"><span>REASONING CONTEXT</span><i>3 SIGNALS</i></div>
+          <dl>
+            <div><dt>APPLICATION</dt><dd>POST /reports/export</dd></div>
+            <div><dt>INTENT</dt><dd>Generate an internal report</dd></div>
+            <div><dt>TRUST BOUNDARY</dt><dd>HTTP request → database</dd></div>
+          </dl>
         </div>
-        <small>VERSIONED SECURITY KNOWLEDGE</small>
-      </div>
 
-      <div class="best-worlds-side best-worlds-analysis">
-        <div class="best-worlds-side-heading">
-          <span class="best-worlds-glyph" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="m8 5-5 7 5 7M16 5l5 7-5 7M14 3l-4 18"/></svg>
-          </span>
-          <span><small>DETERMINISTIC</small><b>Formal analysis</b></span>
+        <div class="reasoning-inference">
+          <span>INFERRED SECURITY BEHAVIOR</span>
+          <p>Request data must not reach <code>executeQuery</code></p>
         </div>
-        <div class="best-worlds-signals">
-          <span>Whole-program paths</span>
-          <span>Repeatable results</span>
-          <span>Every code change</span>
-        </div>
-        <p>ENFORCE IT EVERYWHERE</p>
-      </div>
+      </article>
 
-      <div class="best-worlds-result">
-        <span>Flexible discovery</span><b>+</b><span>Consistent enforcement</span>
-      </div>
+      <article class="best-worlds-core">
+        <header>
+          <span>VERSIONED SPECIFICATION</span>
+          <i>security/sql-injection.yml</i>
+        </header>
+        <div class="best-worlds-spec-code" aria-label="Readable OpenTaint security specification">
+          <p><em>sources:</em></p>
+          <p><span>- pattern:</span> $REQ.get(...)</p>
+          <p><em>sinks:</em></p>
+          <p><span>- pattern:</span> $DB.executeQuery($DATA)</p>
+        </div>
+        <footer><span>READABLE</span><i></i><span>REVIEWABLE</span><i></i><span>REUSABLE</span></footer>
+      </article>
+
+      <article class="best-worlds-side best-worlds-analysis">
+        <header class="best-worlds-side-heading">
+          <small>DETERMINISTIC ENFORCEMENT</small>
+          <h3>The consistency of <strong>formal program analysis</strong></h3>
+        </header>
+
+        <div class="analysis-path" aria-label="A formally analyzed source-to-sink path">
+          <span class="analysis-path-node analysis-path-source"><i>SOURCE</i>request.get</span>
+          <b></b>
+          <span class="analysis-path-node"><i>CALL</i>ReportService.export</span>
+          <b></b>
+          <span class="analysis-path-node analysis-path-sink"><i>SINK</i>executeQuery</span>
+        </div>
+
+        <div class="analysis-runs" aria-label="The same security rule applied to every code change">
+          <div><span>PR #184</span><b>RULE APPLIED</b><i>✓</i></div>
+          <div><span>PR #185</span><b>RULE APPLIED</b><i>✓</i></div>
+          <div><span>release</span><b>RULE APPLIED</b><i>✓</i></div>
+        </div>
+      </article>
     </div>
   </div>
 </section>

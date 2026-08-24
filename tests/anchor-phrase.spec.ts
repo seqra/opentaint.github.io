@@ -9,13 +9,11 @@ test.describe("landing message", () => {
       name: "Continuous, lean, and agentic application security testing",
       level: 1,
     })).toBeVisible();
-    await expect(page.getByRole("heading", {
-      name: "The flexibility of model reasoning and the consistency of formal program analysis combined",
-      level: 2,
-    })).toBeVisible();
-    await expect(page.getByRole("img", {
-      name: /Model reasoning discovers application-specific security behavior/,
-    })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "The flexibility of model reasoning", level: 3 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "The consistency of formal program analysis", level: 3 })).toBeVisible();
+    await expect(page.getByText("VERSIONED SPECIFICATION", { exact: true })).toBeVisible();
+    await expect(page.getByText("security/sql-injection.yml", { exact: true })).toBeVisible();
+    await expect(page.locator(".best-worlds-scroll-cue")).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "Five-minute quickstart" })).toBeVisible();
     await expect(page.getByText("Run your first agentic application security test in 5 minutes", { exact: true })).toHaveCount(0);
     await expect(page.getByText("Run deep security scan and static triage with OpenTaint appsec-agent skill", { exact: true })).toBeVisible();

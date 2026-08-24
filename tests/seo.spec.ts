@@ -11,7 +11,7 @@ test.describe("search and answer-engine pages", () => {
     await expect(page.getByRole("link", { name: "Read the taint analysis guide" })).toHaveAttribute("href", "/blog/what-is-taint-analysis/");
   });
 
-  test("publishes the taint-analysis guide as an evergreen resource", async ({ page }) => {
+  test("publishes the taint-analysis guide as a technical resource", async ({ page }) => {
     await page.goto("/blog/what-is-taint-analysis/");
 
     await expect(page).toHaveTitle("What Is Taint Analysis? Taint Flow and SAST Tools Explained | OpenTaint");

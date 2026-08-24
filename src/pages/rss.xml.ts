@@ -8,7 +8,7 @@ export async function GET(context: APIContext) {
 
   return rss({
     title: `${siteConfig.title} Resources`,
-    description: "Evergreen application-security guides, benchmarks, case studies, and technical research from OpenTaint.",
+    description: "Application-security guides, benchmarks, case studies, and technical research from OpenTaint.",
     site: context.site ?? siteConfig.url,
     items: posts.map((post) => ({
       title: post.title,

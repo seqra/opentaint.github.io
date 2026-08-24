@@ -1031,6 +1031,12 @@
     color: hsl(var(--code-annotation));
   }
 
+  .best-worlds-spec-code .best-worlds-spec-ellipsis {
+    padding-left: var(--spacing-04);
+    color: hsl(var(--muted-foreground));
+    letter-spacing: 0.18em;
+  }
+
   .best-worlds-core > footer {
     display: flex;
     min-height: var(--spacing-09);
@@ -1104,6 +1110,27 @@
     font-size: 8px;
   }
 
+  .analysis-runs > header {
+    display: flex;
+    min-height: var(--spacing-09);
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid hsl(var(--border));
+    padding-inline: var(--spacing-04);
+    font-family: var(--font-mono);
+    font-size: 7px;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+  }
+
+  .analysis-runs > header span {
+    color: hsl(var(--muted-foreground));
+  }
+
+  .analysis-runs > header b {
+    color: hsl(var(--brand));
+  }
+
   .analysis-runs > div + div {
     border-top: 1px solid hsl(var(--border));
   }
@@ -1111,6 +1138,8 @@
   .analysis-runs span { color: hsl(var(--foreground)); font-weight: 700; }
   .analysis-runs b { color: hsl(var(--muted-foreground)); font-size: 7px; letter-spacing: 0.08em; }
   .analysis-runs i { color: hsl(142 53% 36%); font-size: 11px; font-style: normal; }
+  .analysis-runs .analysis-run-blocked b,
+  .analysis-runs .analysis-run-blocked i { color: hsl(var(--brand)); }
 
   @media (max-width: 1100px) and (min-width: 901px) {
     .best-worlds-visual {
@@ -1157,6 +1186,10 @@
       padding-inline: var(--spacing-05);
     }
 
+    .best-worlds-toolbar span:last-child {
+      display: none;
+    }
+
     .best-worlds-flow,
     .best-worlds-flow-label { display: none; }
 
@@ -1173,6 +1206,11 @@
     .best-worlds-side-heading h3 {
       max-width: 18ch;
       font-size: 1.5rem;
+    }
+
+    .reasoning-context dd {
+      line-height: 1.35;
+      white-space: normal;
     }
 
     .best-worlds-core {

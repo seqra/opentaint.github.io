@@ -11,8 +11,11 @@ test.describe("landing message", () => {
     })).toBeVisible();
     await expect(page.getByRole("heading", { name: "The flexibility of model reasoning", level: 3 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "The consistency of formal program analysis", level: 3 })).toBeVisible();
-    await expect(page.getByText("VERSIONED SPECIFICATION", { exact: true })).toBeVisible();
-    await expect(page.getByText("security/sql-injection.yml", { exact: true })).toBeVisible();
+    await expect(page.getByText("FORMAL SPECIFICATION", { exact: true })).toBeVisible();
+    await expect(page.getByText("security/ssti.yml", { exact: true })).toBeVisible();
+    await expect(page.getByText("$DATA = $REQ.get(...);", { exact: true })).toBeVisible();
+    await expect(page.getByText("$TEMPLATE.render($DATA);", { exact: true })).toBeVisible();
+    await expect(page.getByText("CI/CD VULNERABILITY GATE", { exact: true })).toBeVisible();
     await expect(page.locator(".best-worlds-scroll-cue")).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "Five-minute quickstart" })).toBeVisible();
     await expect(page.getByText("Run your first agentic application security test in 5 minutes", { exact: true })).toHaveCount(0);

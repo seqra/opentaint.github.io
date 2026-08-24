@@ -7,7 +7,6 @@ test.describe("search and answer-engine pages", () => {
     await expect(page).toHaveTitle("OpenTaint: Continuous Vulnerability Checks from Security Reviews");
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://opentaint.org/");
     await expect(page.getByRole("heading", { level: 2, name: "What is taint analysis?" })).toBeVisible();
-    await expect(page.getByText(/Every security review becomes reusable vulnerability coverage/)).toBeVisible();
     await expect(page.getByRole("link", { name: "Read the taint analysis guide" })).toHaveAttribute("href", "/blog/what-is-taint-analysis/");
   });
 

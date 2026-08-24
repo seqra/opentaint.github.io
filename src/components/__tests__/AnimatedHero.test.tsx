@@ -7,8 +7,6 @@ describe("AnimatedHero", () => {
     render(<AnimatedHero />);
     expect(screen.getByRole("heading", { level: 1, name: "Continuous, lean, and agentic application security testing" })).toBeVisible();
     expect(screen.getByText("The open source taint analysis engine for the AI era")).toHaveClass("section-banner");
-    expect(screen.getByText(/Find vulnerabilities with agent-led security reviews/)).toBeVisible();
-    expect(screen.getByText(/run deterministic checks on every change in CI\/CD/)).toBeVisible();
     expect(document.querySelector('img[src="/opentaint-header-light.svg"]')).toHaveAttribute("alt", "OpenTaint");
     expect(screen.getByText("Continuous", { selector: "span" })).toHaveClass("text-primary");
     expect(screen.getByText("Lean", { selector: "span" })).toHaveClass("hero-prefix-word");

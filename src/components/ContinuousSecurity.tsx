@@ -147,10 +147,10 @@ function TriagePreview() {
 }
 
 const cards = [
-  { title: "Discover", description: "Find application-specific trust boundaries and vulnerability patterns in an agent-led security review.", preview: <DiscoverPreview /> },
-  { title: "Enact", description: "Preserve review knowledge as taint rules and dependency models that can run again.", preview: <EnactPreview /> },
-  { title: "Scan", description: "Run deterministic vulnerability checks across the whole project on every change in CI/CD.", preview: <ScanPreview /> },
-  { title: "Triage", description: "Confirm findings, tune away false alarms, and retain each refinement for future scans.", preview: <TriagePreview /> },
+  { title: "Discover", description: "Learn trust boundaries and vulnerability patterns as an informal specification.", preview: <DiscoverPreview /> },
+  { title: "Enact", description: "Enact the informal specification as taint rules and dependency models.", preview: <EnactPreview /> },
+  { title: "Scan", description: "Search the whole project with formal program analysis.", preview: <ScanPreview /> },
+  { title: "Triage", description: "Confirm findings and tune away false alarms.", preview: <TriagePreview /> },
 ] as const;
 
 function BalanceVisual() {
@@ -255,9 +255,6 @@ export function ContinuousSecurity() {
         <div className="mx-auto mt-12 max-w-[72rem] text-center sm:mt-16">
           <h2 id="continuous-security-heading" className="section-heading">Turn one-off review into unlimited scans</h2>
           <p className="section-banner continuous-security-subline mx-auto mt-6 max-w-[68ch]">The flexibility of model reasoning and the consistency of formal program analysis combined</p>
-          <p className="mx-auto mt-6 max-w-3xl font-mono text-sm leading-7 text-muted-foreground sm:text-[15px] lg:text-base">
-            Every security review becomes reusable vulnerability coverage: explicit rules and program models that check every pull request without asking an agent to rediscover the same facts.
-          </p>
         </div>
 
         <div className="value-card-grid mobile-card-rail mt-10 grid gap-6 sm:mt-12 lg:grid-cols-2" role="region" aria-label="OpenTaint product advantages" tabIndex={0}>
@@ -272,7 +269,7 @@ export function ContinuousSecurity() {
             <BundleVisual />
             <div className="px-2 pb-2 pt-6">
               <h3 className="font-mono text-xl font-semibold leading-8 tracking-[-0.03em] text-foreground">Open source, batteries included</h3>
-              <p className="mt-3 w-full text-[12px] leading-5 text-muted-foreground">Built for developers: run checks locally and in CI, inspect complete SARIF traces, and refine readable rules. Engine, CLI, viewer, and integrations work together, all open source.</p>
+              <p className="mt-3 w-full text-[12px] leading-5 text-muted-foreground">Engine, rules, models, agent skills, CLI, viewer, and CI integrations — all open source and built to work together.</p>
             </div>
           </article>
         </div>

@@ -91,9 +91,6 @@ export function FirstScanFunnel() {
         <div className="section-header">
           <p className="section-banner">From install to first agentic scan</p>
           <h2 id="quickstart-heading" className="section-heading">Five-minute quickstart</h2>
-          <p className="mx-auto mt-6 max-w-3xl font-mono text-sm leading-7 text-muted-foreground sm:text-[15px] lg:text-base">
-            Run the same open source analysis locally and in CI, inspect complete SARIF traces, and refine readable rules when your application needs more context.
-          </p>
         </div>
 
         <div className="mx-auto mt-8 max-w-4xl space-y-4 text-left sm:mt-10">

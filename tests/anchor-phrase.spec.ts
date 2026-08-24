@@ -13,8 +13,14 @@ test.describe("landing message", () => {
     await expect(page.getByRole("heading", { name: "The consistency of formal program analysis", level: 3 })).toBeVisible();
     await expect(page.getByText("FORMAL SPECIFICATION", { exact: true })).toBeVisible();
     await expect(page.getByText("security/ssti.yml", { exact: true })).toBeVisible();
+    await expect(page.getByText('const tpl = req.get("template");', { exact: true })).toBeVisible();
+    await expect(page.getByText("return engine.render(tpl, ctx);", { exact: true })).toBeVisible();
     await expect(page.getByText("$DATA = $REQ.get(...);", { exact: true })).toBeVisible();
-    await expect(page.getByText("$TEMPLATE.render($DATA);", { exact: true })).toBeVisible();
+    await expect(page.getByText("$TEMPLATE.render($DATA, ...);", { exact: true })).toBeVisible();
+    await expect(page.getByText("UNDERSTANDS CONTEXT", { exact: true })).toBeVisible();
+    await expect(page.getByText("DISCOVERS WHAT IS UNIQUE", { exact: true })).toBeVisible();
+    await expect(page.getByText("WHOLE PROJECT", { exact: true })).toBeVisible();
+    await expect(page.getByText("REPEATABLE", { exact: true })).toBeVisible();
     await expect(page.getByText("CI/CD VULNERABILITY GATE", { exact: true })).toBeVisible();
     await expect(page.locator(".best-worlds-visual")).not.toContainText("·");
     await expect(page.locator(".best-worlds-scroll-cue")).toHaveCount(0);

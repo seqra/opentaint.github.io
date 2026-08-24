@@ -706,10 +706,10 @@
     position: relative;
     display: grid;
     min-height: calc(100svh - var(--spacing-12));
-    grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.96fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(24rem, 1.3fr) minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr);
     align-items: stretch;
-    gap: var(--spacing-10);
+    gap: var(--spacing-08);
     overflow: hidden;
     border: 1px solid hsl(var(--border-strong));
     border-radius: 24px;
@@ -843,7 +843,9 @@
   }
 
   .best-worlds-side {
-    min-height: 34.5rem;
+    min-height: 40rem;
+    justify-content: space-between;
+    gap: var(--spacing-05);
     border-radius: 18px;
     padding: var(--spacing-06);
   }
@@ -855,7 +857,7 @@
   .best-worlds-side-heading small {
     color: hsl(var(--muted-foreground));
     font-family: var(--font-mono);
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 0.14em;
   }
 
@@ -864,7 +866,7 @@
     margin-top: var(--spacing-04);
     color: hsl(var(--foreground));
     font-family: var(--font-mono);
-    font-size: clamp(1.35rem, 2vw, 1.75rem);
+    font-size: clamp(1.6rem, 2.2vw, 2rem);
     font-weight: 500;
     letter-spacing: -0.045em;
     line-height: 1.12;
@@ -879,64 +881,11 @@
     color: hsl(var(--brand));
   }
 
-  .reasoning-context,
   .analysis-runs {
     overflow: hidden;
     border: 1px solid hsl(var(--border));
     border-radius: 12px;
     background: hsl(var(--code-bg));
-  }
-
-  .reasoning-context-bar {
-    display: flex;
-    min-height: var(--spacing-09);
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid hsl(var(--border));
-    padding-inline: var(--spacing-04);
-    color: hsl(var(--muted-foreground));
-    font-family: var(--font-mono);
-    font-size: 9px;
-    font-weight: 750;
-    letter-spacing: 0.1em;
-  }
-
-  .reasoning-context-bar i {
-    color: hsl(var(--agent));
-    font-style: normal;
-  }
-
-  .reasoning-context dl > div {
-    display: grid;
-    min-height: var(--spacing-10);
-    grid-template-columns: minmax(6.5rem, 0.42fr) minmax(0, 1fr);
-    align-items: center;
-    gap: var(--spacing-04);
-    padding-inline: var(--spacing-04);
-  }
-
-  .reasoning-context dl > div + div {
-    border-top: 1px solid hsl(var(--border));
-  }
-
-  .reasoning-context dt,
-  .reasoning-context dd {
-    font-family: var(--font-mono);
-    font-size: 10px;
-  }
-
-  .reasoning-context dt {
-    color: hsl(var(--muted-foreground));
-    font-weight: 750;
-    letter-spacing: 0.08em;
-  }
-
-  .reasoning-context dd {
-    overflow: hidden;
-    color: hsl(var(--foreground));
-    font-weight: 650;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .reasoning-inference {
@@ -948,7 +897,7 @@
   .reasoning-inference span {
     color: hsl(var(--agent));
     font-family: var(--font-mono);
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 750;
     letter-spacing: 0.1em;
   }
@@ -966,9 +915,62 @@
     font-size: 0.9em;
   }
 
+  .best-worlds-values {
+    overflow: hidden;
+    border: 1px solid hsl(var(--border));
+    border-radius: 12px;
+    background: hsl(var(--code-bg));
+  }
+
+  .best-worlds-values > div {
+    display: grid;
+    min-height: var(--spacing-11);
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: var(--spacing-04);
+    padding: var(--spacing-04);
+  }
+
+  .best-worlds-values > div + div {
+    border-top: 1px solid hsl(var(--border));
+  }
+
+  .best-worlds-values i {
+    display: grid;
+    width: var(--spacing-08);
+    height: var(--spacing-08);
+    place-items: center;
+    border: 1px solid hsl(var(--agent) / 0.4);
+    border-radius: 8px;
+    color: hsl(var(--agent));
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 750;
+  }
+
+  .best-worlds-values b,
+  .best-worlds-values small {
+    display: block;
+    font-family: var(--font-mono);
+  }
+
+  .best-worlds-values b {
+    color: hsl(var(--foreground));
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+
+  .best-worlds-values small {
+    margin-top: var(--spacing-02);
+    color: hsl(var(--muted-foreground));
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
   .best-worlds-core {
     display: flex;
-    min-height: 34.5rem;
+    min-height: 40rem;
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
@@ -994,7 +996,7 @@
 
   .best-worlds-core > header span {
     color: hsl(var(--muted-foreground));
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 750;
     letter-spacing: 0.1em;
   }
@@ -1002,7 +1004,7 @@
   .best-worlds-core > header strong {
     margin-top: var(--spacing-02);
     color: hsl(var(--brand));
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 750;
     letter-spacing: 0.08em;
   }
@@ -1011,63 +1013,174 @@
     margin-top: var(--spacing-02);
     overflow: hidden;
     color: hsl(var(--muted-foreground));
-    font-size: 10px;
+    font-size: 11px;
     font-style: normal;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .best-worlds-spec-code {
-    display: grid;
+  .best-worlds-code-map {
+    display: flex;
+    min-height: 0;
     flex: 1;
-    align-content: center;
+    flex-direction: column;
     gap: var(--spacing-04);
-    padding: var(--spacing-05);
+    padding: var(--spacing-04);
+  }
+
+  .best-worlds-code-panel {
+    overflow: hidden;
+    border: 1px solid hsl(var(--border));
+    border-radius: 10px;
+    background: hsl(var(--code-bg));
+  }
+
+  .best-worlds-code-panel > header {
+    display: flex;
+    min-height: var(--spacing-09);
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid hsl(var(--border));
+    background: hsl(var(--code-header));
+    padding-inline: var(--spacing-04);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+  }
+
+  .best-worlds-code-panel > header span {
+    color: hsl(var(--foreground));
+  }
+
+  .best-worlds-code-panel > header i {
+    color: hsl(var(--muted-foreground));
+    font-style: normal;
+  }
+
+  .best-worlds-code-panel pre {
+    overflow: hidden;
+    padding: var(--spacing-04) 0;
     color: hsl(var(--foreground));
     font-family: var(--font-mono);
     font-size: 12px;
-    line-height: 1.35;
+    line-height: 1.65;
   }
 
-  .best-worlds-spec-code p:nth-child(even) {
-    padding-left: var(--spacing-04);
+  .best-worlds-code-panel code > span {
+    display: block;
+    min-height: 1.65em;
+    padding-inline: var(--spacing-04);
+    white-space: pre;
   }
 
-  .best-worlds-spec-code em {
+  .best-worlds-application-code {
+    flex: 1.08;
+  }
+
+  .best-worlds-formal-code {
+    flex: 0.92;
+    border-color: hsl(var(--brand) / 0.46);
+  }
+
+  .best-worlds-formal-code > header span {
     color: hsl(var(--brand));
-    font-style: normal;
-    font-weight: 750;
   }
 
-  .best-worlds-spec-code span {
-    color: hsl(var(--code-annotation));
+  .best-worlds-code-panel .code-line-source {
+    border-left: 2px solid hsl(var(--agent));
+    background: hsl(var(--agent) / 0.08);
+    color: hsl(var(--agent));
   }
 
-  .best-worlds-spec-code .best-worlds-spec-ellipsis {
-    padding-left: var(--spacing-04);
-    color: hsl(var(--muted-foreground));
-    letter-spacing: 0.18em;
+  .best-worlds-code-panel .code-line-sink {
+    border-left: 2px solid hsl(var(--brand));
+    background: hsl(var(--brand) / 0.07);
+    color: hsl(var(--brand));
   }
 
-  .best-worlds-core > footer {
-    display: flex;
-    min-height: var(--spacing-10);
+  .best-worlds-code-panel .code-line-soft {
+    opacity: 0.26;
+    filter: blur(1.4px);
+  }
+
+  .best-worlds-code-key {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    justify-content: center;
     gap: var(--spacing-03);
-    border-top: 1px solid hsl(var(--border));
     color: hsl(var(--muted-foreground));
     font-family: var(--font-mono);
     font-size: 9px;
     font-weight: 750;
     letter-spacing: 0.08em;
+    text-align: center;
   }
 
-  .best-worlds-core > footer i {
-    width: 2px;
-    height: 2px;
+  .best-worlds-code-key span {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-02);
+  }
+
+  .best-worlds-code-key span > i {
+    width: var(--spacing-03);
+    height: var(--spacing-03);
     border-radius: 999px;
+    background: hsl(var(--agent));
+  }
+
+  .best-worlds-code-key span:last-child > i {
     background: hsl(var(--brand));
+  }
+
+  .best-worlds-code-key > b::before,
+  .best-worlds-code-key > b::after {
+    content: "";
+    display: inline-block;
+    width: var(--spacing-05);
+    height: 1px;
+    margin-inline: var(--spacing-03);
+    vertical-align: middle;
+    background: hsl(var(--border-strong));
+  }
+
+  .best-worlds-formal-code em,
+  .code-meta-sink {
+    color: hsl(var(--brand));
+    font-style: normal;
+  }
+
+  .code-meta-source,
+  .code-meta-data {
+    color: hsl(var(--agent));
+  }
+
+  .code-meta-data,
+  .code-meta-source,
+  .code-meta-sink {
+    font-weight: 800;
+  }
+
+  .best-worlds-analysis-values {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--spacing-02);
+  }
+
+  .best-worlds-analysis-values span {
+    display: grid;
+    min-height: var(--spacing-08);
+    place-items: center;
+    border: 1px solid hsl(var(--brand) / 0.28);
+    border-radius: 8px;
+    background: hsl(var(--brand) / 0.04);
+    color: hsl(var(--brand));
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 750;
+    letter-spacing: 0.05em;
+    text-align: center;
   }
 
   .analysis-path {
@@ -1153,31 +1266,7 @@
   .analysis-runs .analysis-run-blocked b,
   .analysis-runs .analysis-run-blocked i { color: hsl(var(--brand)); }
 
-  @media (max-width: 1100px) and (min-width: 901px) {
-    .best-worlds-visual {
-      grid-template-columns: minmax(0, 1fr) minmax(15rem, 0.96fr) minmax(0, 1fr);
-      gap: var(--spacing-06);
-      padding-right: var(--spacing-06);
-      padding-bottom: var(--spacing-06);
-      padding-left: var(--spacing-06);
-    }
-
-    .best-worlds-toolbar {
-      margin-inline: calc(var(--spacing-06) * -1);
-      padding-inline: var(--spacing-06);
-    }
-
-    .best-worlds-flow,
-    .best-worlds-flow-label { display: none; }
-
-    .reasoning-context dl > div {
-      grid-template-columns: 1fr;
-      align-content: center;
-      gap: var(--spacing-02);
-    }
-  }
-
-  @media (max-width: 900px) {
+  @media (max-width: 1100px) {
     .best-worlds-stage {
       min-height: calc(100svh - var(--spacing-10));
       padding-top: 0;
@@ -1196,10 +1285,6 @@
     .best-worlds-toolbar {
       margin-inline: calc(var(--spacing-05) * -1);
       padding-inline: var(--spacing-05);
-    }
-
-    .best-worlds-toolbar span:last-child {
-      display: none;
     }
 
     .best-worlds-flow { display: none; }
@@ -1234,7 +1319,9 @@
     .best-worlds-side,
     .best-worlds-core {
       width: 100%;
+      max-width: 48rem;
       min-height: auto;
+      justify-self: center;
     }
 
     .best-worlds-side {
@@ -1246,13 +1333,16 @@
       font-size: 1.5rem;
     }
 
-    .reasoning-context dd {
-      line-height: 1.35;
-      white-space: normal;
+  }
+
+  @media (max-width: 600px) {
+    .best-worlds-side,
+    .best-worlds-core {
+      max-width: none;
     }
 
-    .best-worlds-core {
-      min-height: 24rem;
+    .best-worlds-toolbar span:last-child {
+      display: none;
     }
   }
 

@@ -8,7 +8,7 @@ describe("ContinuousSecurity", () => {
 
     const workflow = screen.getByRole("heading", { name: "Triage", level: 3 }).closest(".workflow-card-grid");
     const promise = screen.getByRole("heading", { name: "Turn one-off review into unlimited scans", level: 2 });
-    const firstAdvantage = screen.getByRole("heading", { name: "Spec-driven code search", level: 3 });
+    const firstAdvantage = screen.getByRole("heading", { name: "Practical SOTA static analysis", level: 3 });
     const valueHeading = screen.getByRole("heading", { name: "Simple specifications. Deep analysis. Open source.", level: 2 });
 
     expect(valueHeading).toBeVisible();
@@ -48,16 +48,11 @@ describe("ContinuousSecurity", () => {
     expect(screen.queryByText("The same review can produce different findings")).not.toBeInTheDocument();
   });
 
-  it("shows AST-pattern search, performance balance, and the open-source bundle visually", () => {
+  it("shows performance balance and the open-source bundle visually", () => {
     render(<ContinuousSecurity />);
 
-    expect(screen.getByRole("heading", { name: "Spec-driven code search", level: 3 })).toBeVisible();
-    expect(screen.getByText("Express security behavior as readable AST patterns, then search the whole project with formal data-flow analysis.")).toBeVisible();
-    const astPatternVisual = screen.getByRole("img", { name: /readable AST-pattern security specification/ });
-    expect(astPatternVisual).toBeVisible();
-    expect(astPatternVisual).toHaveTextContent("AST-PATTERN SPEC");
-    expect(astPatternVisual).toHaveTextContent("PROJECT MATCHES");
-    expect(astPatternVisual).toHaveTextContent("$DB.execute($DATA)");
+    expect(screen.queryByRole("heading", { name: "Spec-driven code search", level: 3 })).not.toBeInTheDocument();
+    expect(screen.queryByRole("img", { name: /readable AST-pattern security specification/ })).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Practical SOTA static analysis", level: 3 })).toBeVisible();
     expect(screen.getByText("Minimize missed findings and false alarms without making whole-project analysis impractical.")).toBeVisible();
     const balanceVisual = screen.getByRole("img", { name: "OpenTaint balances scan speed, finding coverage, and precision" });

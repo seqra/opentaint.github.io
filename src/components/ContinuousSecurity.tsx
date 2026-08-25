@@ -217,32 +217,6 @@ function BalanceVisual() {
   );
 }
 
-function AstPatternVisual() {
-  return (
-    <div className="ast-pattern-visual value-visual relative min-h-[20rem] overflow-hidden rounded-[18px] border border-border bg-code-bg" role="img" aria-label="A readable AST-pattern security specification drives whole-project code search">
-      <div className="ast-pattern-body" aria-hidden="true">
-        <section className="ast-pattern-spec">
-          <header><span>yml</span><b>AST-PATTERN SPEC</b></header>
-          <div className="ast-pattern-code">
-            <p><em>sources:</em></p>
-            <p><span>- pattern:</span> $REQ.get(...)</p>
-            <p><em>sinks:</em></p>
-            <p><span>- pattern:</span> $DB.execute($DATA)</p>
-          </div>
-        </section>
-
-        <div className="ast-pattern-search"><span>SEARCH</span><i /></div>
-
-        <section className="ast-pattern-matches">
-          <header><b>PROJECT MATCHES</b><span>2</span></header>
-          <div><i>src</i><span><b>QueryService.java</b><small>source → sink path</small></span><em>MATCH</em></div>
-          <div><i>src</i><span><b>ReportDao.kt</b><small>source → sink path</small></span><em>MATCH</em></div>
-        </section>
-      </div>
-    </div>
-  );
-}
-
 const openSourceParts = [
   { label: "Analysis engine", Icon: Braces },
   { label: "Rules and models", Icon: FileCode2 },
@@ -274,14 +248,7 @@ export function ContinuousSecurity() {
             <h2 id="product-advantages-heading" className="section-heading">Simple specifications. Deep analysis. Open source.</h2>
           </div>
 
-          <div className="value-card-grid mobile-card-rail mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3 sm:mt-16" role="region" aria-labelledby="product-advantages-heading" tabIndex={0}>
-            <article className="value-card mobile-card-rail-item overflow-hidden rounded-[24px] border border-border-strong bg-background p-4 shadow-sm sm:p-6">
-              <AstPatternVisual />
-              <div className="px-2 pb-2 pt-6">
-                <h3 className="font-mono text-xl font-semibold leading-8 tracking-[-0.03em] text-foreground">Spec-driven code search</h3>
-                <p className="mt-3 w-full text-sm leading-6 text-muted-foreground sm:text-[15px]">Express security behavior as readable AST patterns, then search the whole project with formal data-flow analysis.</p>
-              </div>
-            </article>
+          <div className="value-card-grid mobile-card-rail mx-auto mt-12 grid max-w-[64rem] gap-6 md:grid-cols-2 sm:mt-16" role="region" aria-labelledby="product-advantages-heading" tabIndex={0}>
             <article className="value-card mobile-card-rail-item overflow-hidden rounded-[24px] border border-border-strong bg-background p-4 shadow-sm sm:p-6">
               <BalanceVisual />
               <div className="px-2 pb-2 pt-6">

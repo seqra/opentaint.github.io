@@ -13,6 +13,11 @@ test.describe("landing message", () => {
     await expect(page.getByRole("heading", { name: "The flexibility of model reasoning", level: 3 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "The consistency of formal program analysis", level: 3 })).toBeVisible();
     await expect(page.getByText("FORMAL SPECIFICATION", { exact: true })).toBeVisible();
+    await expect(page.locator(".best-worlds-phase-label")).toHaveText([
+      "AGENTIC / DISCOVER",
+      "LEAN / SPECIFY",
+      "CONTINUOUS / SCAN",
+    ]);
     await expect(page.getByText("patterns:", { exact: true })).toBeVisible();
     await expect(page.locator(".best-worlds-formal-code code > span").nth(1)).toHaveText("- pattern: |");
     await expect(page.getByText("PreviewController.java", { exact: true })).toHaveCount(0);
@@ -38,6 +43,7 @@ test.describe("landing message", () => {
     await expect(page.getByText("SEARCHES ALL MODELED PATHS", { exact: true })).toBeVisible();
     await expect(page.getByText("GIVES PREDICTABLE RESULTS", { exact: true })).toBeVisible();
     await expect(page.getByText("CREATES DURABLE CHECKS", { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Spec-driven code search", level: 3 })).toHaveCount(0);
     await expect(page.getByText("CODE CONTEXT + SECURITY REVIEW", { exact: true })).toHaveCount(0);
     await expect(page.getByText("PROJECT-SPECIFIC SSTI PATTERN", { exact: true })).toHaveCount(0);
     await expect(page.getByText("PR #184", { exact: true })).toHaveCount(0);

@@ -278,14 +278,6 @@
     }
   }
 
-  @media (min-width: 768px) and (max-width: 1279px) {
-    .value-card-grid > .value-card:last-child {
-      width: calc((100% - var(--spacing-06)) / 2);
-      grid-column: 1 / -1;
-      justify-self: center;
-    }
-  }
-
   /* Repeated visual evidence becomes a native swipe rail on phones. The next
      card remains visible at the edge, so the interaction explains itself
      without adding another label or pagination control. */
@@ -799,11 +791,13 @@
     display: block;
   }
 
-  .best-worlds-side-heading small {
+  .best-worlds-phase-label {
     color: hsl(var(--muted-foreground));
     font-family: var(--font-mono);
     font-size: 12px;
-    letter-spacing: 0.14em;
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    line-height: 1.2;
   }
 
   .best-worlds-side-heading h3 {
@@ -938,13 +932,6 @@
     background: hsl(var(--code-header));
     padding-inline: var(--spacing-05);
     font-family: var(--font-mono);
-  }
-
-  .best-worlds-core > header span {
-    color: hsl(var(--muted-foreground));
-    font-size: 12px;
-    font-weight: 750;
-    letter-spacing: 0.1em;
   }
 
   .best-worlds-core > header strong {
@@ -1642,154 +1629,6 @@
     border-radius: 999px;
     background: hsl(var(--background));
     pointer-events: none;
-  }
-
-  .ast-pattern-visual {
-    font-family: var(--font-mono);
-  }
-
-  .ast-pattern-body {
-    position: absolute;
-    inset: var(--spacing-05);
-    display: grid;
-    grid-template-rows: minmax(0, 1fr) var(--spacing-10) minmax(0, 0.8fr);
-  }
-
-  .ast-pattern-spec,
-  .ast-pattern-matches {
-    min-height: 0;
-    overflow: hidden;
-    border: 1px solid hsl(var(--border-strong));
-    border-radius: 12px;
-    background: hsl(var(--background));
-    box-shadow: 0 8px 24px hsl(var(--foreground) / 0.05);
-  }
-
-  .ast-pattern-spec header,
-  .ast-pattern-matches header {
-    display: flex;
-    min-height: var(--spacing-09);
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid hsl(var(--border));
-    background: hsl(var(--code-header));
-    padding-inline: var(--spacing-04);
-    color: hsl(var(--muted-foreground));
-    font-size: 9px;
-    letter-spacing: 0.1em;
-  }
-
-  .ast-pattern-spec header span {
-    display: grid;
-    width: var(--spacing-06);
-    height: var(--spacing-06);
-    place-items: center;
-    border-radius: 5px;
-    background: hsl(var(--brand) / 0.1);
-    color: hsl(var(--brand));
-    font-size: 8px;
-    letter-spacing: 0;
-  }
-
-  .ast-pattern-code {
-    display: grid;
-    gap: var(--spacing-02);
-    padding: var(--spacing-04);
-    color: hsl(var(--foreground));
-    font-size: 10px;
-    line-height: 1.35;
-  }
-
-  .ast-pattern-code p { min-width: 0; }
-  .ast-pattern-code p:nth-child(even) { padding-left: var(--spacing-04); }
-  .ast-pattern-code em { color: hsl(var(--brand)); font-style: normal; font-weight: 750; }
-  .ast-pattern-code span { color: hsl(var(--code-annotation)); }
-
-  .ast-pattern-search {
-    position: relative;
-    display: grid;
-    place-items: center;
-  }
-
-  .ast-pattern-search::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 50%;
-    width: 1px;
-    background: hsl(var(--brand) / 0.5);
-  }
-
-  .ast-pattern-search span {
-    z-index: 1;
-    border: 1px solid hsl(var(--brand) / 0.38);
-    border-radius: 999px;
-    background: hsl(var(--background));
-    padding: var(--spacing-02) var(--spacing-04);
-    color: hsl(var(--brand));
-    font-size: 9px;
-    font-weight: 750;
-    letter-spacing: 0.1em;
-  }
-
-  .ast-pattern-search i {
-    position: absolute;
-    bottom: 1px;
-    left: 50%;
-    width: var(--spacing-03);
-    height: var(--spacing-03);
-    transform: translateX(-50%) rotate(135deg);
-    border-right: 1px solid hsl(var(--brand));
-    border-top: 1px solid hsl(var(--brand));
-  }
-
-  .ast-pattern-matches header span {
-    display: grid;
-    width: var(--spacing-06);
-    height: var(--spacing-06);
-    place-items: center;
-    border-radius: 999px;
-    background: hsl(var(--brand) / 0.1);
-    color: hsl(var(--brand));
-    font-size: 9px;
-    letter-spacing: 0;
-  }
-
-  .ast-pattern-matches > div {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    align-items: center;
-    gap: var(--spacing-03);
-    padding: var(--spacing-03) var(--spacing-04);
-  }
-
-  .ast-pattern-matches > div + div { border-top: 1px solid hsl(var(--border)); }
-
-  .ast-pattern-matches > div > i {
-    display: grid;
-    width: var(--spacing-06);
-    height: var(--spacing-06);
-    place-items: center;
-    border-radius: 5px;
-    background: hsl(var(--brand) / 0.1);
-    color: hsl(var(--brand));
-    font-size: 8px;
-    font-style: normal;
-  }
-
-  .ast-pattern-matches > div > span { min-width: 0; }
-  .ast-pattern-matches > div b,
-  .ast-pattern-matches > div small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .ast-pattern-matches > div b { color: hsl(var(--foreground)); font-size: 9px; }
-  .ast-pattern-matches > div small { margin-top: var(--spacing-01); color: hsl(var(--muted-foreground)); font-size: 8px; }
-  .ast-pattern-matches > div em { color: hsl(var(--brand)); font-size: 8px; font-style: normal; font-weight: 750; letter-spacing: 0.08em; }
-
-  @media (min-width: 640px) {
-    .ast-pattern-code { font-size: 11px; }
-    .ast-pattern-matches > div b { font-size: 10px; }
-    .ast-pattern-matches > div small,
-    .ast-pattern-matches > div em { font-size: 9px; }
   }
 
   .bundle-system {

@@ -76,7 +76,7 @@
 
       <article class="best-worlds-core">
         <header>
-          <span class="best-worlds-phase-label">LEAN / SPECIFY</span>
+          <span class="best-worlds-phase-label">LEAN / ENACT</span>
           <h3>Spec-driven vulnerability search</h3>
         </header>
 
@@ -84,27 +84,43 @@
           <section class="best-worlds-code-panel best-worlds-application-code" aria-label="Spring application code with the taint source, transformation, and sink highlighted">
             <pre><code><span>@PostMapping("/preview")</span>
 <span class="code-line-source">String <b class="code-object-method">preview</b>(PreviewDto <b class="code-object-source">dto</b>) &#123;</span>
-<span class="code-line-transform">  var <b class="code-object-data">view</b> = dto.template().strip();</span>
+<span class="code-line-transform">  var <b class="code-object-template">template</b> = dto.template();</span>
+<span class="code-line-transform">  var <b class="code-object-data">view</b> = template.strip();</span>
 <span class="code-line-soft">  audit("preview_requested");</span>
 <span class="code-line-sink">  return <b class="code-object-sink">engine</b>.process(<b class="code-object-data">view</b>,</span>
 <span class="code-line-sink">      context);</span>
 <span>&#125;</span></code></pre>
           </section>
 
-          <div class="best-worlds-bindings" aria-label="The $UNTRUSTED taint mark follows data through String strip">
+          <div class="best-worlds-bindings" aria-label="Metavariable bindings and the taint trace from dto through template and strip to engine process">
             <strong>METAVARIABLES ARE DATA TAINT MARKS</strong>
-            <div class="best-worlds-taint-flow">
-              <code class="best-worlds-taint-node"><b class="code-meta-source">$UNTRUSTED</b><span> = <span class="code-object-source">dto</span></span></code>
-              <span class="best-worlds-taint-model">
-                <b>DEPENDENCY MODEL</b>
-                <code>String#strip &#123; result = this; &#125;</code>
-              </span>
-              <code class="best-worlds-taint-node"><b class="code-meta-source">$UNTRUSTED</b><span> = <span class="code-object-data">view</span></span></code>
+
+            <div class="best-worlds-metavar-map" aria-label="Metavariable mappings">
+              <code><b class="code-meta-method">$METHOD</b><i>=</i><span class="code-object-method">preview</span></code>
+              <code><b class="code-meta-source">$UNTRUSTED</b><i>=</i><span class="code-object-source">dto</span></code>
+              <code><b class="code-meta-sink">$ENGINE</b><i>=</i><span class="code-object-sink">engine</span></code>
+            </div>
+
+            <div class="best-worlds-data-trace" aria-label="Taint trace: dto, template, view, engine process">
+              <code class="best-worlds-trace-node best-worlds-trace-source"><b>dto</b><span>$UNTRUSTED</span></code>
+              <code class="best-worlds-trace-node"><b>template</b><span>template()</span></code>
+              <code class="best-worlds-trace-node"><b>view</b><span>strip()</span></code>
+              <code class="best-worlds-trace-node best-worlds-trace-sink"><b>engine</b><span>process()</span></code>
               <span class="best-worlds-taint-signal" aria-hidden="true"></span>
             </div>
-            <div class="best-worlds-symbol-bindings">
-              <code><b class="code-meta-method">$METHOD</b> = <span class="code-object-method">preview</span></code>
-              <code><b class="code-meta-sink">$ENGINE</b> = <span class="code-object-sink">engine</span></code>
+
+            <div class="best-worlds-dependency-models" aria-label="Dependency models for template and strip">
+              <strong>DEPENDENCY MODELS</strong>
+              <div>
+                <pre><code><span class="best-worlds-model-function"><b>function:</b><wbr /> PreviewDto#template</span>
+<span><b>copy:</b></span>
+<span>  - <b>from:</b> this</span>
+<span>    <b>to:</b> result</span></code></pre>
+                <pre><code><span class="best-worlds-model-function"><b>function:</b><wbr /> java.lang.String#strip</span>
+<span><b>copy:</b></span>
+<span>  - <b>from:</b> this</span>
+<span>    <b>to:</b> result</span></code></pre>
+              </div>
             </div>
           </div>
 

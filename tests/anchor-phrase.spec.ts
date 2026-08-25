@@ -20,7 +20,7 @@ test.describe("landing message", () => {
     await expect(page.locator(".best-worlds-phase-label")).toHaveText([
       "AGENTIC / DISCOVER",
       "CONTINUOUS / SCAN",
-      "LEAN / SPECIFY",
+      "LEAN / ENACT",
     ]);
     await expect(page.getByText("patterns:", { exact: true })).toBeVisible();
     await expect(page.locator(".best-worlds-formal-code code > span").nth(1)).toHaveText("- pattern: |");
@@ -28,14 +28,17 @@ test.describe("landing message", () => {
     await expect(page.getByText("SPRING APPLICATION CODE", { exact: true })).toHaveCount(0);
     await expect(page.getByText("Java pattern", { exact: true })).toHaveCount(0);
     await expect(page.getByText("String preview(PreviewDto dto) {", { exact: true })).toBeVisible();
-    await expect(page.getByText("var view = dto.template().strip();", { exact: true })).toBeVisible();
+    await expect(page.getByText("var template = dto.template();", { exact: true })).toBeVisible();
+    await expect(page.getByText("var view = template.strip();", { exact: true })).toBeVisible();
     await expect(page.getByText("$ENGINE.process($UNTRUSTED, ...);", { exact: true })).toBeVisible();
     await expect(page.locator(".best-worlds-formal-code .code-line-ellipsis")).toHaveText(["..."]);
     await expect(page.getByText("METAVARIABLES ARE DATA TAINT MARKS", { exact: true })).toBeVisible();
-    await expect(page.getByText("String#strip { result = this; }", { exact: true })).toBeVisible();
-    await expect(page.getByText("$UNTRUSTED = dto", { exact: true })).toBeVisible();
-    await expect(page.getByText("$UNTRUSTED = view", { exact: true })).toBeVisible();
-    await expect(page.getByText("$ENGINE = engine", { exact: true })).toBeVisible();
+    await expect(page.getByText("function: PreviewDto#template", { exact: true })).toBeVisible();
+    await expect(page.getByText("function: java.lang.String#strip", { exact: true })).toBeVisible();
+    await expect(page.locator(".best-worlds-metavar-map")).toContainText("$UNTRUSTED=dto");
+    await expect(page.locator(".best-worlds-metavar-map")).toContainText("$METHOD=preview");
+    await expect(page.locator(".best-worlds-metavar-map")).toContainText("$ENGINE=engine");
+    await expect(page.locator(".best-worlds-data-trace .best-worlds-trace-node > b")).toHaveText(["dto", "template", "view", "engine"]);
     await expect(page.locator(".best-worlds-visual")).not.toContainText("$SOURCE");
     await expect(page.locator(".best-worlds-visual")).not.toContainText("$DATA");
     await expect(page.locator(".best-worlds-visual")).not.toContainText("$RETURN");

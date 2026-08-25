@@ -257,10 +257,7 @@
   }
 
   .hero-promise-focus {
-    padding: 0.625rem 0.875rem;
-    border-radius: 0.375rem;
-    background: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
+    color: hsl(var(--primary));
     font-size: 1.125rem;
     font-weight: 700;
     letter-spacing: -0.025em;
@@ -304,7 +301,6 @@
       display: block;
       width: fit-content;
       margin: 0.5rem 0;
-      padding: 0.3rem 0.55rem;
     }
   }
 

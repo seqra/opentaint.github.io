@@ -42,8 +42,8 @@ describe("hero flow field", () => {
     expect(desktopSvg).toContain(" L");
     expect(desktopSvg).not.toContain(" C");
     expect(desktopSvg).toContain('stroke-width="1"');
-    expect(desktopSvg).toContain('stroke-width="2.25"');
-    expect(desktopSvg).toContain('stroke-dasharray="12 30"');
+    expect(desktopSvg).toContain('stroke-width="1.5"');
+    expect(desktopSvg).toContain('stroke-dasharray="8 18"');
     expect(renderHeroFlowFieldSvg(HERO_FLOW_FIELD_MOBILE_HEIGHT)).toContain(
       `viewBox="0 0 1200 ${HERO_FLOW_FIELD_MOBILE_HEIGHT}"`,
     );

@@ -107,21 +107,25 @@
               <code class="best-worlds-trace-node best-worlds-flow-stage best-worlds-flow-stage-3"><b class="code-meta-source">strip()</b><span>returns view</span></code>
               <code class="best-worlds-trace-node best-worlds-flow-stage best-worlds-flow-stage-4"><b class="code-meta-sink">engine.<wbr />process()</b><span>receives view</span></code>
             </div>
+          </div>
 
-            <div class="best-worlds-dependency-models" aria-label="Dependency models for template and strip">
-              <strong>Dependency models</strong>
-              <pre><code><span><b>language:</b> java</span>
+          <section class="best-worlds-dependency-models" aria-label="Dependency models for template and strip">
+            <strong>Dependency models</strong>
+            <div class="best-worlds-dependency-model-grid">
+              <pre aria-label="Dependency model for PreviewDto template"><code><span><b>language:</b> java</span>
 <span><b>passThrough:</b></span>
 <span class="best-worlds-model-template best-worlds-flow-stage best-worlds-flow-stage-2">- <b>function:</b> PreviewDto#template</span>
 <span class="best-worlds-model-template best-worlds-flow-stage best-worlds-flow-stage-2">  <b>copy:</b></span>
 <span class="best-worlds-model-template best-worlds-flow-stage best-worlds-flow-stage-2">  - <b>from:</b> this</span>
-<span class="best-worlds-model-template best-worlds-flow-stage best-worlds-flow-stage-2">    <b>to:</b> result</span>
+<span class="best-worlds-model-template best-worlds-flow-stage best-worlds-flow-stage-2">    <b>to:</b> result</span></code></pre>
+              <pre aria-label="Dependency model for String strip"><code><span><b>language:</b> java</span>
+<span><b>passThrough:</b></span>
 <span class="best-worlds-model-strip best-worlds-flow-stage best-worlds-flow-stage-3">- <b>function:</b> java.lang.String#strip</span>
 <span class="best-worlds-model-strip best-worlds-flow-stage best-worlds-flow-stage-3">  <b>copy:</b></span>
 <span class="best-worlds-model-strip best-worlds-flow-stage best-worlds-flow-stage-3">  - <b>from:</b> this</span>
 <span class="best-worlds-model-strip best-worlds-flow-stage best-worlds-flow-stage-3">    <b>to:</b> result</span></code></pre>
             </div>
-          </div>
+          </section>
 
           <section class="best-worlds-code-panel best-worlds-formal-code" aria-label="SSTI search pattern expressed with metavariables">
             <h4 class="best-worlds-panel-heading">Rule</h4>

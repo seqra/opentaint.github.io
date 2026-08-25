@@ -15,7 +15,7 @@ test.describe("landing message", () => {
     await expect(page.getByText("Try open source taint analysis engine for the AI era", { exact: true })).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "The flexibility of model reasoning", level: 3 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "The consistency of formal program analysis", level: 3 })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Learn a formal spec from a vulnerability, then search for every match", level: 3 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Turn one vulnerability into a formal check that searches the full codebase for every match", level: 3 })).toBeVisible();
     await expect(page.getByText("FORMAL SPECIFICATION", { exact: true })).toHaveCount(0);
     await expect(page.locator(".best-worlds-phase-label")).toHaveText([
       "AGENTIC / DISCOVER",

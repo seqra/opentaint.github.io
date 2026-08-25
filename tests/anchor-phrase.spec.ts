@@ -29,7 +29,7 @@ test.describe("landing message", () => {
     await expect(page.getByText("Java pattern", { exact: true })).toHaveCount(0);
     await expect(page.locator(".best-worlds-application-code .best-worlds-panel-heading")).toHaveText("Code");
     await expect(page.locator(".best-worlds-bindings > strong")).toHaveText("Data flow");
-    await expect(page.locator(".best-worlds-formal-code .best-worlds-panel-heading")).toHaveText("Taint Rule");
+    await expect(page.locator(".best-worlds-formal-code .best-worlds-panel-heading")).toHaveText("Taint rule");
     await expect(page.getByText("String preview(PreviewDto dto) {", { exact: true })).toBeVisible();
     await expect(page.getByText("var template = dto.template();", { exact: true })).toBeVisible();
     await expect(page.getByText("var view = template.strip();", { exact: true })).toBeVisible();

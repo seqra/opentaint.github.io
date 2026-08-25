@@ -1161,9 +1161,11 @@
   }
 
   .best-worlds-dependency-models {
+    display: flex;
     overflow: hidden;
     grid-column: 3;
     grid-row: 1;
+    flex-direction: column;
     border: 0;
     border-left: 1px solid hsl(var(--border));
     border-radius: 0;
@@ -1184,6 +1186,7 @@
 
   .best-worlds-dependency-models pre {
     overflow-x: auto;
+    flex: 1;
     padding: var(--spacing-04) 0;
     color: hsl(var(--foreground));
     font-family: var(--font-mono);
@@ -1270,6 +1273,21 @@
   .code-meta-source,
   .code-meta-sink {
     font-weight: 800;
+  }
+
+  @media (min-width: 601px) {
+    .best-worlds-code-panel pre,
+    .best-worlds-dependency-models pre {
+      display: grid;
+      align-items: center;
+    }
+
+    .best-worlds-code-panel pre > code,
+    .best-worlds-dependency-models pre > code {
+      width: max-content;
+      max-width: 100%;
+      margin-inline: auto;
+    }
   }
 
   @media (max-width: 1100px) {

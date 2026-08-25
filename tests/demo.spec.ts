@@ -237,7 +237,7 @@ test.describe("landing product demonstration", () => {
   test("iPhone SE shows the open-source card as a scroll cue", async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 568 });
     await page.goto("/");
-    const rail = page.getByRole("region", { name: "Find vulnerabilities fast with open-source tools" });
+    const rail = page.getByRole("region", { name: "Run deep local scans without vendor lock-in" });
     await rail.scrollIntoViewIfNeeded();
 
     const visibleNext = await rail.evaluate((element) => {

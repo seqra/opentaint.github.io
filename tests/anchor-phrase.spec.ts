@@ -6,7 +6,7 @@ test.describe("landing message", () => {
 
     await expect(page.locator(".hero-composition .section-banner")).toHaveText("OpenTaint is the open source taint analysis engine for the AI era");
     await expect(page.getByRole("heading", {
-      name: "Turn one agent-led security review into continuous vulnerability checks",
+      name: "Agent-led security reviews. Continuous vulnerability checks.",
       level: 1,
     })).toBeVisible();
     await expect(page.getByText("It turns one-off security findings into unlimited scans across the development lifecycle.", { exact: true })).toBeVisible();
@@ -16,10 +16,13 @@ test.describe("landing message", () => {
     await expect(page.getByText("PreviewController.java", { exact: true })).toBeVisible();
     await expect(page.getByText("String preview(PreviewDto dto) {", { exact: true })).toBeVisible();
     await expect(page.getByText("var view = dto.template().strip();", { exact: true })).toBeVisible();
-    await expect(page.getByText("$ENGINE.process($UNTRUSTED, ...);", { exact: true })).toBeVisible();
+    await expect(page.getByText("$ENGINE.process($DATA, ...);", { exact: true })).toBeVisible();
     await expect(page.locator(".best-worlds-formal-code .code-line-ellipsis")).toHaveText(["..."]);
     await expect(page.getByText("METAVARIABLES ARE DATA TAINT MARKS", { exact: true })).toBeVisible();
-    await expect(page.getByText(/java\.lang\.String#strip\s+this to result/)).toBeVisible();
+    await expect(page.getByText("String#strip { result = this; }", { exact: true })).toBeVisible();
+    await expect(page.getByText("$SOURCE = dto", { exact: true })).toBeVisible();
+    await expect(page.getByText("$DATA = view", { exact: true })).toBeVisible();
+    await expect(page.getByText("$ENGINE = engine", { exact: true })).toBeVisible();
     await expect(page.getByText("Adapts security knowledge to your application", { exact: true })).toBeVisible();
     await expect(page.getByText("Finds every match for each security rule", { exact: true })).toBeVisible();
     await expect(page.getByText("FINDS NEW VULNERABILITY PATTERNS", { exact: true })).toBeVisible();

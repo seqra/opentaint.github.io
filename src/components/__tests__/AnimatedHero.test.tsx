@@ -5,12 +5,13 @@ import { AnimatedHero } from "../AnimatedHero";
 describe("AnimatedHero", () => {
   it("renders the core promise", () => {
     render(<AnimatedHero />);
-    expect(screen.getByRole("heading", { level: 1, name: "Turn one agent-led security review into continuous vulnerability checks" })).toBeVisible();
+    expect(screen.getByRole("heading", { level: 1, name: "Agent-led security reviews. Continuous vulnerability checks." })).toBeVisible();
     expect(document.querySelector(".section-banner")).toHaveTextContent("OpenTaint is the open source taint analysis engine for the AI era");
     expect(document.querySelector(".hero-subline")).toHaveTextContent("It turns one-off security findings into unlimited scans across the development lifecycle.");
     expect(screen.queryByText("The flexibility of model reasoning and the consistency of formal program analysis combined")).not.toBeInTheDocument();
     expect(document.querySelector('img[src="/opentaint-header-light.svg"]')).toHaveAttribute("alt", "OpenTaint");
-    expect(screen.getByText("agent-led security review", { selector: "span" })).toHaveClass("text-primary");
+    expect(screen.getByText("Agent-led", { selector: "span" })).toHaveClass("text-primary");
+    expect(screen.getByText("Continuous", { selector: "span" })).toHaveClass("text-primary");
     expect(document.querySelector(".hero-prefix-slot")).toBeNull();
     expect(document.querySelector(".hero-title-column")).toBeNull();
     expect(document.querySelector(".hero-signal-field")).toBeNull();
@@ -28,7 +29,7 @@ describe("AnimatedHero", () => {
   it("renders the headline without a cursor", () => {
     const { container } = render(<AnimatedHero />);
     expect(container.querySelector("h1 .crt-cursor")).toBeNull();
-    expect(container.querySelector("h1")?.textContent).toBe("Turn one agent-led security review into continuous vulnerability checks");
+    expect(container.querySelector("h1")?.textContent).toBe("Agent-led security reviews. Continuous vulnerability checks.");
   });
 
   it("renders the headline without glow effects", () => {

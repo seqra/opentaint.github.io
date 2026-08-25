@@ -8,7 +8,7 @@ export function AnimatedHero() {
         <img src="/opentaint-header-dark.svg" alt="" aria-hidden="true" className="hero-wordmark mx-0 hidden h-auto w-56 dark:block sm:w-64 lg:mx-auto lg:w-72" />
 
         <h1 className="hero-heading mx-0 mt-12 max-w-[25ch] text-left font-mono font-semibold text-foreground lg:mx-auto lg:text-center">
-          Turn one <span className="text-primary">agent-led security review</span> into continuous vulnerability checks
+          <span className="text-primary">Agent-led</span> security reviews. <span className="text-primary">Continuous</span> vulnerability checks.
         </h1>
 
         <p className="section-banner mx-0 mt-8 max-w-[92ch] text-left lg:mx-auto lg:text-center">

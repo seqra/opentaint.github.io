@@ -12,8 +12,6 @@
         <path class="best-worlds-flow-muted" d="M374 294 H434 M766 294 H826" />
         <path class="best-worlds-flow-active" d="M374 294 H434 M766 294 H826" />
       </svg>
-      <span class="best-worlds-flow-label best-worlds-flow-label-left" aria-hidden="true">SPECIFY</span>
-      <span class="best-worlds-flow-label best-worlds-flow-label-right" aria-hidden="true">SCAN</span>
 
       <article class="best-worlds-side best-worlds-reasoning">
         <header class="best-worlds-side-heading">
@@ -57,34 +55,36 @@
           <section class="best-worlds-code-panel best-worlds-application-code" aria-label="Spring application code with the taint source, transformation, and sink highlighted">
             <header><span>SPRING APPLICATION CODE</span><i>PreviewController.java</i></header>
             <pre><code><span>@PostMapping("/preview")</span>
-<span class="code-line-source">String preview(PreviewDto dto) &#123;</span>
-<span class="code-line-transform">  var view = dto.template().strip();</span>
+<span class="code-line-source">String <b class="code-object-method">preview</b>(PreviewDto <b class="code-object-source">dto</b>) &#123;</span>
+<span class="code-line-transform">  var <b class="code-object-data">view</b> = dto.template().strip();</span>
 <span class="code-line-soft">  audit("preview_requested");</span>
-<span class="code-line-sink">  return engine.process(view,</span>
+<span class="code-line-sink">  return <b class="code-object-sink">engine</b>.process(<b class="code-object-data">view</b>,</span>
 <span class="code-line-sink">      context);</span>
 <span>&#125;</span></code></pre>
           </section>
 
-          <div class="best-worlds-code-key">
-            <strong><span>$UNTRUSTED</span></strong>
-            <b>METAVARIABLES ARE DATA TAINT MARKS</b>
+          <div class="best-worlds-bindings" aria-label="Metavariables bound to objects in the application code">
+            <strong>METAVARIABLES ARE DATA TAINT MARKS</strong>
+            <div>
+              <code><b class="code-meta-method">$METHOD</b> = <span class="code-object-method">preview</span></code>
+              <code><b class="code-meta-source">$SOURCE</b> = <span class="code-object-source">dto</span></code>
+              <code><b class="code-meta-source">$DATA</b> = <span class="code-object-data">view</span></code>
+              <code><b class="code-meta-sink">$ENGINE</b> = <span class="code-object-sink">engine</span></code>
+            </div>
           </div>
 
           <div class="best-worlds-dependency-model" aria-label="Dependency model propagating taint through String strip">
             <strong>DEPENDENCY MODEL</strong>
-            <code>java.lang.String#strip&nbsp;&nbsp; this to result</code>
+            <code>String#strip &#123; result = this; &#125;</code>
           </div>
 
           <section class="best-worlds-code-panel best-worlds-formal-code" aria-label="Formal SSTI specification expressed with metavariables">
-            <header><span>FORMAL SPECIFICATION</span><i>source to sink</i></header>
-            <pre><code><span><em># source</em></span>
-<span>@<b class="code-meta-source">$ANNOTATION</b>(...)</span>
-<span><b class="code-meta-data">$RETURNTYPE</b> <b class="code-meta-data">$METHODNAME</b>(...,</span>
-<span>  <b class="code-meta-data">$TYPE</b> <b class="code-meta-source">$UNTRUSTED</b>, ...) &#123;</span>
+            <header><span>FORMAL SPECIFICATION</span><i>Java pattern</i></header>
+            <pre><code><span><b class="code-meta-data">$RETURN</b> <b class="code-meta-method">$METHOD</b>(...,</span>
+<span>  PreviewDto <b class="code-meta-source">$SOURCE</b>, ...) &#123;</span>
 <span class="code-line-ellipsis">  ...</span>
-<span>&#125;</span>
-<span><em># sink</em></span>
-<span><b class="code-meta-sink">$ENGINE</b>.process(<b class="code-meta-source">$UNTRUSTED</b>, ...);</span></code></pre>
+<span>  <b class="code-meta-sink">$ENGINE</b>.process(<b class="code-meta-source">$DATA</b>, ...);</span>
+<span>&#125;</span></code></pre>
           </section>
         </div>
       </article>

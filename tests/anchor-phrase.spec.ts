@@ -50,6 +50,19 @@ test.describe("landing message", () => {
     await expect(page.locator(".best-worlds-metavar-map")).toContainText("$UNTRUSTED=template");
     await expect(page.locator(".best-worlds-metavar-map")).toContainText("$METHOD=preview");
     await expect(page.locator(".best-worlds-metavar-map")).toContainText("$ENGINE=engine");
+    const equalityOffsets = await page.locator(".best-worlds-metavar-map code > i").evaluateAll((operators) =>
+      operators.map((operator) => operator.getBoundingClientRect().left)
+    );
+    expect(Math.max(...equalityOffsets) - Math.min(...equalityOffsets)).toBeLessThanOrEqual(1);
+    const untrustedGap = await page.locator(".best-worlds-metavar-map code").nth(1).evaluate((mapping) => {
+      const metavariable = mapping.querySelector("b")!;
+      const textRange = document.createRange();
+      textRange.selectNodeContents(metavariable);
+      const text = textRange.getBoundingClientRect();
+      const operator = mapping.querySelector("i")!.getBoundingClientRect();
+      return operator.left - text.right;
+    });
+    expect(untrustedGap).toBeGreaterThanOrEqual(12);
     await expect(page.locator(".best-worlds-data-trace .best-worlds-trace-node > b")).toHaveText(["template", "URLDecoder.decode()", "strip()", "engine.process()"]);
     await expect(page.locator(".best-worlds-data-trace .best-worlds-trace-node > span")).toHaveText(["$UNTRUSTED", "returns decoded", "returns view", "receives view"]);
     await expect(page.locator(".best-worlds-bindings")).not.toContainText("SOURCE");
@@ -175,6 +188,10 @@ test.describe("landing message", () => {
     expect(layout.hasOverflow).toBe(true);
     expect(layout.firstCardFillsMostOfRail).toBe(true);
     expect(layout.nextCardEdgeIsVisible).toBe(true);
+    const mobileEqualityOffsets = await page.locator(".best-worlds-metavar-map code > i").evaluateAll((operators) =>
+      operators.map((operator) => operator.getBoundingClientRect().left)
+    );
+    expect(Math.max(...mobileEqualityOffsets) - Math.min(...mobileEqualityOffsets)).toBeLessThanOrEqual(1);
   });
 
   test("frames the product proof with the real Conductor review", async ({ page }) => {

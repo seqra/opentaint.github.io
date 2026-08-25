@@ -7,67 +7,67 @@ export type FaqItem = {
 export const faqItems: readonly FaqItem[] = [
   {
     question: "What is taint analysis?",
-    answer: "Taint analysis is a static program-analysis technique that tracks data from untrusted sources, through assignments and function calls, to security-sensitive sinks. A finding is reported when tainted data can reach a sink without passing through a valid sanitizer. It is commonly used to detect injection, path traversal, SSRF, XSS, and related data-flow vulnerabilities.",
+    answer: "Taint analysis tracks data from untrusted sources to security-sensitive sinks and shows the path that can cause a vulnerability. Developers use this path to find the cause and make a precise fix for injection, path traversal, SSRF, XSS, and other data-flow vulnerabilities.",
   },
   {
     question: "What is OpenTaint?",
-    answer: "OpenTaint is the open source engine for continuous, lean, and agentic application security testing. It turns knowledge from agent-led security reviews into AST-pattern taint rules and dependency models, then applies that formal specification across the codebase with deterministic program analysis.",
+    answer: "OpenTaint is an open source taint analysis engine that turns one security finding into a formal check for the full codebase. AST-pattern rules and dependency models store the security knowledge, and formal program analysis finds every modeled match in each scan.",
   },
   {
     question: "How does OpenTaint work in CI/CD?",
-    answer: "OpenTaint runs repeatable vulnerability checks on pull requests and CI/CD builds through its GitHub Actions and GitLab CI integrations. It produces SARIF results that can be uploaded to GitHub Code Security or processed by other pipeline tools. The same rules and program models run on every change, so agents do not need to rediscover known application behavior on each review.",
+    answer: "OpenTaint runs the same vulnerability checks in pull requests and CI/CD builds, so teams can use the results as a security gate before release. GitHub Actions and GitLab CI can start the checks with the same rules and dependency models, and OpenTaint creates SARIF results for pipeline tools.",
   },
   {
     question: "Can developers run the same security checks locally and in CI?",
-    answer: "Yes. Developers can run OpenTaint from the CLI, inspect complete source-to-sink traces in SARIF or the report viewer, and refine readable YAML rules locally. GitHub Actions and GitLab CI use the same engine, rules, and program models for repeatable pipeline checks.",
+    answer: "Yes. Developers can use the CLI to find and fix vulnerabilities before they push code, with the same engine, rules, and dependency models as CI. The same inputs produce the same findings in GitHub Actions and GitLab CI. Developers can also examine source-to-sink traces in SARIF or the report viewer and edit YAML rules locally.",
   },
   {
     question: "What vulnerabilities does OpenTaint detect?",
-    answer: "Built-in rules cover more than 20 vulnerability classes, including SQL injection, XSS, SSRF, SpEL injection, open redirects, path traversal, and command injection. Each finding includes the complete reported flow from the application entry point to the dangerous operation.",
+    answer: "OpenTaint detects more than 20 built-in data-flow vulnerability classes, including SQL injection, XSS, SSRF, SpEL injection, SSTI, path traversal, and command injection. OpenTaint agent skills can discover project-specific vulnerability patterns during a security review and turn them into formal checks. The engine then searches the full codebase for every match and shows the complete data-flow path. Developers use this evidence to confirm the risk and fix its cause.",
   },
   {
     question: "What are AST-pattern rules?",
-    answer: "AST-pattern rules describe untrusted inputs, dangerous operations, and sanitizers in a format familiar from Semgrep and ast-grep. AST-pattern matchers identify matching syntax. Formal program analysis then traces tainted values through methods, fields, async code, and persistence layers. Rules remain readable and directly refinable by people and agents.",
+    answer: "AST-pattern rules let people and agents describe untrusted inputs, dangerous operations, and sanitizers with readable syntax similar to Semgrep and ast-grep. OpenTaint translates each AST-pattern rule into a configuration for the taint analyzer and interprets each metavariable as a taint mark on matching data. Formal program analysis then tracks the tainted data through methods, fields, asynchronous code, and persistence layers. This process lets simple rules drive deep data-flow analysis.",
   },
   {
-    question: "Why not just use an LLM agent for security scanning?",
-    answer: "Agent reviews are flexible, but repeated reviews can return different findings and consume model tokens rereading known code. OpenTaint preserves what the agent learned as taint rules and dependency models, then searches the whole codebase deterministically without model inference.",
+    question: "Why not use only an LLM agent for security scanning?",
+    answer: "LLM agents can find new vulnerability patterns and understand application context, but repeated reviews can produce different results and use more model tokens. OpenTaint stores each learned pattern in taint rules and dependency models, then formal program analysis finds every modeled match with local compute.",
   },
   {
     question: "Does OpenTaint require an AI agent?",
-    answer: "No. OpenTaint can scan with its built-in rules and models alone. Agent skills are optional: they review application-specific context and produce or refine rules and dependency models for broader coverage.",
+    answer: "No. Built-in rules and dependency models let OpenTaint scan a project without an agent, while optional agent skills learn application-specific patterns and add formal checks. Teams can start with standard coverage and add project knowledge when necessary.",
   },
   {
     question: "How does OpenTaint secure agent-generated code?",
-    answer: "OpenTaint scans agent-generated and human-written code the same way. In CI, it applies the same rules and models to the current codebase, so known vulnerability patterns remain covered regardless of who wrote the change.",
+    answer: "OpenTaint applies the same formal checks to agent-generated and human-written code, so the author does not change the analysis. Teams can run these checks in CI before the code enters the main branch or a release.",
   },
   {
-    question: "Why is application security the new tech debt?",
-    answer: "Software changes faster than teams can fully review it. Unreviewed attack surfaces and unresolved vulnerabilities accumulate across releases, while attackers can exploit them at any time. OpenTaint turns review knowledge into coverage that can be applied repeatedly instead of rebuilding that context for every review.",
+    question: "Why does application security become technical debt?",
+    answer: "Application security becomes technical debt when software changes faster than teams can review it, because unreviewed attack surfaces and unresolved vulnerabilities increase with each release. OpenTaint stores review knowledge in reusable rules and models, so later scans use this knowledge instead of repeating the same review.",
   },
   {
-    question: "What languages and frameworks are supported?",
-    answer: "OpenTaint supports Java and Kotlin, with deep support for Spring Boot, Spring MVC, and Spring Data. It analyzes bytecode to resolve inheritance, generics, and calls into libraries on the build classpath. Python and Go are on the roadmap.",
+    question: "Which languages and frameworks does OpenTaint support?",
+    answer: "OpenTaint supports Java and Kotlin, with deep analysis for Spring Boot, Spring MVC, and Spring Data. Bytecode analysis resolves inheritance, generics, and library calls, which helps OpenTaint follow data through application code and dependencies. The roadmap includes support for Python and Go.",
   },
   {
-    question: "Why is OpenTaint the most thorough taint analyzer for Spring apps?",
-    answer: "OpenTaint tracks tainted values across methods, fields, async boundaries, and JPA persistence. Its dependency models cover Reactor, Spring WebFlux, Kotlin coroutines, and stored flows that enter through one request and reappear in another.",
+    question: "How does OpenTaint analyze Spring applications?",
+    answer: "OpenTaint follows tainted values through Spring application code, framework calls, asynchronous boundaries, and JPA persistence, with dependency models for Reactor, Spring WebFlux, and Kotlin coroutines. OpenTaint also connects stored data across requests to find long vulnerability paths that cross framework and storage boundaries.",
   },
   {
     question: "How does OpenTaint compare to Semgrep?",
-    answer: "OpenTaint provides open source inter-procedural taint analysis, including cross-endpoint and persistence flows. Its AST-pattern rule format supports existing Semgrep syntax, which makes gradual migration possible.",
+    answer: "Both tools use readable code patterns, but OpenTaint provides open source inter-procedural taint analysis across endpoints and persistence layers. The OpenTaint AST-pattern format supports existing Semgrep syntax, so teams can move compatible rules in stages.",
   },
   {
     question: "How does OpenTaint compare to CodeQL?",
-    answer: "Both tools support inter-procedural taint analysis. OpenTaint is fully open source for public and private code, and uses AST-pattern rules that developers and agents can read and refine without learning QL.",
+    answer: "Both tools provide inter-procedural taint analysis, but OpenTaint uses readable AST-pattern rules instead of QL queries. Developers and agents can edit these rules without QL knowledge, and OpenTaint is fully open source for public and private code.",
   },
   {
     question: "Is OpenTaint free to use?",
-    answer: "Yes. The core engine is Apache 2.0. The CLI, CI integrations, and rules are MIT. You can use them on public, private, and commercial codebases.",
+    answer: "Yes. The core engine uses the Apache 2.0 license, while the CLI, CI integrations, and rules use the MIT license. These licenses permit use on public, private, and commercial codebases, and OpenTaint does not charge a fee for each scan.",
   },
   {
-    question: "Can I use existing Semgrep rules?",
-    answer: "Yes, with some restrictions and OpenTaint-specific extensions. OpenTaint propagates metavariables as data values through inter-procedural analysis, so the same rule can produce different findings than it does in Semgrep.",
+    question: "Can I use existing Semgrep rules with OpenTaint?",
+    answer: "Yes, if the rule uses supported syntax. OpenTaint lets teams reuse existing rule knowledge and reduce migration work, but it also has extensions and restrictions. OpenTaint tracks metavariables across function calls, so its scans can report different findings than Semgrep.",
   },
   {
     question: "Still have questions?",

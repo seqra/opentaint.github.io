@@ -1114,9 +1114,10 @@
   .best-worlds-metavar-map {
     display: grid;
     grid-column: 1;
-    grid-template-columns: 1fr;
+    grid-template-columns: max-content auto minmax(0, 1fr);
     border-right: 1px solid hsl(var(--border));
-    gap: 0;
+    column-gap: var(--spacing-02);
+    row-gap: 0;
     padding: 0;
     background: transparent;
   }
@@ -1124,9 +1125,10 @@
   .best-worlds-metavar-map code {
     display: grid;
     min-width: 0;
-    grid-template-columns: auto auto minmax(0, 1fr);
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
     align-items: center;
-    gap: var(--spacing-02);
+    gap: inherit;
     padding: var(--spacing-03) var(--spacing-04);
     color: hsl(var(--foreground));
     font-size: 13px;
@@ -1142,6 +1144,10 @@
     padding: 0;
     color: hsl(var(--muted-foreground));
     font-weight: 650;
+  }
+
+  .best-worlds-metavar-map code > b {
+    padding-right: var(--spacing-03);
   }
 
   .best-worlds-metavar-map code > i {
@@ -1438,7 +1444,7 @@
 
     .best-worlds-metavar-map {
       grid-column: 1;
-      grid-template-columns: 1fr;
+      grid-template-columns: max-content auto minmax(0, 1fr);
       border-right: 0;
       border-bottom: 1px solid hsl(var(--border));
     }

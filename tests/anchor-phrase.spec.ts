@@ -9,7 +9,9 @@ test.describe("landing message", () => {
       name: "Continuous, lean, and agentic application security testing",
       level: 1,
     })).toBeVisible();
-    await expect(page.getByText("Turn one-off security findings into unlimited scans across the development lifecycle.", { exact: true })).toBeVisible();
+    await expect(page.getByText("Turn one-off security findings into unlimited scans across the development lifecycle", { exact: true })).toBeVisible();
+    await expect(page.locator(".hero-promise-focus")).toHaveText("unlimited scans");
+    await expect(page.locator(".hero-promise-command")).toHaveCount(0);
     await expect(page.getByText("Try open source taint analysis engine for the AI era", { exact: true })).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "The flexibility of model reasoning", level: 3 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "The consistency of formal program analysis", level: 3 })).toBeVisible();

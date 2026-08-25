@@ -7,8 +7,8 @@ describe("AnimatedHero", () => {
     render(<AnimatedHero />);
     expect(screen.getByRole("heading", { level: 1, name: "Continuous, lean, and agentic application security testing" })).toBeVisible();
     expect(document.querySelector(".section-banner")).toHaveTextContent("The open source taint analysis engine for the AI era");
-    expect(document.querySelector(".hero-subline")).toHaveTextContent("Turn one-off security findings into unlimited scans across the development lifecycle");
-    expect(screen.getByText("unlimited scans", { exact: true })).toHaveClass("hero-promise-focus");
+    expect(document.querySelector(".hero-subline")).toHaveTextContent("Turn frontier model reasoning into reliable static-analysis checks that detect vulnerabilities at low cost");
+    expect(screen.getByText("reliable static-analysis checks", { exact: true })).toHaveClass("hero-promise-focus");
     expect(document.querySelector(".hero-promise-command")).toBeNull();
     expect(screen.queryByText("The flexibility of model reasoning and the consistency of formal program analysis combined")).not.toBeInTheDocument();
     expect(document.querySelector('img[src="/opentaint-header-light.svg"]')).toHaveAttribute("alt", "OpenTaint");

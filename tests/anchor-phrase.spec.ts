@@ -95,7 +95,7 @@ test.describe("landing message", () => {
         searchStoryRunsLeftToRight: code.left < models.left && models.left < pattern.left,
         searchStoryTopOffset: Math.max(code.top, models.top, pattern.top) - Math.min(code.top, models.top, pattern.top),
         searchStoryHeightOffset: Math.max(code.height, models.height, pattern.height) - Math.min(code.height, models.height, pattern.height),
-        traceBelowStory: trace.top > Math.max(code.bottom, models.bottom, pattern.bottom),
+        traceBelowStory: trace.top >= Math.max(code.bottom, models.bottom, pattern.bottom),
         traceSpansStory: Math.abs(trace.left - code.left) <= 1 && Math.abs(trace.right - pattern.right) <= 1,
       };
     });

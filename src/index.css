@@ -964,29 +964,6 @@
     background: hsl(var(--code-bg));
   }
 
-  .best-worlds-code-panel > header {
-    display: flex;
-    min-height: var(--spacing-09);
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid hsl(var(--border));
-    background: hsl(var(--code-header));
-    padding-inline: var(--spacing-04);
-    font-family: var(--font-mono);
-    font-size: 12px;
-    font-weight: 750;
-    letter-spacing: 0.08em;
-  }
-
-  .best-worlds-code-panel > header span {
-    color: hsl(var(--foreground));
-  }
-
-  .best-worlds-code-panel > header i {
-    color: hsl(var(--muted-foreground));
-    font-style: normal;
-  }
-
   .best-worlds-code-panel pre {
     overflow: hidden;
     padding: var(--spacing-04) 0;
@@ -1004,16 +981,12 @@
   }
 
   .best-worlds-application-code {
-    flex: 1.08;
+    flex: 1;
   }
 
   .best-worlds-formal-code {
-    flex: 0.92;
+    flex: 1;
     border-color: hsl(var(--brand) / 0.46);
-  }
-
-  .best-worlds-formal-code > header span {
-    color: hsl(var(--brand));
   }
 
   .best-worlds-code-panel .code-line-source {
@@ -1068,6 +1041,11 @@
 
   .code-object-sink {
     color: hsl(var(--brand));
+  }
+
+  .code-spec-key {
+    color: hsl(var(--brand));
+    font-weight: 800;
   }
 
   .best-worlds-bindings {
@@ -1198,14 +1176,6 @@
 
     .best-worlds-code-panel pre {
       font-size: 12px;
-    }
-
-    .best-worlds-code-panel > header {
-      min-height: auto;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: var(--spacing-02);
-      padding-block: var(--spacing-03);
     }
 
     .best-worlds-code-panel code > span {

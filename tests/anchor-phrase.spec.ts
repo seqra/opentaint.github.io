@@ -13,7 +13,11 @@ test.describe("landing message", () => {
     await expect(page.getByRole("heading", { name: "The flexibility of model reasoning", level: 3 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "The consistency of formal program analysis", level: 3 })).toBeVisible();
     await expect(page.getByText("FORMAL SPECIFICATION", { exact: true })).toBeVisible();
-    await expect(page.getByText("PreviewController.java", { exact: true })).toBeVisible();
+    await expect(page.getByText("patterns:", { exact: true })).toBeVisible();
+    await expect(page.locator(".best-worlds-formal-code code > span").nth(1)).toHaveText("- pattern: |");
+    await expect(page.getByText("PreviewController.java", { exact: true })).toHaveCount(0);
+    await expect(page.getByText("SPRING APPLICATION CODE", { exact: true })).toHaveCount(0);
+    await expect(page.getByText("Java pattern", { exact: true })).toHaveCount(0);
     await expect(page.getByText("String preview(PreviewDto dto) {", { exact: true })).toBeVisible();
     await expect(page.getByText("var view = dto.template().strip();", { exact: true })).toBeVisible();
     await expect(page.getByText("$ENGINE.process($DATA, ...);", { exact: true })).toBeVisible();

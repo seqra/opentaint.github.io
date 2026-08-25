@@ -48,12 +48,11 @@
       <article class="best-worlds-core">
         <header>
           <span>LEAN / SPECIFY</span>
-          <strong>CODE TO FORMAL SPECIFICATION</strong>
+          <strong>FORMAL SPECIFICATION</strong>
         </header>
 
         <div class="best-worlds-code-map">
           <section class="best-worlds-code-panel best-worlds-application-code" aria-label="Spring application code with the taint source, transformation, and sink highlighted">
-            <header><span>SPRING APPLICATION CODE</span><i>PreviewController.java</i></header>
             <pre><code><span>@PostMapping("/preview")</span>
 <span class="code-line-source">String <b class="code-object-method">preview</b>(PreviewDto <b class="code-object-source">dto</b>) &#123;</span>
 <span class="code-line-transform">  var <b class="code-object-data">view</b> = dto.template().strip();</span>
@@ -79,12 +78,13 @@
           </div>
 
           <section class="best-worlds-code-panel best-worlds-formal-code" aria-label="Formal SSTI specification expressed with metavariables">
-            <header><span>FORMAL SPECIFICATION</span><i>Java pattern</i></header>
-            <pre><code><span><b class="code-meta-data">$RETURN</b> <b class="code-meta-method">$METHOD</b>(...,</span>
-<span>  PreviewDto <b class="code-meta-source">$SOURCE</b>, ...) &#123;</span>
-<span class="code-line-ellipsis">  ...</span>
-<span>  <b class="code-meta-sink">$ENGINE</b>.process(<b class="code-meta-source">$DATA</b>, ...);</span>
-<span>&#125;</span></code></pre>
+            <pre><code><span><b class="code-spec-key">patterns:</b></span>
+<span>  - <b class="code-spec-key">pattern:</b> |</span>
+<span>      <b class="code-meta-data">$RETURN</b> <b class="code-meta-method">$METHOD</b>(...,</span>
+<span>        PreviewDto <b class="code-meta-source">$SOURCE</b>, ...) &#123;</span>
+<span class="code-line-ellipsis">        ...</span>
+<span>        <b class="code-meta-sink">$ENGINE</b>.process(<b class="code-meta-source">$DATA</b>, ...);</span>
+<span>      &#125;</span></code></pre>
           </section>
         </div>
       </article>

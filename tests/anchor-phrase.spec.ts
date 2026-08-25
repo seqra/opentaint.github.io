@@ -99,7 +99,7 @@ test.describe("landing message", () => {
 
     await expect(page.getByText("As AI generates more code, security risk and review cost compound", { exact: true })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Find vulnerabilities LLMs miss using only local compute", level: 2 })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Turn one-off review into unlimited scans", level: 2 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Turn one-off security review into unlimited scans", level: 2 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Fast scans. Fewer false alarms. Fewer missed findings" })).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "Open source, batteries included", level: 3 })).toBeVisible();
     await expect(page.getByText(/symbolic execution/i)).toHaveCount(0);
@@ -109,7 +109,7 @@ test.describe("landing message", () => {
     await page.goto("/");
 
     const workflow = page.getByRole("region", {
-      name: "Turn one-off review into unlimited scans",
+      name: "Turn one-off security review into unlimited scans",
     });
     await expect(workflow.getByRole("heading", { name: "Discover", exact: true })).toBeVisible();
     await expect(workflow.getByRole("heading", { name: "Enact", exact: true })).toBeVisible();

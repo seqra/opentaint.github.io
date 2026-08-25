@@ -7,12 +7,12 @@ describe("ContinuousSecurity", () => {
     render(<ContinuousSecurity />);
 
     const workflow = screen.getByRole("heading", { name: "Triage", level: 3 }).closest(".workflow-card-grid");
-    const promise = screen.getByRole("heading", { name: "Turn one-off review into unlimited scans", level: 2 });
+    const promise = screen.getByRole("heading", { name: "Turn one-off security review into unlimited scans", level: 2 });
     const firstAdvantage = screen.getByRole("heading", { name: "Practical SOTA static analysis", level: 3 });
     const valueHeading = screen.getByRole("heading", { name: "Find vulnerabilities LLMs miss using only local compute", level: 2 });
 
     expect(valueHeading).toBeVisible();
-    expect(promise).toHaveTextContent("Turn one-off review into unlimited scans");
+    expect(promise).toHaveTextContent("Turn one-off security review into unlimited scans");
     expect(screen.queryByText("The flexibility of model reasoning and the consistency of formal program analysis combined")).not.toBeInTheDocument();
     expect(valueHeading.compareDocumentPosition(firstAdvantage) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(firstAdvantage.compareDocumentPosition(promise) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();

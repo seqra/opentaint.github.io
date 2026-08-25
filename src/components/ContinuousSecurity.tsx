@@ -268,7 +268,7 @@ export function ContinuousSecurity() {
         </div>
 
         <div className="mx-auto mt-16 max-w-[72rem] text-center">
-          <h2 id="continuous-security-heading" className="section-heading">Turn one-off review into unlimited scans</h2>
+          <h2 id="continuous-security-heading" className="section-heading">Turn one-off security review into unlimited scans</h2>
         </div>
 
         <div className="workflow-card-grid mobile-card-rail mt-12 grid gap-4 md:grid-cols-2 min-[1440px]:-mx-12 min-[1440px]:grid-cols-4" role="region" aria-label="OpenTaint workflow" tabIndex={0}>

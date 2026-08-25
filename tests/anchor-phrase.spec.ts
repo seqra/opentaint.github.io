@@ -15,7 +15,7 @@ test.describe("landing message", () => {
     await expect(page.getByText("Try open source taint analysis engine for the AI era", { exact: true })).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "The flexibility of model reasoning", level: 3 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "The consistency of formal program analysis", level: 3 })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Learn formal spec and Search vulnerability under it", level: 3 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Learn a formal spec from a vulnerability, then search for every match", level: 3 })).toBeVisible();
     await expect(page.getByText("FORMAL SPECIFICATION", { exact: true })).toHaveCount(0);
     await expect(page.locator(".best-worlds-phase-label")).toHaveText([
       "AGENTIC / DISCOVER",
@@ -64,14 +64,20 @@ test.describe("landing message", () => {
     await expect(page.locator(".best-worlds-visual")).not.toContainText("$SOURCE");
     await expect(page.locator(".best-worlds-visual")).not.toContainText("$DATA");
     await expect(page.locator(".best-worlds-visual")).not.toContainText("$RETURN");
-    await expect(page.getByText("Adapts security knowledge to your application", { exact: true })).toBeVisible();
-    await expect(page.getByText("Finds every match for each security rule", { exact: true })).toBeVisible();
-    await expect(page.getByText("FINDS NEW VULNERABILITY PATTERNS", { exact: true })).toBeVisible();
-    await expect(page.getByText("UNDERSTANDS APPLICATION CONTEXT", { exact: true })).toBeVisible();
-    await expect(page.getByText("UNDERSTANDS CODE DEPENDENCIES", { exact: true })).toBeVisible();
-    await expect(page.getByText("SEARCHES ALL MODELED PATHS", { exact: true })).toBeVisible();
-    await expect(page.getByText("GIVES PREDICTABLE RESULTS", { exact: true })).toBeVisible();
-    await expect(page.getByText("RUNS ON LOCAL COMPUTE", { exact: true })).toBeVisible();
+    await expect(page.getByText("Find new vulnerabilities and show which ones matter", { exact: true })).toBeVisible();
+    await expect(page.getByText("Find every instance of a known vulnerability pattern", { exact: true })).toBeVisible();
+    await expect(page.getByText("LEARNS NEW VULNERABILITY PATTERNS", { exact: true })).toBeVisible();
+    await expect(page.getByText("Finds vulnerabilities that existing checks miss.", { exact: true })).toBeVisible();
+    await expect(page.getByText("SHOWS WHICH FINDINGS CAN CAUSE HARM", { exact: true })).toBeVisible();
+    await expect(page.getByText("Uses architecture, trust boundaries, and intended behavior.", { exact: true })).toBeVisible();
+    await expect(page.getByText("FOLLOWS RISK THROUGH DEPENDENCIES", { exact: true })).toBeVisible();
+    await expect(page.getByText("Finds vulnerable paths across frameworks, libraries, and APIs.", { exact: true })).toBeVisible();
+    await expect(page.getByText("COVERS EVERY MODELED PATH", { exact: true })).toBeVisible();
+    await expect(page.getByText("Checks the full program model instead of a sample.", { exact: true })).toBeVisible();
+    await expect(page.getByText("REPRODUCES EVERY RESULT", { exact: true })).toBeVisible();
+    await expect(page.getByText("The same code and rule produce the same findings.", { exact: true })).toBeVisible();
+    await expect(page.getByText("RUNS ON HARDWARE YOU CONTROL", { exact: true })).toBeVisible();
+    await expect(page.getByText("Run unlimited scans at CPU cost and keep sensitive code private.", { exact: true })).toBeVisible();
     await expect(page.getByText("CREATES DURABLE CHECKS", { exact: true })).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "Spec-driven code search", level: 3 })).toHaveCount(0);
     await expect(page.getByText("CODE CONTEXT + SECURITY REVIEW", { exact: true })).toHaveCount(0);
@@ -140,6 +146,35 @@ test.describe("landing message", () => {
     expect(layout.visualTop).toBeLessThan(layout.viewportHeight - 24);
     expect(layout.visualTop).toBeGreaterThan(layout.viewportHeight - 64);
     expect(layout.visualHeight).toBeGreaterThanOrEqual(layout.viewportHeight - 80);
+  });
+
+  test("makes the under-hero comparison swipeable on mobile", async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto("/");
+
+    const rail = page.locator(".best-worlds-powers");
+    const visual = page.locator(".best-worlds-visual");
+    await expect(visual).toHaveCSS("border-top-width", "0px");
+    await expect(visual).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    await expect(visual).toHaveCSS("padding-left", "0px");
+    await expect(visual).toHaveCSS("box-shadow", "none");
+    await expect(rail).toHaveCSS("overflow-x", "auto");
+    await expect(rail).toHaveCSS("scroll-snap-type", "inline mandatory");
+    const layout = await rail.evaluate((element) => {
+      const cards = Array.from(element.children) as HTMLElement[];
+      const railBox = element.getBoundingClientRect();
+      const firstBox = cards[0].getBoundingClientRect();
+      const secondBox = cards[1].getBoundingClientRect();
+      return {
+        hasOverflow: element.scrollWidth > element.clientWidth,
+        firstCardFillsMostOfRail: firstBox.width >= railBox.width * 0.8,
+        nextCardEdgeIsVisible: secondBox.left < railBox.right,
+      };
+    });
+
+    expect(layout.hasOverflow).toBe(true);
+    expect(layout.firstCardFillsMostOfRail).toBe(true);
+    expect(layout.nextCardEdgeIsVisible).toBe(true);
   });
 
   test("frames the product proof with the real Conductor review", async ({ page }) => {

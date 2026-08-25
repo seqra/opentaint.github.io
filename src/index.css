@@ -1390,6 +1390,20 @@
   }
 
   @media (max-width: 600px) {
+    .best-worlds-visual {
+      overflow: visible;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      padding: 0;
+      box-shadow: none;
+    }
+
+    .best-worlds-powers.mobile-card-rail {
+      grid-auto-columns: calc(100% - var(--spacing-06));
+      gap: var(--spacing-03);
+    }
+
     .best-worlds-code-map {
       padding: 0;
     }

@@ -3,20 +3,20 @@
     The flexibility of model reasoning and the consistency of formal program analysis combined
   </h2>
   <p id="best-worlds-description" class="sr-only">
-    OpenTaint combines model reasoning with formal program analysis, then uses readable specifications to search application code for vulnerabilities.
+    Model reasoning finds new vulnerabilities. Formal program analysis searches for every match.
   </p>
 
   <div class="best-worlds-inner">
     <div class="best-worlds-visual">
-      <div class="best-worlds-powers">
-        <article class="best-worlds-side best-worlds-reasoning">
+      <div class="best-worlds-powers mobile-card-rail" role="region" aria-label="Model reasoning and formal program analysis" tabindex="0">
+        <article class="best-worlds-side best-worlds-reasoning mobile-card-rail-item">
           <header class="best-worlds-side-heading">
             <span class="best-worlds-phase-label">AGENTIC / DISCOVER</span>
             <h3>The flexibility of<br /><strong>model reasoning</strong></h3>
           </header>
 
           <p class="best-worlds-outcome best-worlds-reasoning-outcome">
-            Adapts security knowledge to your application
+            Find new vulnerabilities and show which ones matter
           </p>
 
           <div class="best-worlds-values" aria-label="Values of model reasoning">
@@ -24,31 +24,31 @@
               <span class="best-worlds-value-symbol" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none"><path d="M5 9a7 7 0 0 1 14 0v2M8 10a4 4 0 0 1 8 0v3M12 10v7M7 14c0 3 1 5 3 7M17 15c0 2-.5 4-1.5 6" /></svg>
               </span>
-              <span><b>FINDS NEW VULNERABILITY PATTERNS</b><small>Identifies dangerous behavior that was not defined before the review.</small></span>
+              <span><b>LEARNS NEW VULNERABILITY PATTERNS</b><small>Finds vulnerabilities that existing checks miss.</small></span>
             </div>
             <div>
               <span class="best-worlds-value-symbol" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none"><path d="M8 4H4v4M16 4h4v4M20 16v4h-4M8 20H4v-4" /><circle cx="12" cy="12" r="3" /></svg>
               </span>
-              <span><b>UNDERSTANDS APPLICATION CONTEXT</b><small>Uses architecture, trust boundaries, and intended behavior to assess a finding.</small></span>
+              <span><b>SHOWS WHICH FINDINGS CAN CAUSE HARM</b><small>Uses architecture, trust boundaries, and intended behavior.</small></span>
             </div>
             <div>
               <span class="best-worlds-value-symbol" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="4" width="6" height="5" rx="1" /><rect x="14.5" y="4" width="6" height="5" rx="1" /><rect x="9" y="15" width="6" height="5" rx="1" /><path d="M6.5 9v2.5H17.5V9M12 11.5V15" /></svg>
               </span>
-              <span><b>UNDERSTANDS CODE DEPENDENCIES</b><small>Uses knowledge of frameworks, libraries, and APIs to explain security behavior.</small></span>
+              <span><b>FOLLOWS RISK THROUGH DEPENDENCIES</b><small>Finds vulnerable paths across frameworks, libraries, and APIs.</small></span>
             </div>
           </div>
         </article>
 
-        <article class="best-worlds-side best-worlds-analysis">
+        <article class="best-worlds-side best-worlds-analysis mobile-card-rail-item">
           <header class="best-worlds-side-heading">
             <span class="best-worlds-phase-label">CONTINUOUS / SCAN</span>
             <h3>The consistency of<br /><strong>formal program analysis</strong></h3>
           </header>
 
           <p class="best-worlds-outcome best-worlds-analysis-outcome">
-            Finds every match for each security rule
+            Find every instance of a known vulnerability pattern
           </p>
 
           <div class="best-worlds-values" aria-label="Values of formal program analysis">
@@ -56,19 +56,19 @@
               <span class="best-worlds-value-symbol" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none"><circle cx="5" cy="6" r="2" /><circle cx="18.5" cy="5" r="2" /><circle cx="12" cy="18" r="2" /><path d="M7 6h4l2-1h3.5M6.5 7.5l4.25 8.75M17.5 7l-4.25 9.25" /></svg>
               </span>
-              <span><b>SEARCHES ALL MODELED PATHS</b><small>Checks each reachable path in the program model.</small></span>
+              <span><b>COVERS EVERY MODELED PATH</b><small>Checks the full program model instead of a sample.</small></span>
             </div>
             <div>
               <span class="best-worlds-value-symbol" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none"><path d="M5 9h14M5 15h14" /></svg>
               </span>
-              <span><b>GIVES PREDICTABLE RESULTS</b><small>The same code and specification give the same findings.</small></span>
+              <span><b>REPRODUCES EVERY RESULT</b><small>The same code and rule produce the same findings.</small></span>
             </div>
             <div>
               <span class="best-worlds-value-symbol" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none"><rect x="5" y="5" width="14" height="14" rx="2" /><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3M9 9h6v6H9z" /></svg>
               </span>
-              <span><b>RUNS ON LOCAL COMPUTE</b><small>Each scan uses standard CPU resources and does not require an external service.</small></span>
+              <span><b>RUNS ON HARDWARE YOU CONTROL</b><small>Run unlimited scans at CPU cost and keep sensitive code private.</small></span>
             </div>
           </div>
         </article>
@@ -77,7 +77,7 @@
       <article class="best-worlds-core">
         <header>
           <span class="best-worlds-phase-label">LEAN / ENACT</span>
-          <h3><strong class="best-worlds-title-learn">Learn</strong> formal spec and <strong class="best-worlds-title-search">Search</strong> vulnerability under it</h3>
+          <h3><strong class="best-worlds-title-learn">Learn</strong> a formal spec from a vulnerability, then <strong class="best-worlds-title-search">search</strong> for every match</h3>
         </header>
 
         <div class="best-worlds-code-map">

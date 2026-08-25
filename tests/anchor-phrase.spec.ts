@@ -15,11 +15,12 @@ test.describe("landing message", () => {
     await expect(page.getByText("Try open source taint analysis engine for the AI era", { exact: true })).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "The flexibility of model reasoning", level: 3 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "The consistency of formal program analysis", level: 3 })).toBeVisible();
-    await expect(page.getByText("FORMAL SPECIFICATION", { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Spec-driven vulnerability search", level: 3 })).toBeVisible();
+    await expect(page.getByText("FORMAL SPECIFICATION", { exact: true })).toHaveCount(0);
     await expect(page.locator(".best-worlds-phase-label")).toHaveText([
       "AGENTIC / DISCOVER",
-      "LEAN / SPECIFY",
       "CONTINUOUS / SCAN",
+      "LEAN / SPECIFY",
     ]);
     await expect(page.getByText("patterns:", { exact: true })).toBeVisible();
     await expect(page.locator(".best-worlds-formal-code code > span").nth(1)).toHaveText("- pattern: |");
@@ -55,6 +56,25 @@ test.describe("landing message", () => {
     await expect(page.locator(".best-worlds-visual")).not.toContainText("→");
     await expect(page.locator(".best-worlds-toolbar")).toHaveCount(0);
     await expect(page.locator(".best-worlds-scroll-cue")).toHaveCount(0);
+    const visualOrder = await page.locator(".best-worlds-visual").evaluate((visual) => {
+      const box = (selector: string) => visual.querySelector(selector)!.getBoundingClientRect();
+      const reasoning = box(".best-worlds-reasoning");
+      const analysis = box(".best-worlds-analysis");
+      const core = box(".best-worlds-core");
+      const code = box(".best-worlds-application-code");
+      const trace = box(".best-worlds-bindings");
+      const pattern = box(".best-worlds-formal-code");
+      return {
+        topCardOffset: Math.abs(reasoning.top - analysis.top),
+        coreBelowCards: core.top > Math.max(reasoning.bottom, analysis.bottom),
+        searchStoryRunsLeftToRight: code.left < trace.left && trace.left < pattern.left,
+        searchStoryTopOffset: Math.max(code.top, trace.top, pattern.top) - Math.min(code.top, trace.top, pattern.top),
+      };
+    });
+    expect(visualOrder.topCardOffset).toBeLessThanOrEqual(1);
+    expect(visualOrder.coreBelowCards).toBe(true);
+    expect(visualOrder.searchStoryRunsLeftToRight).toBe(true);
+    expect(visualOrder.searchStoryTopOffset).toBeLessThanOrEqual(1);
     const smallestVisualType = await page.locator(".best-worlds-visual").evaluate((visual) =>
       Math.min(...Array.from(visual.querySelectorAll("*")).filter((element) =>
         element.textContent?.trim() && (element as HTMLElement).offsetParent !== null
@@ -84,8 +104,8 @@ test.describe("landing message", () => {
 
     expect(Math.abs(layout.heroBottom - layout.visualTop)).toBeLessThanOrEqual(1);
     expect(layout.visualTop).toBeLessThan(layout.viewportHeight);
-    expect(layout.visualTop).toBeLessThan(layout.viewportHeight - 96);
-    expect(layout.visualTop).toBeGreaterThan(layout.viewportHeight - 160);
+    expect(layout.visualTop).toBeLessThan(layout.viewportHeight - 24);
+    expect(layout.visualTop).toBeGreaterThan(layout.viewportHeight - 64);
     expect(layout.visualHeight).toBeGreaterThanOrEqual(layout.viewportHeight - 80);
   });
 

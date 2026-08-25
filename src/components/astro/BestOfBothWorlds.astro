@@ -82,13 +82,13 @@
 
         <div class="best-worlds-code-map">
           <section class="best-worlds-code-panel best-worlds-application-code" aria-label="Spring application code with the taint source, transformation, and sink highlighted">
+            <h4 class="best-worlds-panel-heading">CODE</h4>
             <pre><code><span>@PostMapping("/preview")</span>
 <span class="code-line-source">String <b class="code-object-method">preview</b>(PreviewDto <b class="code-object-source">dto</b>) &#123;</span>
 <span class="code-line-transform">  var <b class="code-object-template">template</b> = dto.template();</span>
 <span class="code-line-transform">  var <b class="code-object-data">view</b> = template.strip();</span>
 <span class="code-line-soft">  audit("preview_requested");</span>
-<span class="code-line-sink">  return <b class="code-object-sink">engine</b>.process(<b class="code-object-data">view</b>,</span>
-<span class="code-line-sink">      context);</span>
+<span class="code-line-sink">  return <b class="code-object-sink">engine</b>.process(<b class="code-object-data">view</b>, context);</span>
 <span>&#125;</span></code></pre>
           </section>
 
@@ -102,11 +102,10 @@
             </div>
 
             <div class="best-worlds-data-trace" aria-label="Taint trace: dto, template, view, engine process">
-              <code class="best-worlds-trace-node best-worlds-trace-source"><b>dto</b><span>$UNTRUSTED</span></code>
-              <code class="best-worlds-trace-node"><b>template</b><span>template()</span></code>
-              <code class="best-worlds-trace-node"><b>view</b><span>strip()</span></code>
-              <code class="best-worlds-trace-node best-worlds-trace-sink"><b>engine</b><span>process()</span></code>
-              <span class="best-worlds-taint-signal" aria-hidden="true"></span>
+              <code class="best-worlds-trace-node best-worlds-trace-source"><span class="best-worlds-trace-role">TAINT SOURCE</span><b>dto</b><span>$UNTRUSTED</span></code>
+              <code class="best-worlds-trace-node"><span class="best-worlds-trace-role">PASS-THROUGH</span><b>template()</b><span>result: template</span></code>
+              <code class="best-worlds-trace-node"><span class="best-worlds-trace-role">PASS-THROUGH</span><b>strip()</b><span>result: view</span></code>
+              <code class="best-worlds-trace-node best-worlds-trace-sink"><span class="best-worlds-trace-role">TAINT SINK</span><b>engine.process</b><span>input: view</span></code>
             </div>
 
             <div class="best-worlds-dependency-models" aria-label="Dependency models for template and strip">
@@ -125,10 +124,10 @@
           </div>
 
           <section class="best-worlds-code-panel best-worlds-formal-code" aria-label="SSTI search pattern expressed with metavariables">
+            <h4 class="best-worlds-panel-heading">RULE</h4>
             <pre><code><span><b class="code-spec-key">patterns:</b></span>
 <span>  - <b class="code-spec-key">pattern:</b> |</span>
-<span>      <b class="code-meta-method">$METHOD</b>(...,</span>
-<span>        PreviewDto <b class="code-meta-source">$UNTRUSTED</b>, ...) &#123;</span>
+<span>      <b class="code-meta-method">$METHOD</b>(..., PreviewDto <b class="code-meta-source">$UNTRUSTED</b>, ...) &#123;</span>
 <span class="code-line-ellipsis">        ...</span>
 <span>        <b class="code-meta-sink">$ENGINE</b>.process(<b class="code-meta-source">$UNTRUSTED</b>, ...);</span>
 <span>      &#125;</span></code></pre>

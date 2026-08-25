@@ -760,13 +760,6 @@
   .best-worlds-reasoning { border-color: hsl(var(--agent) / 0.48); }
   .best-worlds-analysis { border-color: hsl(var(--brand) / 0.48); }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .best-worlds-taint-signal {
-      display: block;
-      animation: taint-mark-flow 2.8s ease-in-out infinite;
-    }
-  }
-
   .best-worlds-side,
   .best-worlds-core { align-self: stretch; }
 
@@ -952,18 +945,36 @@
   .best-worlds-code-panel {
     position: relative;
     z-index: 1;
+    display: flex;
     overflow: hidden;
+    flex-direction: column;
     border: 1px solid hsl(var(--border));
     border-radius: 10px;
     background: hsl(var(--code-bg));
   }
 
+  .best-worlds-panel-heading,
+  .best-worlds-bindings > strong {
+    display: flex;
+    min-height: 35px;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid hsl(var(--border));
+    color: hsl(var(--foreground));
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+    text-align: center;
+  }
+
   .best-worlds-code-panel pre {
     overflow: hidden;
+    flex: 1;
     padding: var(--spacing-04) 0;
     color: hsl(var(--foreground));
     font-family: var(--font-mono);
-    font-size: 13px;
+    font-size: 12.5px;
     line-height: 1.5;
   }
 
@@ -1055,12 +1066,7 @@
   }
 
   .best-worlds-bindings > strong {
-    display: block;
-    border-bottom: 1px solid hsl(var(--border));
     padding: var(--spacing-03) var(--spacing-04);
-    color: hsl(var(--foreground));
-    font-size: 12px;
-    letter-spacing: 0.08em;
   }
 
   .best-worlds-metavar-map {
@@ -1123,7 +1129,7 @@
     z-index: 1;
     display: flex;
     min-width: 0;
-    min-height: 52px;
+    min-height: 72px;
     align-items: center;
     flex-direction: column;
     gap: var(--spacing-02);
@@ -1133,20 +1139,32 @@
     background: hsl(var(--code-bg));
     color: hsl(var(--foreground));
     font-size: 12px;
-    white-space: nowrap;
   }
 
   .best-worlds-trace-node > b {
     color: hsl(var(--agent));
     font-size: 13px;
+    white-space: nowrap;
   }
 
   .best-worlds-trace-node > span {
     color: hsl(var(--muted-foreground));
+    text-align: center;
+  }
+
+  .best-worlds-trace-node > .best-worlds-trace-role {
+    color: hsl(var(--muted-foreground));
+    font-size: 12px;
+    font-weight: 750;
+    letter-spacing: 0.04em;
   }
 
   .best-worlds-trace-source {
     border-color: hsl(var(--agent) / 0.62);
+  }
+
+  .best-worlds-trace-source > .best-worlds-trace-role {
+    color: hsl(var(--agent));
   }
 
   .best-worlds-trace-sink {
@@ -1157,17 +1175,8 @@
     color: hsl(var(--brand));
   }
 
-  .best-worlds-taint-signal {
-    position: absolute;
-    z-index: 2;
-    top: calc(50% - 4px);
-    left: 12%;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: hsl(var(--agent));
-    box-shadow: 0 0 0 3px hsl(var(--code-bg));
-    opacity: 0;
+  .best-worlds-trace-sink > .best-worlds-trace-role {
+    color: hsl(var(--brand));
   }
 
   .best-worlds-dependency-models {
@@ -1321,10 +1330,6 @@
       width: 2px;
       height: auto;
       background: linear-gradient(180deg, hsl(var(--agent) / 0.72), hsl(var(--agent) / 0.45) 68%, hsl(var(--brand) / 0.58));
-    }
-
-    .best-worlds-taint-signal {
-      display: none;
     }
 
     .best-worlds-dependency-models > div {
@@ -3285,12 +3290,6 @@
 
 @keyframes trace-flow {
   to { stroke-dashoffset: -16; }
-}
-
-@keyframes taint-mark-flow {
-  0% { left: 12%; opacity: 0; }
-  12%, 88% { opacity: 1; }
-  100% { left: 86%; opacity: 0; }
 }
 
 @keyframes balance-breathe {

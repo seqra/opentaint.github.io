@@ -27,9 +27,13 @@ test.describe("landing message", () => {
     await expect(page.getByText("PreviewController.java", { exact: true })).toHaveCount(0);
     await expect(page.getByText("SPRING APPLICATION CODE", { exact: true })).toHaveCount(0);
     await expect(page.getByText("Java pattern", { exact: true })).toHaveCount(0);
+    await expect(page.locator(".best-worlds-application-code .best-worlds-panel-heading")).toHaveText("CODE");
+    await expect(page.locator(".best-worlds-formal-code .best-worlds-panel-heading")).toHaveText("RULE");
     await expect(page.getByText("String preview(PreviewDto dto) {", { exact: true })).toBeVisible();
     await expect(page.getByText("var template = dto.template();", { exact: true })).toBeVisible();
     await expect(page.getByText("var view = template.strip();", { exact: true })).toBeVisible();
+    await expect(page.locator(".best-worlds-application-code .code-line-sink")).toHaveText("return engine.process(view, context);");
+    await expect(page.locator(".best-worlds-formal-code code > span").nth(2)).toHaveText("$METHOD(..., PreviewDto $UNTRUSTED, ...) {");
     await expect(page.getByText("$ENGINE.process($UNTRUSTED, ...);", { exact: true })).toBeVisible();
     await expect(page.locator(".best-worlds-formal-code .code-line-ellipsis")).toHaveText(["..."]);
     await expect(page.getByText("METAVARIABLES ARE DATA TAINT MARKS", { exact: true })).toBeVisible();
@@ -38,7 +42,10 @@ test.describe("landing message", () => {
     await expect(page.locator(".best-worlds-metavar-map")).toContainText("$UNTRUSTED=dto");
     await expect(page.locator(".best-worlds-metavar-map")).toContainText("$METHOD=preview");
     await expect(page.locator(".best-worlds-metavar-map")).toContainText("$ENGINE=engine");
-    await expect(page.locator(".best-worlds-data-trace .best-worlds-trace-node > b")).toHaveText(["dto", "template", "view", "engine"]);
+    await expect(page.locator(".best-worlds-data-trace .best-worlds-trace-role")).toHaveText(["TAINT SOURCE", "PASS-THROUGH", "PASS-THROUGH", "TAINT SINK"]);
+    await expect(page.locator(".best-worlds-data-trace .best-worlds-trace-node > b")).toHaveText(["dto", "template()", "strip()", "engine.process"]);
+    await expect(page.locator(".best-worlds-data-trace .best-worlds-trace-node > span:last-child")).toHaveText(["$UNTRUSTED", "result: template", "result: view", "input: view"]);
+    await expect(page.locator(".best-worlds-taint-signal")).toHaveCount(0);
     await expect(page.locator(".best-worlds-visual")).not.toContainText("$SOURCE");
     await expect(page.locator(".best-worlds-visual")).not.toContainText("$DATA");
     await expect(page.locator(".best-worlds-visual")).not.toContainText("$RETURN");

@@ -10,14 +10,14 @@
     <div class="best-worlds-visual">
       <div class="best-worlds-toolbar" aria-hidden="true">
         <span><i></i> OPEN SOURCE, BATTERIES INCLUDED</span>
-        <span>DISCOVER → ENACT → SCAN → TRIAGE</span>
+        <span>DISCOVER → SPECIFY → SCAN → TRIAGE</span>
       </div>
 
       <svg class="best-worlds-flow" viewBox="0 0 1200 560" preserveAspectRatio="none" aria-hidden="true">
         <path class="best-worlds-flow-muted" d="M374 294 H434 M766 294 H826" />
         <path class="best-worlds-flow-active" d="M374 294 H434 M766 294 H826" />
       </svg>
-      <span class="best-worlds-flow-label best-worlds-flow-label-left" aria-hidden="true">ENACT</span>
+      <span class="best-worlds-flow-label best-worlds-flow-label-left" aria-hidden="true">SPECIFY</span>
       <span class="best-worlds-flow-label best-worlds-flow-label-right" aria-hidden="true">SCAN</span>
 
       <article class="best-worlds-side best-worlds-reasoning">
@@ -31,20 +31,30 @@
         </p>
 
         <div class="best-worlds-values" aria-label="Values of model reasoning">
-          <div><i>01</i><span><b>INTERPRETS INTENT</b><small>Routes, framework conventions, and trust boundaries</small></span></div>
-          <div><i>02</i><span><b>FINDS APP-SPECIFIC RISK</b><small>Unique sources, sinks, and data transformations</small></span></div>
-          <div><i>03</i><span><b>LEARNS FROM REVIEW</b><small>Each discovery becomes reusable security knowledge</small></span></div>
-        </div>
-
-        <div class="reasoning-inference">
-          <span>CODE CONTEXT + SECURITY REVIEW</span>
-          <p>Project-specific <code>rules and dependency models</code></p>
+          <div>
+            <span class="best-worlds-value-symbol" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 9a7 7 0 0 1 14 0v2M8 10a4 4 0 0 1 8 0v3M12 10v7M7 14c0 3 1 5 3 7M17 15c0 2-.5 4-1.5 6" /></svg>
+            </span>
+            <span><b>FINDS NEW VULNERABILITY PATTERNS</b><small>Identifies dangerous behavior that was not defined before the review.</small></span>
+          </div>
+          <div>
+            <span class="best-worlds-value-symbol" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M8 4H4v4M16 4h4v4M20 16v4h-4M8 20H4v-4" /><circle cx="12" cy="12" r="3" /></svg>
+            </span>
+            <span><b>UNDERSTANDS APPLICATION CONTEXT</b><small>Uses architecture, trust boundaries, and intended behavior to assess a finding.</small></span>
+          </div>
+          <div>
+            <span class="best-worlds-value-symbol" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="4" width="6" height="5" rx="1" /><rect x="14.5" y="4" width="6" height="5" rx="1" /><rect x="9" y="15" width="6" height="5" rx="1" /><path d="M6.5 9v2.5H17.5V9M12 11.5V15" /></svg>
+            </span>
+            <span><b>UNDERSTANDS DEPENDENCIES</b><small>Uses knowledge of frameworks, libraries, and APIs to explain security behavior.</small></span>
+          </div>
         </div>
       </article>
 
       <article class="best-worlds-core">
         <header>
-          <span>LEAN / ENACT</span>
+          <span>LEAN / SPECIFY</span>
           <strong>CODE TO FORMAL SPECIFICATION</strong>
           <i>Related code becomes reusable security knowledge</i>
         </header>
@@ -92,27 +102,28 @@
         </header>
 
         <p class="best-worlds-outcome best-worlds-analysis-outcome">
-          <strong>Enforces security knowledge across the whole codebase</strong>
+          Finds every match for each security rule
         </p>
 
-        <div class="analysis-coverage" aria-label="Whole-project formal program analysis coverage">
-          <header>WHOLE-PROJECT DATA FLOW</header>
+        <div class="best-worlds-values" aria-label="Values of formal program analysis">
           <div>
-            <span>METHODS</span>
-            <span>FIELDS</span>
-            <span>DEPENDENCIES</span>
-            <span>STORAGE</span>
+            <span class="best-worlds-value-symbol" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="5" cy="6" r="2" /><circle cx="18.5" cy="5" r="2" /><circle cx="12" cy="18" r="2" /><path d="M7 6h4l2-1h3.5M6.5 7.5l4.25 8.75M17.5 7l-4.25 9.25" /></svg>
+            </span>
+            <span><b>SEARCHES ALL MODELED PATHS</b><small>Checks each reachable path in the program model.</small></span>
           </div>
-          <footer>
-            <span>ONE FORMAL SPECIFICATION</span>
-            <b>ALL MATCHING PATHS</b>
-          </footer>
-        </div>
-
-        <div class="analysis-repeatability" aria-label="Deterministic results wherever OpenTaint runs">
-          <strong>SAME CODE + SAME SPECIFICATION</strong>
-          <span>= SAME RESULT</span>
-          <div><b>LOCAL</b><b>PULL REQUEST</b><b>CI/CD</b></div>
+          <div>
+            <span class="best-worlds-value-symbol" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 9h14M5 15h14" /></svg>
+            </span>
+            <span><b>GIVES PREDICTABLE RESULTS</b><small>The same code and specification give the same findings.</small></span>
+          </div>
+          <div>
+            <span class="best-worlds-value-symbol" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M7 3.5h7l3 3V20.5H7zM14 3.5v3h3" /><path d="m9.5 14 1.75 1.75L15 12" /></svg>
+            </span>
+            <span><b>CREATES DURABLE CHECKS</b><small>Teams can version, review, and reuse each specification with little maintenance.</small></span>
+          </div>
         </div>
       </article>
     </div>

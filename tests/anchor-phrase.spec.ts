@@ -4,11 +4,12 @@ test.describe("landing message", () => {
   test("leads with the open source engine position", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page.getByText("The open source taint analysis engine for the AI era", { exact: true })).toBeVisible();
+    await expect(page.locator(".hero-subline > span").first()).toHaveText("OpenTaint is the open source taint analysis engine for the AI era.");
     await expect(page.getByRole("heading", {
-      name: "Continuous, lean, and agentic application security testing",
+      name: "Turn one agent-led security review into continuous vulnerability checks",
       level: 1,
     })).toBeVisible();
+    await expect(page.getByText("It turns one-off security findings into unlimited scans across the development lifecycle.", { exact: true })).toBeVisible();
     await expect(page.getByRole("heading", { name: "The flexibility of model reasoning", level: 3 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "The consistency of formal program analysis", level: 3 })).toBeVisible();
     await expect(page.getByText("FORMAL SPECIFICATION", { exact: true })).toBeVisible();
@@ -20,11 +21,14 @@ test.describe("landing message", () => {
     await expect(page.getByText("METAVARIABLES ARE DATA TAINT MARKS", { exact: true })).toBeVisible();
     await expect(page.getByText(/java\.lang\.String#strip\s+this → result/)).toBeVisible();
     await expect(page.getByText("Adapts security knowledge to your application", { exact: true })).toBeVisible();
-    await expect(page.getByText("Enforces security knowledge across the whole codebase", { exact: true })).toBeVisible();
-    await expect(page.getByText("WHOLE-PROJECT DATA FLOW", { exact: true })).toBeVisible();
-    await expect(page.getByText("SAME CODE + SAME SPECIFICATION", { exact: true })).toBeVisible();
-    await expect(page.getByText("INTERPRETS INTENT", { exact: true })).toBeVisible();
-    await expect(page.getByText("FINDS APP-SPECIFIC RISK", { exact: true })).toBeVisible();
+    await expect(page.getByText("Finds every match for each security rule", { exact: true })).toBeVisible();
+    await expect(page.getByText("FINDS NEW VULNERABILITY PATTERNS", { exact: true })).toBeVisible();
+    await expect(page.getByText("UNDERSTANDS APPLICATION CONTEXT", { exact: true })).toBeVisible();
+    await expect(page.getByText("UNDERSTANDS DEPENDENCIES", { exact: true })).toBeVisible();
+    await expect(page.getByText("SEARCHES ALL MODELED PATHS", { exact: true })).toBeVisible();
+    await expect(page.getByText("GIVES PREDICTABLE RESULTS", { exact: true })).toBeVisible();
+    await expect(page.getByText("CREATES DURABLE CHECKS", { exact: true })).toBeVisible();
+    await expect(page.getByText("CODE CONTEXT + SECURITY REVIEW", { exact: true })).toHaveCount(0);
     await expect(page.getByText("PROJECT-SPECIFIC SSTI PATTERN", { exact: true })).toHaveCount(0);
     await expect(page.getByText("PR #184", { exact: true })).toHaveCount(0);
     await expect(page.getByText("$TAINTED = $DATA.strip();", { exact: true })).toHaveCount(0);
@@ -36,7 +40,7 @@ test.describe("landing message", () => {
       ).map((element) => Number.parseFloat(getComputedStyle(element).fontSize)))
     );
     expect(smallestVisualType).toBeGreaterThanOrEqual(12);
-    await expect(page.getByRole("heading", { name: "Five-minute quickstart" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Install OpenTaint and check your project in five minutes" })).toBeVisible();
     await expect(page.getByText("Run your first agentic application security test in 5 minutes", { exact: true })).toHaveCount(0);
     await expect(page.getByText("Run deep security scan and static triage with OpenTaint appsec-agent skill", { exact: true })).toBeVisible();
   });
@@ -59,7 +63,7 @@ test.describe("landing message", () => {
 
     expect(Math.abs(layout.heroBottom - layout.visualTop)).toBeLessThanOrEqual(1);
     expect(layout.visualTop).toBeLessThan(layout.viewportHeight);
-    expect(layout.visualTop).toBeLessThan(layout.viewportHeight - 128);
+    expect(layout.visualTop).toBeLessThan(layout.viewportHeight - 96);
     expect(layout.visualTop).toBeGreaterThan(layout.viewportHeight - 160);
     expect(layout.visualHeight).toBeGreaterThanOrEqual(layout.viewportHeight - 80);
   });

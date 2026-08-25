@@ -89,8 +89,8 @@ export function FirstScanFunnel() {
     <section id="install" className="band quickstart-section" aria-labelledby="quickstart-heading">
       <div className="relative z-10 mx-auto max-w-[82rem]">
         <div className="section-header">
-          <p className="section-banner">From install to first agentic scan</p>
-          <h2 id="quickstart-heading" className="section-heading">Five-minute quickstart</h2>
+          <p className="section-banner">First scan</p>
+          <h2 id="quickstart-heading" className="section-heading">Install OpenTaint and check your project in five minutes</h2>
         </div>
 
         <div className="mx-auto mt-8 max-w-4xl space-y-4 text-left sm:mt-10">
@@ -126,14 +126,14 @@ export function FirstScanFunnel() {
           </div>
 
           <div className="grid gap-3 md:grid-cols-[16rem_minmax(0,1fr)] md:items-center md:gap-4">
-            <StageLabel number="02">Install OpenTaint agent skills</StageLabel>
+            <StageLabel number="02">Install the OpenTaint agent skills</StageLabel>
             <div className="min-w-0 overflow-hidden rounded-xl border border-panel-border bg-panel">
               <CommandLine id="skills install command" value={skillsCommand} copiedId={copiedId} onCopy={copy} />
             </div>
           </div>
 
           <div className="grid gap-3 md:grid-cols-[16rem_minmax(0,1fr)] md:items-center md:gap-4">
-            <StageLabel number="03">Prompt your agent to start agentic scan with OpenTaint</StageLabel>
+            <StageLabel number="03">Ask your agent to start a security scan</StageLabel>
             <div className="min-w-0 overflow-hidden rounded-xl border border-panel-border bg-panel">
               <CommandLine id="first security-review prompt" value={firstPrompt} prompt copiedId={copiedId} onCopy={copy} />
             </div>

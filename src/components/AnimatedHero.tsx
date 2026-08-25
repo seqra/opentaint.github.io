@@ -1,6 +1,4 @@
-import { Download, Star } from "lucide-react";
-
-const heroPrefixes = ["Continuous", "Lean", "Agentic"];
+import { Download, ScanSearch } from "lucide-react";
 
 export function AnimatedHero() {
   return (
@@ -9,26 +7,13 @@ export function AnimatedHero() {
         <img src="/opentaint-header-light.svg" alt="OpenTaint" className="hero-wordmark mx-0 h-auto w-56 dark:hidden sm:w-64 lg:mx-auto lg:w-72" />
         <img src="/opentaint-header-dark.svg" alt="" aria-hidden="true" className="hero-wordmark mx-0 hidden h-auto w-56 dark:block sm:w-64 lg:mx-auto lg:w-72" />
 
-        <h1 className="hero-heading mx-0 mt-12 max-w-full text-left font-mono font-semibold text-foreground lg:mx-auto lg:text-center">
-          <span className="sr-only">Continuous, lean, and agentic application security testing</span>
-          <span aria-hidden="true" className="hero-title-lockup">
-            <span className="hero-prefix-slot relative block h-[1em] w-[10ch] shrink-0">
-              {heroPrefixes.map((prefix) => (
-                <span key={prefix} className="hero-prefix-word absolute inset-0 text-left text-primary lg:text-right">
-                  {prefix}
-                </span>
-              ))}
-            </span>
-            <span className="hero-title-column">
-              <span>Application</span>
-              <span>Security</span>
-              <span>Testing</span>
-            </span>
-          </span>
+        <h1 className="hero-heading mx-0 mt-12 max-w-[25ch] text-left font-mono font-semibold text-foreground lg:mx-auto lg:text-center">
+          Turn one <span className="text-primary">agent-led security review</span> into continuous vulnerability checks
         </h1>
 
-        <p className="section-banner hero-subline mx-0 mt-12 max-w-[68ch] text-left lg:mx-auto lg:text-center">
-          The open source taint analysis engine for the AI era
+        <p className="hero-subline mx-0 mt-8 max-w-[62ch] text-left font-mono text-muted-foreground lg:mx-auto lg:text-center">
+          <span className="block text-foreground">OpenTaint is the open source taint analysis engine for the AI era.</span>
+          <span className="mt-2 block">It turns one-off security findings into unlimited scans across the development lifecycle.</span>
         </p>
 
         <div className="mt-6 flex items-center justify-start gap-4 lg:justify-center">
@@ -36,9 +21,9 @@ export function AnimatedHero() {
             Install
             <Download aria-hidden="true" className="h-5 w-5" />
           </a>
-          <a href="https://github.com/seqra/opentaint" target="_blank" rel="noopener noreferrer" className="cta-pill cta-pill-secondary hero-cta">
-            Star
-            <Star aria-hidden="true" className="h-5 w-5" />
+          <a href="/blog/conductor-rce-cve-2026-58138/" className="cta-pill cta-pill-secondary hero-cta">
+            See a real finding
+            <ScanSearch aria-hidden="true" className="h-5 w-5" />
           </a>
         </div>
       </div>

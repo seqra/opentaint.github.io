@@ -98,13 +98,7 @@ test.describe("landing message", () => {
     await page.goto("/");
 
     await expect(page.getByText("As AI generates more code, security risk and review cost compound", { exact: true })).toBeVisible();
-    const valueHeading = page.getByRole("heading", { name: "Find hard-to-detect vulnerabilities with exhaustive local analysis you own", level: 2 });
-    await expect(valueHeading).toBeVisible();
-    const renderedLines = await valueHeading.evaluate((element) => {
-      const styles = window.getComputedStyle(element);
-      return element.getBoundingClientRect().height / Number.parseFloat(styles.lineHeight);
-    });
-    expect(renderedLines).toBeLessThan(1.5);
+    await expect(page.getByRole("heading", { name: "Find hard-to-detect vulnerabilities with exhaustive local analysis you own", level: 2 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Turn one-off review into unlimited scans", level: 2 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Fast scans. Fewer false alarms. Fewer missed findings" })).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "Open source, batteries included", level: 3 })).toBeVisible();

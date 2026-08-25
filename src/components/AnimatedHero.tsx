@@ -1,5 +1,7 @@
 import { Download, ScanSearch } from "lucide-react";
 
+const heroPrefixes = ["Continuous", "Lean", "Agentic"];
+
 export function AnimatedHero() {
   return (
     <div className="hero-composition relative z-0 mx-auto flex w-full max-w-[82rem] flex-1 flex-col text-center">
@@ -7,9 +9,22 @@ export function AnimatedHero() {
         <img src="/opentaint-header-light.svg" alt="OpenTaint" className="hero-wordmark mx-0 h-auto w-56 dark:hidden sm:w-64 lg:mx-auto lg:w-72" />
         <img src="/opentaint-header-dark.svg" alt="" aria-hidden="true" className="hero-wordmark mx-0 hidden h-auto w-56 dark:block sm:w-64 lg:mx-auto lg:w-72" />
 
-        <h1 className="hero-heading mx-0 mt-12 max-w-[31ch] text-left font-mono font-semibold text-foreground lg:mx-auto lg:text-center">
-          <span className="text-primary">Continuous, lean, and agentic</span>{" "}
-          <span className="block">application security testing</span>
+        <h1 className="hero-heading mx-0 mt-12 max-w-full text-left font-mono font-semibold text-foreground lg:mx-auto lg:text-center">
+          <span className="sr-only">Continuous, lean, and agentic application security testing</span>
+          <span aria-hidden="true" className="hero-title-lockup">
+            <span className="hero-prefix-slot relative block h-[1em] w-[10ch] shrink-0">
+              {heroPrefixes.map((prefix) => (
+                <span key={prefix} className="hero-prefix-word absolute inset-0 text-left text-primary lg:text-right">
+                  {prefix}
+                </span>
+              ))}
+            </span>
+            <span className="hero-title-column">
+              <span>Application</span>
+              <span>Security</span>
+              <span>Testing</span>
+            </span>
+          </span>
         </h1>
 
         <p className="section-banner mx-0 mt-8 max-w-[92ch] text-left lg:mx-auto lg:text-center">

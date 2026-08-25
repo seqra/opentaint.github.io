@@ -30,8 +30,8 @@ export function AnimatedHero() {
         <p className="section-banner mx-0 mt-8 max-w-[92ch] text-left lg:mx-auto lg:text-center">
           The open source taint analysis engine for the AI era
         </p>
-        <p className="hero-subline mx-0 mt-4 max-w-[62ch] text-left font-mono text-muted-foreground lg:mx-auto lg:text-center">
-          It turns one-off security findings into unlimited scans across the development lifecycle.
+        <p className="hero-subline mx-0 mt-4 max-w-[62ch] text-left font-mono text-primary lg:mx-auto lg:text-center">
+          Turn one-off security findings into unlimited scans across the development lifecycle. Try open source taint analysis engine for the AI era
         </p>
 
         <div className="mt-6 flex items-center justify-start gap-4 lg:justify-center">

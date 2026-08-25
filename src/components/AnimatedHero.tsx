@@ -28,7 +28,7 @@ export function AnimatedHero() {
         </h1>
 
         <p className="hero-subline hero-promise mx-0 mt-8 font-mono lg:mx-auto">
-          Turn frontier model reasoning into reliable <span className="whitespace-nowrap">static-analysis</span> checks that detect vulnerabilities at low cost
+          Turn frontier model reasoning into reliable <span className="whitespace-nowrap">static-analysis</span> checks to detect vulnerabilities at low cost
         </p>
         <p className="section-banner mx-0 mt-5 max-w-[92ch] text-left lg:mx-auto lg:text-center">
           The open source taint analysis engine for the AI era

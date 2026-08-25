@@ -1,44 +1,5 @@
 ---
-import { Code } from "astro-expressive-code/components";
 import PerlinBackdrop from "@/components/astro/PerlinBackdrop.astro";
-
-/* Both artifacts come from the CVE-2026-58138 reproduction kit. Fully-qualified
-   names are shortened to keep the lines readable; everything else is verbatim. */
-const artifacts = [
-  {
-    label: "Taint rule",
-    file: ".opentaint/rules/graalvm-polyglot-sinks.yaml",
-    caption: "Fires only when the context was built with full host access.",
-    code: `id: graalvm-polyglot-eval
-languages: [java]
-mode: taint
-pattern-sinks:
-  - patterns:
-      - pattern: (Context $CTX).eval($LANG, $SOURCE)
-      - focus-metavariable: $SOURCE
-      # Only a context with full host access is RCE.
-      - pattern-inside: |
-          Context $CTX = $B
-            .allowAllAccess(true).build();
-          ...`,
-  },
-  {
-    label: "Dependency model",
-    file: ".opentaint/config/org.graalvm.polyglot.yaml",
-    caption: "The builder mutates and returns itself, so taint survives the chain.",
-    code: `language: java
-passThrough:
-  - function: Context$Builder#option
-    copy:
-      - from: this
-        to: result
-
-  - function: Source$Builder#cached
-    copy:
-      - from: this
-        to: result`,
-  },
-];
 
 /* The reported flow, source first. `where` says what the value crosses, not
    where it lives — file and line belong in the report, not on a landing page. */
@@ -53,88 +14,15 @@ const traceSteps = [
 <section class="band real-world-band" aria-labelledby="what-heading">
   <PerlinBackdrop class="section-flow-noise-soft" />
   <div class="relative z-10 mx-auto max-w-6xl">
-    <div class="section-header">
+    <div class="section-header real-world-header">
       <p class="section-eyebrow">A real-world review</p>
-      <h2 id="what-heading" class="section-heading">How OpenTaint found CVE-2026-58138</h2>
-      <a href="/blog/conductor-rce-cve-2026-58138/" class="mt-6 inline-flex font-mono text-[15px] font-semibold leading-6 text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground lg:text-base">Read the CVE-2026-58138 reproduction post.</a>
+      <h2 id="what-heading" class="section-heading real-world-heading">How OpenTaint found critical CVE-2026-58138</h2>
+      <a href="/blog/conductor-rce-cve-2026-58138/" class="mt-6 inline-flex font-mono text-[15px] font-semibold leading-6 text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground lg:text-base">Read the detailed case study</a>
     </div>
 
 
-    <figure class="section-content overflow-hidden rounded-xl border border-border-strong bg-background" aria-labelledby="what-heading">
-      <div class="p-4 sm:p-6 lg:p-8">
-        <p class="flex items-baseline gap-3 font-mono text-xs font-semibold uppercase tracking-[0.16em] sm:text-[13px]">
-          <span class="text-primary">01</span>
-          <span class="text-foreground">Agent reviews</span>
-        </p>
-
-        <div class="cve-card-rail cve-card-rail-compact mobile-card-rail mt-6 grid gap-6 sm:mt-8 lg:grid-cols-2" role="region" aria-label="Reviewed application code" tabindex="0">
-          <article class="reveal mobile-card-rail-item min-w-0 overflow-hidden rounded-xl border border-border-strong bg-code-bg">
-            <div class="flex items-center justify-between border-b border-border bg-code-header px-4 py-3 font-mono text-[11px] text-muted-foreground sm:text-xs">
-              <span class="font-semibold text-foreground">WorkflowResource.java / Lambda.java</span>
-              <span class="uppercase tracking-[0.12em]">request path</span>
-            </div>
-            <pre class="overflow-x-auto px-4 py-6 font-mono text-[11px] leading-6 text-foreground sm:px-6 sm:text-xs"><code>    <span class="text-emerald-700 dark:text-emerald-400">// Controller entry point.</span>
-<span class="text-muted-foreground">77</span>  @PostMapping(produces = TEXT_PLAIN_VALUE)
-<span class="text-muted-foreground">81</span>  public String startWorkflow(
-<span class="text-muted-foreground">82</span>      @RequestBody StartWorkflowRequest request) &#123;
-<span class="text-muted-foreground">83</span>    return workflowService.startWorkflow(request);
-<span class="text-muted-foreground">84</span>  &#125;
-
-    <span class="text-emerald-700 dark:text-emerald-400">// Trust boundary: request data controls the script.</span>
-<span class="text-muted-foreground">68</span>  Map&lt;String, Object&gt; taskInput = task.getInputData();
-<span class="text-muted-foreground">71</span>  scriptExpression = (String) taskInput.get(
-<span class="text-muted-foreground">72</span>      <span class="text-primary">"scriptExpression"</span>);
-<span class="text-muted-foreground">80</span>  Object result = ScriptEvaluator.eval(
-<span class="text-muted-foreground">81</span>      scriptExpression, taskInput);</code></pre>
-          </article>
-
-          <article class="reveal mobile-card-rail-item min-w-0 overflow-hidden rounded-xl border border-border-strong bg-code-bg">
-            <div class="flex items-center justify-between border-b border-border bg-code-header px-4 py-3 font-mono text-[11px] text-muted-foreground sm:text-xs">
-              <span class="font-semibold text-foreground">ScriptEvaluator.java</span>
-              <span class="uppercase tracking-[0.12em]">evaluation path</span>
-            </div>
-            <pre class="overflow-x-auto px-4 py-6 font-mono text-[11px] leading-6 text-foreground sm:px-6 sm:text-xs"><code>    <span class="text-emerald-700 dark:text-emerald-400">// Opaque external method behavior: option() returns this builder.</span>
-<span class="text-muted-foreground">116</span> private static Context createNewContext() &#123;
-<span class="text-muted-foreground">117</span>   return Context.newBuilder(<span class="text-primary">"js"</span>)
-<span class="text-muted-foreground">118</span>     .<span class="text-primary">allowHostAccess(HostAccess.ALL)</span>
-<span class="text-muted-foreground">119</span>     .option("engine.WarnInterpreterOnly", "false")
-<span class="text-muted-foreground">120</span>     .build();
-<span class="text-muted-foreground">121</span> &#125;
-
-    <span class="text-emerald-700 dark:text-emerald-400">// Vulnerability pattern: untrusted script reaches the evaluator.</span>
-<span class="text-muted-foreground">202</span> executorService.submit(
-<span class="text-muted-foreground">203</span>   () -&gt; context.<span class="text-primary">eval("js", script)</span>);</code></pre>
-          </article>
-        </div>
-      </div>
-
-      <div class="border-t border-border p-4 sm:p-6 lg:p-8">
-        <p class="flex items-baseline gap-3 font-mono text-xs font-semibold uppercase tracking-[0.16em] sm:text-[13px]">
-          <span class="text-primary">02</span>
-          <span class="text-foreground">Agent enacts</span>
-        </p>
-
-        <div class="cve-card-rail cve-card-rail-compact mobile-card-rail mt-6 grid gap-6 sm:mt-8 lg:grid-cols-2" role="region" aria-label="Formal security specifications" tabindex="0">
-          {artifacts.map((artifact) => (
-            <article class="reveal mobile-card-rail-item flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong transition-colors duration-300 hover:border-primary/60 motion-reduce:transition-none">
-              <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-border bg-code-header px-4 py-3">
-                <span class="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-foreground sm:text-[13px]">{artifact.label}</span>
-                <span class="font-mono text-xs text-muted-foreground sm:text-[13px]">{artifact.file.split("/").pop()}</span>
-              </div>
-              <Code code={artifact.code} lang="yaml" class="artifact-code" />
-              <p class="border-t border-border px-4 py-3 font-mono text-xs leading-5 text-muted-foreground sm:text-[13px] sm:leading-6">{artifact.caption}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-
-      <div class="border-t border-border p-4 sm:p-6 lg:p-8">
-        <p class="flex items-baseline gap-3 font-mono text-xs font-semibold uppercase tracking-[0.16em] sm:text-[13px]">
-          <span class="text-primary">03</span>
-          <span class="text-foreground">Formal taint analysis searches</span>
-        </p>
-
-        <div class="cve-card-rail cve-card-rail-compact mobile-card-rail mt-6 grid items-stretch gap-6 sm:mt-8 lg:grid-cols-[1.5fr_0.5fr] lg:gap-10" role="region" aria-label="OpenTaint finding and reported trace" tabindex="0">
+    <figure class="section-content overflow-hidden rounded-xl border border-border-strong bg-background p-4 sm:p-6 lg:p-8" aria-labelledby="what-heading">
+        <div class="cve-card-rail cve-card-rail-compact mobile-card-rail grid items-stretch gap-6 lg:grid-cols-[1.5fr_0.5fr] lg:gap-10" role="region" aria-label="OpenTaint finding and reported trace" tabindex="0">
           {/* Both panels are the same box: header strip, body, footer strip —
               so their borders, tops, and bottoms line up whatever the content
               inside them costs. */}
@@ -188,8 +76,6 @@ const traceSteps = [
             </p>
           </div>
         </div>
-
-      </div>
     </figure>
 
   </div>

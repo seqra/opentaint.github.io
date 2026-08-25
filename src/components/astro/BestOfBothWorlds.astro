@@ -12,7 +12,7 @@
         <article class="best-worlds-side best-worlds-reasoning">
           <header class="best-worlds-side-heading">
             <span class="best-worlds-phase-label">AGENTIC / DISCOVER</span>
-            <h3>The flexibility of <strong>model reasoning</strong></h3>
+            <h3>The flexibility of<br /><strong>model reasoning</strong></h3>
           </header>
 
           <p class="best-worlds-outcome best-worlds-reasoning-outcome">
@@ -44,7 +44,7 @@
         <article class="best-worlds-side best-worlds-analysis">
           <header class="best-worlds-side-heading">
             <span class="best-worlds-phase-label">CONTINUOUS / SCAN</span>
-            <h3>The consistency of <strong>formal program analysis</strong></h3>
+            <h3>The consistency of<br /><strong>formal program analysis</strong></h3>
           </header>
 
           <p class="best-worlds-outcome best-worlds-analysis-outcome">
@@ -66,9 +66,9 @@
             </div>
             <div>
               <span class="best-worlds-value-symbol" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none"><path d="M7 3.5h7l3 3V20.5H7zM14 3.5v3h3" /><path d="m9.5 14 1.75 1.75L15 12" /></svg>
+                <svg viewBox="0 0 24 24" fill="none"><rect x="5" y="5" width="14" height="14" rx="2" /><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3M9 9h6v6H9z" /></svg>
               </span>
-              <span><b>CREATES DURABLE CHECKS</b><small>Teams can version, review, and reuse each specification with little maintenance.</small></span>
+              <span><b>RUNS ON LOCAL COMPUTE</b><small>Each scan uses standard CPU resources and does not require an external service.</small></span>
             </div>
           </div>
         </article>
@@ -77,34 +77,25 @@
       <article class="best-worlds-core">
         <header>
           <span class="best-worlds-phase-label">LEAN / ENACT</span>
-          <h3>Spec-driven vulnerability search</h3>
+          <h3><strong class="best-worlds-title-learn">Learn</strong> formal spec and <strong class="best-worlds-title-search">Search</strong> vulnerability under it</h3>
         </header>
 
         <div class="best-worlds-code-map">
           <section class="best-worlds-code-panel best-worlds-application-code" aria-label="Spring application code with the taint source, transformation, and sink highlighted">
             <h4 class="best-worlds-panel-heading">Code</h4>
             <pre><code><span>@PostMapping("/preview")</span>
-<span class="code-line-source">String <span class="best-worlds-flow-token best-worlds-flow-stage best-worlds-flow-stage-1"><b class="code-object-method">preview</b>(PreviewDto <b class="code-object-source">dto</b>)</span> &#123;</span>
-<span class="code-line-transform">  var <span class="best-worlds-flow-token best-worlds-flow-stage best-worlds-flow-stage-2"><b class="code-object-template">template</b> = dto.template()</span>;</span>
-<span class="code-line-transform">  var <span class="best-worlds-flow-token best-worlds-flow-stage best-worlds-flow-stage-3"><b class="code-object-data">view</b> = template.strip()</span>;</span>
+<span class="code-line-source">String <span class="best-worlds-flow-token best-worlds-flow-stage best-worlds-flow-stage-1"><b class="code-object-method">preview</b>(String <b class="code-object-source">template</b>)</span> &#123;</span>
+<span class="code-line-transform">  var <span class="best-worlds-flow-token best-worlds-flow-stage best-worlds-flow-stage-2"><b class="code-object-template">decoded</b> = URLDecoder.decode(template)</span>;</span>
+<span class="code-line-transform">  var <span class="best-worlds-flow-token best-worlds-flow-stage best-worlds-flow-stage-3"><b class="code-object-data">view</b> = decoded.strip()</span>;</span>
 <span class="code-line-sink">  return <span class="best-worlds-flow-token best-worlds-flow-stage best-worlds-flow-stage-4"><b class="code-object-sink">engine</b>.process(<b class="code-object-data">view</b>, context)</span>;</span>
 <span>&#125;</span></code></pre>
           </section>
 
-          <section class="best-worlds-code-panel best-worlds-formal-code" aria-label="SSTI search pattern expressed with metavariables">
-            <h4 class="best-worlds-panel-heading">Taint rule</h4>
-            <pre><code><span><b class="code-spec-key">pattern:</b> |</span>
-<span>  <span class="best-worlds-flow-token best-worlds-flow-stage best-worlds-flow-stage-1"><b class="code-meta-method">$METHOD</b>(..., PreviewDto <b class="code-meta-source">$UNTRUSTED</b>, ...) &#123;</span></span>
-<span class="code-line-ellipsis"><span class="best-worlds-flow-token best-worlds-flow-stage best-worlds-flow-stage-2-3">    ...</span></span>
-<span>    <span class="best-worlds-flow-token best-worlds-flow-stage best-worlds-flow-stage-4"><b class="code-meta-sink">$ENGINE</b>.process(<b class="code-meta-source">$UNTRUSTED</b>, ...);</span></span>
-<span>  &#125;</span></code></pre>
-          </section>
-
-          <section class="best-worlds-dependency-models" aria-label="Dependency models for template and strip">
+          <section class="best-worlds-dependency-models" aria-label="Dependency models for URL decoding and strip">
             <strong>Dependency models</strong>
-            <pre><code><span class="best-worlds-model-block best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-2"><span class="best-worlds-model-template">- <b>function:</b> PreviewDto#template</span>
+            <pre><code><span class="best-worlds-model-block best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-2"><span class="best-worlds-model-template">- <b>function:</b> java.net.URLDecoder#decode</span>
 <span class="best-worlds-model-template">  <b>copy:</b></span>
-<span class="best-worlds-model-template">  - <b>from:</b> this</span>
+<span class="best-worlds-model-template">  - <b>from:</b> arg(0)</span>
 <span class="best-worlds-model-template">    <b>to:</b> result</span></span>
 <span class="best-worlds-model-block best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-3"><span class="best-worlds-model-strip">- <b>function:</b> java.lang.String#strip</span>
 <span class="best-worlds-model-strip">  <b>copy:</b></span>
@@ -112,18 +103,27 @@
 <span class="best-worlds-model-strip">    <b>to:</b> result</span></span></code></pre>
           </section>
 
-          <div class="best-worlds-bindings" aria-label="Metavariable bindings and the taint trace from dto through template and strip to engine process">
+          <section class="best-worlds-code-panel best-worlds-formal-code" aria-label="SSTI search pattern expressed with metavariables">
+            <h4 class="best-worlds-panel-heading">Taint rule</h4>
+            <pre><code><span><b class="code-spec-key">pattern:</b> |</span>
+<span>  <span class="best-worlds-flow-token best-worlds-flow-stage best-worlds-flow-stage-1"><b class="code-meta-method">$METHOD</b>(..., String <b class="code-meta-source">$UNTRUSTED</b>, ...) &#123;</span></span>
+<span class="code-line-ellipsis"><span class="best-worlds-flow-token best-worlds-flow-stage best-worlds-flow-stage-2-3">    ...</span></span>
+<span>    <span class="best-worlds-flow-token best-worlds-flow-stage best-worlds-flow-stage-4"><b class="code-meta-sink">$ENGINE</b>.process(<b class="code-meta-source">$UNTRUSTED</b>, ...);</span></span>
+<span>  &#125;</span></code></pre>
+          </section>
+
+          <div class="best-worlds-bindings" aria-label="Metavariable bindings and the taint trace from template through URL decoding and strip to engine process">
             <strong>Data flow</strong>
 
             <div class="best-worlds-metavar-map" aria-label="Metavariable mappings">
               <code class="best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-1"><b class="code-meta-method">$METHOD</b><i>=</i><span class="code-object-method">preview</span></code>
-              <code class="best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-1"><b class="code-meta-source">$UNTRUSTED</b><i>=</i><span class="code-object-source">dto</span></code>
+              <code class="best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-1"><b class="code-meta-source">$UNTRUSTED</b><i>=</i><span class="code-object-source">template</span></code>
               <code class="best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-4"><b class="code-meta-sink">$ENGINE</b><i>=</i><span class="code-object-sink">engine</span></code>
             </div>
 
-            <div class="best-worlds-data-trace" aria-label="Taint trace: dto, template, view, engine process">
-              <code class="best-worlds-trace-node best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-1"><b class="code-meta-source">dto</b><span>$UNTRUSTED</span></code>
-              <code class="best-worlds-trace-node best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-2"><b class="code-meta-source">template()</b><span>returns template</span></code>
+            <div class="best-worlds-data-trace" aria-label="Taint trace: template, decoded, view, engine process">
+              <code class="best-worlds-trace-node best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-1"><b class="code-meta-source">template</b><span>$UNTRUSTED</span></code>
+              <code class="best-worlds-trace-node best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-2"><b class="code-meta-source">URLDecoder.<wbr />decode()</b><span>returns decoded</span></code>
               <code class="best-worlds-trace-node best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-3"><b class="code-meta-source">strip()</b><span>returns view</span></code>
               <code class="best-worlds-trace-node best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-4"><b class="code-meta-sink">engine.<wbr />process()</b><span>receives view</span></code>
             </div>

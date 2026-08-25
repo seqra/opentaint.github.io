@@ -257,6 +257,17 @@
     @apply mt-6;
   }
 
+  @media (min-width: 1280px) {
+    .real-world-header {
+      max-width: 72rem;
+    }
+
+    .real-world-heading {
+      white-space: nowrap;
+      letter-spacing: -0.045em;
+    }
+  }
+
   .section-content {
     @apply mt-8 sm:mt-12 lg:mt-16;
   }
@@ -718,16 +729,16 @@
     min-height: calc(100svh - var(--spacing-12));
     grid-template-rows: auto auto;
     align-items: stretch;
-    gap: var(--spacing-08);
+    gap: var(--spacing-06);
     overflow: hidden;
     border: 1px solid hsl(var(--border-strong));
-    border-radius: 24px;
+    border-radius: 16px;
     background:
       radial-gradient(circle at 50% 50%, hsl(var(--brand) / 0.09), transparent 28%),
       linear-gradient(90deg, hsl(var(--agent) / 0.035), transparent 38%, transparent 62%, hsl(var(--brand) / 0.035)),
       hsl(var(--code-bg));
-    padding: var(--spacing-08);
-    box-shadow: 0 24px 64px hsl(var(--foreground) / 0.08);
+    padding: var(--spacing-07);
+    box-shadow: 0 16px 48px hsl(var(--foreground) / 0.06);
   }
 
   .best-worlds-powers {
@@ -735,7 +746,7 @@
     z-index: 1;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--spacing-08);
+    gap: var(--spacing-06);
   }
 
   .best-worlds-side,
@@ -748,23 +759,23 @@
     display: grid;
     min-height: 24rem;
     grid-template-rows: auto auto minmax(0, 1fr);
-    gap: var(--spacing-05);
+    gap: 0;
+    overflow: hidden;
     border: 1px solid hsl(var(--border-strong));
-    border-radius: 18px;
-    background: hsl(var(--background) / 0.92);
-    padding: var(--spacing-06);
-    box-shadow: 0 16px 40px hsl(var(--foreground) / 0.07);
-    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    background: hsl(var(--code-bg));
+    padding: 0;
+    box-shadow: 0 1px 2px hsl(var(--foreground) / 0.04);
   }
-
-  .best-worlds-reasoning { border-color: hsl(var(--agent) / 0.48); }
-  .best-worlds-analysis { border-color: hsl(var(--brand) / 0.48); }
 
   .best-worlds-side,
   .best-worlds-core { align-self: stretch; }
 
   .best-worlds-side-heading {
     display: block;
+    border-bottom: 1px solid hsl(var(--border));
+    background: hsl(var(--background));
+    padding: var(--spacing-06);
   }
 
   .best-worlds-phase-label {
@@ -774,6 +785,15 @@
     font-weight: 750;
     letter-spacing: 0.12em;
     line-height: 1.2;
+  }
+
+  .best-worlds-reasoning .best-worlds-phase-label {
+    color: hsl(var(--agent));
+  }
+
+  .best-worlds-analysis .best-worlds-phase-label,
+  .best-worlds-core > header .best-worlds-phase-label {
+    color: hsl(var(--brand));
   }
 
   .best-worlds-side-heading h3 {
@@ -800,9 +820,11 @@
     display: flex;
     min-height: var(--spacing-11);
     align-items: center;
-    border: 1px solid currentColor;
+    margin: var(--spacing-06) var(--spacing-06) 0;
+    border: 1px solid hsl(var(--border-strong));
     border-radius: 12px;
-    padding: var(--spacing-04);
+    background: hsl(var(--background));
+    padding: var(--spacing-05);
     font-family: var(--font-mono);
     font-size: 17px;
     font-weight: 750;
@@ -810,12 +832,12 @@
   }
 
   .best-worlds-reasoning-outcome {
-    background: hsl(var(--agent) / 0.055);
+    border-color: hsl(var(--agent) / 0.32);
     color: hsl(var(--agent));
   }
 
   .best-worlds-analysis-outcome {
-    background: hsl(var(--brand) / 0.055);
+    border-color: hsl(var(--brand) / 0.32);
     color: hsl(var(--brand));
   }
 
@@ -824,8 +846,9 @@
     grid-template-rows: repeat(3, minmax(0, 1fr));
     overflow: hidden;
     border: 1px solid hsl(var(--border));
-    border-radius: 12px;
-    background: hsl(var(--code-bg));
+    margin: var(--spacing-05) var(--spacing-06) var(--spacing-06);
+    border-radius: 10px;
+    background: hsl(var(--background));
   }
 
   .best-worlds-values > div {
@@ -891,12 +914,12 @@
     align-items: stretch;
     justify-content: flex-start;
     overflow: hidden;
-    border: 1px solid hsl(var(--brand) / 0.44);
-    border-radius: 16px;
+    border: 1px solid hsl(var(--border-strong));
+    border-radius: 12px;
     background: hsl(var(--background));
     padding: 0;
     text-align: left;
-    box-shadow: 0 0 0 4px hsl(var(--brand) / 0.035), 0 18px 48px hsl(var(--foreground) / 0.07);
+    box-shadow: 0 1px 2px hsl(var(--foreground) / 0.04);
   }
 
   .best-worlds-core > header {
@@ -906,7 +929,8 @@
     flex-direction: column;
     justify-content: center;
     border-bottom: 1px solid hsl(var(--border));
-    background: hsl(var(--code-header));
+    background: hsl(var(--background));
+    padding-block: var(--spacing-05);
     padding-inline: var(--spacing-05);
     font-family: var(--font-mono);
     text-align: center;
@@ -914,10 +938,22 @@
 
   .best-worlds-core > header h3 {
     margin-top: var(--spacing-02);
-    color: hsl(var(--brand));
+    color: hsl(var(--foreground));
     font-size: 19px;
     font-weight: 750;
-    letter-spacing: 0.08em;
+    letter-spacing: 0;
+  }
+
+  .best-worlds-core > header h3 strong {
+    font-weight: 750;
+  }
+
+  .best-worlds-title-learn {
+    color: hsl(var(--agent));
+  }
+
+  .best-worlds-title-search {
+    color: hsl(var(--brand));
   }
 
   .best-worlds-code-map {
@@ -925,10 +961,11 @@
     display: grid;
     min-height: 0;
     flex: 1;
-    grid-template-columns: minmax(0, 30fr) minmax(0, 35fr) minmax(0, 35fr);
+    grid-template-columns: minmax(0, 36fr) minmax(0, 28fr) minmax(0, 36fr);
     grid-template-rows: auto auto;
     align-items: stretch;
     gap: 0;
+    background: hsl(var(--code-bg));
     padding: 0;
   }
 
@@ -940,7 +977,7 @@
     flex-direction: column;
     border: 0;
     border-radius: 0;
-    background: hsl(var(--background));
+    background: hsl(var(--code-bg));
   }
 
   .best-worlds-panel-heading,
@@ -950,6 +987,7 @@
     align-items: center;
     justify-content: center;
     border-bottom: 1px solid hsl(var(--border));
+    background: hsl(var(--code-header));
     color: hsl(var(--foreground));
     font-family: var(--font-mono);
     font-size: 14px;
@@ -994,9 +1032,10 @@
   }
 
   .best-worlds-formal-code {
-    grid-column: 2;
+    grid-column: 3;
     grid-row: 1;
     min-width: 0;
+    border-left: 1px solid hsl(var(--border));
   }
 
   .best-worlds-application-code {
@@ -1063,7 +1102,7 @@
     border-radius: 0;
     background:
       linear-gradient(90deg, hsl(var(--agent) / 0.025), transparent 48%, hsl(var(--brand) / 0.018)),
-      hsl(var(--background));
+      hsl(var(--code-bg));
     font-family: var(--font-mono);
   }
 
@@ -1143,10 +1182,10 @@
     justify-content: center;
     border: 0;
     border-radius: 6px;
-    background: hsl(var(--code-bg));
+    background: hsl(var(--background));
     color: hsl(var(--foreground));
     font-size: 13px;
-    outline: 1px solid hsl(var(--agent) / 0.22);
+    outline: 1px solid hsl(var(--border-strong));
     outline-offset: -1px;
   }
 
@@ -1163,13 +1202,12 @@
   .best-worlds-dependency-models {
     display: flex;
     overflow: hidden;
-    grid-column: 3;
+    grid-column: 2;
     grid-row: 1;
     flex-direction: column;
     border: 0;
-    border-left: 1px solid hsl(var(--border));
     border-radius: 0;
-    background: hsl(var(--background));
+    background: hsl(var(--code-bg));
   }
 
   .best-worlds-dependency-models > strong {
@@ -1299,7 +1337,7 @@
 
     .best-worlds-visual {
       min-height: auto;
-      gap: var(--spacing-08);
+      gap: var(--spacing-06);
       margin-top: 0;
       padding: var(--spacing-05);
     }
@@ -1312,7 +1350,7 @@
     }
 
     .best-worlds-side {
-      gap: var(--spacing-08);
+      gap: 0;
     }
 
     .best-worlds-side-heading h3 {
@@ -1359,6 +1397,19 @@
     .best-worlds-side,
     .best-worlds-core {
       max-width: none;
+    }
+
+    .best-worlds-side-heading {
+      padding: var(--spacing-05);
+    }
+
+    .best-worlds-outcome {
+      margin: var(--spacing-05) var(--spacing-05) 0;
+      padding: var(--spacing-04);
+    }
+
+    .best-worlds-values {
+      margin: var(--spacing-05);
     }
 
     .best-worlds-code-panel pre { font-size: 13px; }

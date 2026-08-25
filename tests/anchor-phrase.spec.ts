@@ -9,13 +9,13 @@ test.describe("landing message", () => {
       name: "Continuous, lean, and agentic application security testing",
       level: 1,
     })).toBeVisible();
-    await expect(page.getByText("Turn frontier model reasoning into reliable static-analysis checks that detect vulnerabilities at low cost", { exact: true })).toBeVisible();
+    await expect(page.getByText("Turn frontier model reasoning into reliable static-analysis checks to detect vulnerabilities at low cost", { exact: true })).toBeVisible();
     await expect(page.locator(".hero-promise-focus")).toHaveCount(0);
     await expect(page.locator(".hero-promise-command")).toHaveCount(0);
     await expect(page.getByText("Try open source taint analysis engine for the AI era", { exact: true })).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "The flexibility of model reasoning", level: 3 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "The consistency of formal program analysis", level: 3 })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Spec-driven vulnerability search", level: 3 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Learn formal spec and Search vulnerability under it", level: 3 })).toBeVisible();
     await expect(page.getByText("FORMAL SPECIFICATION", { exact: true })).toHaveCount(0);
     await expect(page.locator(".best-worlds-phase-label")).toHaveText([
       "AGENTIC / DISCOVER",
@@ -30,16 +30,16 @@ test.describe("landing message", () => {
     await expect(page.locator(".best-worlds-application-code .best-worlds-panel-heading")).toHaveText("Code");
     await expect(page.locator(".best-worlds-bindings > strong")).toHaveText("Data flow");
     await expect(page.locator(".best-worlds-formal-code .best-worlds-panel-heading")).toHaveText("Taint rule");
-    await expect(page.getByText("String preview(PreviewDto dto) {", { exact: true })).toBeVisible();
-    await expect(page.getByText("var template = dto.template();", { exact: true })).toBeVisible();
-    await expect(page.getByText("var view = template.strip();", { exact: true })).toBeVisible();
+    await expect(page.getByText("String preview(String template) {", { exact: true })).toBeVisible();
+    await expect(page.getByText("var decoded = URLDecoder.decode(template);", { exact: true })).toBeVisible();
+    await expect(page.getByText("var view = decoded.strip();", { exact: true })).toBeVisible();
     await expect(page.getByText('audit("preview_requested");', { exact: true })).toHaveCount(0);
     await expect(page.locator(".best-worlds-application-code .code-line-sink")).toHaveText("return engine.process(view, context);");
-    await expect(page.locator(".best-worlds-formal-code code > span").nth(1)).toHaveText("$METHOD(..., PreviewDto $UNTRUSTED, ...) {");
+    await expect(page.locator(".best-worlds-formal-code code > span").nth(1)).toHaveText("$METHOD(..., String $UNTRUSTED, ...) {");
     await expect(page.getByText("$ENGINE.process($UNTRUSTED, ...);", { exact: true })).toBeVisible();
     await expect(page.locator(".best-worlds-formal-code .code-line-ellipsis")).toHaveText(["..."]);
     await expect(page.getByText("METAVARIABLES ARE DATA TAINT MARKS", { exact: true })).toHaveCount(0);
-    await expect(page.locator(".best-worlds-model-template")).toHaveText(["- function: PreviewDto#template", "copy:", "- from: this", "to: result"]);
+    await expect(page.locator(".best-worlds-model-template")).toHaveText(["- function: java.net.URLDecoder#decode", "copy:", "- from: arg(0)", "to: result"]);
     await expect(page.locator(".best-worlds-model-strip")).toHaveText(["- function: java.lang.String#strip", "copy:", "- from: this", "to: result"]);
     const modelIndentation = await page.locator(".best-worlds-model-template").evaluateAll((lines) =>
       lines.map((line) => line.querySelector("b")!.getBoundingClientRect().left)
@@ -47,11 +47,11 @@ test.describe("landing message", () => {
     expect(Math.abs(modelIndentation[0] - modelIndentation[1])).toBeLessThanOrEqual(1);
     expect(modelIndentation[2] - modelIndentation[1]).toBeGreaterThan(4);
     expect(Math.abs(modelIndentation[2] - modelIndentation[3])).toBeLessThanOrEqual(1);
-    await expect(page.locator(".best-worlds-metavar-map")).toContainText("$UNTRUSTED=dto");
+    await expect(page.locator(".best-worlds-metavar-map")).toContainText("$UNTRUSTED=template");
     await expect(page.locator(".best-worlds-metavar-map")).toContainText("$METHOD=preview");
     await expect(page.locator(".best-worlds-metavar-map")).toContainText("$ENGINE=engine");
-    await expect(page.locator(".best-worlds-data-trace .best-worlds-trace-node > b")).toHaveText(["dto", "template()", "strip()", "engine.process()"]);
-    await expect(page.locator(".best-worlds-data-trace .best-worlds-trace-node > span")).toHaveText(["$UNTRUSTED", "returns template", "returns view", "receives view"]);
+    await expect(page.locator(".best-worlds-data-trace .best-worlds-trace-node > b")).toHaveText(["template", "URLDecoder.decode()", "strip()", "engine.process()"]);
+    await expect(page.locator(".best-worlds-data-trace .best-worlds-trace-node > span")).toHaveText(["$UNTRUSTED", "returns decoded", "returns view", "receives view"]);
     await expect(page.locator(".best-worlds-bindings")).not.toContainText("SOURCE");
     await expect(page.locator(".best-worlds-bindings")).not.toContainText("SINK");
     await expect(page.locator(".best-worlds-bindings")).not.toContainText("PASS-THROUGH");
@@ -71,7 +71,8 @@ test.describe("landing message", () => {
     await expect(page.getByText("UNDERSTANDS CODE DEPENDENCIES", { exact: true })).toBeVisible();
     await expect(page.getByText("SEARCHES ALL MODELED PATHS", { exact: true })).toBeVisible();
     await expect(page.getByText("GIVES PREDICTABLE RESULTS", { exact: true })).toBeVisible();
-    await expect(page.getByText("CREATES DURABLE CHECKS", { exact: true })).toBeVisible();
+    await expect(page.getByText("RUNS ON LOCAL COMPUTE", { exact: true })).toBeVisible();
+    await expect(page.getByText("CREATES DURABLE CHECKS", { exact: true })).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "Spec-driven code search", level: 3 })).toHaveCount(0);
     await expect(page.getByText("CODE CONTEXT + SECURITY REVIEW", { exact: true })).toHaveCount(0);
     await expect(page.getByText("PROJECT-SPECIFIC SSTI PATTERN", { exact: true })).toHaveCount(0);
@@ -93,11 +94,11 @@ test.describe("landing message", () => {
       return {
         topCardOffset: Math.abs(reasoning.top - analysis.top),
         coreBelowCards: core.top > Math.max(reasoning.bottom, analysis.bottom),
-        searchStoryRunsLeftToRight: code.left < pattern.left && pattern.left < models.left,
+        searchStoryRunsLeftToRight: code.left < models.left && models.left < pattern.left,
         searchStoryTopOffset: Math.max(code.top, models.top, pattern.top) - Math.min(code.top, models.top, pattern.top),
         searchStoryHeightOffset: Math.max(code.height, models.height, pattern.height) - Math.min(code.height, models.height, pattern.height),
         traceBelowStory: trace.top >= Math.max(code.bottom, models.bottom, pattern.bottom),
-        traceSpansStory: Math.abs(trace.left - code.left) <= 1 && Math.abs(trace.right - models.right) <= 1,
+        traceSpansStory: Math.abs(trace.left - code.left) <= 1 && Math.abs(trace.right - pattern.right) <= 1,
       };
     });
     expect(visualOrder.topCardOffset).toBeLessThanOrEqual(1);
@@ -144,7 +145,17 @@ test.describe("landing message", () => {
   test("frames the product proof with the real Conductor review", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page.getByRole("heading", { name: "How OpenTaint found CVE-2026-58138" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "How OpenTaint found critical CVE-2026-58138" })).toBeVisible();
+    const realWorldHeading = page.locator(".real-world-heading");
+    await expect(realWorldHeading).toHaveCSS("font-size", "48px");
+    await expect(realWorldHeading).toHaveCSS("white-space", "nowrap");
+    expect(await realWorldHeading.evaluate((heading) => heading.scrollWidth <= heading.clientWidth)).toBe(true);
+    await expect(page.getByRole("link", { name: "Read the detailed case study" })).toBeVisible();
+    await expect(page.getByText("Reported finding", { exact: true })).toBeVisible();
+    await expect(page.getByText("Reported taint trace", { exact: true })).toBeVisible();
+    await expect(page.getByText("Agent reviews", { exact: true })).toHaveCount(0);
+    await expect(page.getByText("Agent enacts", { exact: true })).toHaveCount(0);
+    await expect(page.getByText("Formal taint analysis searches", { exact: true })).toHaveCount(0);
     await expect(page.getByText("What works once must keep working")).toHaveCount(0);
     await expect(page.getByText("One review versus continuous use")).toHaveCount(0);
   });

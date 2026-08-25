@@ -62,28 +62,30 @@
 <span>&#125;</span></code></pre>
           </section>
 
-          <div class="best-worlds-bindings" aria-label="Metavariables bound to objects in the application code">
+          <div class="best-worlds-bindings" aria-label="The $UNTRUSTED taint mark follows data through String strip">
             <strong>METAVARIABLES ARE DATA TAINT MARKS</strong>
-            <div>
+            <div class="best-worlds-taint-flow">
+              <code class="best-worlds-taint-node"><b class="code-meta-source">$UNTRUSTED</b><span> = <span class="code-object-source">dto</span></span></code>
+              <span class="best-worlds-taint-model">
+                <b>DEPENDENCY MODEL</b>
+                <code>String#strip &#123; result = this; &#125;</code>
+              </span>
+              <code class="best-worlds-taint-node"><b class="code-meta-source">$UNTRUSTED</b><span> = <span class="code-object-data">view</span></span></code>
+              <span class="best-worlds-taint-signal" aria-hidden="true"></span>
+            </div>
+            <div class="best-worlds-symbol-bindings">
               <code><b class="code-meta-method">$METHOD</b> = <span class="code-object-method">preview</span></code>
-              <code><b class="code-meta-source">$SOURCE</b> = <span class="code-object-source">dto</span></code>
-              <code><b class="code-meta-source">$DATA</b> = <span class="code-object-data">view</span></code>
               <code><b class="code-meta-sink">$ENGINE</b> = <span class="code-object-sink">engine</span></code>
             </div>
-          </div>
-
-          <div class="best-worlds-dependency-model" aria-label="Dependency model propagating taint through String strip">
-            <strong>DEPENDENCY MODEL</strong>
-            <code>String#strip &#123; result = this; &#125;</code>
           </div>
 
           <section class="best-worlds-code-panel best-worlds-formal-code" aria-label="Formal SSTI specification expressed with metavariables">
             <pre><code><span><b class="code-spec-key">patterns:</b></span>
 <span>  - <b class="code-spec-key">pattern:</b> |</span>
 <span>      <b class="code-meta-data">$RETURN</b> <b class="code-meta-method">$METHOD</b>(...,</span>
-<span>        PreviewDto <b class="code-meta-source">$SOURCE</b>, ...) &#123;</span>
+<span>        PreviewDto <b class="code-meta-source">$UNTRUSTED</b>, ...) &#123;</span>
 <span class="code-line-ellipsis">        ...</span>
-<span>        <b class="code-meta-sink">$ENGINE</b>.process(<b class="code-meta-source">$DATA</b>, ...);</span>
+<span>        <b class="code-meta-sink">$ENGINE</b>.process(<b class="code-meta-source">$UNTRUSTED</b>, ...);</span>
 <span>      &#125;</span></code></pre>
           </section>
         </div>

@@ -776,6 +776,13 @@
     }
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    .best-worlds-taint-signal {
+      display: block;
+      animation: taint-mark-flow 2.8s ease-in-out infinite;
+    }
+  }
+
   .best-worlds-side,
   .best-worlds-core { align-self: stretch; }
 
@@ -1065,12 +1072,13 @@
     letter-spacing: 0.08em;
   }
 
-  .best-worlds-bindings > div {
+  .best-worlds-symbol-bindings {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid hsl(var(--border));
   }
 
-  .best-worlds-bindings code {
+  .best-worlds-symbol-bindings code {
     min-width: 0;
     padding: var(--spacing-03) var(--spacing-04);
     color: hsl(var(--foreground));
@@ -1078,37 +1086,92 @@
     white-space: nowrap;
   }
 
-  .best-worlds-bindings code:nth-child(even) {
+  .best-worlds-symbol-bindings code + code {
     border-left: 1px solid hsl(var(--border));
   }
 
-  .best-worlds-bindings code:nth-child(n + 3) {
-    border-top: 1px solid hsl(var(--border));
+  .best-worlds-taint-flow {
+    position: relative;
+    display: grid;
+    min-height: 88px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1fr);
+    align-items: center;
+    gap: var(--spacing-04);
+    padding: var(--spacing-03);
   }
 
-  .best-worlds-dependency-model {
+  .best-worlds-taint-flow::before {
+    position: absolute;
+    top: 50%;
+    right: 16%;
+    left: 16%;
+    height: 2px;
+    background: hsl(var(--agent) / 0.35);
+    content: "";
+  }
+
+  .best-worlds-taint-node,
+  .best-worlds-taint-model {
+    position: relative;
+    z-index: 1;
     display: flex;
-    min-height: var(--spacing-10);
     align-items: center;
-    justify-content: space-between;
-    gap: var(--spacing-04);
-    border: 1px solid hsl(var(--agent) / 0.28);
-    border-radius: 10px;
-    background: hsl(var(--agent) / 0.045);
-    padding-inline: var(--spacing-04);
-    font-family: var(--font-mono);
+    justify-content: center;
+    background: hsl(var(--code-bg));
+  }
+
+  .best-worlds-taint-node {
+    min-width: 0;
+    min-height: 56px;
+    flex-direction: column;
+    gap: var(--spacing-02);
+    border: 1px solid hsl(var(--agent) / 0.34);
+    border-radius: 8px;
+    color: hsl(var(--foreground));
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .best-worlds-taint-node > b {
     font-size: 12px;
   }
 
-  .best-worlds-dependency-model strong {
+  .best-worlds-taint-model {
+    min-width: 0;
+    min-height: 64px;
+    flex-direction: column;
+    gap: var(--spacing-02);
+    border: 1px solid hsl(var(--agent) / 0.28);
+    border-radius: 8px;
+    background: hsl(var(--code-bg));
+    padding: var(--spacing-02);
+    text-align: center;
+  }
+
+  .best-worlds-taint-model > b {
     color: hsl(var(--muted-foreground));
+    font-size: 12px;
     letter-spacing: 0.08em;
   }
 
-  .best-worlds-dependency-model code {
+  .best-worlds-taint-model code {
     color: hsl(var(--agent));
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 750;
+    white-space: normal;
+  }
+
+  .best-worlds-taint-signal {
+    position: absolute;
+    z-index: 0;
+    top: calc(50% - 4px);
+    left: 16%;
+    display: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: hsl(var(--agent));
+    box-shadow: 0 0 0 3px hsl(var(--code-bg));
   }
 
   .code-meta-sink {
@@ -1169,6 +1232,10 @@
   }
 
   @media (max-width: 600px) {
+    .best-worlds-code-map {
+      padding: var(--spacing-03);
+    }
+
     .best-worlds-side,
     .best-worlds-core {
       max-width: none;
@@ -1182,12 +1249,6 @@
       padding-inline: var(--spacing-03);
     }
 
-    .best-worlds-dependency-model {
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: center;
-      padding-block: var(--spacing-03);
-    }
   }
 
   .hero-workflow-signal-field {
@@ -3290,6 +3351,12 @@
 
 @keyframes trace-flow {
   to { stroke-dashoffset: -16; }
+}
+
+@keyframes taint-mark-flow {
+  0% { left: 16%; opacity: 0; }
+  12%, 88% { opacity: 1; }
+  100% { left: 82%; opacity: 0; }
 }
 
 @keyframes balance-breathe {

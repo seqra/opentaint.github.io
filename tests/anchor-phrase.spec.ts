@@ -20,13 +20,15 @@ test.describe("landing message", () => {
     await expect(page.getByText("Java pattern", { exact: true })).toHaveCount(0);
     await expect(page.getByText("String preview(PreviewDto dto) {", { exact: true })).toBeVisible();
     await expect(page.getByText("var view = dto.template().strip();", { exact: true })).toBeVisible();
-    await expect(page.getByText("$ENGINE.process($DATA, ...);", { exact: true })).toBeVisible();
+    await expect(page.getByText("$ENGINE.process($UNTRUSTED, ...);", { exact: true })).toBeVisible();
     await expect(page.locator(".best-worlds-formal-code .code-line-ellipsis")).toHaveText(["..."]);
     await expect(page.getByText("METAVARIABLES ARE DATA TAINT MARKS", { exact: true })).toBeVisible();
     await expect(page.getByText("String#strip { result = this; }", { exact: true })).toBeVisible();
-    await expect(page.getByText("$SOURCE = dto", { exact: true })).toBeVisible();
-    await expect(page.getByText("$DATA = view", { exact: true })).toBeVisible();
+    await expect(page.getByText("$UNTRUSTED = dto", { exact: true })).toBeVisible();
+    await expect(page.getByText("$UNTRUSTED = view", { exact: true })).toBeVisible();
     await expect(page.getByText("$ENGINE = engine", { exact: true })).toBeVisible();
+    await expect(page.locator(".best-worlds-visual")).not.toContainText("$SOURCE");
+    await expect(page.locator(".best-worlds-visual")).not.toContainText("$DATA");
     await expect(page.getByText("Adapts security knowledge to your application", { exact: true })).toBeVisible();
     await expect(page.getByText("Finds every match for each security rule", { exact: true })).toBeVisible();
     await expect(page.getByText("FINDS NEW VULNERABILITY PATTERNS", { exact: true })).toBeVisible();

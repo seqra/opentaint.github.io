@@ -22,20 +22,20 @@ test.describe("landing message", () => {
       "CONTINUOUS / SCAN",
       "LEAN / ENACT",
     ]);
-    await expect(page.getByText("patterns:", { exact: true })).toBeVisible();
-    await expect(page.locator(".best-worlds-formal-code code > span").nth(1)).toHaveText("- pattern: |");
+    await expect(page.getByText("patterns:", { exact: true })).toHaveCount(0);
+    await expect(page.locator(".best-worlds-formal-code code > span").first()).toHaveText("pattern: |");
     await expect(page.getByText("PreviewController.java", { exact: true })).toHaveCount(0);
     await expect(page.getByText("SPRING APPLICATION CODE", { exact: true })).toHaveCount(0);
     await expect(page.getByText("Java pattern", { exact: true })).toHaveCount(0);
     await expect(page.locator(".best-worlds-application-code .best-worlds-panel-heading")).toHaveText("Code");
     await expect(page.locator(".best-worlds-bindings > strong")).toHaveText("Data flow");
-    await expect(page.locator(".best-worlds-formal-code .best-worlds-panel-heading")).toHaveText("Rule");
+    await expect(page.locator(".best-worlds-formal-code .best-worlds-panel-heading")).toHaveText("Taint Rule");
     await expect(page.getByText("String preview(PreviewDto dto) {", { exact: true })).toBeVisible();
     await expect(page.getByText("var template = dto.template();", { exact: true })).toBeVisible();
     await expect(page.getByText("var view = template.strip();", { exact: true })).toBeVisible();
     await expect(page.getByText('audit("preview_requested");', { exact: true })).toHaveCount(0);
     await expect(page.locator(".best-worlds-application-code .code-line-sink")).toHaveText("return engine.process(view, context);");
-    await expect(page.locator(".best-worlds-formal-code code > span").nth(2)).toHaveText("$METHOD(..., PreviewDto $UNTRUSTED, ...) {");
+    await expect(page.locator(".best-worlds-formal-code code > span").nth(1)).toHaveText("$METHOD(..., PreviewDto $UNTRUSTED, ...) {");
     await expect(page.getByText("$ENGINE.process($UNTRUSTED, ...);", { exact: true })).toBeVisible();
     await expect(page.locator(".best-worlds-formal-code .code-line-ellipsis")).toHaveText(["..."]);
     await expect(page.getByText("METAVARIABLES ARE DATA TAINT MARKS", { exact: true })).toHaveCount(0);
@@ -57,9 +57,10 @@ test.describe("landing message", () => {
     await expect(page.locator(".best-worlds-bindings")).not.toContainText("PASS-THROUGH");
     await expect(page.locator(".best-worlds-taint-signal")).toHaveCount(0);
     await expect(page.locator(".best-worlds-flow-stage-1")).toHaveCount(5);
-    await expect(page.locator(".best-worlds-flow-stage-2")).toHaveCount(6);
-    await expect(page.locator(".best-worlds-flow-stage-3")).toHaveCount(6);
+    await expect(page.locator(".best-worlds-flow-stage-2")).toHaveCount(3);
+    await expect(page.locator(".best-worlds-flow-stage-3")).toHaveCount(3);
     await expect(page.locator(".best-worlds-flow-stage-4")).toHaveCount(4);
+    await expect(page.locator(".best-worlds-flow-stage-2-3")).toHaveCount(1);
     await expect(page.locator(".best-worlds-visual")).not.toContainText("$SOURCE");
     await expect(page.locator(".best-worlds-visual")).not.toContainText("$DATA");
     await expect(page.locator(".best-worlds-visual")).not.toContainText("$RETURN");
@@ -92,11 +93,11 @@ test.describe("landing message", () => {
       return {
         topCardOffset: Math.abs(reasoning.top - analysis.top),
         coreBelowCards: core.top > Math.max(reasoning.bottom, analysis.bottom),
-        searchStoryRunsLeftToRight: code.left < models.left && models.left < pattern.left,
+        searchStoryRunsLeftToRight: code.left < pattern.left && pattern.left < models.left,
         searchStoryTopOffset: Math.max(code.top, models.top, pattern.top) - Math.min(code.top, models.top, pattern.top),
         searchStoryHeightOffset: Math.max(code.height, models.height, pattern.height) - Math.min(code.height, models.height, pattern.height),
         traceBelowStory: trace.top >= Math.max(code.bottom, models.bottom, pattern.bottom),
-        traceSpansStory: Math.abs(trace.left - code.left) <= 1 && Math.abs(trace.right - pattern.right) <= 1,
+        traceSpansStory: Math.abs(trace.left - code.left) <= 1 && Math.abs(trace.right - models.right) <= 1,
       };
     });
     expect(visualOrder.topCardOffset).toBeLessThanOrEqual(1);

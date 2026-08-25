@@ -84,52 +84,50 @@
           <section class="best-worlds-code-panel best-worlds-application-code" aria-label="Spring application code with the taint source, transformation, and sink highlighted">
             <h4 class="best-worlds-panel-heading">Code</h4>
             <pre><code><span>@PostMapping("/preview")</span>
-<span class="code-line-source best-worlds-flow-stage best-worlds-flow-stage-1">String <b class="code-object-method">preview</b>(PreviewDto <b class="code-object-source">dto</b>) &#123;</span>
-<span class="code-line-transform best-worlds-flow-stage best-worlds-flow-stage-2">  var <b class="code-object-template">template</b> = dto.template();</span>
-<span class="code-line-transform best-worlds-flow-stage best-worlds-flow-stage-3">  var <b class="code-object-data">view</b> = template.strip();</span>
-<span class="code-line-sink best-worlds-flow-stage best-worlds-flow-stage-4">  return <b class="code-object-sink">engine</b>.process(<b class="code-object-data">view</b>, context);</span>
+<span class="code-line-source">String <span class="best-worlds-flow-token best-worlds-flow-stage best-worlds-flow-stage-1"><b class="code-object-method">preview</b>(PreviewDto <b class="code-object-source">dto</b>)</span> &#123;</span>
+<span class="code-line-transform">  var <span class="best-worlds-flow-token best-worlds-flow-stage best-worlds-flow-stage-2"><b class="code-object-template">template</b> = dto.template()</span>;</span>
+<span class="code-line-transform">  var <span class="best-worlds-flow-token best-worlds-flow-stage best-worlds-flow-stage-3"><b class="code-object-data">view</b> = template.strip()</span>;</span>
+<span class="code-line-sink">  return <span class="best-worlds-flow-token best-worlds-flow-stage best-worlds-flow-stage-4"><b class="code-object-sink">engine</b>.process(<b class="code-object-data">view</b>, context)</span>;</span>
 <span>&#125;</span></code></pre>
+          </section>
+
+          <section class="best-worlds-code-panel best-worlds-formal-code" aria-label="SSTI search pattern expressed with metavariables">
+            <h4 class="best-worlds-panel-heading">Taint Rule</h4>
+            <pre><code><span><b class="code-spec-key">pattern:</b> |</span>
+<span>  <span class="best-worlds-flow-token best-worlds-flow-stage best-worlds-flow-stage-1"><b class="code-meta-method">$METHOD</b>(..., PreviewDto <b class="code-meta-source">$UNTRUSTED</b>, ...) &#123;</span></span>
+<span class="code-line-ellipsis"><span class="best-worlds-flow-token best-worlds-flow-stage best-worlds-flow-stage-2-3">    ...</span></span>
+<span>    <span class="best-worlds-flow-token best-worlds-flow-stage best-worlds-flow-stage-4"><b class="code-meta-sink">$ENGINE</b>.process(<b class="code-meta-source">$UNTRUSTED</b>, ...);</span></span>
+<span>  &#125;</span></code></pre>
           </section>
 
           <section class="best-worlds-dependency-models" aria-label="Dependency models for template and strip">
             <strong>Dependency models</strong>
-            <pre><code>
-<span class="best-worlds-model-template best-worlds-flow-stage best-worlds-flow-stage-2">- <b>function:</b> PreviewDto#template</span>
-<span class="best-worlds-model-template best-worlds-flow-stage best-worlds-flow-stage-2">  <b>copy:</b></span>
-<span class="best-worlds-model-template best-worlds-flow-stage best-worlds-flow-stage-2">  - <b>from:</b> this</span>
-<span class="best-worlds-model-template best-worlds-flow-stage best-worlds-flow-stage-2">    <b>to:</b> result</span>
-<span class="best-worlds-model-strip best-worlds-flow-stage best-worlds-flow-stage-3">- <b>function:</b> java.lang.String#strip</span>
-<span class="best-worlds-model-strip best-worlds-flow-stage best-worlds-flow-stage-3">  <b>copy:</b></span>
-<span class="best-worlds-model-strip best-worlds-flow-stage best-worlds-flow-stage-3">  - <b>from:</b> this</span>
-<span class="best-worlds-model-strip best-worlds-flow-stage best-worlds-flow-stage-3">    <b>to:</b> result</span></code></pre>
+            <pre><code><span class="best-worlds-model-block best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-2"><span class="best-worlds-model-template">- <b>function:</b> PreviewDto#template</span>
+<span class="best-worlds-model-template">  <b>copy:</b></span>
+<span class="best-worlds-model-template">  - <b>from:</b> this</span>
+<span class="best-worlds-model-template">    <b>to:</b> result</span></span>
+<span class="best-worlds-model-block best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-3"><span class="best-worlds-model-strip">- <b>function:</b> java.lang.String#strip</span>
+<span class="best-worlds-model-strip">  <b>copy:</b></span>
+<span class="best-worlds-model-strip">  - <b>from:</b> this</span>
+<span class="best-worlds-model-strip">    <b>to:</b> result</span></span></code></pre>
           </section>
 
           <div class="best-worlds-bindings" aria-label="Metavariable bindings and the taint trace from dto through template and strip to engine process">
             <strong>Data flow</strong>
 
             <div class="best-worlds-metavar-map" aria-label="Metavariable mappings">
-              <code class="best-worlds-flow-stage best-worlds-flow-stage-1"><b class="code-meta-method">$METHOD</b><i>=</i><span class="code-object-method">preview</span></code>
-              <code class="best-worlds-flow-stage best-worlds-flow-stage-1"><b class="code-meta-source">$UNTRUSTED</b><i>=</i><span class="code-object-source">dto</span></code>
-              <code class="best-worlds-flow-stage best-worlds-flow-stage-4"><b class="code-meta-sink">$ENGINE</b><i>=</i><span class="code-object-sink">engine</span></code>
+              <code class="best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-1"><b class="code-meta-method">$METHOD</b><i>=</i><span class="code-object-method">preview</span></code>
+              <code class="best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-1"><b class="code-meta-source">$UNTRUSTED</b><i>=</i><span class="code-object-source">dto</span></code>
+              <code class="best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-4"><b class="code-meta-sink">$ENGINE</b><i>=</i><span class="code-object-sink">engine</span></code>
             </div>
 
             <div class="best-worlds-data-trace" aria-label="Taint trace: dto, template, view, engine process">
-              <code class="best-worlds-trace-node best-worlds-flow-stage best-worlds-flow-stage-1"><b class="code-meta-source">dto</b><span>$UNTRUSTED</span></code>
-              <code class="best-worlds-trace-node best-worlds-flow-stage best-worlds-flow-stage-2"><b class="code-meta-source">template()</b><span>returns template</span></code>
-              <code class="best-worlds-trace-node best-worlds-flow-stage best-worlds-flow-stage-3"><b class="code-meta-source">strip()</b><span>returns view</span></code>
-              <code class="best-worlds-trace-node best-worlds-flow-stage best-worlds-flow-stage-4"><b class="code-meta-sink">engine.<wbr />process()</b><span>receives view</span></code>
+              <code class="best-worlds-trace-node best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-1"><b class="code-meta-source">dto</b><span>$UNTRUSTED</span></code>
+              <code class="best-worlds-trace-node best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-2"><b class="code-meta-source">template()</b><span>returns template</span></code>
+              <code class="best-worlds-trace-node best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-3"><b class="code-meta-source">strip()</b><span>returns view</span></code>
+              <code class="best-worlds-trace-node best-worlds-flow-surface best-worlds-flow-stage best-worlds-flow-stage-4"><b class="code-meta-sink">engine.<wbr />process()</b><span>receives view</span></code>
             </div>
           </div>
-
-          <section class="best-worlds-code-panel best-worlds-formal-code" aria-label="SSTI search pattern expressed with metavariables">
-            <h4 class="best-worlds-panel-heading">Rule</h4>
-            <pre><code><span><b class="code-spec-key">patterns:</b></span>
-<span>  - <b class="code-spec-key">pattern:</b> |</span>
-<span class="best-worlds-flow-stage best-worlds-flow-stage-1">      <b class="code-meta-method">$METHOD</b>(..., PreviewDto <b class="code-meta-source">$UNTRUSTED</b>, ...) &#123;</span>
-<span class="code-line-ellipsis best-worlds-flow-stage best-worlds-flow-stage-2-3">        ...</span>
-<span class="best-worlds-flow-stage best-worlds-flow-stage-4">        <b class="code-meta-sink">$ENGINE</b>.process(<b class="code-meta-source">$UNTRUSTED</b>, ...);</span>
-<span>      &#125;</span></code></pre>
-          </section>
         </div>
       </article>
 

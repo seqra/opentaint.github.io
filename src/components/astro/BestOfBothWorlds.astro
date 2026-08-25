@@ -87,9 +87,21 @@
 <span class="code-line-source best-worlds-flow-stage best-worlds-flow-stage-1">String <b class="code-object-method">preview</b>(PreviewDto <b class="code-object-source">dto</b>) &#123;</span>
 <span class="code-line-transform best-worlds-flow-stage best-worlds-flow-stage-2">  var <b class="code-object-template">template</b> = dto.template();</span>
 <span class="code-line-transform best-worlds-flow-stage best-worlds-flow-stage-3">  var <b class="code-object-data">view</b> = template.strip();</span>
-<span class="code-line-soft">  audit("preview_requested");</span>
 <span class="code-line-sink best-worlds-flow-stage best-worlds-flow-stage-4">  return <b class="code-object-sink">engine</b>.process(<b class="code-object-data">view</b>, context);</span>
 <span>&#125;</span></code></pre>
+          </section>
+
+          <section class="best-worlds-dependency-models" aria-label="Dependency models for template and strip">
+            <strong>Dependency models</strong>
+            <pre><code>
+<span class="best-worlds-model-template best-worlds-flow-stage best-worlds-flow-stage-2">- <b>function:</b> PreviewDto#template</span>
+<span class="best-worlds-model-template best-worlds-flow-stage best-worlds-flow-stage-2">  <b>copy:</b></span>
+<span class="best-worlds-model-template best-worlds-flow-stage best-worlds-flow-stage-2">  - <b>from:</b> this</span>
+<span class="best-worlds-model-template best-worlds-flow-stage best-worlds-flow-stage-2">    <b>to:</b> result</span>
+<span class="best-worlds-model-strip best-worlds-flow-stage best-worlds-flow-stage-3">- <b>function:</b> java.lang.String#strip</span>
+<span class="best-worlds-model-strip best-worlds-flow-stage best-worlds-flow-stage-3">  <b>copy:</b></span>
+<span class="best-worlds-model-strip best-worlds-flow-stage best-worlds-flow-stage-3">  - <b>from:</b> this</span>
+<span class="best-worlds-model-strip best-worlds-flow-stage best-worlds-flow-stage-3">    <b>to:</b> result</span></code></pre>
           </section>
 
           <div class="best-worlds-bindings" aria-label="Metavariable bindings and the taint trace from dto through template and strip to engine process">
@@ -108,24 +120,6 @@
               <code class="best-worlds-trace-node best-worlds-flow-stage best-worlds-flow-stage-4"><b class="code-meta-sink">engine.<wbr />process()</b><span>receives view</span></code>
             </div>
           </div>
-
-          <section class="best-worlds-dependency-models" aria-label="Dependency models for template and strip">
-            <strong>Dependency models</strong>
-            <div class="best-worlds-dependency-model-grid">
-              <pre aria-label="Dependency model for PreviewDto template"><code><span><b>language:</b> java</span>
-<span><b>passThrough:</b></span>
-<span class="best-worlds-model-template best-worlds-flow-stage best-worlds-flow-stage-2">- <b>function:</b> PreviewDto#template</span>
-<span class="best-worlds-model-template best-worlds-flow-stage best-worlds-flow-stage-2">  <b>copy:</b></span>
-<span class="best-worlds-model-template best-worlds-flow-stage best-worlds-flow-stage-2">  - <b>from:</b> this</span>
-<span class="best-worlds-model-template best-worlds-flow-stage best-worlds-flow-stage-2">    <b>to:</b> result</span></code></pre>
-              <pre aria-label="Dependency model for String strip"><code><span><b>language:</b> java</span>
-<span><b>passThrough:</b></span>
-<span class="best-worlds-model-strip best-worlds-flow-stage best-worlds-flow-stage-3">- <b>function:</b> java.lang.String#strip</span>
-<span class="best-worlds-model-strip best-worlds-flow-stage best-worlds-flow-stage-3">  <b>copy:</b></span>
-<span class="best-worlds-model-strip best-worlds-flow-stage best-worlds-flow-stage-3">  - <b>from:</b> this</span>
-<span class="best-worlds-model-strip best-worlds-flow-stage best-worlds-flow-stage-3">    <b>to:</b> result</span></code></pre>
-            </div>
-          </section>
 
           <section class="best-worlds-code-panel best-worlds-formal-code" aria-label="SSTI search pattern expressed with metavariables">
             <h4 class="best-worlds-panel-heading">Rule</h4>

@@ -33,6 +33,7 @@ test.describe("landing message", () => {
     await expect(page.getByText("String preview(PreviewDto dto) {", { exact: true })).toBeVisible();
     await expect(page.getByText("var template = dto.template();", { exact: true })).toBeVisible();
     await expect(page.getByText("var view = template.strip();", { exact: true })).toBeVisible();
+    await expect(page.getByText('audit("preview_requested");', { exact: true })).toHaveCount(0);
     await expect(page.locator(".best-worlds-application-code .code-line-sink")).toHaveText("return engine.process(view, context);");
     await expect(page.locator(".best-worlds-formal-code code > span").nth(2)).toHaveText("$METHOD(..., PreviewDto $UNTRUSTED, ...) {");
     await expect(page.getByText("$ENGINE.process($UNTRUSTED, ...);", { exact: true })).toBeVisible();
@@ -85,17 +86,17 @@ test.describe("landing message", () => {
       const analysis = box(".best-worlds-analysis");
       const core = box(".best-worlds-core");
       const code = box(".best-worlds-application-code");
-      const trace = box(".best-worlds-bindings");
       const pattern = box(".best-worlds-formal-code");
       const models = box(".best-worlds-dependency-models");
+      const trace = box(".best-worlds-bindings");
       return {
         topCardOffset: Math.abs(reasoning.top - analysis.top),
         coreBelowCards: core.top > Math.max(reasoning.bottom, analysis.bottom),
-        searchStoryRunsLeftToRight: code.left < trace.left && trace.left < pattern.left,
-        searchStoryTopOffset: Math.max(code.top, trace.top, pattern.top) - Math.min(code.top, trace.top, pattern.top),
-        searchStoryHeightOffset: Math.max(code.height, trace.height, pattern.height) - Math.min(code.height, trace.height, pattern.height),
-        modelsBelowStory: models.top > Math.max(code.bottom, trace.bottom, pattern.bottom),
-        modelsSpanStory: Math.abs(models.left - code.left) <= 1 && Math.abs(models.right - pattern.right) <= 1,
+        searchStoryRunsLeftToRight: code.left < models.left && models.left < pattern.left,
+        searchStoryTopOffset: Math.max(code.top, models.top, pattern.top) - Math.min(code.top, models.top, pattern.top),
+        searchStoryHeightOffset: Math.max(code.height, models.height, pattern.height) - Math.min(code.height, models.height, pattern.height),
+        traceBelowStory: trace.top > Math.max(code.bottom, models.bottom, pattern.bottom),
+        traceSpansStory: Math.abs(trace.left - code.left) <= 1 && Math.abs(trace.right - pattern.right) <= 1,
       };
     });
     expect(visualOrder.topCardOffset).toBeLessThanOrEqual(1);
@@ -103,8 +104,8 @@ test.describe("landing message", () => {
     expect(visualOrder.searchStoryRunsLeftToRight).toBe(true);
     expect(visualOrder.searchStoryTopOffset).toBeLessThanOrEqual(1);
     expect(visualOrder.searchStoryHeightOffset).toBeLessThanOrEqual(1);
-    expect(visualOrder.modelsBelowStory).toBe(true);
-    expect(visualOrder.modelsSpanStory).toBe(true);
+    expect(visualOrder.traceBelowStory).toBe(true);
+    expect(visualOrder.traceSpansStory).toBe(true);
     const smallestVisualType = await page.locator(".best-worlds-visual").evaluate((visual) =>
       Math.min(...Array.from(visual.querySelectorAll("*")).filter((element) =>
         element.textContent?.trim() && (element as HTMLElement).offsetParent !== null

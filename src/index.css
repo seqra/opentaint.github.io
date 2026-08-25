@@ -1012,11 +1012,6 @@
     color: hsl(var(--foreground));
   }
 
-  .best-worlds-code-panel .code-line-soft {
-    opacity: 0.26;
-    filter: blur(1.4px);
-  }
-
   .best-worlds-code-panel .code-line-ellipsis {
     color: hsl(var(--foreground));
     font-weight: 750;
@@ -1055,11 +1050,11 @@
   .best-worlds-bindings {
     position: relative;
     z-index: 1;
-    display: flex;
+    display: grid;
     overflow: hidden;
-    grid-column: 2;
-    grid-row: 1;
-    flex-direction: column;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    grid-template-columns: minmax(21rem, 0.85fr) minmax(0, 1.4fr);
     border: 1px solid hsl(var(--border));
     border-radius: 6px;
     background: hsl(var(--background) / 0.64);
@@ -1068,13 +1063,15 @@
   }
 
   .best-worlds-bindings > strong {
+    grid-column: 1 / -1;
     padding: var(--spacing-03) var(--spacing-04);
   }
 
   .best-worlds-metavar-map {
     display: grid;
+    grid-column: 1;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    border-bottom: 1px solid hsl(var(--border));
+    border-right: 1px solid hsl(var(--border));
     background: hsl(var(--background) / 0.45);
   }
 
@@ -1110,7 +1107,7 @@
     position: relative;
     display: grid;
     min-height: 96px;
-    flex: 1;
+    grid-column: 2;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     align-items: center;
     gap: var(--spacing-03);
@@ -1156,8 +1153,8 @@
 
   .best-worlds-dependency-models {
     overflow: hidden;
-    grid-column: 1 / -1;
-    grid-row: 2;
+    grid-column: 2;
+    grid-row: 1;
     border: 1px solid hsl(var(--border));
     border-radius: 6px;
     background: hsl(var(--background) / 0.64);
@@ -1176,11 +1173,6 @@
     font-weight: 600;
   }
 
-  .best-worlds-dependency-model-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .best-worlds-dependency-models pre {
     overflow-x: auto;
     padding: var(--spacing-03) 0 var(--spacing-04);
@@ -1193,10 +1185,6 @@
 
   .best-worlds-dependency-models pre::-webkit-scrollbar {
     display: none;
-  }
-
-  .best-worlds-dependency-models pre + pre {
-    border-left: 1px solid hsl(var(--border));
   }
 
   .best-worlds-dependency-models code > span {
@@ -1294,6 +1282,20 @@
       grid-column: auto;
       grid-row: auto;
     }
+
+    .best-worlds-bindings {
+      grid-template-columns: 1fr;
+    }
+
+    .best-worlds-metavar-map {
+      grid-column: 1;
+      border-right: 0;
+      border-bottom: 1px solid hsl(var(--border));
+    }
+
+    .best-worlds-data-trace {
+      grid-column: 1;
+    }
   }
 
   @media (max-width: 800px) {
@@ -1340,15 +1342,6 @@
       width: 2px;
       height: auto;
       background: linear-gradient(180deg, hsl(var(--agent) / 0.72), hsl(var(--agent) / 0.45) 68%, hsl(var(--brand) / 0.58));
-    }
-
-    .best-worlds-dependency-model-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .best-worlds-dependency-models pre + pre {
-      border-top: 1px solid hsl(var(--border));
-      border-left: 0;
     }
 
   }

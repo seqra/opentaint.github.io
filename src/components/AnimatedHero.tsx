@@ -31,9 +31,7 @@ export function AnimatedHero() {
           The open source taint analysis engine for the AI era
         </p>
         <p className="hero-subline hero-promise mx-0 mt-5 font-mono lg:mx-auto">
-          <span className="hero-promise-part">Turn frontier model reasoning into</span>{" "}
-          <strong className="hero-promise-focus">reliable static-analysis checks</strong>{" "}
-          <span className="hero-promise-part">that detect vulnerabilities at low cost</span>
+          Turn frontier model reasoning into reliable <span className="whitespace-nowrap">static-analysis</span> checks that detect vulnerabilities at low cost
         </p>
 
         <div className="mt-6 flex items-center justify-start gap-4 lg:justify-center">

@@ -10,7 +10,7 @@ test.describe("landing message", () => {
       level: 1,
     })).toBeVisible();
     await expect(page.getByText("Turn frontier model reasoning into reliable static-analysis checks that detect vulnerabilities at low cost", { exact: true })).toBeVisible();
-    await expect(page.locator(".hero-promise-focus")).toHaveText("reliable static-analysis checks");
+    await expect(page.locator(".hero-promise-focus")).toHaveCount(0);
     await expect(page.locator(".hero-promise-command")).toHaveCount(0);
     await expect(page.getByText("Try open source taint analysis engine for the AI era", { exact: true })).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "The flexibility of model reasoning", level: 3 })).toBeVisible();

@@ -229,84 +229,27 @@
   }
 
   .hero-promise {
-    display: grid;
     width: 100%;
     max-width: 64rem;
-    grid-template-columns: minmax(0, 1fr) max-content minmax(0, 1fr);
-    align-items: center;
-    gap: 1.25rem;
     padding: 1rem 1.5rem;
     border-block: 1px solid hsl(var(--primary) / 0.3);
     background: linear-gradient(90deg, transparent, hsl(var(--background) / 0.96) 12%, hsl(var(--background) / 0.96) 88%, transparent);
     color: hsl(var(--primary));
-  }
-
-  .hero-promise-part {
-    max-width: 20rem;
     font-weight: 600;
-  }
-
-  .hero-promise-part:first-child {
-    justify-self: end;
-    text-align: right;
-  }
-
-  .hero-promise-part:last-child {
-    justify-self: start;
-    text-align: left;
-  }
-
-  .hero-promise-focus {
-    color: hsl(var(--primary));
-    font-size: 1.125rem;
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    line-height: 1.35;
-    white-space: nowrap;
+    text-align: center;
+    text-wrap: balance;
   }
 
   @media (min-width: 1024px) {
     .hero-subline {
       font-size: 1.125rem;
     }
-
-    .hero-promise-part {
-      font-size: 1.0625rem;
-    }
-
-    .hero-promise-focus {
-      font-size: 1.25rem;
-    }
   }
 
   @media (max-width: 639px) {
     .hero-promise {
-      display: block;
       padding: 1rem 0.25rem;
       text-align: left;
-    }
-
-    .hero-promise-part {
-      display: block;
-      max-width: none;
-    }
-
-    .hero-promise-part:first-child,
-    .hero-promise-part:last-child {
-      justify-self: auto;
-      text-align: left;
-    }
-
-    .hero-promise-part:last-child {
-      margin-top: 0.5rem;
-    }
-
-    .hero-promise-focus {
-      display: block;
-      width: fit-content;
-      max-width: 100%;
-      margin: 0.5rem 0;
-      white-space: normal;
     }
   }
 

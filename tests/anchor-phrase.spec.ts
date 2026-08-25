@@ -29,6 +29,7 @@ test.describe("landing message", () => {
     await expect(page.getByText("$ENGINE = engine", { exact: true })).toBeVisible();
     await expect(page.locator(".best-worlds-visual")).not.toContainText("$SOURCE");
     await expect(page.locator(".best-worlds-visual")).not.toContainText("$DATA");
+    await expect(page.locator(".best-worlds-visual")).not.toContainText("$RETURN");
     await expect(page.getByText("Adapts security knowledge to your application", { exact: true })).toBeVisible();
     await expect(page.getByText("Finds every match for each security rule", { exact: true })).toBeVisible();
     await expect(page.getByText("FINDS NEW VULNERABILITY PATTERNS", { exact: true })).toBeVisible();

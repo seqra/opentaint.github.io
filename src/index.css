@@ -224,14 +224,26 @@
 
   .hero-subline {
     max-width: 48rem;
-    font-size: 0.9375rem;
+    font-size: 1rem;
     line-height: 1.6;
     letter-spacing: 0;
   }
 
+  .hero-promise {
+    padding: 1rem 1.25rem;
+    border: 1px solid hsl(var(--primary) / 0.28);
+    border-left-width: 4px;
+    border-left-color: hsl(var(--primary));
+    border-radius: 0.75rem;
+    background: hsl(var(--background) / 0.94);
+    box-shadow: 0 0.75rem 1.75rem hsl(var(--foreground) / 0.06);
+    color: hsl(var(--primary));
+    font-weight: 600;
+  }
+
   @media (min-width: 1024px) {
     .hero-subline {
-      font-size: 1rem;
+      font-size: 1.125rem;
     }
   }
 

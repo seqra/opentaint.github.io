@@ -245,7 +245,7 @@ export function ContinuousSecurity() {
       <div className="relative z-10 mx-auto max-w-[96rem]">
         <div>
           <div className="section-header">
-            <h2 id="product-advantages-heading" className="section-heading">Find hard-to-detect vulnerabilities with exhaustive local analysis you own</h2>
+            <h2 id="product-advantages-heading" className="section-heading">Find vulnerabilities LLMs miss using only local compute</h2>
           </div>
 
           <div className="value-card-grid mobile-card-rail mx-auto mt-12 grid max-w-[64rem] gap-6 md:grid-cols-2 sm:mt-16" role="region" aria-labelledby="product-advantages-heading" tabIndex={0}>

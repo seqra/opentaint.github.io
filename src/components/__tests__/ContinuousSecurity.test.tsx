@@ -9,7 +9,7 @@ describe("ContinuousSecurity", () => {
     const workflow = screen.getByRole("heading", { name: "Triage", level: 3 }).closest(".workflow-card-grid");
     const promise = screen.getByRole("heading", { name: "Turn one-off review into unlimited scans", level: 2 });
     const firstAdvantage = screen.getByRole("heading", { name: "Practical SOTA static analysis", level: 3 });
-    const valueHeading = screen.getByRole("heading", { name: "Practical SOTA static analysis. Open source, batteries included.", level: 2 });
+    const valueHeading = screen.getByRole("heading", { name: "Fast, accurate analysis. Open source.", level: 2 });
 
     expect(valueHeading).toBeVisible();
     expect(promise).toHaveTextContent("Turn one-off review into unlimited scans");

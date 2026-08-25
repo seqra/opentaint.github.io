@@ -245,7 +245,7 @@ export function ContinuousSecurity() {
       <div className="relative z-10 mx-auto max-w-[96rem]">
         <div>
           <div className="section-header">
-            <h2 id="product-advantages-heading" className="section-heading">Simple specifications. Deep analysis. Open source.</h2>
+            <h2 id="product-advantages-heading" className="section-heading">Practical SOTA static analysis. Open source, batteries included.</h2>
           </div>
 
           <div className="value-card-grid mobile-card-rail mx-auto mt-12 grid max-w-[64rem] gap-6 md:grid-cols-2 sm:mt-16" role="region" aria-labelledby="product-advantages-heading" tabIndex={0}>
@@ -267,7 +267,11 @@ export function ContinuousSecurity() {
 
         </div>
 
-        <div className="workflow-card-grid mobile-card-rail mt-16 grid gap-4 md:grid-cols-2 min-[1440px]:-mx-12 min-[1440px]:grid-cols-4 sm:mt-20" role="region" aria-label="OpenTaint workflow" tabIndex={0}>
+        <div className="mx-auto mt-16 max-w-[72rem] text-center">
+          <h2 id="continuous-security-heading" className="section-heading">Turn one-off review into unlimited scans</h2>
+        </div>
+
+        <div className="workflow-card-grid mobile-card-rail mt-12 grid gap-4 md:grid-cols-2 min-[1440px]:-mx-12 min-[1440px]:grid-cols-4" role="region" aria-label="OpenTaint workflow" tabIndex={0}>
           {cards.map((card) => (
             <article key={card.title} className="workflow-card mobile-card-rail-item flex min-h-[25rem] flex-col overflow-hidden rounded-[24px] border border-border-strong bg-background shadow-sm">
               <div className="relative h-[18rem] p-3">{card.preview}</div>
@@ -281,9 +285,6 @@ export function ContinuousSecurity() {
           ))}
         </div>
 
-        <div className="mx-auto mt-12 max-w-[72rem] text-center sm:mt-16">
-          <h2 id="continuous-security-heading" className="section-heading">Turn one-off review into unlimited scans</h2>
-        </div>
       </div>
     </section>
   );

@@ -9,14 +9,14 @@ describe("ContinuousSecurity", () => {
     const workflow = screen.getByRole("heading", { name: "Triage", level: 3 }).closest(".workflow-card-grid");
     const promise = screen.getByRole("heading", { name: "Turn one-off review into unlimited scans", level: 2 });
     const firstAdvantage = screen.getByRole("heading", { name: "Practical SOTA static analysis", level: 3 });
-    const valueHeading = screen.getByRole("heading", { name: "Simple specifications. Deep analysis. Open source.", level: 2 });
+    const valueHeading = screen.getByRole("heading", { name: "Practical SOTA static analysis. Open source, batteries included.", level: 2 });
 
     expect(valueHeading).toBeVisible();
     expect(promise).toHaveTextContent("Turn one-off review into unlimited scans");
     expect(screen.queryByText("The flexibility of model reasoning and the consistency of formal program analysis combined")).not.toBeInTheDocument();
     expect(valueHeading.compareDocumentPosition(firstAdvantage) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(firstAdvantage.compareDocumentPosition(workflow as Node) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect((workflow as Node).compareDocumentPosition(promise) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(firstAdvantage.compareDocumentPosition(promise) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(promise.compareDocumentPosition(workflow as Node) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it("shows the four-part OpenTaint workflow", () => {

@@ -4,7 +4,7 @@ test.describe("landing message", () => {
   test("leads with the open source engine position", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page.locator(".hero-subline > span").first()).toHaveText("OpenTaint is the open source taint analysis engine for the AI era.");
+    await expect(page.locator(".hero-composition .section-banner")).toHaveText("OpenTaint is the open source taint analysis engine for the AI era");
     await expect(page.getByRole("heading", {
       name: "Turn one agent-led security review into continuous vulnerability checks",
       level: 1,
@@ -19,12 +19,12 @@ test.describe("landing message", () => {
     await expect(page.getByText("$ENGINE.process($UNTRUSTED, ...);", { exact: true })).toBeVisible();
     await expect(page.locator(".best-worlds-formal-code .code-line-ellipsis")).toHaveText(["..."]);
     await expect(page.getByText("METAVARIABLES ARE DATA TAINT MARKS", { exact: true })).toBeVisible();
-    await expect(page.getByText(/java\.lang\.String#strip\s+this → result/)).toBeVisible();
+    await expect(page.getByText(/java\.lang\.String#strip\s+this to result/)).toBeVisible();
     await expect(page.getByText("Adapts security knowledge to your application", { exact: true })).toBeVisible();
     await expect(page.getByText("Finds every match for each security rule", { exact: true })).toBeVisible();
     await expect(page.getByText("FINDS NEW VULNERABILITY PATTERNS", { exact: true })).toBeVisible();
     await expect(page.getByText("UNDERSTANDS APPLICATION CONTEXT", { exact: true })).toBeVisible();
-    await expect(page.getByText("UNDERSTANDS DEPENDENCIES", { exact: true })).toBeVisible();
+    await expect(page.getByText("UNDERSTANDS CODE DEPENDENCIES", { exact: true })).toBeVisible();
     await expect(page.getByText("SEARCHES ALL MODELED PATHS", { exact: true })).toBeVisible();
     await expect(page.getByText("GIVES PREDICTABLE RESULTS", { exact: true })).toBeVisible();
     await expect(page.getByText("CREATES DURABLE CHECKS", { exact: true })).toBeVisible();
@@ -33,6 +33,8 @@ test.describe("landing message", () => {
     await expect(page.getByText("PR #184", { exact: true })).toHaveCount(0);
     await expect(page.getByText("$TAINTED = $DATA.strip();", { exact: true })).toHaveCount(0);
     await expect(page.locator(".best-worlds-visual")).not.toContainText("·");
+    await expect(page.locator(".best-worlds-visual")).not.toContainText("→");
+    await expect(page.locator(".best-worlds-toolbar")).toHaveCount(0);
     await expect(page.locator(".best-worlds-scroll-cue")).toHaveCount(0);
     const smallestVisualType = await page.locator(".best-worlds-visual").evaluate((visual) =>
       Math.min(...Array.from(visual.querySelectorAll("*")).filter((element) =>
@@ -40,7 +42,7 @@ test.describe("landing message", () => {
       ).map((element) => Number.parseFloat(getComputedStyle(element).fontSize)))
     );
     expect(smallestVisualType).toBeGreaterThanOrEqual(12);
-    await expect(page.getByRole("heading", { name: "Install OpenTaint and check your project in five minutes" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Scan your project in five minutes" })).toBeVisible();
     await expect(page.getByText("Run your first agentic application security test in 5 minutes", { exact: true })).toHaveCount(0);
     await expect(page.getByText("Run deep security scan and static triage with OpenTaint appsec-agent skill", { exact: true })).toBeVisible();
   });

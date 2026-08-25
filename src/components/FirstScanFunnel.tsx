@@ -89,8 +89,8 @@ export function FirstScanFunnel() {
     <section id="install" className="band quickstart-section" aria-labelledby="quickstart-heading">
       <div className="relative z-10 mx-auto max-w-[82rem]">
         <div className="section-header">
-          <p className="section-banner">First scan</p>
-          <h2 id="quickstart-heading" className="section-heading">Install OpenTaint and check your project in five minutes</h2>
+          <p className="section-banner">First agentic scan</p>
+          <h2 id="quickstart-heading" className="section-heading">Scan your project in five minutes</h2>
         </div>
 
         <div className="mx-auto mt-8 max-w-4xl space-y-4 text-left sm:mt-10">

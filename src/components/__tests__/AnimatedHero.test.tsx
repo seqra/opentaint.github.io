@@ -6,8 +6,8 @@ describe("AnimatedHero", () => {
   it("renders the core promise", () => {
     render(<AnimatedHero />);
     expect(screen.getByRole("heading", { level: 1, name: "Turn one agent-led security review into continuous vulnerability checks" })).toBeVisible();
-    expect(document.querySelector(".hero-subline")?.children[0]).toHaveTextContent("OpenTaint is the open source taint analysis engine for the AI era.");
-    expect(document.querySelector(".hero-subline")?.children[1]).toHaveTextContent("It turns one-off security findings into unlimited scans across the development lifecycle.");
+    expect(document.querySelector(".section-banner")).toHaveTextContent("OpenTaint is the open source taint analysis engine for the AI era");
+    expect(document.querySelector(".hero-subline")).toHaveTextContent("It turns one-off security findings into unlimited scans across the development lifecycle.");
     expect(screen.queryByText("The flexibility of model reasoning and the consistency of formal program analysis combined")).not.toBeInTheDocument();
     expect(document.querySelector('img[src="/opentaint-header-light.svg"]')).toHaveAttribute("alt", "OpenTaint");
     expect(screen.getByText("agent-led security review", { selector: "span" })).toHaveClass("text-primary");
@@ -15,7 +15,7 @@ describe("AnimatedHero", () => {
     expect(document.querySelector(".hero-title-column")).toBeNull();
     expect(document.querySelector(".hero-signal-field")).toBeNull();
     expect(screen.getByRole("link", { name: "Install" })).toHaveAttribute("href", "#install");
-    expect(screen.getByRole("link", { name: "See a real finding" })).toHaveAttribute("href", "/blog/conductor-rce-cve-2026-58138/");
+    expect(screen.getByRole("link", { name: "See CVE" })).toHaveAttribute("href", "/blog/conductor-rce-cve-2026-58138/");
   });
 
   it("uses no hard-coded hex colors in class names", () => {

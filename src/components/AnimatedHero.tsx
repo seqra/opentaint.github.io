@@ -11,9 +11,11 @@ export function AnimatedHero() {
           Turn one <span className="text-primary">agent-led security review</span> into continuous vulnerability checks
         </h1>
 
-        <p className="hero-subline mx-0 mt-8 max-w-[62ch] text-left font-mono text-muted-foreground lg:mx-auto lg:text-center">
-          <span className="block text-foreground">OpenTaint is the open source taint analysis engine for the AI era.</span>
-          <span className="mt-2 block">It turns one-off security findings into unlimited scans across the development lifecycle.</span>
+        <p className="section-banner mx-0 mt-8 max-w-[92ch] text-left lg:mx-auto lg:text-center">
+          OpenTaint is the open source taint analysis engine for the AI era
+        </p>
+        <p className="hero-subline mx-0 mt-4 max-w-[62ch] text-left font-mono text-muted-foreground lg:mx-auto lg:text-center">
+          It turns one-off security findings into unlimited scans across the development lifecycle.
         </p>
 
         <div className="mt-6 flex items-center justify-start gap-4 lg:justify-center">
@@ -22,7 +24,7 @@ export function AnimatedHero() {
             <Download aria-hidden="true" className="h-5 w-5" />
           </a>
           <a href="/blog/conductor-rce-cve-2026-58138/" className="cta-pill cta-pill-secondary hero-cta">
-            See a real finding
+            See CVE
             <ScanSearch aria-hidden="true" className="h-5 w-5" />
           </a>
         </div>

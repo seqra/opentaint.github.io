@@ -8,11 +8,6 @@
 
   <div class="best-worlds-inner">
     <div class="best-worlds-visual">
-      <div class="best-worlds-toolbar" aria-hidden="true">
-        <span><i></i> OPEN SOURCE, BATTERIES INCLUDED</span>
-        <span>DISCOVER → SPECIFY → SCAN → TRIAGE</span>
-      </div>
-
       <svg class="best-worlds-flow" viewBox="0 0 1200 560" preserveAspectRatio="none" aria-hidden="true">
         <path class="best-worlds-flow-muted" d="M374 294 H434 M766 294 H826" />
         <path class="best-worlds-flow-active" d="M374 294 H434 M766 294 H826" />
@@ -47,7 +42,7 @@
             <span class="best-worlds-value-symbol" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="4" width="6" height="5" rx="1" /><rect x="14.5" y="4" width="6" height="5" rx="1" /><rect x="9" y="15" width="6" height="5" rx="1" /><path d="M6.5 9v2.5H17.5V9M12 11.5V15" /></svg>
             </span>
-            <span><b>UNDERSTANDS DEPENDENCIES</b><small>Uses knowledge of frameworks, libraries, and APIs to explain security behavior.</small></span>
+            <span><b>UNDERSTANDS CODE DEPENDENCIES</b><small>Uses knowledge of frameworks, libraries, and APIs to explain security behavior.</small></span>
           </div>
         </div>
       </article>
@@ -56,7 +51,6 @@
         <header>
           <span>LEAN / SPECIFY</span>
           <strong>CODE TO FORMAL SPECIFICATION</strong>
-          <i>Related code becomes reusable security knowledge</i>
         </header>
 
         <div class="best-worlds-code-map">
@@ -78,11 +72,11 @@
 
           <div class="best-worlds-dependency-model" aria-label="Dependency model propagating taint through String strip">
             <strong>DEPENDENCY MODEL</strong>
-            <code>java.lang.String#strip&nbsp;&nbsp; this → result</code>
+            <code>java.lang.String#strip&nbsp;&nbsp; this to result</code>
           </div>
 
           <section class="best-worlds-code-panel best-worlds-formal-code" aria-label="Formal SSTI specification expressed with metavariables">
-            <header><span>FORMAL SPECIFICATION</span><i>source → sink</i></header>
+            <header><span>FORMAL SPECIFICATION</span><i>source to sink</i></header>
             <pre><code><span><em># source</em></span>
 <span>@<b class="code-meta-source">$ANNOTATION</b>(...)</span>
 <span><b class="code-meta-data">$RETURNTYPE</b> <b class="code-meta-data">$METHODNAME</b>(...,</span>

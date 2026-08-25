@@ -2,7 +2,6 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import SiteHeader from "@/components/astro/SiteHeader.astro";
 import LandingFooter from "@/components/astro/LandingFooter.astro";
-import { createHeroFlowField } from "@/lib/heroFlowField";
 import { AnimatedHero } from "@/components/AnimatedHero";
 import { FirstScanFunnel } from "@/components/FirstScanFunnel";
 import Demo from "@/components/astro/Demo.astro";
@@ -84,12 +83,6 @@ const structuredData = [
       })),
   },
 ];
-const heroWorkflowFlowLines = createHeroFlowField({ height: 1440 });
-const heroWorkflowBasePath = heroWorkflowFlowLines.map((line) => line.d).join(" ");
-const heroWorkflowActivePaths = Array.from({ length: 3 }, (_, phase) => heroWorkflowFlowLines
-  .filter((line, index) => line.active && index % 3 === phase)
-  .map((line) => line.d)
-  .join(" "));
 ---
 
 <BaseLayout
@@ -103,14 +96,7 @@ const heroWorkflowActivePaths = Array.from({ length: 3 }, (_, phase) => heroWork
     <SiteHeader />
     <main id="main" class="landing-sections flex-1 pt-16">
       <div class="hero-workflow-group">
-        <svg class="hero-workflow-signal-field" viewBox="0 0 1200 1440" preserveAspectRatio="none" aria-hidden="true">
-          <g class="hero-signal-graph">
-            <path class="hero-signal-base" d={heroWorkflowBasePath}></path>
-            {heroWorkflowActivePaths.map((path, phase) => (
-              <path class:list={["hero-signal-active", `hero-signal-active-${phase}`]} d={path}></path>
-            ))}
-          </g>
-        </svg>
+        <div class="hero-workflow-signal-field" aria-hidden="true"></div>
 
         <section class="band hero-band">
           <AnimatedHero />

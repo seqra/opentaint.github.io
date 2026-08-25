@@ -4,7 +4,7 @@ test.describe("landing message", () => {
   test("leads with the open source engine position", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page.locator(".hero-composition .section-banner")).toHaveText("OpenTaint is the open source taint analysis engine for the AI era");
+    await expect(page.locator(".hero-composition .section-banner")).toHaveText("The open source taint analysis engine for the AI era");
     await expect(page.getByRole("heading", {
       name: "Continuous, lean, and agentic application security testing",
       level: 1,

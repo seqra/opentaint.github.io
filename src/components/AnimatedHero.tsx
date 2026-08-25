@@ -28,7 +28,7 @@ export function AnimatedHero() {
         </h1>
 
         <p className="section-banner mx-0 mt-8 max-w-[92ch] text-left lg:mx-auto lg:text-center">
-          OpenTaint is the open source taint analysis engine for the AI era
+          The open source taint analysis engine for the AI era
         </p>
         <p className="hero-subline mx-0 mt-4 max-w-[62ch] text-left font-mono text-muted-foreground lg:mx-auto lg:text-center">
           It turns one-off security findings into unlimited scans across the development lifecycle.

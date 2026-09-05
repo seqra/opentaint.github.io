@@ -7,7 +7,7 @@ export const siteConfig = {
   ogVersion: deploymentRevision.slice(0, 12),
   url: "https://opentaint.org",
   author: "Seqra Team",
-  twitter: "@seqradev",
+  twitter: "@opentaint",
   github: "https://github.com/seqra/opentaint",
   discord: "https://discord.gg/6BXDfbP4p9",
 } as const;

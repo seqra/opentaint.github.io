@@ -15,14 +15,16 @@ const skills = {
       <h2 id="agent-skills-heading" class="section-heading">An application-security workflow</h2>
     </div>
 
-    <div class="section-content grid gap-6 sm:gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:gap-12">
-      <div class="lg:order-2">
+    <div class="section-content">
+      <div class="mx-auto max-w-3xl lg:text-center">
         <h3 class="font-mono text-[1.375rem] font-semibold leading-8 text-foreground sm:text-2xl">Fifteen composable skills, one workflow</h3>
-        <p class="mt-4 max-w-[52ch] font-mono text-[15px] leading-7 text-muted-foreground lg:text-base">{skills.description}</p>
+        <p class="mt-4 font-mono text-base leading-7 text-muted-foreground">{skills.description}</p>
         <a href={skills.href} class="mt-6 inline-flex font-mono text-[15px] font-semibold text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground lg:text-base">Read the release post</a>
       </div>
 
-      <AgentPipeline />
+      <div class="mt-8">
+        <AgentPipeline />
+      </div>
     </div>
   </div>
 </section>

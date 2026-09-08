@@ -161,7 +161,7 @@ test.describe("landing message", () => {
     expect(layout.visualHeight).toBeGreaterThanOrEqual(layout.viewportHeight - 80);
   });
 
-  test("makes the under-hero comparison swipeable on mobile", async ({ page }) => {
+  test("shows both under-hero comparison cards without horizontal scrolling on mobile", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
     await page.goto("/");
 
@@ -171,8 +171,6 @@ test.describe("landing message", () => {
     await expect(visual).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
     await expect(visual).toHaveCSS("padding-left", "0px");
     await expect(visual).toHaveCSS("box-shadow", "none");
-    await expect(rail).toHaveCSS("overflow-x", "auto");
-    await expect(rail).toHaveCSS("scroll-snap-type", "inline mandatory");
     const layout = await rail.evaluate((element) => {
       const cards = Array.from(element.children) as HTMLElement[];
       const railBox = element.getBoundingClientRect();
@@ -181,13 +179,15 @@ test.describe("landing message", () => {
       return {
         hasOverflow: element.scrollWidth > element.clientWidth,
         firstCardFillsMostOfRail: firstBox.width >= railBox.width * 0.8,
-        nextCardEdgeIsVisible: secondBox.left < railBox.right,
+        secondCardBelowFirst: secondBox.top >= firstBox.bottom,
+        secondCardFits: secondBox.left >= railBox.left && secondBox.right <= railBox.right + 1,
       };
     });
 
-    expect(layout.hasOverflow).toBe(true);
+    expect(layout.hasOverflow).toBe(false);
     expect(layout.firstCardFillsMostOfRail).toBe(true);
-    expect(layout.nextCardEdgeIsVisible).toBe(true);
+    expect(layout.secondCardBelowFirst).toBe(true);
+    expect(layout.secondCardFits).toBe(true);
     const mobileEqualityOffsets = await page.locator(".best-worlds-metavar-map code > i").evaluateAll((operators) =>
       operators.map((operator) => operator.getBoundingClientRect().left)
     );
@@ -199,7 +199,7 @@ test.describe("landing message", () => {
 
     await expect(page.getByRole("heading", { name: "How OpenTaint found critical CVE-2026-58138" })).toBeVisible();
     const realWorldHeading = page.locator(".real-world-heading");
-    await expect(realWorldHeading).toHaveCSS("font-size", "48px");
+    await expect(realWorldHeading).toHaveCSS("font-size", "40px");
     await expect(realWorldHeading).toHaveCSS("white-space", "nowrap");
     expect(await realWorldHeading.evaluate((heading) => heading.scrollWidth <= heading.clientWidth)).toBe(true);
     await expect(page.getByRole("link", { name: "Read the detailed case study" })).toBeVisible();

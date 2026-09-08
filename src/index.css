@@ -200,7 +200,7 @@
   }
 
   .section-heading {
-    @apply font-mono text-[2rem] font-semibold text-foreground sm:text-[2.25rem] md:text-[2.625rem] lg:text-[3rem];
+    @apply font-mono text-[1.75rem] font-semibold text-foreground sm:text-[2rem] lg:text-[2.5rem];
     line-height: 1.1;
     letter-spacing: -0.032em;
   }
@@ -222,6 +222,12 @@
     @apply text-xs tracking-[0.16em] lg:text-[13px];
   }
 
+  .hero-open-source-label {
+    color: hsl(var(--muted-foreground));
+    font-weight: 500;
+    letter-spacing: 0.1em;
+  }
+
   .hero-subline {
     font-size: 1rem;
     line-height: 1.6;
@@ -231,12 +237,12 @@
   .hero-promise {
     width: 100%;
     max-width: 64rem;
-    padding: 1rem 1.5rem;
-    border-block: 1px solid hsl(var(--primary) / 0.3);
-    background: linear-gradient(90deg, transparent, hsl(var(--background) / 0.96) 12%, hsl(var(--background) / 0.96) 88%, transparent);
-    color: hsl(var(--primary));
-    font-weight: 600;
-    text-align: center;
+    padding: var(--spacing-04) 0;
+    border: 0;
+    background: none;
+    color: hsl(var(--foreground));
+    font-weight: 500;
+    text-align: left;
     text-wrap: balance;
   }
 
@@ -244,11 +250,15 @@
     .hero-subline {
       font-size: 1.125rem;
     }
+
+    .hero-promise {
+      text-align: center;
+    }
   }
 
   @media (max-width: 639px) {
     .hero-promise {
-      padding: 1rem 0.25rem;
+      padding: var(--spacing-03) 0;
       text-align: left;
     }
   }
@@ -361,6 +371,24 @@
     .cve-card-rail-compact.mobile-card-rail {
       grid-auto-columns: calc(100% - var(--spacing-06));
       gap: var(--spacing-03);
+    }
+
+    /* The two essential value groups are part of the reading flow on phones;
+       keep the other mobile rails horizontally navigable. */
+    .best-worlds-powers.mobile-card-rail,
+    .value-card-grid.mobile-card-rail {
+      display: grid;
+      grid-auto-columns: auto;
+      grid-auto-flow: row;
+      grid-template-columns: minmax(0, 1fr) !important;
+      overflow: visible;
+      scroll-snap-type: none;
+    }
+
+    .best-worlds-powers.mobile-card-rail .mobile-card-rail-item,
+    .value-card-grid.mobile-card-rail .mobile-card-rail-item {
+      min-width: 0;
+      scroll-snap-align: none;
     }
 
     .security-stat-rail.mobile-card-rail {
@@ -674,7 +702,19 @@
 
   .continuous-security-band {
     isolation: isolate;
-    padding-top: var(--spacing-11);
+    padding-top: var(--spacing-09);
+  }
+
+  @media (min-width: 640px) {
+    .continuous-security-band {
+      padding-top: var(--spacing-10);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .continuous-security-band {
+      padding-top: var(--spacing-11);
+    }
   }
 
   .landing-sections > astro-island:has(> .continuous-security-band) > .continuous-security-band::before {
@@ -761,7 +801,7 @@
     grid-template-rows: auto auto minmax(0, 1fr);
     gap: 0;
     overflow: hidden;
-    border: 1px solid hsl(var(--border-strong));
+    border: 1px solid hsl(var(--border) / 0.72);
     border-radius: 12px;
     background: hsl(var(--code-bg));
     padding: 0;
@@ -903,8 +943,8 @@
   .best-worlds-values small {
     margin-top: var(--spacing-02);
     color: hsl(var(--muted-foreground));
-    font-size: 13px;
-    line-height: 1.35;
+    font-size: 14px;
+    line-height: 1.45;
   }
 
   .best-worlds-core {
@@ -914,7 +954,7 @@
     align-items: stretch;
     justify-content: flex-start;
     overflow: hidden;
-    border: 1px solid hsl(var(--border-strong));
+    border: 1px solid hsl(var(--border) / 0.72);
     border-radius: 12px;
     background: hsl(var(--background));
     padding: 0;
@@ -1479,7 +1519,7 @@
     width: 100%;
     height: 100%;
     background-color: hsl(var(--brand));
-    opacity: 0.31;
+    opacity: 0.14;
     pointer-events: none;
     -webkit-mask-image: var(--hero-flow-field-image);
     -webkit-mask-repeat: no-repeat;
@@ -1510,7 +1550,7 @@
   }
 
   .dark .hero-workflow-signal-field {
-    opacity: 0.44;
+    opacity: 0.22;
   }
 
   .landing-sections > .band.security-debt-band {
@@ -1835,6 +1875,7 @@
 
   .value-card {
     transition: border-color 240ms ease, transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+    border-color: hsl(var(--border) / 0.72);
   }
 
   .value-card:hover {
@@ -2804,6 +2845,13 @@
     justify-content: center;
   }
 
+  @media (max-width: 639px) {
+    .hero-band {
+      min-height: auto;
+      padding-block: var(--spacing-08) var(--spacing-09);
+    }
+  }
+
   /* Carbon expressive headings scale fluidly between breakpoints. This keeps
      the hero hierarchy continuous instead of stepping backward at lg. */
   .hero-heading {
@@ -2813,37 +2861,84 @@
   }
 
   .hero-title-lockup {
-    display: inline-flex;
+    display: flex;
+    width: 100%;
     flex-direction: column;
     align-items: flex-start;
   }
 
   .hero-title-column {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    column-gap: 0.3em;
     line-height: 1;
+    text-align: left;
+  }
+
+  @media (max-width: 639px) {
+    .hero-title-lockup {
+      align-items: flex-start;
+    }
+
+    .hero-title-column {
+      justify-content: flex-start;
+    }
+  }
+
+  .hero-prefix-word {
     text-align: left;
   }
 
   @media (min-width: 1024px) {
     .hero-title-lockup {
+      align-items: center;
+    }
+
+    .hero-title-column {
+      justify-content: center;
+    }
+
+    .hero-prefix-word {
+      text-align: center;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .hero-title-lockup {
+      display: inline-flex;
+      width: auto;
       flex-direction: row;
       align-items: center;
       column-gap: 0.36em;
     }
 
     .hero-title-column {
+      width: auto;
+      flex-wrap: nowrap;
       flex-direction: row;
       align-items: center;
       column-gap: 0.36em;
       text-align: left;
+    }
+
+    .hero-prefix-word {
+      text-align: right;
     }
   }
 
   @media (min-width: 1280px) {
     .hero-heading {
       font-size: min(3.375rem, calc((100vw - 8rem) / 22.7));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .real-world-heading {
+      font-size: 2.5rem;
     }
   }
 
@@ -3179,14 +3274,14 @@
   }
 
   .section-title {
-    @apply font-mono text-[2rem] font-semibold text-foreground sm:text-[2.25rem] md:text-[2.625rem] lg:text-[3rem];
+    @apply font-mono text-[1.75rem] font-semibold text-foreground sm:text-[2rem] lg:text-[2.5rem];
     line-height: 1.1;
     letter-spacing: -0.032em;
   }
 
   .section-subtitle {
     @apply mt-4 font-mono leading-[185%] text-muted-foreground;
-    font-size: 15px;
+    font-size: 1rem;
     max-width: 72ch;
   }
 
@@ -3201,7 +3296,7 @@
   /* Secondary line under a headline — matches the muted body voice. */
   .subheadline {
     @apply mt-4 font-mono leading-[185%] text-muted-foreground lg:mt-6;
-    font-size: 15px;
+    font-size: 1rem;
   }
 
   @media (min-width: 1024px) {
@@ -3218,12 +3313,12 @@
 
   .feature-bullet {
     @apply font-mono text-muted-foreground select-none;
-    font-size: 15px;
+    font-size: 1rem;
   }
 
   .feature-title {
     @apply font-mono font-medium text-foreground;
-    font-size: 15px;
+    font-size: 1rem;
     margin-right: 0.75rem;
   }
 

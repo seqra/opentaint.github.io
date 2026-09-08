@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { MobileRailControls } from "./MobileRailControls";
 import { Bot, Braces, Check, FileCode2, Monitor, Terminal } from "lucide-react";
 
 function VisualFrame({ children, label, className = "" }: { children: ReactNode; label: string; className?: string }) {
@@ -248,19 +249,19 @@ export function ContinuousSecurity() {
             <h2 id="product-advantages-heading" className="section-heading">Find vulnerabilities LLMs miss using only local compute</h2>
           </div>
 
-          <div className="value-card-grid mobile-card-rail mx-auto mt-12 grid max-w-[64rem] gap-6 md:grid-cols-2 sm:mt-16" role="region" aria-labelledby="product-advantages-heading" tabIndex={0}>
+          <div className="value-card-grid mobile-card-rail mx-auto mt-8 grid max-w-[64rem] gap-6 md:grid-cols-2 sm:mt-12" role="region" aria-labelledby="product-advantages-heading">
             <article className="value-card mobile-card-rail-item overflow-hidden rounded-[24px] border border-border-strong bg-background p-4 shadow-sm sm:p-6">
               <BalanceVisual />
               <div className="px-2 pb-2 pt-6">
                 <h3 className="font-mono text-xl font-semibold leading-8 tracking-[-0.03em] text-foreground">Practical SOTA static analysis</h3>
-                <p className="mt-3 w-full text-sm leading-6 text-muted-foreground sm:text-[15px]">Minimize missed findings and false alarms without making whole-project analysis impractical.</p>
+                <p className="mt-3 w-full text-base leading-7 text-muted-foreground">Minimize missed findings and false alarms without making whole-project analysis impractical.</p>
               </div>
             </article>
             <article className="value-card mobile-card-rail-item overflow-hidden rounded-[24px] border border-border-strong bg-background p-4 shadow-sm sm:p-6">
               <OpenSourceVisual />
               <div className="px-2 pb-2 pt-6">
                 <h3 className="font-mono text-xl font-semibold leading-8 tracking-[-0.03em] text-foreground">Open source, batteries included</h3>
-                <p className="mt-3 w-full text-sm leading-6 text-muted-foreground sm:text-[15px]">Engine, rules, models, agent skills, CLI, viewer, and CI integrations — all open source and built to work together.</p>
+                <p className="mt-3 w-full text-base leading-7 text-muted-foreground">Engine, rules, models, agent skills, CLI, viewer, and CI integrations — all open source and built to work together.</p>
               </div>
             </article>
           </div>
@@ -277,13 +278,14 @@ export function ContinuousSecurity() {
               <div className="relative h-[18rem] p-3">{card.preview}</div>
               <div className="flex flex-1 flex-col px-6 pb-6 pt-2">
                 <h3 className="font-mono text-2xl font-semibold tracking-[-0.04em] text-foreground">{card.title}</h3>
-                <p className="mt-3 break-words text-sm leading-6 text-muted-foreground">
+                <p className="mt-3 break-words text-base leading-7 text-muted-foreground">
                   {card.description.map((line) => <span className="block" key={line}>{line}</span>)}
                 </p>
               </div>
             </article>
           ))}
         </div>
+        <MobileRailControls label="OpenTaint workflow" />
 
       </div>
     </section>

@@ -220,32 +220,36 @@ test.describe("landing product demonstration", () => {
     await expect(triage).not.toContainText("PreviewRenderer.java:11");
   });
 
-  test("iPhone SE shows the next workflow card as a scroll cue", async ({ page }) => {
+  test("iPhone SE provides working navigation between workflow cards", async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 568 });
     await page.goto("/");
     const rail = page.getByRole("region", { name: "OpenTaint workflow" });
     await rail.scrollIntoViewIfNeeded();
 
-    const visibleNext = await rail.evaluate((element) => {
-      const railBox = element.getBoundingClientRect();
-      const nextBox = element.children[1]?.getBoundingClientRect();
-      return nextBox ? Math.max(0, railBox.right - nextBox.left) : 0;
-    });
-    expect(visibleNext).toBeGreaterThanOrEqual(20);
+    const navigation = page.getByRole("navigation", { name: "OpenTaint workflow navigation" });
+    await expect(navigation).toContainText("1 / 4");
+    await navigation.getByRole("button", { name: "Next card: OpenTaint workflow" }).click();
+    await expect(navigation).toContainText("2 / 4");
+    await navigation.getByRole("button", { name: "Previous card: OpenTaint workflow" }).click();
+    await expect(navigation).toContainText("1 / 4");
   });
 
-  test("iPhone SE shows the open-source card as a scroll cue", async ({ page }) => {
+  test("iPhone SE stacks both product advantages", async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 568 });
     await page.goto("/");
     const rail = page.getByRole("region", { name: "Find vulnerabilities LLMs miss using only local compute" });
     await rail.scrollIntoViewIfNeeded();
 
-    const visibleNext = await rail.evaluate((element) => {
-      const railBox = element.getBoundingClientRect();
-      const nextBox = element.children[1]?.getBoundingClientRect();
-      return nextBox ? Math.max(0, railBox.right - nextBox.left) : 0;
+    const layout = await rail.evaluate((element) => {
+      const firstBox = element.children[0].getBoundingClientRect();
+      const nextBox = element.children[1].getBoundingClientRect();
+      return {
+        stacked: nextBox.top >= firstBox.bottom,
+        fits: element.scrollWidth <= element.clientWidth,
+      };
     });
-    expect(visibleNext).toBeGreaterThanOrEqual(12);
+    expect(layout.stacked).toBe(true);
+    expect(layout.fits).toBe(true);
   });
 
   test("iPhone SE exposes every CVE evidence rail for horizontal scrolling", async ({ page }) => {

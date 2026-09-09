@@ -4,7 +4,7 @@ const heroPrefixes = ["Continuous", "Lean", "Agentic"];
 
 export function AnimatedHero() {
   return (
-    <div className="hero-composition relative z-0 mx-auto flex w-full max-w-[82rem] flex-1 flex-col text-center">
+    <div className="hero-composition relative z-0 mx-auto flex w-full max-w-[99rem] flex-1 flex-col text-center">
       <div className="relative z-10">
         <img src="/opentaint-header-light.svg" alt="OpenTaint" className="hero-wordmark mx-0 h-auto w-56 dark:hidden sm:w-64 lg:mx-auto lg:w-72" />
         <img src="/opentaint-header-dark.svg" alt="" aria-hidden="true" className="hero-wordmark mx-0 hidden h-auto w-56 dark:block sm:w-64 lg:mx-auto lg:w-72" />
@@ -27,20 +27,17 @@ export function AnimatedHero() {
           </span>
         </h1>
 
-        <p className="hero-subline hero-promise mx-0 mt-6 font-mono sm:mt-8 lg:mx-auto">
+        <p className="hero-subline hero-promise mx-0 mt-6 font-mono sm:mt-8 lg:mx-auto lg:text-center">
           Turn frontier model reasoning into reliable <span className="whitespace-nowrap">static-analysis</span> checks to detect vulnerabilities at low cost
         </p>
-        <p className="section-banner hero-open-source-label mx-0 mt-4 max-w-[92ch] text-left sm:mt-6 lg:mx-auto lg:text-center">
-          The open source taint analysis engine for the AI era
-        </p>
 
-        <div className="mt-4 flex items-center justify-start gap-4 sm:mt-6 lg:justify-center">
+        <div className="hero-actions mt-6">
           <a href="#install" className="cta-pill hero-cta">
             Install
             <Download aria-hidden="true" className="h-5 w-5" />
           </a>
           <a href="/blog/conductor-rce-cve-2026-58138/" className="cta-pill cta-pill-secondary hero-cta">
-            See CVE
+            CVE study
             <ScanSearch aria-hidden="true" className="h-5 w-5" />
           </a>
         </div>

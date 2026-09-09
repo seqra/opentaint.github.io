@@ -1,15 +1,15 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("landing message", () => {
-  test("leads with the open source engine position", async ({ page }) => {
+  test("presents the hero promise and under-hero product position", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page.locator(".hero-composition .section-banner")).toHaveText("The open source taint analysis engine for the AI era");
+    await expect(page.locator(".hero-composition .hero-promise")).toHaveText("Turn frontier model reasoning into reliable static-analysis checks to detect vulnerabilities at low cost");
     await expect(page.getByRole("heading", {
       name: "Continuous, lean, and agentic application security testing",
       level: 1,
     })).toBeVisible();
-    await expect(page.getByText("Turn frontier model reasoning into reliable static-analysis checks to detect vulnerabilities at low cost", { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "The open source taint analysis engine for the AI era", level: 2 })).toBeVisible();
     await expect(page.locator(".hero-promise-focus")).toHaveCount(0);
     await expect(page.locator(".hero-promise-command")).toHaveCount(0);
     await expect(page.getByText("Try open source taint analysis engine for the AI era", { exact: true })).toHaveCount(0);
@@ -138,12 +138,13 @@ test.describe("landing message", () => {
     await expect(page.getByText("Run deep security scan and static triage with OpenTaint appsec-agent skill", { exact: true })).toBeVisible();
   });
 
-  test("reveals a thin edge of the full-screen approach visual below the hero", async ({ page }) => {
+  test("introduces the comparison at the fold below the shorter hero", async ({ page }) => {
     await page.goto("/");
 
     const layout = await page.evaluate(() => {
       const hero = document.querySelector(".hero-band") as HTMLElement;
       const visual = document.querySelector(".best-worlds-stage") as HTMLElement;
+      const heading = document.querySelector(".best-worlds-heading") as HTMLElement;
       const heroBox = hero.getBoundingClientRect();
       const visualBox = visual.getBoundingClientRect();
       return {
@@ -151,13 +152,14 @@ test.describe("landing message", () => {
         heroBottom: heroBox.bottom,
         visualTop: visualBox.top,
         visualHeight: visualBox.height,
+        headingBottom: heading.getBoundingClientRect().bottom,
       };
     });
 
     expect(Math.abs(layout.heroBottom - layout.visualTop)).toBeLessThanOrEqual(1);
     expect(layout.visualTop).toBeLessThan(layout.viewportHeight);
-    expect(layout.visualTop).toBeLessThan(layout.viewportHeight - 24);
-    expect(layout.visualTop).toBeGreaterThan(layout.viewportHeight - 64);
+    expect(layout.visualTop).toBeLessThan(layout.viewportHeight - 80);
+    expect(layout.headingBottom).toBeLessThanOrEqual(layout.viewportHeight + 1);
     expect(layout.visualHeight).toBeGreaterThanOrEqual(layout.viewportHeight - 80);
   });
 

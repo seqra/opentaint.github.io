@@ -72,7 +72,7 @@
     --code-taint-bg: 0 72% 46% / 0.1;
     --code-taint-text: #ca2121;
     --radius: 0.5rem;
-    --page-max: 1760px;
+    --page-max: 99rem;
     --page-pad: var(--spacing-05);
     /* Reading column shared by the landing bands and the blog/404 pages. */
     --content-max: 72rem;
@@ -222,24 +222,15 @@
     @apply text-xs tracking-[0.16em] lg:text-[13px];
   }
 
-  .hero-open-source-label {
-    color: hsl(var(--muted-foreground));
-    font-weight: 500;
-    letter-spacing: 0.1em;
-  }
-
   .hero-subline {
     font-size: 1rem;
-    line-height: 1.6;
+    line-height: 1.55;
     letter-spacing: 0;
   }
 
   .hero-promise {
     width: 100%;
-    max-width: 64rem;
-    padding: var(--spacing-04) 0;
-    border: 0;
-    background: none;
+    max-width: 72ch;
     color: hsl(var(--foreground));
     font-weight: 500;
     text-align: left;
@@ -251,16 +242,7 @@
       font-size: 1.125rem;
     }
 
-    .hero-promise {
-      text-align: center;
-    }
-  }
-
-  @media (max-width: 639px) {
-    .hero-promise {
-      padding: var(--spacing-03) 0;
-      text-align: left;
-    }
+    .hero-promise { text-align: center; }
   }
 
   .section-header > .section-heading:not(:first-child) {
@@ -755,6 +737,27 @@
     align-items: flex-start;
     overflow: hidden;
     padding: 0 var(--page-pad) var(--spacing-10);
+  }
+
+  .best-worlds-heading {
+    max-width: 30ch;
+    margin: 0 auto var(--spacing-07);
+    color: hsl(var(--foreground));
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.032em;
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  @media (min-width: 640px) {
+    .best-worlds-heading { font-size: 1.75rem; }
+  }
+
+  @media (min-width: 1024px) {
+    .best-worlds-heading { font-size: 2rem; }
   }
 
   .best-worlds-inner {
@@ -2829,7 +2832,7 @@
      the visual conclusion of the promise above it, so it shares the hero band
      and does not start behind another section rule. */
   .hero-band {
-    min-height: calc(100svh - var(--spacing-10) - var(--spacing-08));
+    min-height: clamp(35rem, calc(100svh - var(--spacing-13) - var(--spacing-06)), 72rem);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -2855,8 +2858,8 @@
   /* Carbon expressive headings scale fluidly between breakpoints. This keeps
      the hero hierarchy continuous instead of stepping backward at lg. */
   .hero-heading {
-    font-size: clamp(2rem, calc(1.3rem + 2.5vw), 3.375rem);
-    line-height: clamp(2.5rem, calc(1.8rem + 2.5vw), 3.5rem);
+    font-size: clamp(2rem, calc(1.25rem + 2.25vw), 3.25rem);
+    line-height: 1.08;
     letter-spacing: 0;
   }
 
@@ -2932,7 +2935,7 @@
 
   @media (min-width: 1280px) {
     .hero-heading {
-      font-size: min(3.375rem, calc((100vw - 8rem) / 22.7));
+      font-size: min(3.25rem, calc((100vw - 8rem) / 23.5));
     }
   }
 
@@ -3357,9 +3360,11 @@
 
   .hero-cta {
     height: 3rem;
-    gap: 1rem;
+    width: 100%;
+    justify-content: space-between;
+    gap: var(--spacing-03);
     border-radius: 0.5rem;
-    padding-inline: 1rem;
+    padding-inline: var(--spacing-04);
     font-family: var(--font-mono);
     font-size: 1rem;
     font-weight: 400;
@@ -3369,13 +3374,22 @@
 
   .hero-cta.cta-pill-secondary {
     border-color: hsl(var(--brand) / 0.38);
-    background-color: hsl(var(--brand) / 0.08);
+    background-color: transparent;
     color: hsl(var(--brand));
   }
 
   .hero-cta.cta-pill-secondary:hover {
     border-color: hsl(var(--brand) / 0.58);
-    background-color: hsl(var(--brand) / 0.14);
+    background-color: hsl(var(--brand) / 0.08);
+  }
+
+  .hero-actions {
+    display: grid;
+    width: 100%;
+    max-width: 23rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-05);
+    margin-inline: 0;
   }
 
   @media (min-width: 1024px) {
@@ -3383,7 +3397,20 @@
       font-size: 14px;
     }
 
-    .hero-cta { font-size: 1rem; }
+    .hero-cta {
+      padding-inline: var(--spacing-05);
+      font-size: 1rem;
+    }
+
+    .hero-actions { margin-inline: auto; }
+  }
+
+  @media (min-width: 2560px) and (min-height: 1400px) {
+    .hero-heading { font-size: 4rem; }
+    .hero-wordmark { width: 20rem; }
+    .hero-subline { font-size: 1.25rem; }
+    .hero-actions { max-width: 25rem; }
+    .hero-cta { height: 3.5rem; font-size: 1.0625rem; }
   }
 }
 

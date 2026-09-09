@@ -733,7 +733,7 @@
     position: relative;
     z-index: 1;
     display: flex;
-    min-height: calc(100svh - var(--spacing-10));
+    min-height: min(calc(100svh - var(--spacing-10)), 72rem);
     align-items: flex-start;
     overflow: hidden;
     padding: 0 var(--page-pad) var(--spacing-10);
@@ -762,7 +762,7 @@
 
   .best-worlds-inner {
     width: 100%;
-    max-width: 96rem;
+    max-width: 80rem;
     margin-inline: auto;
   }
 
@@ -853,6 +853,10 @@
   .best-worlds-side-heading strong {
     color: hsl(var(--agent));
     font-weight: 750;
+  }
+
+  .best-worlds-capability-mark {
+    display: none;
   }
 
   .best-worlds-analysis .best-worlds-side-heading strong {
@@ -1513,6 +1517,155 @@
       background: linear-gradient(180deg, hsl(var(--agent) / 0.72), hsl(var(--agent) / 0.45) 68%, hsl(var(--brand) / 0.58));
     }
 
+  }
+
+  /* On larger screens the comparison reads as one balanced argument rather
+     than a stack of nested cards. Mobile keeps the stronger card boundaries
+     that make the two capabilities easier to scan vertically. */
+  @media (min-width: 801px) {
+    .best-worlds-visual {
+      min-height: auto;
+      gap: var(--spacing-09);
+      overflow: visible;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      padding: 0;
+      box-shadow: none;
+    }
+
+    .best-worlds-powers {
+      gap: 0;
+      border-block: 1px solid hsl(var(--border));
+      background: hsl(var(--background) / 0.46);
+    }
+
+    .best-worlds-side {
+      min-height: auto;
+      overflow: visible;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .best-worlds-side + .best-worlds-side {
+      border-left: 1px solid hsl(var(--border));
+    }
+
+    .best-worlds-side-heading {
+      position: relative;
+      border-bottom: 0;
+      background: transparent;
+      padding: var(--spacing-07) var(--spacing-08) var(--spacing-05);
+    }
+
+    .best-worlds-capability-mark {
+      display: block;
+      width: min(14rem, 68%);
+      height: auto;
+      margin: var(--spacing-06) auto 0;
+      color: hsl(var(--agent));
+      opacity: 0.56;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.5;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .best-worlds-maze-walls {
+      opacity: 0.48;
+    }
+
+    .best-worlds-maze-route {
+      stroke-width: 2.4;
+    }
+
+    .best-worlds-maze-start,
+    .best-worlds-maze-end {
+      fill: currentColor;
+      stroke: none;
+    }
+
+    .best-worlds-analysis .best-worlds-capability-mark {
+      color: hsl(var(--brand));
+    }
+
+    .best-worlds-outcome {
+      min-height: auto;
+      align-items: flex-start;
+      margin: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      padding: 0 var(--spacing-08) var(--spacing-05);
+      font-size: 16px;
+    }
+
+    .best-worlds-values {
+      grid-template-rows: repeat(3, auto);
+      align-content: start;
+      overflow: visible;
+      border: 0;
+      margin: 0;
+      border-radius: 0;
+      background: transparent;
+      padding: 0 var(--spacing-08) var(--spacing-07);
+    }
+
+    .best-worlds-values > div {
+      align-items: start;
+      gap: var(--spacing-04);
+      padding: var(--spacing-04) 0;
+    }
+
+    .best-worlds-values > div + div {
+      border-top: 0;
+    }
+
+    .best-worlds-value-symbol {
+      width: var(--spacing-06);
+      height: var(--spacing-06);
+      margin-top: 2px;
+      border: 0;
+      border-radius: 0;
+    }
+
+    .best-worlds-value-symbol svg {
+      width: var(--spacing-05);
+      height: var(--spacing-05);
+    }
+
+    .best-worlds-values b {
+      font-size: 13px;
+      letter-spacing: 0.035em;
+    }
+
+    .best-worlds-values small {
+      max-width: 54ch;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .best-worlds-capability-mark {
+      width: 18rem;
+      stroke-width: 1.35;
+    }
+  }
+
+  @media (min-width: 2560px) and (min-height: 1400px) {
+    .best-worlds-inner { max-width: 99rem; }
+    .best-worlds-heading { font-size: 2.5rem; }
+    .best-worlds-phase-label { font-size: 13px; }
+    .best-worlds-side-heading h3 { font-size: 2rem; }
+    .best-worlds-outcome { font-size: 18px; }
+    .best-worlds-values b { font-size: 14px; }
+    .best-worlds-values small { font-size: 15px; }
+    .best-worlds-core > header h3 { font-size: 22px; }
+    .best-worlds-capability-mark { width: 22rem; }
   }
 
   .hero-workflow-signal-field {

@@ -225,7 +225,7 @@ test.describe("landing message", () => {
     await expect(page.getByText(/symbolic execution/i)).toHaveCount(0);
   });
 
-  test("shows the workflow immediately before the product demo", async ({ page }) => {
+  test("places first-scan setup between the workflow and product demo", async ({ page }) => {
     await page.goto("/");
 
     const workflow = page.getByRole("region", {
@@ -236,11 +236,14 @@ test.describe("landing message", () => {
     await expect(workflow.getByRole("heading", { name: "Scan", exact: true })).toBeVisible();
     await expect(workflow.getByRole("heading", { name: "Triage", exact: true })).toBeVisible();
 
-    const immediatelyBeforeDemo = await workflow.evaluate((element) => {
-      const group = element.closest(".hero-workflow-group");
-      return group?.nextElementSibling?.classList.contains("demo-section");
-    });
-    expect(immediatelyBeforeDemo).toBe(true);
+    const sectionOrder = await page.locator(".hero-workflow-group, .quickstart-section, .demo-section").evaluateAll((elements) =>
+      elements.map((element) =>
+        element.classList.contains("hero-workflow-group")
+          ? "workflow"
+          : element.classList.contains("quickstart-section") ? "first-scan" : "demo"
+      )
+    );
+    expect(sectionOrder).toEqual(["workflow", "first-scan", "demo"]);
   });
 
   test("groups the landing sections with intentional dividers and backgrounds", async ({ page }) => {

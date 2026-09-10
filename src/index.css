@@ -2691,7 +2691,7 @@
 
   .enact-map {
     display: grid;
-    min-height: 9rem;
+    min-height: 12rem;
     grid-template-columns: minmax(0, 1fr) minmax(var(--spacing-10), 7rem) minmax(0, 1fr);
     align-items: center;
     justify-content: center;
@@ -2703,7 +2703,7 @@
     display: grid;
     width: 100%;
     max-width: none;
-    height: 7.5rem;
+    height: 10rem;
     min-width: 0;
     grid-template-rows: var(--spacing-06) minmax(0, 1fr);
     align-content: center;
@@ -2729,13 +2729,13 @@
   .enact-map-facts > span {
     display: flex;
     flex: 1 1 0;
-    min-height: 1.35rem;
+    min-height: 1.75rem;
     align-items: center;
     border: 1px solid hsl(var(--border));
     border-radius: 0.25rem;
     padding-inline: var(--spacing-03);
     color: hsl(var(--muted-foreground));
-    font-size: 7px;
+    font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.06em;
     transition:
@@ -2765,7 +2765,7 @@
     gap: var(--spacing-02);
     overflow: hidden;
     color: hsl(var(--foreground));
-    font-size: 8px;
+    font-size: 11px;
     font-weight: 650;
     text-overflow: ellipsis;
     white-space: nowrap;

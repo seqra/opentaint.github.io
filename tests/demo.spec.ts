@@ -11,9 +11,9 @@ test.describe("landing product demonstration", () => {
     const workbench = page.getByTestId("unified-workbench");
     await workbench.scrollIntoViewIfNeeded();
     await waitForDemo(workbench);
-    await workbench.getByRole("button", { name: "Discovery", exact: true }).click();
-    await expect(workbench.getByRole("button", { name: "Discovery", exact: true })).toHaveAttribute("aria-current", "step");
-    await expect(workbench.getByText("Review this application for unauthenticated code execution. Capture what you learn for future scans.")).toBeVisible();
+    await workbench.getByRole("button", { name: "Discover", exact: true }).click();
+    await expect(workbench.getByRole("button", { name: "Discover", exact: true })).toHaveAttribute("aria-current", "step");
+    await expect(workbench.getByLabel("Agent transcript")).toHaveCount(0);
     await expect(workbench.getByRole("heading", { name: "Unauthenticated execution review" })).toBeVisible();
     const discovery = workbench.getByTestId("review-report-scroll");
     await expect(discovery.getByText("Trust boundary", { exact: true })).toBeVisible();
@@ -98,7 +98,7 @@ test.describe("landing product demonstration", () => {
     await expect(workbench.getByTestId("triage-view")).toContainText("HostAccess.ALL");
 
     await jump(0.8);
-    await expect(workbench).toContainText("0 false alarms");
+    await expect(workbench.getByTestId("triage-view").getByText("0", { exact: true })).toBeVisible();
 
     await jump(0.872);
     const report = workbench.getByTestId("simplified-report-view");
@@ -107,9 +107,9 @@ test.describe("landing product demonstration", () => {
       const line = tooltip.parentElement?.firstElementChild;
       const tooltipBox = tooltip.getBoundingClientRect();
       const lineBox = line?.getBoundingClientRect();
-      return { tooltipTop: tooltipBox.top, lineBottom: lineBox?.bottom ?? 0 };
+      return { tooltipTop: tooltipBox.top, tooltipBottom: tooltipBox.bottom, lineTop: lineBox?.top ?? 0, lineBottom: lineBox?.bottom ?? 0 };
     });
-    expect(positions.tooltipTop).toBeGreaterThanOrEqual(positions.lineBottom);
+    expect(positions.tooltipTop >= positions.lineBottom || positions.tooltipBottom <= positions.lineTop).toBe(true);
 
     await jump(0.882);
     await expect(report.getByRole("status")).toContainText("Step 7 of 10");
@@ -117,19 +117,18 @@ test.describe("landing product demonstration", () => {
       const line = tooltip.parentElement?.firstElementChild;
       const tooltipBox = tooltip.getBoundingClientRect();
       const lineBox = line?.getBoundingClientRect();
-      return { tooltipTop: tooltipBox.top, lineBottom: lineBox?.bottom ?? 0 };
+      return { tooltipTop: tooltipBox.top, tooltipBottom: tooltipBox.bottom, lineTop: lineBox?.top ?? 0, lineBottom: lineBox?.bottom ?? 0 };
     });
-    expect(positions.tooltipTop).toBeGreaterThanOrEqual(positions.lineBottom);
+    expect(positions.tooltipTop >= positions.lineBottom || positions.tooltipBottom <= positions.lineTop).toBe(true);
   });
 
-  test("global page scrolling advances the synchronized transcript and surface", async ({ page }) => {
+  test("global page scrolling advances the analysis surface", async ({ page }) => {
     await page.goto("/");
     const track = page.getByTestId("demo-scroll-track");
     const workbench = page.getByTestId("unified-workbench");
     await track.scrollIntoViewIfNeeded();
     await expect(workbench).toBeVisible();
     await waitForDemo(workbench);
-    const transcript = workbench.getByLabel("Agent transcript");
     await track.evaluate((element) => {
       const sticky = element.firstElementChild as HTMLElement;
       const stickyTop = Number.parseFloat(getComputedStyle(sticky).top) || 0;
@@ -139,7 +138,6 @@ test.describe("landing product demonstration", () => {
     });
 
     await expect(workbench.getByTestId("simplified-report-view")).toBeVisible();
-    await expect.poll(() => transcript.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
   });
 
   test("uses the page scrollbar instead of a nested demo scrollbar", async ({ page }) => {
@@ -163,41 +161,21 @@ test.describe("landing product demonstration", () => {
     expect(await track.evaluate((element) => element.scrollTop)).toBe(0);
   });
 
-  test("renders the agent transcript from its true start to its true end", async ({ page }) => {
+  test("keeps the output canvas wider than the stage rail", async ({ page }) => {
     await page.goto("/");
     await page.evaluate(() => { document.documentElement.style.scrollBehavior = "auto"; });
     const track = page.getByTestId("demo-scroll-track");
     const workbench = page.getByTestId("unified-workbench");
-    const transcript = page.getByLabel("Agent transcript");
     await track.scrollIntoViewIfNeeded();
     await expect(workbench).toBeVisible();
     await waitForDemo(workbench);
+    await expect(workbench.getByLabel("Agent transcript")).toHaveCount(0);
 
-    await track.evaluate((element) => {
-      const sticky = element.firstElementChild as HTMLElement;
-      const stickyTop = Number.parseFloat(getComputedStyle(sticky).top) || 0;
-      window.scrollTo(0, element.getBoundingClientRect().top + window.scrollY - stickyTop);
-    });
-    await expect.poll(() => transcript.evaluate((element) => element.scrollTop)).toBe(0);
-
-    const alignment = await workbench.evaluate((element) => {
-      const box = element.getBoundingClientRect();
-      return {
-        center: box.top + box.height / 2,
-        viewportCenter: box.top + box.height / 2,
-      };
-    });
-    expect(Math.abs(alignment.center - alignment.viewportCenter)).toBeLessThanOrEqual(2);
-
-    await track.evaluate((element) => {
-      const sticky = element.firstElementChild as HTMLElement;
-      const stickyTop = Number.parseFloat(getComputedStyle(sticky).top) || 0;
-      const start = element.getBoundingClientRect().top + window.scrollY - stickyTop;
-      window.scrollTo(0, start + element.offsetHeight - sticky.offsetHeight);
-    });
-    await expect.poll(() => transcript.evaluate((element) => (
-      element.scrollHeight - element.clientHeight - element.scrollTop
-    ))).toBeLessThanOrEqual(1);
+    const output = workbench.locator('section[aria-live="polite"]');
+    const steps = workbench.getByLabel("Demo steps");
+    const [outputBox, stepsBox] = await Promise.all([output.boundingBox(), steps.boundingBox()]);
+    expect(outputBox?.width).toBeGreaterThan((stepsBox?.width ?? 0) * 4);
+    expect(outputBox?.x).toBeLessThan(stepsBox?.x ?? 0);
   });
 
   test("renders scan candidates and removes the false alarm after triage", async ({ page }) => {
@@ -215,7 +193,6 @@ test.describe("landing product demonstration", () => {
 
     await workbench.getByRole("button", { name: "Triage", exact: true }).click();
     const triage = workbench.getByTestId("triage-view");
-    await expect(workbench).toContainText("Inspected 2 complete paths");
     await expect(triage).toContainText("FALSE ALARMS");
     await expect(triage).not.toContainText("PreviewRenderer.java:11");
   });

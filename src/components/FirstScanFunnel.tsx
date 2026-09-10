@@ -15,7 +15,19 @@ const installMethods: InstallMethod[] = [
   { id: "docker", label: "docker", command: "docker pull ghcr.io/seqra/opentaint:latest" },
 ];
 
-const skillsCommand = "npx skills add https://github.com/seqra/opentaint";
+const agentSkillMethods: InstallMethod[] = [
+  {
+    id: "claude",
+    label: "Claude",
+    command: "claude plugin marketplace add seqra/opentaint\nclaude plugin install appsec-workflow@opentaint",
+  },
+  {
+    id: "codex",
+    label: "Codex",
+    command: "codex plugin marketplace add seqra/opentaint\ncodex plugin add appsec-workflow@opentaint",
+  },
+];
+
 const firstPrompt = "Run deep security scan and static triage with OpenTaint appsec-agent skill";
 
 type CopyProps = {
@@ -34,7 +46,7 @@ function CopyButton({ id, value, copiedId, onCopy }: CopyProps) {
       aria-label={copied ? `${id} copied` : `Copy ${id}`}
       className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-panel-foreground/15 text-panel-foreground/70 transition-colors hover:border-panel-foreground/35 hover:text-panel-foreground"
     >
-      {copied ? <Check className="h-4 w-4 text-panel-accent" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
+      {copied ? <Check className="h-4 w-4 text-primary" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
     </button>
   );
 }
@@ -62,7 +74,7 @@ function CommandLine({ id, value, prompt = false, copiedId, onCopy }: CopyProps 
             onCopy(id, value);
           }
         }}
-        className="min-w-0 flex-1 cursor-pointer whitespace-pre-wrap break-words rounded px-1 font-mono text-[13px] leading-6 text-panel-foreground/90 transition-colors hover:bg-panel-accent/10 hover:text-panel-foreground sm:text-[15px]"
+        className="min-w-0 flex-1 cursor-pointer whitespace-pre-wrap break-words rounded px-1 font-mono text-[13px] leading-6 text-panel-foreground/90 transition-colors hover:bg-primary/10 hover:text-panel-foreground sm:text-[15px]"
       >
         {value}
       </code>
@@ -73,10 +85,15 @@ function CommandLine({ id, value, prompt = false, copiedId, onCopy }: CopyProps 
 
 export function FirstScanFunnel() {
   const [activeMethod, setActiveMethod] = useState(installMethods[0]?.id ?? "npm");
+  const [activeAgent, setActiveAgent] = useState(agentSkillMethods[0]?.id ?? "claude");
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const activeInstallMethod = useMemo(
     () => installMethods.find((method) => method.id === activeMethod) ?? installMethods[0],
     [activeMethod],
+  );
+  const activeAgentSkillMethod = useMemo(
+    () => agentSkillMethods.find((method) => method.id === activeAgent) ?? agentSkillMethods[0],
+    [activeAgent],
   );
 
   const copy = async (id: string, value: string) => {
@@ -112,7 +129,7 @@ export function FirstScanFunnel() {
                         }}
                         className={[
                           "h-12 shrink-0 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors sm:text-[13px]",
-                          active ? "text-panel-accent" : "text-panel-foreground/60 hover:text-panel-accent",
+                          active ? "text-primary" : "text-panel-foreground/60 hover:text-primary",
                         ].join(" ")}
                       >
                         {method.label}
@@ -128,7 +145,33 @@ export function FirstScanFunnel() {
           <div className="grid gap-3 md:grid-cols-[16rem_minmax(0,1fr)] md:items-center md:gap-4">
             <StageLabel number="02">Install the OpenTaint agent skills</StageLabel>
             <div className="min-w-0 overflow-hidden rounded-xl border border-panel-border bg-panel">
-              <CommandLine id="skills install command" value={skillsCommand} copiedId={copiedId} onCopy={copy} />
+              <div className="flex h-12 items-center border-b border-panel-border/30 px-4 sm:px-6" role="tablist" aria-label="Agent skill installation">
+                {agentSkillMethods.map((method) => {
+                  const active = method.id === activeAgentSkillMethod?.id;
+                  return (
+                    <button
+                      key={method.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={active}
+                      aria-controls="agent-skills-command"
+                      onClick={() => {
+                        setActiveAgent(method.id);
+                        setCopiedId(null);
+                      }}
+                      className={[
+                        "flex h-12 items-center border-b-2 px-4 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors first:pl-0 sm:text-[13px]",
+                        active ? "border-primary text-primary" : "border-transparent text-panel-foreground/60 hover:text-primary",
+                      ].join(" ")}
+                    >
+                      {method.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <div id="agent-skills-command" role="tabpanel" className="flex min-h-[7rem] items-center [&>*]:w-full">
+                {activeAgentSkillMethod && <CommandLine id={`${activeAgentSkillMethod.label} skills install command`} value={activeAgentSkillMethod.command} copiedId={copiedId} onCopy={copy} />}
+              </div>
             </div>
           </div>
 

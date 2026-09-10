@@ -2164,18 +2164,42 @@
 
   .balance-shape {
     animation: balance-breathe 5.5s ease-in-out infinite;
+    transform-box: view-box;
   }
 
   .balance-point {
-    position: absolute;
-    z-index: 1;
-    width: 10px;
-    height: 10px;
-    transform: translate(-50%, -50%);
-    border: 2px solid hsl(var(--brand));
-    border-radius: 999px;
-    background: hsl(var(--background));
+    fill: hsl(var(--background));
+    stroke: hsl(var(--brand));
+    stroke-width: 2px;
+    vector-effect: non-scaling-stroke;
     pointer-events: none;
+  }
+
+  .balance-chart {
+    font-family: var(--font-mono);
+  }
+
+  .balance-edge-label {
+    fill: hsl(var(--brand));
+    font-size: 15px;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+    paint-order: stroke;
+    stroke: hsl(var(--code-bg));
+    stroke-linejoin: round;
+    stroke-width: 8px;
+  }
+
+  .balance-center-label rect {
+    fill: hsl(var(--background));
+    stroke: hsl(var(--brand) / 0.45);
+    vector-effect: non-scaling-stroke;
+  }
+
+  .balance-center-label text {
+    fill: hsl(var(--brand));
+    font-size: 14px;
+    font-weight: 750;
   }
 
   .bundle-system {
@@ -2643,7 +2667,7 @@
   .open-parts-list li b {
     min-width: 0;
     color: hsl(var(--foreground));
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 650;
   }
 
@@ -2653,7 +2677,7 @@
     }
 
     .open-parts-list li b {
-      font-size: 12px;
+      font-size: 15px;
     }
   }
 
@@ -3234,6 +3258,10 @@
     padding-top: var(--spacing-08);
     padding-bottom: var(--spacing-11);
     overflow: visible;
+  }
+
+  .landing-sections > .demo-section::before {
+    content: none;
   }
 
   .demo-section-inner {

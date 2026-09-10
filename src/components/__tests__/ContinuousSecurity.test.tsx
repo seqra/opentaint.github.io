@@ -65,15 +65,19 @@ describe("ContinuousSecurity", () => {
 
     const geometrySvg = balanceVisual.querySelector<SVGSVGElement>("svg[data-balance-center]")!;
     const parsePoints = (value: string) => value.split(" ").map((point) => point.split(",").map(Number));
-    const [viewBoxX, viewBoxY, viewBoxWidth, viewBoxHeight] = geometrySvg.getAttribute("viewBox")!.split(" ").map(Number);
     const [centerX, centerY] = geometrySvg.dataset.balanceCenter!.split(",").map(Number);
     const outerPoints = parsePoints(balanceVisual.querySelector("[data-balance-guide='outer']")!.getAttribute("points")!);
     const activePoints = parsePoints(balanceVisual.querySelector("[data-balance-active]")!.getAttribute("points")!);
-    const vertexDots = Array.from(balanceVisual.querySelectorAll<HTMLElement>("[data-balance-dot]"));
-    const centerLabel = balanceVisual.querySelector<HTMLElement>("[data-balance-center-label]")!;
+    const vertexDots = Array.from(balanceVisual.querySelectorAll<SVGCircleElement>("[data-balance-dot]"));
+    const centerLabel = balanceVisual.querySelector<SVGGElement>("[data-balance-center-label]")!;
 
-    expect(Number.parseFloat(centerLabel.style.left)).toBeCloseTo(((centerX - viewBoxX) / viewBoxWidth) * 100);
-    expect(Number.parseFloat(centerLabel.style.top)).toBeCloseTo(((centerY - viewBoxY) / viewBoxHeight) * 100);
+    expect(centerLabel).toHaveAttribute("transform", `translate(${centerX} ${centerY})`);
+
+    const outerSideLengths = outerPoints.map(([x, y], index) => {
+      const [nextX, nextY] = outerPoints[(index + 1) % outerPoints.length];
+      return Math.hypot(nextX - x, nextY - y);
+    });
+    outerSideLengths.forEach((length) => expect(length).toBeCloseTo(outerSideLengths[0], 2));
 
     activePoints.forEach(([activeX, activeY], index) => {
       const [outerX, outerY] = outerPoints[index];
@@ -83,8 +87,8 @@ describe("ContinuousSecurity", () => {
 
       expect(crossProduct).toBeCloseTo(0);
       expect(activeDistance).toBeLessThan(outerDistance * 0.85);
-      expect(Number.parseFloat(vertexDots[index].style.left)).toBeCloseTo(((activeX - viewBoxX) / viewBoxWidth) * 100);
-      expect(Number.parseFloat(vertexDots[index].style.top)).toBeCloseTo(((activeY - viewBoxY) / viewBoxHeight) * 100);
+      expect(Number(vertexDots[index].getAttribute("cx"))).toBeCloseTo(activeX);
+      expect(Number(vertexDots[index].getAttribute("cy"))).toBeCloseTo(activeY);
     });
 
     expect(screen.getByRole("heading", { name: "Open source, batteries included", level: 3 })).toBeVisible();

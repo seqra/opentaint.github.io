@@ -113,21 +113,21 @@ const reviewIntersectionCenter = {
             <span class="mt-2 block text-sm font-semibold leading-6 text-muted-foreground sm:text-[15px]">LLM-only findings recurred in all five runs on the same code and prompt</span>
           </figcaption>
           <p class="sr-only">These were reported issues outside the deterministic reference set, not independently confirmed vulnerabilities.</p>
-          <div class="mt-4 flex h-[13rem] w-full items-center sm:mt-6 sm:h-[17rem]">
+          <div class="mt-4 flex h-[14rem] w-full items-center sm:mt-6 sm:h-[18rem]">
             <svg class="h-auto max-h-full w-full" viewBox="60 -20 370 280" role="img" aria-label="The exact overlap shared by all five identical reviews contains only 14 percent of unmatched LLM-reported issues">
               <defs>
-                {reviewCircles.map((circle, index) => <clipPath id={`review-${index + 1}`}><circle cx={circle.cx} cy={circle.cy} r="72" /></clipPath>)}
+                {reviewCircles.map((circle, index) => <clipPath id={`review-${index + 1}`}><circle cx={circle.cx} cy={circle.cy} r="76" /></clipPath>)}
               </defs>
-              <g fill="hsl(var(--brand) / 0.025)" stroke="hsl(var(--brand) / 0.65)" stroke-width="2">
-                {reviewCircles.map((circle) => <circle cx={circle.cx} cy={circle.cy} r="72" />)}
+              <g fill="hsl(var(--brand) / 0.025)" stroke="hsl(var(--brand) / 0.65)" stroke-width="2.25">
+                {reviewCircles.map((circle) => <circle cx={circle.cx} cy={circle.cy} r="76" />)}
               </g>
               <g clip-path="url(#review-1)"><g clip-path="url(#review-2)"><g clip-path="url(#review-3)"><g clip-path="url(#review-4)"><g clip-path="url(#review-5)">
                 <rect x="0" y="0" width="490" height="230" fill="hsl(var(--brand))" />
               </g></g></g></g></g>
-              <g fill="hsl(var(--muted-foreground))" font-size="8" font-weight="700">
+              <g fill="hsl(var(--muted-foreground))" font-family="var(--font-mono)" font-size="11" font-weight="700">
                 {reviewCircles.map((circle) => <text x={circle.lx} y={circle.ly} text-anchor="middle">{circle.label}</text>)}
               </g>
-              <text x={reviewIntersectionCenter.x} y={reviewIntersectionCenter.y} text-anchor="middle" dominant-baseline="middle" fill="hsl(var(--background))" font-size="9" font-weight="700">ALL FIVE</text>
+              <text x={reviewIntersectionCenter.x} y={reviewIntersectionCenter.y} text-anchor="middle" dominant-baseline="middle" fill="hsl(var(--background))" font-family="var(--font-mono)" font-size="12" font-weight="750">ALL FIVE</text>
             </svg>
           </div>
           <a href="https://snyk.io/blog/snyk-vulnbench-js-1-0-llm-security-review-repeatability/" target="_blank" rel="noreferrer" class="mt-auto self-end font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4 sm:text-xs">Snyk VulnBench</a>

@@ -51,15 +51,7 @@ function SurfaceStory({ title, children, window }: { title: string; children: st
   );
 }
 
-function ReviewReport({ progress }: { progress: number }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const element = scrollRef.current;
-    if (!element) return;
-    element.scrollTop = Math.max(0, element.scrollHeight - element.clientHeight) * progress;
-  }, [progress]);
-
+function ReviewReport() {
   return (
     <SurfaceStory
       title="Informal security knowledge"
@@ -71,30 +63,30 @@ function ReviewReport({ progress }: { progress: number }) {
           </div>
           <span className="ml-auto flex items-center gap-2 text-[12px] text-[#4c835e] dark:text-[#7fbd92]"><Check className="h-3.5 w-3.5" /> Saved</span>
         </div>
-        <div ref={scrollRef} data-testid="review-report-scroll" className="min-h-0 flex-1 overflow-hidden px-8 py-4 xl:px-10 xl:py-6">
-        <article className="mx-auto max-w-[44rem] text-[15px] leading-6 text-[#443c38] dark:text-card-foreground">
-          <h3 className="text-[26px] font-semibold leading-8 tracking-[-0.025em] text-foreground">Unauthenticated execution review</h3>
-          <p className="mt-2 text-muted-foreground">Security context captured from the reviewed request path.</p>
+        <div data-testid="review-report-scroll" className="min-h-0 flex-1 overflow-hidden px-6 py-4 xl:px-8">
+        <article className="mx-auto max-w-[44rem] text-[14px] leading-5 text-[#443c38] dark:text-card-foreground xl:text-[15px] xl:leading-6">
+          <h3 className="text-[22px] font-semibold leading-7 tracking-[-0.025em] text-foreground xl:text-[24px]">Unauthenticated execution review</h3>
+          <p className="mt-1 text-muted-foreground">Security context captured from the reviewed request path.</p>
 
-          <section className="mt-4 rounded-[10px] border border-primary/25 bg-primary/[0.05] p-3 xl:mt-6 xl:p-4">
-            <p className="font-mono text-[12px] font-semibold uppercase tracking-[0.12em] text-primary">Trust boundary</p>
-            <p className="mt-2">Unauthenticated <code className="font-mono text-[14px] text-primary">POST /api/jobs</code> input controls the script passed into the execution pipeline.</p>
+          <section className="mt-4 rounded-[10px] border border-primary/25 bg-primary/[0.05] p-3">
+            <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary">Trust boundary</p>
+            <p className="mt-2">Unauthenticated <code className="font-mono text-[13px] text-primary">POST /api/jobs</code> input controls the script passed into the execution pipeline.</p>
           </section>
 
-          <section className="mt-3 rounded-[10px] border border-border bg-background p-3 xl:p-4">
-            <p className="font-mono text-[12px] font-semibold uppercase tracking-[0.12em] text-primary">Vulnerability pattern</p>
-            <p className="mt-2">Request-controlled script reaches <code className="font-mono text-[14px] text-primary">Context.eval</code> with host access enabled.</p>
+          <section className="mt-2 rounded-[10px] border border-border bg-background p-3">
+            <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary">Vulnerability pattern</p>
+            <p className="mt-2">Request-controlled script reaches <code className="font-mono text-[13px] text-primary">Context.eval</code> with host access enabled.</p>
           </section>
 
-          <section className="mt-3 rounded-[10px] border border-border bg-background p-3 xl:p-4">
-            <p className="font-mono text-[12px] font-semibold uppercase tracking-[0.12em] text-primary">Opaque method behavior</p>
-            <p className="mt-2"><code className="font-mono text-[14px] text-primary">Context.Builder.option()</code> returns the same builder, preserving state through the chain.</p>
+          <section className="mt-2 rounded-[10px] border border-border bg-background p-3">
+            <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary">Opaque method behavior</p>
+            <p className="mt-2"><code className="font-mono text-[13px] text-primary">Context.Builder.option()</code> returns the same builder, preserving state through the chain.</p>
           </section>
 
-          <div className="mt-6 flex items-center gap-3 rounded-[10px] border border-border bg-[#f5f3f0] px-4 py-3 font-mono dark:bg-code">
+          <div className="mt-3 flex items-center gap-3 rounded-[10px] border border-border bg-[#f5f3f0] px-3 py-2 font-mono dark:bg-code">
             <span className="h-2 w-2 rounded-full bg-primary" />
-            <span className="text-[13px] font-semibold text-foreground">Unauthenticated script execution</span>
-            <span className="ml-auto text-[12px] text-muted-foreground">CWE-94</span>
+            <span className="text-[12px] font-semibold text-foreground xl:text-[13px]">Unauthenticated script execution</span>
+            <span className="ml-auto text-[11px] text-muted-foreground xl:text-[12px]">CWE-94</span>
           </div>
         </article>
         </div>
@@ -687,7 +679,7 @@ function FindingReport({ progress }: { progress: number }) {
 }
 
 function WorkSurface({ stage, progress }: { stage: TimelineId; progress: number }) {
-  if (stage === "review") return <ReviewReport progress={progress} />;
+  if (stage === "review") return <ReviewReport />;
   if (stage === "enact") return <Specifications progress={progress} />;
   if (stage === "scan") return <ScanResults progress={progress} />;
   if (stage === "triage") return <TriageView progress={progress} />;
@@ -752,7 +744,7 @@ export function UnifiedWorkbench() {
 
   return (
     <div ref={scrollTrackRef} data-testid="demo-scroll-track" className="demo-scroll-track relative h-[720vh]">
-      <div className="sticky top-16 flex h-[calc(100vh-4rem)] min-h-[38rem] max-h-[48rem] items-center">
+      <div className="sticky top-16 flex h-[calc(100vh-4rem)] min-h-[38rem] items-center">
         <div data-testid="unified-workbench" data-demo-ready={ready ? "true" : "false"} className="agent-ui mx-auto w-full max-w-[92rem] overflow-hidden rounded-[20px] border border-black/10 bg-white p-2 dark:border-border dark:bg-card 2xl:max-w-[96rem]">
       <div className="overflow-hidden rounded-[13px] border border-border bg-background">
         <div className="flex h-11 items-center border-b border-border bg-[#f0efec] px-4 dark:bg-code-header">

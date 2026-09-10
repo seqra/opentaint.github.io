@@ -43,10 +43,10 @@ function SurfaceStory({ title, children, window }: { title: string; children: st
   return (
     <div className="flex h-full min-h-0 flex-col bg-[#efeeeb] p-4 dark:bg-background">
       <div className="mb-6 w-full shrink-0 px-3 pt-1 text-center">
-        <p className="font-mono text-[24px] font-semibold leading-7 tracking-[-0.035em] text-foreground xl:text-[26px]">{title}</p>
-        <p className="mx-auto mt-2 max-w-[46rem] text-[15px] leading-6 text-muted-foreground">{children}</p>
+        <p className="font-mono text-[24px] font-semibold leading-8 tracking-[-0.035em] text-foreground xl:text-[28px] 2xl:text-[30px]">{title}</p>
+        <p className="mx-auto mt-2 max-w-[52rem] text-[15px] leading-6 text-muted-foreground xl:text-[16px]">{children}</p>
       </div>
-      <div className="mx-auto min-h-0 w-full max-w-[60rem] flex-1">{window}</div>
+      <div className="mx-auto min-h-0 w-full max-w-[60rem] flex-1 2xl:max-w-[72rem]">{window}</div>
     </div>
   );
 }
@@ -64,34 +64,29 @@ function ReviewReport({ progress }: { progress: number }) {
     <SurfaceStory
       title="Informal security knowledge"
       window={<div className="flex h-full flex-col overflow-hidden rounded-[10px] border border-border bg-[#faf9f7] shadow-sm dark:bg-card">
-        <div className="relative flex h-10 shrink-0 items-center border-b border-border bg-[#f1f0ed] px-3 dark:bg-code-header">
-          <div className="flex gap-2" aria-hidden="true">
-            <span className="h-2 w-2 rounded-full bg-[#ff5f57]" />
-            <span className="h-2 w-2 rounded-full bg-[#febc2e]" />
-            <span className="h-2 w-2 rounded-full bg-[#28c840]" />
-          </div>
-          <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-md border border-border bg-background/80 px-4 py-1">
+        <div className="flex h-11 shrink-0 items-center border-b border-border bg-[#f1f0ed] px-4 dark:bg-code-header">
+          <div className="flex items-center gap-2 rounded-md border border-border bg-background/80 px-3 py-1">
             <FileText className="h-3 w-3 text-muted-foreground" strokeWidth={1.7} aria-hidden="true" />
             <span className="whitespace-nowrap font-mono text-[12px] text-foreground">security-review.md</span>
           </div>
-          <span className="ml-auto hidden items-center gap-2 text-[12px] text-[#4c835e] dark:text-[#7fbd92] xl:flex"><Check className="h-3.5 w-3.5" /> Saved</span>
+          <span className="ml-auto flex items-center gap-2 text-[12px] text-[#4c835e] dark:text-[#7fbd92]"><Check className="h-3.5 w-3.5" /> Saved</span>
         </div>
-        <div ref={scrollRef} data-testid="review-report-scroll" className="min-h-0 flex-1 overflow-hidden px-8 py-8 xl:px-10">
-        <article className="mx-auto max-w-[36rem] text-[15px] leading-6 text-[#443c38] dark:text-card-foreground">
+        <div ref={scrollRef} data-testid="review-report-scroll" className="min-h-0 flex-1 overflow-hidden px-8 py-4 xl:px-10 xl:py-6">
+        <article className="mx-auto max-w-[44rem] text-[15px] leading-6 text-[#443c38] dark:text-card-foreground">
           <h3 className="text-[26px] font-semibold leading-8 tracking-[-0.025em] text-foreground">Unauthenticated execution review</h3>
           <p className="mt-2 text-muted-foreground">Security context captured from the reviewed request path.</p>
 
-          <section className="mt-8 rounded-[10px] border border-primary/25 bg-primary/[0.05] p-4">
+          <section className="mt-4 rounded-[10px] border border-primary/25 bg-primary/[0.05] p-3 xl:mt-6 xl:p-4">
             <p className="font-mono text-[12px] font-semibold uppercase tracking-[0.12em] text-primary">Trust boundary</p>
             <p className="mt-2">Unauthenticated <code className="font-mono text-[14px] text-primary">POST /api/jobs</code> input controls the script passed into the execution pipeline.</p>
           </section>
 
-          <section className="mt-3 rounded-[10px] border border-border bg-background p-4">
+          <section className="mt-3 rounded-[10px] border border-border bg-background p-3 xl:p-4">
             <p className="font-mono text-[12px] font-semibold uppercase tracking-[0.12em] text-primary">Vulnerability pattern</p>
             <p className="mt-2">Request-controlled script reaches <code className="font-mono text-[14px] text-primary">Context.eval</code> with host access enabled.</p>
           </section>
 
-          <section className="mt-3 rounded-[10px] border border-border bg-background p-4">
+          <section className="mt-3 rounded-[10px] border border-border bg-background p-3 xl:p-4">
             <p className="font-mono text-[12px] font-semibold uppercase tracking-[0.12em] text-primary">Opaque method behavior</p>
             <p className="mt-2"><code className="font-mono text-[14px] text-primary">Context.Builder.option()</code> returns the same builder, preserving state through the chain.</p>
           </section>
@@ -246,7 +241,7 @@ function SpecificationTransformation({ activeArtifact }: { activeArtifact: numbe
   const isFactActive = (fact: string) => mapping.facts.includes(fact as never);
 
   return (
-    <div className="enact-map mx-auto mb-3 max-w-[54rem] rounded-[10px] border border-border bg-background p-3 font-mono" aria-label="Informal security knowledge transformed into formal specifications">
+    <div className="enact-map mx-auto mb-3 w-full max-w-[54rem] rounded-[10px] border border-border bg-background p-3 font-mono 2xl:max-w-[64rem]" aria-label="Informal security knowledge transformed into formal specifications">
       <div className="enact-map-document">
         <span className="enact-map-file"><FileText aria-hidden="true" /> security-review.md</span>
         <div className="enact-map-facts">
@@ -293,7 +288,7 @@ function Specifications({ progress }: { progress: number }) {
       title="Formal security specifications"
       window={<div data-testid="artifact-scroll" className="flex h-full min-h-0 flex-col overflow-hidden rounded-[10px] border border-border bg-[#f4f2ef] p-3 shadow-sm dark:bg-card">
         <SpecificationTransformation activeArtifact={activeArtifact} />
-        <div className="artifact-stack mx-auto min-h-0 w-full max-w-[54rem] flex-1" data-open-artifact={openArtifact < 0 ? "none" : openArtifact}>
+        <div className="artifact-stack mx-auto min-h-0 w-full max-w-[54rem] flex-1 2xl:max-w-[64rem]" data-open-artifact={openArtifact < 0 ? "none" : openArtifact}>
           {artifacts.map((artifact, index) => (
             <div key={artifact.path} className="contents">
               <div className="artifact-stack-item min-h-0">
@@ -329,11 +324,11 @@ function ScanFinding({ title, file, path }: ScanFindingProps) {
     <article className="grid h-full min-h-0 grid-cols-[minmax(0,1.05fr)_minmax(9rem,0.95fr)] overflow-hidden rounded-[10px] border border-primary/35 bg-background">
       <div className="flex min-h-0 flex-col justify-center px-4 py-3.5">
         <div className="flex items-center justify-between gap-3">
-          <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-primary">CWE-94</span>
-          <span className="font-mono text-[11px] text-muted-foreground">Candidate</span>
+          <span className="font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-primary">CWE-94</span>
+          <span className="font-mono text-[12px] text-muted-foreground">Candidate</span>
         </div>
-        <h4 className="mt-3 text-[15px] font-semibold leading-5 text-foreground">{title}</h4>
-        <p className="mt-2 font-mono text-[12px] text-muted-foreground">{file}</p>
+        <h4 className="mt-3 text-[16px] font-semibold leading-6 text-foreground">{title}</h4>
+        <p className="mt-2 font-mono text-[13px] text-muted-foreground">{file}</p>
       </div>
       <div className="flex min-h-0 flex-col justify-center border-l border-primary/15 bg-primary/[0.025] px-4 py-3.5 dark:bg-primary/[0.045]">
         <div className="flex items-center gap-2" aria-hidden="true">
@@ -343,7 +338,7 @@ function ScanFinding({ title, file, path }: ScanFindingProps) {
           <span className="h-px flex-1 bg-primary/35" />
           <span className="h-2 w-2 rotate-45 bg-primary" />
         </div>
-        <p className="mt-2 text-[12px] leading-4 text-muted-foreground">{path}</p>
+        <p className="mt-2 text-[13px] leading-5 text-muted-foreground">{path}</p>
       </div>
     </article>
   );
@@ -358,18 +353,18 @@ function ScanResults({ progress }: { progress: number }) {
       title="Fast scans"
       window={<div data-testid="scan-results-view" className="flex h-full flex-col overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] shadow-sm dark:bg-card">
         <div className="flex h-10 shrink-0 items-center justify-between border-b border-border bg-[#f0eeeb] px-4 font-mono dark:bg-code-header">
-          <span className="text-[13px] font-semibold text-foreground">OpenTaint scan</span>
-          <span className="text-[11px] font-semibold text-[#2d8a4e] dark:text-[#79bd8f]">{complete ? "COMPLETE" : "ANALYZING"}</span>
+          <span className="text-[14px] font-semibold text-foreground">OpenTaint scan</span>
+          <span className="text-[12px] font-semibold text-[#2d8a4e] dark:text-[#79bd8f]">{complete ? "COMPLETE" : "ANALYZING"}</span>
         </div>
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-5">
           <div className="grid shrink-0 grid-cols-3 gap-2">
-            <div className="rounded-lg border border-border bg-background p-4"><span className="font-mono text-[11px] text-muted-foreground">PROJECT MODEL</span><b className="mt-1 block text-[14px] text-foreground">Built</b></div>
-            <div className="rounded-lg border border-border bg-background p-4"><span className="font-mono text-[11px] text-muted-foreground">RULES AND MODELS</span><b className="mt-1 block text-[14px] text-foreground">Loaded</b></div>
-            <div className="rounded-lg border border-border bg-background p-4"><span className="font-mono text-[11px] text-muted-foreground">TIME</span><b className="mt-1 block text-[14px] text-foreground">30s</b></div>
+            <div className="rounded-lg border border-border bg-background p-4"><span className="font-mono text-[12px] text-muted-foreground">PROJECT MODEL</span><b className="mt-1 block text-[16px] text-foreground">Built</b></div>
+            <div className="rounded-lg border border-border bg-background p-4"><span className="font-mono text-[12px] text-muted-foreground">RULES AND MODELS</span><b className="mt-1 block text-[16px] text-foreground">Loaded</b></div>
+            <div className="rounded-lg border border-border bg-background p-4"><span className="font-mono text-[12px] text-muted-foreground">TIME</span><b className="mt-1 block text-[16px] text-foreground">30s</b></div>
           </div>
           <div className="mt-3 h-1 overflow-hidden rounded-full bg-border"><span className="block h-full origin-left bg-primary will-change-transform" style={{ transform: `scaleX(${completion})` }} /></div>
           <div className="mt-5 flex items-center justify-between">
-            <h3 className="font-mono text-[13px] font-semibold uppercase tracking-[0.1em] text-foreground">2 candidate findings</h3>
+            <h3 className="font-mono text-[14px] font-semibold uppercase tracking-[0.1em] text-foreground">2 candidate findings</h3>
           </div>
           <div className="mt-3 flex min-h-0 flex-1 items-center">
             <div className="grid h-5/6 min-h-0 w-full grid-rows-2 gap-4">
@@ -558,7 +553,7 @@ function TriageView({ progress }: { progress: number }) {
     <SurfaceStory
       title="Fewer false alarms"
       window={<div data-testid="triage-view" className="h-full overflow-hidden rounded-[10px] border border-border bg-[#f4f2ef] p-3 shadow-sm dark:bg-card">
-        <div className="mx-auto grid h-full max-w-[40rem] grid-rows-[minmax(0,1fr)_auto_auto] gap-2">
+        <div className="mx-auto grid h-full w-full max-w-[54rem] grid-rows-[minmax(0,1fr)_auto_auto] gap-3 2xl:max-w-[64rem]">
           <div className="min-h-0 overflow-hidden">
             <ArtifactFrame
               path="rules/java/lib/generic/graal-eval.yaml"
@@ -635,23 +630,23 @@ function FindingReport({ progress }: { progress: number }) {
     <SurfaceStory
       title="Detailed dataflow trace"
       window={<div data-testid="simplified-report-view" className="flex h-full flex-col overflow-hidden rounded-[10px] border border-border bg-[#f9f7f5] font-mono text-[#44342c] shadow-sm dark:bg-code dark:text-[var(--code-text)]">
-      <div className="grid h-10 shrink-0 grid-cols-[minmax(0,1fr)_14rem] items-center border-b border-[#ded7d1] bg-[#f0eeeb] text-[13px] dark:border-border dark:bg-code-header">
+      <div className="grid h-11 shrink-0 grid-cols-[minmax(0,1fr)_15rem] items-center border-b border-[#ded7d1] bg-[#f0eeeb] text-[13px] dark:border-border dark:bg-code-header">
         <div className="flex min-w-0 items-center gap-2 px-3">
           <FileCode2 className="h-3.5 w-3.5 shrink-0 text-primary" strokeWidth={1.7} aria-hidden="true" />
           <span className="truncate text-[#44342c] dark:text-[var(--code-text)]">{activeFile}</span>
         </div>
-        <div className="flex h-full w-56 items-center justify-end gap-1 px-2" data-testid="report-navigation">
-          <button aria-label="First step" disabled={stepIndex === 0} onClick={() => move(0)} className="inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-background text-foreground disabled:opacity-35"><SkipBack size={13} /></button>
-          <button aria-label="Back over a call" disabled={stepIndex === 0} onClick={() => move(stepIndex - 3)} className="inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-background text-foreground disabled:opacity-35"><ChevronsLeft size={13} /></button>
-          <button aria-label="Back" disabled={stepIndex === 0} onClick={() => move(stepIndex - 1)} className="inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-background text-foreground disabled:opacity-35"><ChevronLeft size={13} /></button>
-          <button aria-label="Next" disabled={stepIndex === flowSteps.length - 1} onClick={() => move(stepIndex + 1)} className="inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-background text-foreground disabled:opacity-35"><ChevronRight size={13} /></button>
-          <button aria-label="Next over a call" disabled={stepIndex === flowSteps.length - 1} onClick={() => move(stepIndex + 3)} className="inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-background text-foreground disabled:opacity-35"><ChevronsRight size={13} /></button>
-          <button aria-label="Last step" disabled={stepIndex === flowSteps.length - 1} onClick={() => move(flowSteps.length - 1)} className="inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-background text-foreground disabled:opacity-35"><SkipForward size={13} /></button>
+        <div className="flex h-full w-60 items-center justify-end gap-1 px-2" data-testid="report-navigation">
+          <button aria-label="First step" disabled={stepIndex === 0} onClick={() => move(0)} className="inline-flex h-7 w-7 items-center justify-center rounded border border-border bg-background text-foreground disabled:opacity-35"><SkipBack size={14} /></button>
+          <button aria-label="Back over a call" disabled={stepIndex === 0} onClick={() => move(stepIndex - 3)} className="inline-flex h-7 w-7 items-center justify-center rounded border border-border bg-background text-foreground disabled:opacity-35"><ChevronsLeft size={14} /></button>
+          <button aria-label="Back" disabled={stepIndex === 0} onClick={() => move(stepIndex - 1)} className="inline-flex h-7 w-7 items-center justify-center rounded border border-border bg-background text-foreground disabled:opacity-35"><ChevronLeft size={14} /></button>
+          <button aria-label="Next" disabled={stepIndex === flowSteps.length - 1} onClick={() => move(stepIndex + 1)} className="inline-flex h-7 w-7 items-center justify-center rounded border border-border bg-background text-foreground disabled:opacity-35"><ChevronRight size={14} /></button>
+          <button aria-label="Next over a call" disabled={stepIndex === flowSteps.length - 1} onClick={() => move(stepIndex + 3)} className="inline-flex h-7 w-7 items-center justify-center rounded border border-border bg-background text-foreground disabled:opacity-35"><ChevronsRight size={14} /></button>
+          <button aria-label="Last step" disabled={stepIndex === flowSteps.length - 1} onClick={() => move(flowSteps.length - 1)} className="inline-flex h-7 w-7 items-center justify-center rounded border border-border bg-background text-foreground disabled:opacity-35"><SkipForward size={14} /></button>
           <span className="ml-1 inline-flex w-[5ch] shrink-0 justify-end whitespace-nowrap tabular-nums text-[#76665d] dark:text-muted-foreground">{stepIndex + 1}/{flowSteps.length}</span>
         </div>
       </div>
       <div data-testid="report-code-view" className="relative min-h-0 flex-1 overflow-hidden py-2">
-        <div className="text-[clamp(10.5px,0.85vw,12px)] leading-[1.4] tracking-[-0.025em]">
+        <div className="text-[clamp(11.5px,0.9vw,13.5px)] leading-[1.4] tracking-[-0.025em]">
           {activeSourceLines.map((code, index) => {
             const line = index + 1;
             const isCurrent = line === currentLine;
@@ -667,11 +662,11 @@ function FindingReport({ progress }: { progress: number }) {
                   <div
                     role="status"
                     className={[
-                      "absolute left-10 right-2 z-20 rounded-lg border border-primary/30 bg-background/95 px-3 py-2 font-sans text-[12px] leading-[15px] text-foreground shadow-[0_8px_28px_rgba(37,25,20,0.2)] backdrop-blur-sm dark:bg-card/95",
+                      "absolute left-10 right-2 z-20 rounded-lg border border-primary/30 bg-background/95 px-3 py-2 font-sans text-[13px] leading-[18px] text-foreground shadow-[0_8px_28px_rgba(37,25,20,0.2)] backdrop-blur-sm dark:bg-card/95",
                       placeTooltipAbove ? "bottom-full mb-1" : "top-full mt-1",
                     ].join(" ")}
                   >
-                    <div className="mb-1 flex items-center justify-between gap-3 font-mono text-[11px] uppercase tracking-[0.04em] text-muted-foreground">
+                    <div className="mb-1 flex items-center justify-between gap-3 font-mono text-[12px] uppercase tracking-[0.04em] text-muted-foreground">
                       <span>Step {stepIndex + 1} of {flowSteps.length}</span>
                       <span>{currentStep.file}:{currentStep.line}</span>
                     </div>
@@ -758,7 +753,7 @@ export function UnifiedWorkbench() {
   return (
     <div ref={scrollTrackRef} data-testid="demo-scroll-track" className="demo-scroll-track relative h-[720vh]">
       <div className="sticky top-16 flex h-[calc(100vh-4rem)] min-h-[38rem] max-h-[48rem] items-center">
-        <div data-testid="unified-workbench" data-demo-ready={ready ? "true" : "false"} className="agent-ui mx-auto w-full max-w-[82rem] overflow-hidden rounded-[20px] border border-black/10 bg-white p-2 dark:border-border dark:bg-card">
+        <div data-testid="unified-workbench" data-demo-ready={ready ? "true" : "false"} className="agent-ui mx-auto w-full max-w-[92rem] overflow-hidden rounded-[20px] border border-black/10 bg-white p-2 dark:border-border dark:bg-card 2xl:max-w-[96rem]">
       <div className="overflow-hidden rounded-[13px] border border-border bg-background">
         <div className="flex h-11 items-center border-b border-border bg-[#f0efec] px-4 dark:bg-code-header">
           <div className="flex items-center gap-2">

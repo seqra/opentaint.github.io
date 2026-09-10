@@ -12,8 +12,7 @@ describe("FirstScanFunnel", () => {
     expect(screen.getByRole("heading", { name: "Ask your agent to start a security scan" })).toBeVisible();
     expect(screen.queryByText("Run your first agentic application security test in 5 minutes")).not.toBeInTheDocument();
     expect(screen.getByText("npm install -g @seqra/opentaint")).toBeVisible();
-    expect(screen.getByText(/claude plugin marketplace add seqra\/opentaint/)).toBeVisible();
-    expect(screen.getByText(/claude plugin install appsec-workflow@opentaint/)).toBeVisible();
+    expect(screen.getByText("npx skills add https://github.com/seqra/opentaint")).toBeVisible();
     expect(screen.getByText("Run deep security scan and static triage with OpenTaint appsec-agent skill")).toBeVisible();
     expect(screen.getByText("First agentic scan")).toBeVisible();
     expect(screen.queryByText(/Engine, rules, dependency models/)).not.toBeInTheDocument();
@@ -24,16 +23,20 @@ describe("FirstScanFunnel", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "curl" }));
     expect(screen.getByText("curl -fsSL https://opentaint.org/install.sh | bash")).toBeVisible();
-    expect(screen.getByText(/claude plugin marketplace add seqra\/opentaint/)).toBeVisible();
+    expect(screen.getByText("npx skills add https://github.com/seqra/opentaint")).toBeVisible();
   });
 
   it("switches between equal-height Claude and Codex skill instructions", () => {
     render(<FirstScanFunnel />);
 
+    const npx = screen.getByRole("tab", { name: "npx" });
     const claude = screen.getByRole("tab", { name: "Claude" });
     const codex = screen.getByRole("tab", { name: "Codex" });
-    expect(claude).toHaveAttribute("aria-selected", "true");
+    expect(npx).toHaveAttribute("aria-selected", "true");
 
+    fireEvent.click(claude);
+    expect(claude).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByText(/claude plugin marketplace add seqra\/opentaint/)).toBeVisible();
     fireEvent.click(codex);
     expect(codex).toHaveAttribute("aria-selected", "true");
     expect(screen.getByText(/codex plugin marketplace add seqra\/opentaint/)).toBeVisible();
@@ -44,7 +47,7 @@ describe("FirstScanFunnel", () => {
     render(<FirstScanFunnel />);
 
     expect(screen.getByRole("button", { name: "Copy OpenTaint install command by clicking command" })).toHaveTextContent("npm install -g @seqra/opentaint");
-    expect(screen.getByRole("button", { name: "Copy Claude skills install command by clicking command" })).toHaveTextContent("claude plugin marketplace add");
+    expect(screen.getByRole("button", { name: "Copy npx skills install command by clicking command" })).toHaveTextContent("npx skills add");
     expect(screen.getByRole("button", { name: "Copy first security-review prompt by clicking command" })).toHaveTextContent("Run deep security scan");
   });
 });

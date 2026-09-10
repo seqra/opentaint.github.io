@@ -2735,7 +2735,7 @@
     border-radius: 0.25rem;
     padding-inline: var(--spacing-03);
     color: hsl(var(--muted-foreground));
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.06em;
     transition:
@@ -2765,7 +2765,7 @@
     gap: var(--spacing-02);
     overflow: hidden;
     color: hsl(var(--foreground));
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 650;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -2838,7 +2838,7 @@
   }
 
   .enact-transform > span {
-    font-size: 6px;
+    font-size: 9px;
     font-weight: 700;
     letter-spacing: 0.1em;
   }
@@ -2889,7 +2889,7 @@
     align-items: center;
     gap: var(--spacing-02);
     color: hsl(var(--muted-foreground));
-    font-size: 6px;
+    font-size: 9px;
     font-weight: 700;
     letter-spacing: 0.06em;
     transition: color 300ms ease;
@@ -2987,7 +2987,7 @@
 
   .report-trace-node b {
     margin-top: var(--spacing-02);
-    font-size: 7.5px;
+    font-size: 9px;
     font-weight: 700;
     letter-spacing: 0.07em;
     white-space: nowrap;

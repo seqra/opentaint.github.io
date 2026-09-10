@@ -17,6 +17,11 @@ const installMethods: InstallMethod[] = [
 
 const agentSkillMethods: InstallMethod[] = [
   {
+    id: "npx",
+    label: "npx",
+    command: "npx skills add https://github.com/seqra/opentaint",
+  },
+  {
     id: "claude",
     label: "Claude",
     command: "claude plugin marketplace add seqra/opentaint\nclaude plugin install appsec-workflow@opentaint",
@@ -85,7 +90,7 @@ function CommandLine({ id, value, prompt = false, copiedId, onCopy }: CopyProps 
 
 export function FirstScanFunnel() {
   const [activeMethod, setActiveMethod] = useState(installMethods[0]?.id ?? "npm");
-  const [activeAgent, setActiveAgent] = useState(agentSkillMethods[0]?.id ?? "claude");
+  const [activeAgent, setActiveAgent] = useState(agentSkillMethods[0]?.id ?? "npx");
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const activeInstallMethod = useMemo(
     () => installMethods.find((method) => method.id === activeMethod) ?? installMethods[0],
@@ -160,8 +165,8 @@ export function FirstScanFunnel() {
                         setCopiedId(null);
                       }}
                       className={[
-                        "flex h-12 items-center border-b-2 px-4 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors first:pl-0 sm:text-[13px]",
-                        active ? "border-primary text-primary" : "border-transparent text-panel-foreground/60 hover:text-primary",
+                        "flex h-12 items-center px-4 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors first:pl-0 sm:text-[13px]",
+                        active ? "text-primary" : "text-panel-foreground/60 hover:text-primary",
                       ].join(" ")}
                     >
                       {method.label}

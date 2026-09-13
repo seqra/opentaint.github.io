@@ -17,7 +17,7 @@ import { consentCopy } from "@/lib/consent-copy";
   <div class="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between lg:px-6">
     <div class="max-w-3xl font-mono text-xs leading-relaxed text-muted-foreground lg:text-[13px]">
       <p data-cookie-copy="notice">
-        <span aria-hidden="true">🍪 </span>{consentCopy.message}
+        {consentCopy.message}
         <a href="/privacy/" class="ml-1 text-foreground underline decoration-border-strong underline-offset-4 transition-colors hover:text-primary">{consentCopy.privacy}</a>
       </p>
       <p data-cookie-copy="settings" hidden>

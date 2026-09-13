@@ -98,7 +98,15 @@ const formattedUpdatedDate = post.updatedDate
           alt={artwork.alt}
           width="1600"
           height="1000"
-          class="aspect-[8/5] w-full object-cover"
+          class="aspect-[8/5] w-full object-cover dark:hidden"
+          fetchpriority="high"
+        />
+        <img
+          src={artwork.darkSrc}
+          alt={artwork.alt}
+          width="1600"
+          height="1000"
+          class="hidden aspect-[8/5] w-full object-cover dark:block"
           fetchpriority="high"
         />
       </figure>

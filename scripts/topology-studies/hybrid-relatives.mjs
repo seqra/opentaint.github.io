@@ -723,6 +723,83 @@ function clusteredPolygonalTopology(seed = 0x4f544f33) {
   ];
   const clusters = [];
   const body = [];
+  // The shared runner remaps literal light-palette hex values for every
+  // study. These study-scoped classes keep the light geometry/colors unchanged
+  // while giving this dark asset a deliberate, high-contrast treatment. RGB
+  // functions are intentional: they survive the runner's global hex pass.
+  body.push(`<style>
+    svg[data-study="clustered-polygonal-topology"] .clustered-ink {
+      stroke: rgb(25, 23, 25) !important;
+    }
+    svg[data-study="clustered-polygonal-topology"] .clustered-ink-soft {
+      stroke: rgb(83, 72, 74) !important;
+    }
+    svg[data-study="clustered-polygonal-topology"] .clustered-clay {
+      stroke: rgb(166, 84, 66) !important;
+    }
+    svg[data-study="clustered-polygonal-topology"] .clustered-paper-deep {
+      fill: rgb(236, 236, 234) !important;
+    }
+    svg[data-study="clustered-polygonal-topology"] .clustered-ink-dot {
+      fill: rgb(25, 23, 25) !important;
+    }
+    svg[data-study="clustered-polygonal-topology"] .clustered-ink-soft-dot {
+      fill: rgb(83, 72, 74) !important;
+    }
+    svg[data-study="clustered-polygonal-topology"] .clustered-clay-dot {
+      fill: rgb(166, 84, 66) !important;
+    }
+    svg[data-study="clustered-polygonal-topology"] .clustered-red {
+      stroke: #CA2121 !important;
+    }
+    svg[data-study="clustered-polygonal-topology"] .clustered-red-dot {
+      fill: #CA2121 !important;
+      stroke: #CA2121 !important;
+    }
+    svg[data-study="clustered-polygonal-topology"][data-theme="dark"] .clustered-ink {
+      stroke: rgb(249, 236, 236) !important;
+      stroke-width: 1.66px !important;
+    }
+    svg[data-study="clustered-polygonal-topology"][data-theme="dark"] .clustered-ink-soft {
+      stroke: rgb(220, 194, 194) !important;
+      stroke-width: 1.52px !important;
+    }
+    svg[data-study="clustered-polygonal-topology"][data-theme="dark"] .clustered-clay {
+      stroke: rgb(214, 128, 120) !important;
+      stroke-width: 1.28px !important;
+    }
+    svg[data-study="clustered-polygonal-topology"][data-theme="dark"] .clustered-paper-deep {
+      fill: rgb(43, 27, 28) !important;
+      opacity: 0.25 !important;
+    }
+    svg[data-study="clustered-polygonal-topology"][data-theme="dark"] .clustered-ink-dot {
+      fill: rgb(249, 236, 236) !important;
+      stroke: rgb(249, 236, 236) !important;
+      stroke-width: 1.8px !important;
+    }
+    svg[data-study="clustered-polygonal-topology"][data-theme="dark"] .clustered-ink-soft-dot {
+      fill: rgb(220, 194, 194) !important;
+      stroke: rgb(220, 194, 194) !important;
+      stroke-width: 1.6px !important;
+    }
+    svg[data-study="clustered-polygonal-topology"][data-theme="dark"] .clustered-clay-dot {
+      fill: rgb(214, 128, 120) !important;
+      stroke: rgb(214, 128, 120) !important;
+      stroke-width: 1.8px !important;
+    }
+    svg[data-study="clustered-polygonal-topology"][data-theme="dark"] .clustered-red {
+      stroke: #CA2121 !important;
+      stroke-width: 4.45px !important;
+    }
+    svg[data-study="clustered-polygonal-topology"][data-theme="dark"] .clustered-red-dot {
+      fill: #CA2121 !important;
+      stroke: #CA2121 !important;
+      stroke-width: 1.8px !important;
+    }
+  </style>`);
+  const clusterCircle = (cx, cy, radius, className, opacity = 0.82) => (
+    `<circle cx="${f(cx)}" cy="${f(cy)}" r="${f(radius)}" fill="none" opacity="${f(opacity)}" stroke="none" stroke-width="0" class="${className}"/>`
+  );
 
   for (let clusterIndex = 0; clusterIndex < centers.length; clusterIndex += 1) {
     const center = centers[clusterIndex];
@@ -745,7 +822,7 @@ function clusteredPolygonalTopology(seed = 0x4f544f33) {
   for (let clusterIndex = 0; clusterIndex < clusters.length; clusterIndex += 1) {
     const cluster = clusters[clusterIndex];
     const hull = convexHull(cluster.points);
-    body.push(path(hull, COLOR.ink, 1.22, 0.72, true));
+    body.push(path(hull, 'none', 1.22, 0.72, true, 'none', 'class="clustered-ink"'));
     for (const candidate of cluster.triangles) {
       const trianglePoints = [
         cluster.points[candidate.a],
@@ -753,7 +830,7 @@ function clusteredPolygonalTopology(seed = 0x4f544f33) {
         cluster.points[candidate.c],
       ];
       if ((candidate.a + candidate.b + candidate.c + clusterIndex) % 5 === 0) {
-        body.push(path(trianglePoints, COLOR.paperDeep, 0, 0.2, true, COLOR.paperDeep));
+        body.push(path(trianglePoints, 'none', 0, 0.2, true, 'none', 'class="clustered-paper-deep"'));
       }
       const localEdges = [[candidate.a, candidate.b], [candidate.b, candidate.c], [candidate.c, candidate.a]];
       for (const [fromIndex, toIndex] of localEdges) {
@@ -761,14 +838,15 @@ function clusteredPolygonalTopology(seed = 0x4f544f33) {
         const from = cluster.points[fromIndex];
         const to = cluster.points[toIndex];
         const weight = (cluster.weights[fromIndex] + cluster.weights[toIndex]) * 0.5;
-        const stroke = weight > 1.23 ? COLOR.ink : COLOR.clay;
-        body.push(line(from[0], from[1], to[0], to[1], stroke, 0.66 + weight * 0.2, 0.48 + weight * 0.12));
+        const edgeClass = weight > 1.23 ? 'clustered-ink' : 'clustered-clay';
+        body.push(line(from[0], from[1], to[0], to[1], 'none', 0.66 + weight * 0.2, 0.48 + weight * 0.12, `class="${edgeClass}"`));
       }
     }
     for (let index = 0; index < cluster.points.length; index += 1) {
       const point = cluster.points[index];
       const weight = cluster.weights[index];
-      body.push(circle(point[0], point[1], 1.5 + weight * 1.6, weight > 1.28 ? COLOR.ink : COLOR.clay, 0.82));
+      const dotClass = weight > 1.28 ? 'clustered-ink-dot' : 'clustered-clay-dot';
+      body.push(clusterCircle(point[0], point[1], 1.5 + weight * 1.6, dotClass));
     }
   }
 
@@ -783,10 +861,10 @@ function clusteredPolygonalTopology(seed = 0x4f544f33) {
     const routeIndex = bridgePairs.length;
     const bridge = bridgePolyline(first, second, routeIndex);
     bridgePairs.push({ first, second, bridge, routeIndex });
-    body.push(path(bridge.points, COLOR.inkSoft, 1.05, 0.68));
+    body.push(path(bridge.points, 'none', 1.05, 0.68, false, 'none', 'class="clustered-ink-soft"'));
     for (let pointIndex = 1; pointIndex < bridge.points.length - 1; pointIndex += 1) {
       const point = bridge.points[pointIndex];
-      body.push(circle(point[0], point[1], 3.1, COLOR.inkSoft, 0.82));
+      body.push(clusterCircle(point[0], point[1], 3.1, 'clustered-ink-soft-dot'));
     }
   }
 
@@ -794,10 +872,10 @@ function clusteredPolygonalTopology(seed = 0x4f544f33) {
   // lower branch in ink makes the red reading selective without breaking its
   // continuity at each visible junction.
   for (const bridge of bridgePairs.slice(0, 3)) {
-    body.push(path(bridge.bridge.points, COLOR.red, 3.1, 0.92));
+    body.push(path(bridge.bridge.points, 'none', 3.1, 0.92, false, 'none', 'class="clustered-red"'));
     for (let pointIndex = 1; pointIndex < bridge.bridge.points.length - 1; pointIndex += 1) {
       const point = bridge.bridge.points[pointIndex];
-      body.push(circle(point[0], point[1], 2.65, COLOR.red, 0.94));
+      body.push(clusterCircle(point[0], point[1], 2.65, 'clustered-red-dot', 0.94));
     }
   }
 

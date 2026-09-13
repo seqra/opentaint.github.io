@@ -1,24 +1,29 @@
 export type BlogArtwork = {
   src: string;
+  darkSrc: string;
   alt: string;
 };
 
 const artworkBySlug: Record<string, BlogArtwork> = {
   "appsec-agent": {
-    src: "/pictures/generative-art-study/topology-studies/force-relaxed-branching.svg",
-    alt: "A red route crossing an irregular branching analysis tree",
+    src: "/pictures/generative-art-study/topology-studies/agent-review-distillation.svg",
+    darkSrc: "/pictures/generative-art-study/topology-studies/agent-review-distillation-dark.svg",
+    alt: "Broad security exploration converges into one precise red scan path",
   },
   "spring-analyzer": {
     src: "/pictures/generative-art-study/topology-studies/clustered-polygonal-topology.svg",
+    darkSrc: "/pictures/generative-art-study/topology-studies/clustered-polygonal-topology-dark.svg",
     alt: "Connected polygonal systems forming a layered analysis topology",
   },
   "semgrep-vs-codeql-vs-opentaint": {
-    src: "/pictures/generative-art-study/topology-studies/voronoi-delaunay-dual.svg",
-    alt: "A precise red route crossing a dual Voronoi and Delaunay field",
+    src: "/pictures/generative-art-study/topology-studies/analysis-depth-mesh.svg",
+    darkSrc: "/pictures/generative-art-study/topology-studies/analysis-depth-mesh-dark.svg",
+    alt: "Three connected regions resolve progressively deeper layers of one differential mesh",
   },
   "conductor-rce-cve-2026-58138": {
-    src: "/pictures/generative-art-study/topology-studies/opposed-tree-leaf-bridge.svg",
-    alt: "Two opposed branching systems joined by one red execution path",
+    src: "/pictures/generative-art-study/topology-studies/adaptive-proximity-lattice.svg",
+    darkSrc: "/pictures/generative-art-study/topology-studies/adaptive-proximity-lattice-dark.svg",
+    alt: "A red exploit path crossing a structured proximity lattice",
   },
 };
 

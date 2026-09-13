@@ -1,0 +1,90 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import SiteHeader from "@/components/astro/SiteHeader.astro";
+import LandingFooter from "@/components/astro/LandingFooter.astro";
+import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+
+const title = "Privacy and cookies";
+const description = "How the OpenTaint website uses Google Analytics, cookies, and browser storage.";
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="flex min-h-screen flex-col bg-background">
+    <SiteHeader />
+    <main id="main" class="flex-1 pt-16">
+      <div class="page-container">
+        <section class="page-section">
+          <Breadcrumbs items={[
+            { label: "Home", href: "/" },
+            { label: "Privacy and cookies" },
+          ]} />
+
+          <div class="mx-auto mt-6 max-w-3xl">
+            <p class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-primary">Website policy</p>
+            <h1 class="mt-3 font-mono text-3xl font-bold tracking-[-0.035em] text-foreground sm:text-4xl">Privacy and cookies</h1>
+            <p class="mt-3 font-mono text-xs text-muted-foreground">Last updated September 14, 2026</p>
+
+            <div class="privacy-prose mt-8 text-base leading-[175%] text-foreground/85 sm:text-[17px]">
+              <p>OpenTaint is an open source project operated by the Seqra Team. This notice explains the limited website data we collect and how you can control it.</p>
+
+              <h2>Google Analytics</h2>
+              <p>We use Google Analytics 4 to understand how many people visit the site, which pages are useful, and how the site performs. We do not use this data for advertising, remarketing, or user profiling.</p>
+              <p>The standard Analytics implementation can collect page and interaction data, approximate location, and browser and device information. Google says that IP addresses are used during collection and discarded before they are logged.</p>
+
+              <h2>Cookies we use</h2>
+              <p>Google Analytics may set first-party cookies named <code>_ga</code> and <code>_ga_7412RN2Q85</code>. They hold random identifiers used to distinguish visits and sessions and may remain for up to two years.</p>
+              <p>Analytics is enabled by default unless you have previously disabled it. Use <strong>Cookie settings</strong> in the footer at any time to disable or re-enable Analytics. Disabling it prevents future measurement and removes the Analytics cookies this site can identify.</p>
+
+              <h2>Preference storage</h2>
+              <p>We store your Analytics preference in your browser under <code>opentaint:analytics-consent</code>. This local setting is used only to remember your choice.</p>
+
+              <h2>Service providers</h2>
+              <p>Google processes Analytics data to provide the measurement service. Read <a href="https://support.google.com/analytics/answer/6004245" target="_blank" rel="noopener noreferrer">how Google safeguards Analytics data</a> and the <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy Policy</a>.</p>
+              <p>The site is hosted with GitHub Pages. GitHub may process technical request data as described in the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener noreferrer">GitHub General Privacy Statement</a>.</p>
+
+              <h2>Contact</h2>
+              <p>For privacy questions or requests, email <a href="mailto:seqradev@gmail.com">seqradev@gmail.com</a>.</p>
+            </div>
+          </div>
+        </section>
+        <LandingFooter />
+      </div>
+    </main>
+  </div>
+</BaseLayout>
+
+<style>
+  .privacy-prose {
+    font-family: var(--font-editorial);
+  }
+
+  .privacy-prose :global(p) {
+    margin-bottom: var(--spacing-05);
+  }
+
+  .privacy-prose :global(h2) {
+    margin-top: var(--spacing-07);
+    margin-bottom: var(--spacing-04);
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    color: hsl(var(--foreground));
+  }
+
+  .privacy-prose :global(a) {
+    color: hsl(var(--link));
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .privacy-prose :global(code) {
+    border: 1px solid hsl(var(--code-border));
+    border-radius: 0.25rem;
+    background: hsl(var(--code-bg));
+    padding: var(--spacing-01) var(--spacing-02);
+    font-family: var(--font-mono);
+    font-size: 0.82em;
+    color: hsl(var(--foreground));
+  }
+</style>

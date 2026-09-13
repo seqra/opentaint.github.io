@@ -12,16 +12,15 @@ import {
   updateAnalyticsConsent,
 } from "./analytics";
 import {
-  CONSENT_REQUIRED_REGIONS,
-  requiresConsent,
+  shouldShowCookieNotice,
   resolveAnalyticsConsent,
   type ConsentChoice,
 } from "./consent";
 import { detectTimeZone, readStoredChoice, storeChoice } from "./consent-storage";
 
 export type ConsentState = {
-  /** Whether this visitor must opt in before analytics may load. */
-  readonly required: boolean;
+  /** Whether this visitor should receive the first-visit cookie notice. */
+  readonly noticeRequired: boolean;
   /** What they have chosen, if anything. */
   readonly choice: ConsentChoice | null;
 };
@@ -34,27 +33,20 @@ let state: ConsentState | null = null;
  * Resolve consent and start the tag. Idempotent, so any component may call it
  * without caring who got there first.
  *
- * The order is fixed and load-bearing: the defaults have to be complete before
- * the tag loads, because the first page_view goes out with whatever state is
- * declared by then. A remembered choice is part of those defaults rather than a
- * later update, and it drops the region scoping — their own answer governs
- * wherever they are.
- *
- * The tag then loads only where consent resolves to granted, so nothing
- * precedes an answer from someone we are about to ask, and nothing follows a
- * refusal. Where it does load, the region-scoped default stands guard: Google
- * resolves that from the request IP, so a visitor whose time zone misreported
- * where they are gets storage denied rather than measured.
+ * The order is fixed and load-bearing: the preference default is declared
+ * before the tag loads, so the first page view respects a remembered opt-out.
+ * With no preference Analytics starts enabled everywhere. The regional signal
+ * now controls disclosure only, not collection.
  */
 export function initConsent(): ConsentState {
   if (state) return state;
 
-  const required = requiresConsent(detectTimeZone());
+  const noticeRequired = shouldShowCookieNotice(detectTimeZone());
   const choice = readStoredChoice();
-  state = { required, choice };
+  state = { noticeRequired, choice };
 
-  const analytics = resolveAnalyticsConsent(choice, required);
-  setDefaultConsent(analytics, choice ? undefined : CONSENT_REQUIRED_REGIONS);
+  const analytics = resolveAnalyticsConsent(choice);
+  setDefaultConsent(analytics);
   if (analytics === "granted") loadGoogleTag();
 
   return state;
@@ -67,8 +59,8 @@ export function getConsentState(): ConsentState {
 /**
  * Record the visitor's answer, revising the consent state and starting the tag
  * if it was being withheld. Withdrawing clears the identifiers written while
- * consent stood — the tag may already be running, since only the visitors we
- * ask up front are made to wait for it.
+ * consent stood — the tag may already be running because Analytics is enabled
+ * by default until a visitor opts out.
  */
 export function setConsentChoice(next: ConsentChoice): void {
   storeChoice(next);

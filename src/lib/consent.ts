@@ -1,14 +1,13 @@
 /**
- * Consent gating for analytics.
+ * Analytics preference and regional notice policy.
  *
  * The site is a static build served from GitHub Pages, so there is no
  * server-side geo header to read and no CMP vendor in the stack. The visitor's
  * IANA time zone is the closest signal available without adding a third party.
  *
- * It is deliberately over-inclusive: every `Europe/` zone counts, including
- * non-EU ones, plus the EU/EEA territories that sit outside that tree. Showing
- * the banner to someone who did not strictly need it is the cheaper mistake.
- * An undetectable time zone is treated the same way.
+ * The notice audience is deliberately over-inclusive: every `Europe/` zone
+ * counts, including non-EU ones, plus EU/EEA territories outside that tree.
+ * An undetectable time zone receives the notice as the safer fallback.
  */
 
 export const CONSENT_STORAGE_KEY = "opentaint:analytics-consent";
@@ -22,7 +21,7 @@ const EUROPE_ZONE_PREFIX = "Europe/";
  * Portuguese Atlantic islands, Ceuta, Cyprus, Iceland, and the French overseas
  * departments, which are part of the EU for GDPR purposes.
  */
-export const CONSENT_REQUIRED_TIME_ZONES: readonly string[] = [
+export const COOKIE_NOTICE_TIME_ZONES: readonly string[] = [
   "Africa/Ceuta",
   "America/Cayenne",
   "America/Guadeloupe",
@@ -39,25 +38,12 @@ export const CONSENT_REQUIRED_TIME_ZONES: readonly string[] = [
   "Indian/Reunion",
 ];
 
-/**
- * The same policy expressed as ISO country codes, for Google's own
- * region-scoped consent defaults. Google resolves these from the request IP,
- * which catches the visitors a time zone misreports — a traveller, a VPN, a
- * wrong clock. EU/EEA plus the UK; Switzerland is deliberately absent, being
- * covered by the FADP rather than the GDPR.
- */
-export const CONSENT_REQUIRED_REGIONS: readonly string[] = [
-  "AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI",
-  "FR", "GB", "GR", "HR", "HU", "IE", "IS", "IT", "LI", "LT",
-  "LU", "LV", "MT", "NL", "NO", "PL", "PT", "RO", "SE", "SI", "SK",
-];
-
-/** Whether a visitor in `timeZone` must opt in before analytics may load. */
-export function requiresConsent(timeZone: string | null | undefined): boolean {
+/** Whether a visitor in `timeZone` should see the first-visit cookie notice. */
+export function shouldShowCookieNotice(timeZone: string | null | undefined): boolean {
   if (!timeZone) return true;
   return (
     timeZone.startsWith(EUROPE_ZONE_PREFIX) ||
-    CONSENT_REQUIRED_TIME_ZONES.includes(timeZone)
+    COOKIE_NOTICE_TIME_ZONES.includes(timeZone)
   );
 }
 
@@ -69,14 +55,11 @@ export function parseConsentChoice(
 }
 
 /**
- * Resolve the effective analytics permission. An explicit choice always wins;
- * absent one, consent-required regions start denied and everywhere else starts
- * granted — the same geo-gated model semgrep.dev uses.
+ * Resolve the effective analytics permission. Analytics starts enabled when
+ * no preference exists; an explicit opt-out always wins.
  */
 export function resolveAnalyticsConsent(
   choice: ConsentChoice | null,
-  consentRequired: boolean,
 ): ConsentChoice {
-  if (choice) return choice;
-  return consentRequired ? "denied" : "granted";
+  return choice ?? "granted";
 }

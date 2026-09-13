@@ -2,17 +2,18 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import SiteHeader from "@/components/astro/SiteHeader.astro";
 import LandingFooter from "@/components/astro/LandingFooter.astro";
-import { createHeroFlowField } from "@/lib/heroFlowField";
 import { AnimatedHero } from "@/components/AnimatedHero";
 import { FirstScanFunnel } from "@/components/FirstScanFunnel";
 import Demo from "@/components/astro/Demo.astro";
 import TheEconomics from "@/components/astro/TheEconomics.astro";
+import BestOfBothWorlds from "@/components/astro/BestOfBothWorlds.astro";
 import SecurityDebt from "@/components/astro/SecurityDebt.astro";
 import WhatIsOpenTaint from "@/components/astro/WhatIsOpenTaint.astro";
 import EngineProof from "@/components/astro/EngineProof.astro";
 import AgentSkills from "@/components/astro/AgentSkills.astro";
 import SupportedTechnology from "@/components/astro/SupportedTechnology.astro";
 import FAQ from "@/components/astro/FAQ.astro";
+import MobileRailNavigation from "@/components/astro/MobileRailNavigation.astro";
 import { defaultKeywords, siteConfig } from "@/lib/site";
 import { faqItems } from "@/lib/faq";
 
@@ -41,11 +42,22 @@ const structuredData = [
     "@type": "SoftwareApplication",
     name: siteConfig.title,
     applicationCategory: "DeveloperApplication",
+    applicationSubCategory: "Agentic application security testing and static analysis",
     operatingSystem: "Linux, macOS, Windows",
     description: siteConfig.description,
     url: siteConfig.url,
     downloadUrl: "https://github.com/seqra/opentaint/releases",
     license: "https://www.apache.org/licenses/LICENSE-2.0",
+    isAccessibleForFree: true,
+    codeRepository: siteConfig.github,
+    featureList: [
+      "Agent-led application security reviews",
+      "Repeatable vulnerability checks in CI/CD",
+      "GitHub Actions and GitLab CI integrations",
+      "Inter-procedural taint analysis",
+      "Cross-endpoint and persistence flow tracking",
+      "Semgrep-compatible AST-pattern rules",
+    ],
     offers: {
       "@type": "Offer",
       price: "0",
@@ -72,16 +84,10 @@ const structuredData = [
       })),
   },
 ];
-const heroWorkflowFlowLines = createHeroFlowField({ height: 1440 });
-const heroWorkflowBasePath = heroWorkflowFlowLines.map((line) => line.d).join(" ");
-const heroWorkflowActivePaths = Array.from({ length: 3 }, (_, phase) => heroWorkflowFlowLines
-  .filter((line, index) => line.active && index % 3 === phase)
-  .map((line) => line.d)
-  .join(" "));
 ---
 
 <BaseLayout
-  title="OpenTaint | The Open Source Taint Analysis Engine for the AI Era"
+  title="OpenTaint | Open Source Taint Analysis Engine"
   description={siteConfig.description}
   imageAlt="OpenTaint"
   keywords={defaultKeywords}
@@ -91,25 +97,20 @@ const heroWorkflowActivePaths = Array.from({ length: 3 }, (_, phase) => heroWork
     <SiteHeader />
     <main id="main" class="landing-sections flex-1 pt-16">
       <div class="hero-workflow-group">
-        <svg class="hero-workflow-signal-field" viewBox="0 0 1200 1440" preserveAspectRatio="none" aria-hidden="true">
-          <g class="hero-signal-graph">
-            <path class="hero-signal-base" d={heroWorkflowBasePath}></path>
-            {heroWorkflowActivePaths.map((path, phase) => (
-              <path class:list={["hero-signal-active", `hero-signal-active-${phase}`]} d={path}></path>
-            ))}
-          </g>
-        </svg>
+        <div class="hero-workflow-signal-field" aria-hidden="true"></div>
 
         <section class="band hero-band">
           <AnimatedHero />
         </section>
 
+        <BestOfBothWorlds />
+
         <TheEconomics />
       </div>
 
-      <Demo />
-
       <FirstScanFunnel client:visible />
+
+      <Demo />
 
       <SecurityDebt />
 
@@ -127,5 +128,6 @@ const heroWorkflowActivePaths = Array.from({ length: 3 }, (_, phase) => heroWork
         <LandingFooter />
       </div>
     </main>
+    <MobileRailNavigation />
   </div>
 </BaseLayout>

@@ -1,9 +1,8 @@
 ---
 /**
- * Bottom consent bar. It shows where consent is required and none has been
- * given yet, and again whenever someone asks to revise their choice from the
- * footer. Everywhere else it stays in the DOM but hidden, so the markup is
- * identical on every page.
+ * Bottom cookie notice. It appears on the first visit in regions selected by
+ * the local notice policy. Reopening it from the footer reveals explicit
+ * enable/disable controls instead of the one-button acknowledgement.
  */
 import { consentCopy } from "@/lib/consent-copy";
 ---
@@ -16,10 +15,26 @@ import { consentCopy } from "@/lib/consent-copy";
   class="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-card shadow-[0_-6px_24px_-12px_rgba(0,0,0,0.35)]"
 >
   <div class="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between lg:px-6">
-    <p class="font-mono text-xs leading-relaxed text-muted-foreground lg:text-[13px]">
-      {consentCopy.message}
-    </p>
-    <div class="flex shrink-0 gap-2">
+    <div class="max-w-3xl font-mono text-xs leading-relaxed text-muted-foreground lg:text-[13px]">
+      <p data-cookie-copy="notice">
+        {consentCopy.message}
+        <a href="/privacy/" class="ml-1 text-foreground underline decoration-border-strong underline-offset-4 transition-colors hover:text-primary">{consentCopy.privacy}</a>
+      </p>
+      <p data-cookie-copy="settings" hidden>
+        {consentCopy.settingsMessage}
+        <a href="/privacy/" class="ml-1 text-foreground underline decoration-border-strong underline-offset-4 transition-colors hover:text-primary">{consentCopy.privacy}</a>
+      </p>
+    </div>
+    <div data-cookie-actions="notice" class="flex shrink-0">
+      <button
+        type="button"
+        data-cookie-acknowledge
+        class="rounded bg-primary px-5 py-2 font-mono text-xs font-medium text-primary-foreground transition-opacity hover:opacity-90 lg:text-[13px]"
+      >
+        {consentCopy.acknowledge}
+      </button>
+    </div>
+    <div data-cookie-actions="settings" class="flex shrink-0 gap-2" style="display: none;">
       <button
         type="button"
         data-consent="denied"
@@ -44,14 +59,35 @@ import { consentCopy } from "@/lib/consent-copy";
   const banner = document.getElementById("consent-banner");
 
   if (banner) {
-    const { required, choice } = getConsentState();
-    if (required && !choice) banner.hidden = false;
+    const noticeCopy = banner.querySelector<HTMLElement>('[data-cookie-copy="notice"]');
+    const settingsCopy = banner.querySelector<HTMLElement>('[data-cookie-copy="settings"]');
+    const noticeActions = banner.querySelector<HTMLElement>('[data-cookie-actions="notice"]');
+    const settingsActions = banner.querySelector<HTMLElement>('[data-cookie-actions="settings"]');
+
+    const show = (mode: "notice" | "settings") => {
+      const notice = mode === "notice";
+      if (noticeCopy) noticeCopy.hidden = !notice;
+      if (settingsCopy) settingsCopy.hidden = notice;
+      if (noticeActions) noticeActions.style.display = notice ? "flex" : "none";
+      if (settingsActions) settingsActions.style.display = notice ? "none" : "flex";
+      banner.hidden = false;
+    };
+
+    const { noticeRequired, choice } = getConsentState();
+    if (noticeRequired && !choice) show("notice");
 
     onConsentReopen(() => {
-      banner.hidden = false;
+      show("settings");
     });
 
     banner.addEventListener("click", (event) => {
+      const acknowledgement = (event.target as HTMLElement).closest<HTMLElement>("[data-cookie-acknowledge]");
+      if (acknowledgement) {
+        setConsentChoice("granted");
+        banner.hidden = true;
+        return;
+      }
+
       const button = (event.target as HTMLElement).closest<HTMLElement>("[data-consent]");
       const next = button?.dataset.consent;
       if (next !== "granted" && next !== "denied") return;

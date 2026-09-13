@@ -11,11 +11,11 @@ const exploitTrend = [
 ];
 
 const reviewCircles = [
-  { cx: 245, cy: 75, label: "REVIEW 1", lx: 245, ly: -12 },
-  { cx: 287.8, cy: 106.1, label: "REVIEW 2", lx: 392, ly: 106.1 },
-  { cx: 271.5, cy: 156.4, label: "REVIEW 3", lx: 322, ly: 250 },
-  { cx: 218.5, cy: 156.4, label: "REVIEW 4", lx: 168, ly: 250 },
-  { cx: 202.2, cy: 106.1, label: "REVIEW 5", lx: 98, ly: 106.1 },
+  { cx: 230, cy: 108, label: "REVIEW 1", lx: 230, ly: 13 },
+  { cx: 275, cy: 141, label: "REVIEW 2", lx: 410, ly: 120 },
+  { cx: 258, cy: 190, label: "REVIEW 3", lx: 350, ly: 292 },
+  { cx: 202, cy: 190, label: "REVIEW 4", lx: 110, ly: 292 },
+  { cx: 185, cy: 141, label: "REVIEW 5", lx: 50, ly: 120 },
 ];
 
 const reviewIntersectionCenter = {
@@ -29,20 +29,20 @@ const reviewIntersectionCenter = {
   <div class="relative z-10 mx-auto max-w-[90rem]">
     <div class="section-header max-w-6xl">
       <p class="section-eyebrow">As AI generates more code, security risk and review cost compound</p>
-      <h2 id="security-debt-heading" class="section-heading lg:whitespace-nowrap">Application security is the new tech debt</h2>
+      <h2 id="security-debt-heading" class="section-heading xl:whitespace-nowrap">Application security is the new tech debt</h2>
     </div>
 
     <div class="security-stat-rail section-content mobile-card-rail grid gap-6 lg:grid-cols-2" role="region" aria-label="Application security statistics" tabindex="0">
       <article class="reveal mobile-card-rail-item flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
         <header class="border-b border-border px-6 py-6 sm:px-8">
-          <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">01 / Generated code</p>
+          <p class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-primary sm:text-[13px]">01 / Generated code</p>
           <h3 class="mt-3 max-w-[42ch] font-mono text-lg font-semibold leading-7 text-foreground sm:text-xl sm:leading-8">Would you notice the agent slipping a vulnerability into code you never reviewed?</h3>
         </header>
 
         <figure class="flex flex-1 flex-col bg-code-bg px-6 py-6 sm:px-8">
           <figcaption class="font-mono">
             <strong class="block text-5xl tracking-[-0.07em] text-foreground">44% of</strong>
-            <span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">AI-generated solutions contained a known security flaw</span>
+            <span class="mt-2 block text-sm font-semibold leading-6 text-muted-foreground sm:text-[15px]">AI-generated solutions contained a known security flaw</span>
           </figcaption>
 
           <div class="mt-4 flex h-[13rem] items-center sm:mt-6 sm:h-[17rem]">
@@ -60,20 +60,20 @@ const reviewIntersectionCenter = {
               })}
             </svg>
           </div>
-          <a href="https://www.veracode.com/resources/analyst-reports/2026-genai-code-security-report/" target="_blank" rel="noreferrer" class="mt-auto self-end font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Veracode 2026</a>
+          <a href="https://www.veracode.com/resources/analyst-reports/2026-genai-code-security-report/" target="_blank" rel="noreferrer" class="mt-auto self-end font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4 sm:text-xs">Veracode 2026</a>
         </figure>
       </article>
 
       <article class="reveal mobile-card-rail-item flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
         <header class="border-b border-border px-6 py-6 sm:px-8">
-          <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">02 / Exploitation</p>
+          <p class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-primary sm:text-[13px]">02 / Exploitation</p>
           <h3 class="mt-3 max-w-[42ch] font-mono text-lg font-semibold leading-7 text-foreground sm:text-xl sm:leading-8">How long will you keep betting nobody will bother to exploit your code?</h3>
         </header>
 
         <figure class="flex flex-1 flex-col bg-code-bg px-4 py-6 sm:px-8">
           <figcaption class="px-2 font-mono sm:px-0">
             <strong class="block text-4xl tracking-[-0.06em] text-foreground sm:text-5xl">from 5% to 31%</strong>
-            <span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">breaches beginning with vulnerability exploitation</span>
+            <span class="mt-2 block text-sm font-semibold leading-6 text-muted-foreground sm:text-[15px]">breaches beginning with vulnerability exploitation</span>
           </figcaption>
           <p class="sr-only">Vulnerability exploitation became the leading breach entry point for the first time in 19 years.</p>
 
@@ -97,74 +97,74 @@ const reviewIntersectionCenter = {
               ))}
             </svg>
           </div>
-          <a href="https://www.verizon.com/about/news/breach-industry-wide-dbir-finds" target="_blank" rel="noreferrer" class="mt-auto self-end font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Verizon DBIR 2026</a>
+          <a href="https://www.verizon.com/about/news/breach-industry-wide-dbir-finds" target="_blank" rel="noreferrer" class="mt-auto self-end font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4 sm:text-xs">Verizon DBIR 2026</a>
         </figure>
       </article>
 
       <article class="reveal mobile-card-rail-item flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
         <header class="border-b border-border px-6 py-6 sm:px-8">
-          <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">03 / Repeatability</p>
+          <p class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-primary sm:text-[13px]">03 / Repeatability</p>
           <h3 class="mt-3 max-w-[42ch] font-mono text-lg font-semibold leading-7 text-foreground sm:text-xl sm:leading-8">Will tomorrow’s security review catch what today’s review found?</h3>
         </header>
 
         <figure class="flex flex-1 flex-col items-center bg-code-bg px-4 py-6 sm:px-8">
           <figcaption class="w-full font-mono">
             <strong class="block text-5xl tracking-[-0.07em] text-foreground">14% of</strong>
-            <span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">LLM-only findings recurred in all five runs on the same code and prompt</span>
+            <span class="mt-2 block text-sm font-semibold leading-6 text-muted-foreground sm:text-[15px]">LLM-only findings recurred in all five runs on the same code and prompt</span>
           </figcaption>
           <p class="sr-only">These were reported issues outside the deterministic reference set, not independently confirmed vulnerabilities.</p>
-          <div class="mt-4 flex h-[13rem] w-full items-center sm:mt-6 sm:h-[17rem]">
-            <svg class="h-auto max-h-full w-full" viewBox="60 -20 370 280" role="img" aria-label="The exact overlap shared by all five identical reviews contains only 14 percent of unmatched LLM-reported issues">
+          <div class="mt-4 flex h-[16rem] w-full items-center sm:mt-6 sm:h-[20rem]">
+            <svg class="h-auto max-h-full w-full" viewBox="0 0 460 300" role="img" aria-label="The exact overlap shared by all five identical reviews contains only 14 percent of unmatched LLM-reported issues">
               <defs>
-                {reviewCircles.map((circle, index) => <clipPath id={`review-${index + 1}`}><circle cx={circle.cx} cy={circle.cy} r="72" /></clipPath>)}
+                {reviewCircles.map((circle, index) => <clipPath id={`review-${index + 1}`}><circle cx={circle.cx} cy={circle.cy} r="82" /></clipPath>)}
               </defs>
-              <g fill="hsl(var(--brand) / 0.025)" stroke="hsl(var(--brand) / 0.65)" stroke-width="2">
-                {reviewCircles.map((circle) => <circle cx={circle.cx} cy={circle.cy} r="72" />)}
+              <g fill="hsl(var(--brand) / 0.025)" stroke="hsl(var(--brand) / 0.65)" stroke-width="2.25">
+                {reviewCircles.map((circle) => <circle cx={circle.cx} cy={circle.cy} r="82" />)}
               </g>
               <g clip-path="url(#review-1)"><g clip-path="url(#review-2)"><g clip-path="url(#review-3)"><g clip-path="url(#review-4)"><g clip-path="url(#review-5)">
                 <rect x="0" y="0" width="490" height="230" fill="hsl(var(--brand))" />
               </g></g></g></g></g>
-              <g fill="hsl(var(--muted-foreground))" font-size="8" font-weight="700">
+              <g fill="hsl(var(--muted-foreground))" font-family="var(--font-mono)" font-size="16" font-weight="700">
                 {reviewCircles.map((circle) => <text x={circle.lx} y={circle.ly} text-anchor="middle">{circle.label}</text>)}
               </g>
-              <text x={reviewIntersectionCenter.x} y={reviewIntersectionCenter.y} text-anchor="middle" dominant-baseline="middle" fill="hsl(var(--background))" font-size="9" font-weight="700">ALL FIVE</text>
+              <text x={reviewIntersectionCenter.x} y={reviewIntersectionCenter.y} text-anchor="middle" dominant-baseline="middle" fill="hsl(var(--background))" font-family="var(--font-mono)" font-size="13" font-weight="750">ALL FIVE</text>
             </svg>
           </div>
-          <a href="https://snyk.io/blog/snyk-vulnbench-js-1-0-llm-security-review-repeatability/" target="_blank" rel="noreferrer" class="mt-auto self-end font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Snyk VulnBench</a>
+          <a href="https://snyk.io/blog/snyk-vulnbench-js-1-0-llm-security-review-repeatability/" target="_blank" rel="noreferrer" class="mt-auto self-end font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4 sm:text-xs">Snyk VulnBench</a>
         </figure>
       </article>
 
       <article class="reveal mobile-card-rail-item flex min-w-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-background">
         <header class="border-b border-border px-6 py-6 sm:px-8">
-          <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">04 / Model cost</p>
+          <p class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-primary sm:text-[13px]">04 / Model cost</p>
           <h3 class="mt-3 max-w-[42ch] font-mono text-lg font-semibold leading-7 text-foreground sm:text-xl sm:leading-8">How much money will you waste on reviewing the same parts of your application?</h3>
         </header>
 
         <figure class="flex flex-1 flex-col bg-code-bg px-6 py-6 sm:px-8">
           <figcaption class="font-mono">
-            <strong class="block text-4xl tracking-[-0.06em] text-foreground sm:text-5xl">$20K spent</strong>
-            <span class="mt-2 block text-xs font-semibold leading-5 text-muted-foreground">across 1,000 security reviews</span>
+            <strong class="block text-5xl tracking-[-0.07em] text-foreground sm:text-6xl">$20K spent</strong>
+            <span class="mt-2 block text-sm font-semibold leading-6 text-muted-foreground sm:text-[15px]">across 1,000 security reviews</span>
           </figcaption>
 
-          <div class="mt-4 flex h-[13rem] items-center sm:mt-6 sm:h-[17rem]">
-            <svg class="h-auto max-h-full w-full" viewBox="0 0 490 230" role="img" aria-label="One highlighted run among one thousand model runs found the critical OpenBSD vulnerability">
+          <div class="mt-4 flex h-[16rem] items-center sm:mt-6 sm:h-[20rem]">
+            <svg class="h-auto max-h-full w-full" viewBox="0 0 460 300" role="img" aria-label="One highlighted run among one thousand model runs found the critical OpenBSD vulnerability">
               <defs>
-                <pattern id="search-runs" width="12.25" height="9.2" patternUnits="userSpaceOnUse">
-                  <circle cx="6.125" cy="4.6" r="1.45" fill="hsl(var(--muted-foreground) / 0.48)" />
+                <pattern id="search-runs" width="11.5" height="12" patternUnits="userSpaceOnUse">
+                  <circle cx="5.75" cy="6" r="1.7" fill="hsl(var(--muted-foreground) / 0.48)" />
                 </pattern>
               </defs>
-              <rect width="490" height="230" fill="url(#search-runs)" />
-              <circle cx="104.125" cy="151.8" r="7" fill="hsl(var(--background))" stroke="hsl(var(--muted-foreground))" stroke-width="2" />
-              <circle cx="104.125" cy="151.8" r="3" fill="hsl(var(--muted-foreground))" />
-              <path d="M97 155 C72 165 49 178 28 194" fill="none" stroke="hsl(var(--muted-foreground))" stroke-width="1.5" />
-              <text x="10" y="211" fill="hsl(var(--muted-foreground))" font-size="9" font-weight="700">ONE SECURITY REVIEW</text>
-              <circle cx="288" cy="87" r="7" fill="hsl(var(--background))" stroke="hsl(var(--brand))" stroke-width="2" />
-              <circle cx="288" cy="87" r="3" fill="hsl(var(--brand))" />
-              <path d="M296 84 C337 67 379 51 429 38" fill="none" stroke="hsl(var(--brand))" stroke-width="1.5" />
-              <text x="480" y="35" text-anchor="end" fill="hsl(var(--brand))" font-size="9" font-weight="700">CRITICAL BUG FOUND</text>
+              <rect width="460" height="300" fill="url(#search-runs)" />
+              <circle cx="95" cy="190" r="9" fill="hsl(var(--background))" stroke="hsl(var(--muted-foreground))" stroke-width="2.5" />
+              <circle cx="95" cy="190" r="4" fill="hsl(var(--muted-foreground))" />
+              <path d="M86 195 C65 210 42 230 24 252" fill="none" stroke="hsl(var(--muted-foreground))" stroke-width="2" />
+              <text x="18" y="275" fill="hsl(var(--muted-foreground))" font-size="12" font-weight="700">ONE SECURITY REVIEW</text>
+              <circle cx="278" cy="105" r="9" fill="hsl(var(--background))" stroke="hsl(var(--brand))" stroke-width="2.5" />
+              <circle cx="278" cy="105" r="4" fill="hsl(var(--brand))" />
+              <path d="M288 100 C335 80 380 59 428 40" fill="none" stroke="hsl(var(--brand))" stroke-width="2" />
+              <text x="445" y="37" text-anchor="end" fill="hsl(var(--brand))" font-size="12" font-weight="700">CRITICAL BUG FOUND</text>
             </svg>
           </div>
-          <a href="https://www.anthropic.com/research/mythos-preview" target="_blank" rel="noreferrer" class="mt-auto self-end font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4">Anthropic Mythos</a>
+          <a href="https://www.anthropic.com/research/mythos-preview" target="_blank" rel="noreferrer" class="mt-auto self-end font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary underline decoration-primary/30 underline-offset-4 sm:text-xs">Anthropic Mythos</a>
         </figure>
       </article>
     </div>

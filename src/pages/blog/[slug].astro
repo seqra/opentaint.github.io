@@ -17,7 +17,7 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const ogImage = ogImageUrl("index");
+const ogImage = ogImageUrl(post.slug);
 
 let Content: any = null;
 let headings: { depth: number; slug: string; text: string }[] = [];
@@ -36,11 +36,13 @@ const toc = headings
     level: h.depth as 2 | 3,
   }));
 
-const blogPostingSchema = {
+const articleSchema = {
   "@context": "https://schema.org",
-  "@type": "BlogPosting",
+  "@type": post.contentType === "Case study" ? "BlogPosting" : "TechArticle",
   headline: post.title,
   description: post.description,
+  articleSection: post.contentType,
+  keywords: post.keywords?.join(", "),
   datePublished: post.date,
   dateModified: post.updatedDate || post.date,
   author: {
@@ -76,7 +78,7 @@ const breadcrumbSchema = {
       "@type": "ListItem",
       position: 2,
       name: "Blog",
-      item: `${siteConfig.url}/blog`,
+      item: `${siteConfig.url}/blog/`,
     },
     {
       "@type": "ListItem",
@@ -86,9 +88,28 @@ const breadcrumbSchema = {
     },
   ],
 };
+
+const faqSchema = post.faqs
+  ? {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: post.faqs.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.answer,
+        },
+      })),
+    }
+  : null;
+
+const structuredData = faqSchema
+  ? [articleSchema, breadcrumbSchema, faqSchema]
+  : [articleSchema, breadcrumbSchema];
 ---
 
-<BaseLayout title={post.title} description={post.description} canonical={post.canonicalUrl} image={ogImage} keywords={post.keywords} structuredData={[blogPostingSchema, breadcrumbSchema]} ogType="article" articlePublishedTime={post.date} articleModifiedTime={post.updatedDate || post.date}>
+<BaseLayout title={post.title} description={post.description} canonical={post.canonicalUrl} image={ogImage} keywords={post.keywords} structuredData={structuredData} ogType="article" articlePublishedTime={post.date} articleModifiedTime={post.updatedDate || post.date}>
   <div class="min-h-screen bg-background flex flex-col">
     <SiteHeader />
     <main id="main" class="flex-1 pt-28 xl:pt-16">{/* pt-28 clears the header plus the mobile TOC bar — a measured offset, not a ladder step. */}
@@ -113,7 +134,7 @@ const breadcrumbSchema = {
                       href={`#${item.id}`}
                       data-toc-link={item.id}
                       class:list={[
-                        "block py-2 font-mono text-xs text-muted-foreground transition-colors hover:text-primary",
+                        "block py-2 font-mono text-[13px] leading-5 text-muted-foreground transition-colors hover:text-primary",
                         item.level === 3 && "pl-3",
                       ]}
                     >

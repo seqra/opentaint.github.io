@@ -9,6 +9,7 @@ import path from "node:path";
 export default defineConfig({
   site: "https://opentaint.org",
   output: "static",
+  trailingSlash: "always",
   integrations: [
     react(),
     /* Options live in ec.config.mjs so the `<Code>` component can be used
@@ -16,12 +17,7 @@ export default defineConfig({
     expressiveCode(),
     mdx(),
     tailwind(),
-    sitemap({
-      serialize(item) {
-        item.lastmod = new Date().toISOString();
-        return item;
-      },
-    }),
+    sitemap(),
   ],
   markdown: {
     gfm: true,

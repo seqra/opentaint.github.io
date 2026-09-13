@@ -9,17 +9,17 @@ beforeEach(() => {
 });
 
 describe("UnifiedWorkbench", () => {
-  it("starts with a versionless discovery request and informal security knowledge", () => {
+  it("starts with a focused discovery output and no agent transcript", () => {
     render(<UnifiedWorkbench />);
 
-    expect(screen.getByText("Review this application for unauthenticated code execution. Capture what you learn for future scans.")).toBeVisible();
+    expect(screen.queryByLabelText("Coding agent session")).not.toBeInTheDocument();
     expect(screen.getByText("Informal security knowledge")).toBeVisible();
     expect(screen.getByRole("heading", { name: "Unauthenticated execution review" })).toBeVisible();
     expect(screen.queryByText(/Conductor/i)).toBeNull();
     expect(screen.queryByText(/3\.23\.0/)).toBeNull();
   });
 
-  it("uses the stage navigation to time-travel through one agent transcript", () => {
+  it("uses the stage navigation to move through the analysis outputs", () => {
     render(<UnifiedWorkbench />);
 
     fireEvent.click(screen.getByRole("button", { name: "Enact" }));
@@ -64,12 +64,12 @@ describe("UnifiedWorkbench", () => {
     expect(screen.queryByText(/3\.23\.0/)).toBeNull();
   });
 
-  it("shows the scan command and result inspection in the agent session", () => {
+  it("keeps the sticky visual focused on product output", () => {
     render(<UnifiedWorkbench />);
 
-    expect(screen.getAllByText("opentaint scan", { exact: false }).length).toBeGreaterThan(0);
-    expect(screen.getByText("Inspected 2 complete paths")).toBeInTheDocument();
-    expect(screen.getByText("The job path is exploitable. The preview path uses a restricted context and is a false alarm.")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Agent transcript")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Discover output")).toBeVisible();
+    expect(screen.getByLabelText("Demo steps")).toBeVisible();
   });
 
 });

@@ -43,26 +43,11 @@ const DENY_ADS = {
  * sends afterwards carries this state, so it has to be the final answer for
  * this page view — an update arriving later applies only to subsequent hits.
  *
- * `regions` adds the region-scoped default that Google's advanced consent mode
- * prescribes, denying storage across the countries listed. Google resolves it
- * from the request IP, so it still covers a visitor our own region check waved
- * through. Pass it only when the answer is genuinely unknown: for a visitor who
- * has already chosen, their choice governs everywhere, and a region default
- * would override it — region entries win over the general one.
- *
  * Ads stay denied unconditionally — this site runs no advertising — so ads data
  * is redacted too.
  */
-export function setDefaultConsent(analytics: ConsentChoice, regions?: readonly string[]): void {
+export function setDefaultConsent(analytics: ConsentChoice): void {
   gtag("set", "ads_data_redaction", true);
-
-  if (regions?.length) {
-    gtag("consent", "default", {
-      ...DENY_ADS,
-      analytics_storage: "denied",
-      region: regions,
-    });
-  }
 
   gtag("consent", "default", {
     ...DENY_ADS,

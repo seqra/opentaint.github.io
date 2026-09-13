@@ -1,0 +1,58 @@
+<script>
+  function enhanceRails() {
+    document.querySelectorAll<HTMLElement>(
+      '.security-stat-rail.mobile-card-rail, .cve-card-rail.mobile-card-rail',
+    ).forEach((rail) => {
+      const cards = Array.from(rail.children) as HTMLElement[];
+      if (cards.length < 2) return;
+
+      const label = rail.getAttribute('aria-label') || 'Cards';
+      const controls = document.createElement('nav');
+      controls.className = 'mt-4 flex items-center justify-between gap-4 sm:hidden';
+      controls.setAttribute('aria-label', `${label} navigation`);
+      const previous = document.createElement('button');
+      const next = document.createElement('button');
+      const position = document.createElement('span');
+      for (const button of [previous, next]) {
+        button.type = 'button';
+        button.className = 'min-h-11 rounded border border-border px-3 text-sm text-foreground disabled:opacity-40';
+      }
+      previous.textContent = '← Previous';
+      next.textContent = 'Next →';
+      previous.setAttribute('aria-label', `Previous card: ${label}`);
+      next.setAttribute('aria-label', `Next card: ${label}`);
+      position.className = 'text-sm text-muted-foreground';
+      position.setAttribute('aria-live', 'polite');
+      position.setAttribute('aria-atomic', 'true');
+      controls.append(previous, position, next);
+      rail.after(controls);
+
+      function currentIndex() {
+        const left = rail.getBoundingClientRect().left;
+        return cards.reduce((nearest, card, index) =>
+          Math.abs(card.getBoundingClientRect().left - left) <
+          Math.abs(cards[nearest].getBoundingClientRect().left - left) ? index : nearest, 0);
+      }
+      function update() {
+        const index = currentIndex();
+        position.textContent = `${index + 1} / ${cards.length}`;
+        previous.disabled = index === 0;
+        next.disabled = index === cards.length - 1;
+      }
+      function move(direction: number) {
+        const target = cards[Math.max(0, Math.min(cards.length - 1, currentIndex() + direction))];
+        rail.scrollBy({
+          left: target.getBoundingClientRect().left - rail.getBoundingClientRect().left,
+          behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+        });
+      }
+      previous.addEventListener('click', () => move(-1));
+      next.addEventListener('click', () => move(1));
+      rail.addEventListener('scroll', update, { passive: true });
+      new ResizeObserver(update).observe(rail);
+      update();
+    });
+  }
+
+  enhanceRails();
+</script>

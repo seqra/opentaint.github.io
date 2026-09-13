@@ -8,13 +8,13 @@ export async function GET(context: APIContext) {
 
   return rss({
     title: `${siteConfig.title} Blog`,
-    description: siteConfig.description,
+    description: "Application-security guides, benchmarks, case studies, and technical research from OpenTaint.",
     site: context.site ?? siteConfig.url,
     items: posts.map((post) => ({
       title: post.title,
       description: post.description,
       pubDate: new Date(post.date),
-      link: `/blog/${post.slug}`,
+      link: `/blog/${post.slug}/`,
     })),
   });
 }

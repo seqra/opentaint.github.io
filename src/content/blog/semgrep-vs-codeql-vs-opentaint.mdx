@@ -3,6 +3,7 @@ title: "Semgrep vs. CodeQL vs. OpenTaint: XSS Detection Depth Compared"
 description: "We tested Semgrep, CodeQL, and OpenTaint on five progressively harder XSS cases in a Java Spring application — from direct returns to builder patterns with virtual dispatch — to show where each tool's analysis model hits its limit."
 date: "2026-03-24"
 updatedDate: "2026-06-11"
+contentType: "Benchmark"
 keywords:
   - "semgrep vs codeql"
   - "xss detection comparison"
@@ -445,6 +446,6 @@ Real codebases are full of these patterns. As code grows it adds helpers, builde
 
 The test is narrow by design. A single common vulnerability and deliberately simple rules take rule quality out of the equation — the only variable left is how far each engine can carry a value. That is also all the results measure. They say nothing about language coverage or performance on a large codebase.
 
-All five cases are runnable end-to-end in the [java-spring-demo project](https://github.com/seqra/java-spring-demo). For a deeper look at what Spring-specific data flows OpenTaint can model — dependency injection, JPA persistence, and cross-endpoint tracking — see [Taint Analysis for Spring: Security Beyond Syntax](/blog/spring-analyzer).
+All five cases are runnable end-to-end in the [java-spring-demo project](https://github.com/seqra/java-spring-demo). For a deeper look at what Spring-specific data flows OpenTaint can model — dependency injection, JPA persistence, and cross-endpoint tracking — see [Taint Analysis for Spring: Security Beyond Syntax](/blog/spring-analyzer/).
 
 To try OpenTaint on your own project, see the [quick start guide](https://github.com/seqra/opentaint#quick-start).

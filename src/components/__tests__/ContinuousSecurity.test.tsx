@@ -3,15 +3,20 @@ import { describe, expect, it } from "vitest";
 import { ContinuousSecurity } from "../ContinuousSecurity";
 
 describe("ContinuousSecurity", () => {
-  it("places the reusable-scan promise after the workflow", () => {
+  it("gives the product advantages a heading before their visuals", () => {
     render(<ContinuousSecurity />);
 
     const workflow = screen.getByRole("heading", { name: "Triage", level: 3 }).closest(".workflow-card-grid");
-    const promise = screen.getByRole("heading", { level: 2 });
+    const promise = screen.getByRole("heading", { name: "Turn one-off security review into unlimited scans", level: 2 });
+    const firstAdvantage = screen.getByRole("heading", { name: "Practical SOTA static analysis", level: 3 });
+    const valueHeading = screen.getByRole("heading", { name: "Find vulnerabilities LLMs miss using only local compute", level: 2 });
 
-    expect(promise).toHaveTextContent("Turn one-off review into unlimited scans");
-    expect(screen.getByText("The flexibility of model reasoning and the consistency of formal program analysis combined")).toBeVisible();
-    expect(workflow?.compareDocumentPosition(promise) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(valueHeading).toBeVisible();
+    expect(promise).toHaveTextContent("Turn one-off security review into unlimited scans");
+    expect(screen.queryByText("The flexibility of model reasoning and the consistency of formal program analysis combined")).not.toBeInTheDocument();
+    expect(valueHeading.compareDocumentPosition(firstAdvantage) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(firstAdvantage.compareDocumentPosition(promise) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(promise.compareDocumentPosition(workflow as Node) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it("shows the four-part OpenTaint workflow", () => {
@@ -34,21 +39,63 @@ describe("ContinuousSecurity", () => {
   it("keeps the visible workflow copy minimal", () => {
     render(<ContinuousSecurity />);
 
-    expect(screen.getByText("Learn trust boundaries and vulnerability patterns as an informal specification.")).toBeVisible();
-    expect(screen.getByText("Enact the informal specification as taint rules and dependency models.")).toBeVisible();
+    expect(screen.getByText("Discover trust boundaries and")).toBeVisible();
+    expect(screen.getByText("vulnerability patterns.")).toBeVisible();
+    expect(screen.getByText("Enact security knowledge as")).toBeVisible();
+    expect(screen.getByText("rules and dependency models.")).toBeVisible();
     expect(screen.getByText("Search the whole project with formal program analysis.")).toBeVisible();
     expect(screen.getByText("Confirm findings and tune away false alarms.")).toBeVisible();
     expect(screen.queryByText("The same review can produce different findings")).not.toBeInTheDocument();
   });
 
-  it("shows the performance balance and the open-source bundle visually", () => {
+  it("shows performance balance and the open-source bundle visually", () => {
     render(<ContinuousSecurity />);
 
-    expect(screen.getByRole("heading", { name: "Practical balance through SOTA static analysis", level: 3 })).toBeVisible();
+    expect(screen.queryByRole("heading", { name: "Spec-driven code search", level: 3 })).not.toBeInTheDocument();
+    expect(screen.queryByRole("img", { name: /readable AST-pattern security specification/ })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Practical SOTA static analysis", level: 3 })).toBeVisible();
     expect(screen.getByText("Minimize missed findings and false alarms without making whole-project analysis impractical.")).toBeVisible();
-    expect(screen.getByRole("img", { name: "OpenTaint balances scan speed, finding coverage, and precision" })).toBeVisible();
+    const balanceVisual = screen.getByRole("img", { name: "OpenTaint balances scan speed, finding coverage, and precision" });
+    expect(balanceVisual).toBeVisible();
+    expect(balanceVisual).toHaveTextContent("FAST SCAN TIME");
+    expect(balanceVisual).toHaveTextContent("FEWER MISSED FINDINGS");
+    expect(balanceVisual).toHaveTextContent("FEWER FALSE ALARMS");
+    expect(balanceVisual).toHaveTextContent("SOTA");
+    expect(balanceVisual).not.toHaveTextContent("MINIMAL");
+
+    const geometrySvg = balanceVisual.querySelector<SVGSVGElement>("svg[data-balance-center]")!;
+    const parsePoints = (value: string) => value.split(" ").map((point) => point.split(",").map(Number));
+    const [centerX, centerY] = geometrySvg.dataset.balanceCenter!.split(",").map(Number);
+    const outerPoints = parsePoints(balanceVisual.querySelector("[data-balance-guide='outer']")!.getAttribute("points")!);
+    const activePoints = parsePoints(balanceVisual.querySelector("[data-balance-active]")!.getAttribute("points")!);
+    const vertexDots = Array.from(balanceVisual.querySelectorAll<SVGCircleElement>("[data-balance-dot]"));
+    const centerLabel = balanceVisual.querySelector<SVGGElement>("[data-balance-center-label]")!;
+
+    expect(centerLabel).toHaveAttribute("transform", `translate(${centerX} ${centerY})`);
+
+    const outerSideLengths = outerPoints.map(([x, y], index) => {
+      const [nextX, nextY] = outerPoints[(index + 1) % outerPoints.length];
+      return Math.hypot(nextX - x, nextY - y);
+    });
+    outerSideLengths.forEach((length) => expect(length).toBeCloseTo(outerSideLengths[0], 2));
+
+    activePoints.forEach(([activeX, activeY], index) => {
+      const [outerX, outerY] = outerPoints[index];
+      const crossProduct = (outerX - centerX) * (activeY - centerY) - (outerY - centerY) * (activeX - centerX);
+      const outerDistance = Math.hypot(outerX - centerX, outerY - centerY);
+      const activeDistance = Math.hypot(activeX - centerX, activeY - centerY);
+
+      expect(crossProduct).toBeCloseTo(0);
+      expect(activeDistance).toBeLessThan(outerDistance * 0.85);
+      expect(Number(vertexDots[index].getAttribute("cx"))).toBeCloseTo(activeX);
+      expect(Number(vertexDots[index].getAttribute("cy"))).toBeCloseTo(activeY);
+    });
+
     expect(screen.getByRole("heading", { name: "Open source, batteries included", level: 3 })).toBeVisible();
     expect(screen.getByText("Engine, rules, models, agent skills, CLI, viewer, and CI integrations — all open source and built to work together.")).toBeVisible();
-    expect(screen.getByRole("img", { name: /open-source OpenTaint bundle/ })).toBeVisible();
+    const openSourceVisual = screen.getByRole("img", { name: /OpenTaint open-source components/ });
+    expect(openSourceVisual).toBeVisible();
+    expect(openSourceVisual).toHaveTextContent("Analysis engine");
+    expect(openSourceVisual).toHaveTextContent("CLI and CI");
   });
 });

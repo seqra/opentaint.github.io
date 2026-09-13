@@ -1,9 +1,11 @@
 /** Wording shown in the consent bar, kept beside the site's other copy. */
 export const consentCopy = {
-  label: "Analytics cookie consent",
-  message:
-    "We use Google Analytics to count visits and see which pages people find useful. No ads, no profiling, nothing sold. Decline and no cookies are set.",
-  accept: "Accept",
-  decline: "Decline",
-  settings: "Cookie settings",
+  label: "Analytics cookie notice",
+  message: "We use Google Analytics cookies to improve OpenTaint.",
+  settingsMessage: "Choose whether to enable Google Analytics cookies.",
+  acknowledge: "OK",
+  accept: "Enable analytics",
+  decline: "Disable analytics",
+  settings: "Cookie Settings",
+  privacy: "Privacy Policy",
 } as const;

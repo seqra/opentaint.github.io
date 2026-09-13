@@ -11,7 +11,7 @@ const blog = defineCollection({
     keywords: z.array(z.string()).optional(),
     author: z.string().optional(),
     contentType: z
-      .enum(["Guide", "Technical guide", "Workflow guide", "Benchmark", "Case study", "Technical note"])
+      .enum(["Guide", "Benchmark", "Case study", "Technical note"])
       .default("Technical note"),
     faqs: z
       .array(

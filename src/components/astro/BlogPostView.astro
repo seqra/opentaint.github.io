@@ -1,6 +1,7 @@
 ---
 import type { Post } from "@/lib/content";
 import Breadcrumbs from "@/components/astro/Breadcrumbs.astro";
+import { getBlogArtwork } from "@/lib/blogArtwork";
 
 type TocItem = {
   id: string;
@@ -14,6 +15,7 @@ type Props = {
 };
 
 const { post, headings = [] } = Astro.props;
+const artwork = getBlogArtwork(post.slug);
 
 const toc: TocItem[] = headings
   .filter((h) => h.depth === 2 || h.depth === 3)
@@ -83,26 +85,44 @@ const formattedUpdatedDate = post.updatedDate
 
     <div class="mt-4 flex flex-wrap items-center gap-3 font-mono text-[10px] text-muted-foreground sm:text-xs lg:text-[13px] lg:mt-6">
       <span class="font-semibold uppercase tracking-[0.12em] text-primary">{post.contentType}</span>
-      <span aria-hidden="true">·</span>
       <time datetime={post.date}>Published {formattedDate}</time>
       {formattedUpdatedDate && (
-        <>
-          <span aria-hidden="true">·</span>
-          <time datetime={post.updatedDate}>Last reviewed {formattedUpdatedDate}</time>
-        </>
+        <time datetime={post.updatedDate}>Last reviewed {formattedUpdatedDate}</time>
       )}
     </div>
+
+    {artwork && (
+      <figure class="mt-8 overflow-hidden rounded-lg border border-border bg-secondary sm:mt-10">
+        <img
+          src={artwork.src}
+          alt={artwork.alt}
+          width="1600"
+          height="1000"
+          class="aspect-[8/5] w-full object-cover"
+          fetchpriority="high"
+        />
+      </figure>
+    )}
 
   </section>
 
   <section class="page-section">
-    <div class="blog-prose max-w-none break-words font-mono text-[15px] leading-[185%] text-foreground/85 lg:text-base">
+    <div class="blog-prose max-w-none break-words text-base leading-[175%] text-foreground/85 lg:text-[17px]">
       <slot />
     </div>
   </section>
 </article>
 
 <style is:global>
+  .blog-prose {
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  .blog-prose > p,
+  .blog-prose > ul,
+  .blog-prose > ol,
+  .blog-prose > blockquote {
+    max-width: 72ch;
+  }
   .blog-prose h2 {
     @apply mt-8 mb-3 scroll-mt-32 font-mono text-xl font-semibold tracking-[-0.02em] text-foreground sm:text-2xl lg:text-[1.625rem] lg:mt-10 lg:mb-4;
   }
@@ -154,7 +174,7 @@ const formattedUpdatedDate = post.updatedDate
     @apply mb-4 ml-6 list-decimal space-y-1;
   }
   .blog-prose p {
-    @apply mb-4 leading-[190%];
+    @apply mb-4 leading-[175%];
   }
   .blog-prose strong {
     @apply text-foreground;
@@ -167,6 +187,11 @@ const formattedUpdatedDate = post.updatedDate
   }
   [data-toc-link][aria-current="true"] {
     color: hsl(var(--foreground));
+    border-left-color: hsl(var(--primary));
+  }
+  [data-toc-link] {
+    border-left: 2px solid transparent;
+    padding-left: 0.75rem;
   }
   /* Mobile scroll indicators for tables */
   .table-wrapper {

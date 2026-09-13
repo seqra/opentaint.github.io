@@ -7,7 +7,7 @@ export type PostSummary = {
   description: string;
   date: string;
   updatedDate?: string;
-  contentType: "Guide" | "Technical guide" | "Workflow guide" | "Benchmark" | "Case study" | "Technical note";
+  contentType: "Guide" | "Benchmark" | "Case study" | "Technical note";
 };
 
 export type Post = PostSummary & {

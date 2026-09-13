@@ -10,9 +10,6 @@ export default defineConfig({
   site: "https://opentaint.org",
   output: "static",
   trailingSlash: "always",
-  redirects: {
-    "/taint-analysis/": "/blog/what-is-taint-analysis/",
-  },
   integrations: [
     react(),
     /* Options live in ec.config.mjs so the `<Code>` component can be used

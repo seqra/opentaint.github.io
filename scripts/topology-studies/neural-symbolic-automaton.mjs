@@ -58,15 +58,16 @@ function pathD(points, close = false) {
   return `${commands.join(' ')}${close ? ' Z' : ''}`;
 }
 
-function smoothPathD(points) {
+function smoothPathD(points, close = false) {
   if (!points.length) return '';
   if (points.length === 1) return `M ${f(points[0].x)} ${f(points[0].y)}`;
   let output = `M ${f(points[0].x)} ${f(points[0].y)}`;
-  for (let index = 0; index < points.length - 1; index += 1) {
-    const previous = points[index - 1] || points[index];
+  const segmentCount = close ? points.length : points.length - 1;
+  for (let index = 0; index < segmentCount; index += 1) {
+    const previous = close ? points[(index - 1 + points.length) % points.length] : (points[index - 1] || points[index]);
     const first = points[index];
-    const second = points[index + 1];
-    const next = points[index + 2] || second;
+    const second = points[(index + 1) % points.length];
+    const next = close ? points[(index + 2) % points.length] : (points[index + 2] || second);
     const controlOne = {
       x: first.x + (second.x - previous.x) / 6,
       y: first.y + (second.y - previous.y) / 6,
@@ -77,7 +78,7 @@ function smoothPathD(points) {
     };
     output += ` C ${f(controlOne.x)} ${f(controlOne.y)} ${f(controlTwo.x)} ${f(controlTwo.y)} ${f(second.x)} ${f(second.y)}`;
   }
-  return output;
+  return `${output}${close ? ' Z' : ''}`;
 }
 
 function ellipsePath(cx, cy, radiusX, radiusY, rotation, wobble = 0) {
@@ -103,7 +104,7 @@ function classes(strokeClass, fillClass = '') {
 
 function pathElement(points, strokeClass, width = 1, opacity = 1, close = false, fillClass = '', smooth = false, extra = '') {
   if (points.length < 2) return '';
-  const d = smooth ? smoothPathD(points) : pathD(points, close);
+  const d = smooth ? smoothPathD(points, close) : pathD(points, close);
   const className = classes(strokeClass, fillClass);
   return `<path class="${className}" d="${d}" fill="none" stroke="none" stroke-width="${f(width)}" opacity="${f(opacity)}" stroke-linecap="round" stroke-linejoin="round" ${extra}/>`;
 }
@@ -275,23 +276,6 @@ function drawActivationBands(random, phase) {
     }
   }
 
-  // Three final channels converge into the left edge of the state-knot.
-  const targets = [
-    { x: 560, y: 418 },
-    { x: 548, y: 500 },
-    { x: 560, y: 582 },
-  ];
-  const finalLayer = layers.at(-1);
-  for (const [index, target] of targets.entries()) {
-    const source = finalLayer[Math.round((index + 1) * (finalLayer.length - 1) / 4)];
-    body += pathElement([
-      source,
-      { x: source.x + 38, y: source.y + (target.y - source.y) * 0.15 },
-      { x: target.x - 36, y: target.y + (source.y - target.y) * 0.18 },
-      target,
-    ], index === 1 ? 'ink' : 'soft', 1.25, 0.58, false, '', true);
-  }
-
   // A few stable short crossbars make the left field read as layers rather
   // than a collection of isolated filaments.
   for (let index = 0; index < 6; index += 1) {
@@ -315,75 +299,38 @@ function squarePoints(cx, cy, size) {
   ];
 }
 
-function drawAutomaton(phase) {
-  // Three exact square states are enough to make the symbolic handoff legible:
-  // an entry symbol, one compact constraint gate, and a lattice handoff.
-  const states = [
-    { x: 626, y: 500, size: 52, fill: 'deep', stroke: 'ink', inner: 'soft' },
-    { x: 722, y: 414, size: 58, fill: 'clay', stroke: 'ink', inner: 'ink' },
-    { x: 824, y: 500, size: 52, fill: 'deep', stroke: 'soft', inner: 'clay' },
+function diamondPoints(cx, cy, radius) {
+  return [
+    { x: cx, y: cy - radius },
+    { x: cx + radius, y: cy },
+    { x: cx, y: cy + radius },
+    { x: cx - radius, y: cy },
   ];
+}
+
+function drawAutomaton(phase) {
+  // One rotated square is the agentic enactment boundary: the invariant
+  // passes through unchanged, while the representation around it changes
+  // from distributed activations to an explicit exhaustive state space.
+  const agent = { x: 690, y: 500, radius: 48 };
   let body = '';
 
-  // The three channels leaving the final activation band contract at the
-  // entry state. They stay straight and sparse, so the existing left field
-  // remains the dominant visual texture.
-  body += pathElement([
-    { x: 560, y: 418 },
-    { x: 592, y: 418 },
-    states[0],
-  ], 'soft', 0.9, 0.45, false, '', false);
-  body += pathElement([{ x: 548, y: 500 }, states[0]], 'ink', 1.08, 0.5, false, '', false);
-  body += pathElement([
-    { x: 560, y: 582 },
-    { x: 592, y: 582 },
-    states[0],
-  ], 'soft', 0.9, 0.45, false, '', false);
-
-  // One clean two-edge decision shape keeps the center symbolic rather than
-  // orbital. All edges remain ordinary undirected geometry: no arrows.
-  body += pathElement([states[0], states[1]], 'soft', 1.18, 0.64, false, '', false);
-  body += pathElement([states[1], states[2]], 'clay', 1.18, 0.64, false, '', false);
-
-  for (const [index, state] of states.entries()) {
-    body += pathElement(
-      squarePoints(state.x, state.y, state.size),
-      state.stroke,
-      1.42,
-      0.8,
-      true,
-      state.fill,
-      false,
-    );
-    body += pathElement(
-      squarePoints(state.x, state.y, index === 1 ? 17 : 14),
-      state.inner,
-      0.9,
-      0.75,
-      true,
-      '',
-      false,
-    );
-    body += dot(state, index === 1 ? 4.2 : 3.8, state.inner, '', 0, 0.88);
-  }
-
-  // Overlay the central activation channel so the semantic route begins in
-  // the left field, then turn through the two symbolic choices. The first
-  // four points reproduce the existing channel's smooth geometry exactly.
+  body += pathElement(
+    diamondPoints(agent.x, agent.y, agent.radius),
+    'red',
+    1.46,
+    0.82,
+    true,
+    'red',
+    false,
+  );
+  // The invariant is deliberately straight through the enactment boundary.
+  // Its only mark here is the red center point.
   const finalSpec = { cx: 438, cy: 500, rx: 66, ry: 185, count: 11 };
   const finalLayer = activationLayer(finalSpec, phase, 2);
   const source = finalLayer[Math.round((finalLayer.length - 1) / 2)];
-  const target = { x: 548, y: 500 };
-  const redIngress = [
-    source,
-    { x: source.x + (target.x - source.x) * 0.42, y: source.y },
-    { x: target.x - (target.x - source.x) * 0.34, y: target.y },
-    target,
-  ];
-  body += pathElement(redIngress, 'red', 3.2, 0.96, false, '', true);
-  body += pathElement([target, states[0], states[1], states[2]], 'red', 3.2, 0.96, false, '', false);
-  body += dot(source, 5.2, 'red', '', 0, 0.98);
-  body += dot(states[1], 5.1, 'red', '', 0, 0.98);
+  body += pathElement([source, { x: 824, y: 500 }], 'red', 3.2, 0.96, false, '', false);
+  body += dot(agent, 5.2, 'red', '', 0, 0.98);
   return body;
 }
 

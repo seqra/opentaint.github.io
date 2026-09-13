@@ -1784,19 +1784,19 @@
      whenever their geometry or stroke treatment changes. */
   @media (max-width: 600px), (min-width: 1101px) and (max-width: 1279px) {
     .hero-workflow-signal-field {
-      --hero-flow-field-image: url("/hero-workflow-flow-mobile.svg?v=200-350-d1252");
+      --hero-flow-field-image: url("/hero-workflow-flow-mobile.svg?v=150-250-d1252");
     }
   }
 
   @media (min-width: 601px) and (max-width: 1100px) {
     .hero-workflow-signal-field {
-      --hero-flow-field-image: url("/hero-workflow-flow-tablet.svg?v=200-350-d1252");
+      --hero-flow-field-image: url("/hero-workflow-flow-tablet.svg?v=150-250-d1252");
     }
   }
 
   @media (min-width: 1280px) {
     .hero-workflow-signal-field {
-      --hero-flow-field-image: url("/hero-workflow-flow-desktop.svg?v=200-350-d1252");
+      --hero-flow-field-image: url("/hero-workflow-flow-desktop.svg?v=150-250-d1252");
     }
   }
 

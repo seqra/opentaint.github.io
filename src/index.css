@@ -1770,7 +1770,7 @@
     width: 100%;
     height: 100%;
     background-color: hsl(var(--brand));
-    opacity: 0.14;
+    opacity: 0.31;
     pointer-events: none;
     -webkit-mask-image: var(--hero-flow-field-image);
     -webkit-mask-repeat: no-repeat;
@@ -1784,24 +1784,24 @@
      whenever their geometry or stroke treatment changes. */
   @media (max-width: 600px), (min-width: 1101px) and (max-width: 1279px) {
     .hero-workflow-signal-field {
-      --hero-flow-field-image: url("/hero-workflow-flow-mobile.svg?v=100-150-d0818");
+      --hero-flow-field-image: url("/hero-workflow-flow-mobile.svg?v=200-350-d1252");
     }
   }
 
   @media (min-width: 601px) and (max-width: 1100px) {
     .hero-workflow-signal-field {
-      --hero-flow-field-image: url("/hero-workflow-flow-tablet.svg?v=100-150-d0818");
+      --hero-flow-field-image: url("/hero-workflow-flow-tablet.svg?v=200-350-d1252");
     }
   }
 
   @media (min-width: 1280px) {
     .hero-workflow-signal-field {
-      --hero-flow-field-image: url("/hero-workflow-flow-desktop.svg?v=100-150-d0818");
+      --hero-flow-field-image: url("/hero-workflow-flow-desktop.svg?v=200-350-d1252");
     }
   }
 
   .dark .hero-workflow-signal-field {
-    opacity: 0.22;
+    opacity: 0.44;
   }
 
   .landing-sections > .band.security-debt-band {

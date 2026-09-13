@@ -1,5 +1,6 @@
 
 @import "@fontsource-variable/jetbrains-mono/wght.css";
+@import "@fontsource-variable/geist/wght.css";
 
 @tailwind base;
 @tailwind components;
@@ -10,6 +11,7 @@
     color-scheme: light;
     --font-sans: "JetBrains Mono Variable", ui-monospace, monospace;
     --font-mono: "JetBrains Mono Variable", monospace;
+    --font-editorial: "Geist Variable", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
     /* IBM Carbon spacing scale. Layout whitespace uses these discrete tokens;
        responsive layouts step between tokens instead of interpolating values. */

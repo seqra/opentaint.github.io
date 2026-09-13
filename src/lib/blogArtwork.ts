@@ -6,9 +6,9 @@ export type BlogArtwork = {
 
 const artworkBySlug: Record<string, BlogArtwork> = {
   "appsec-agent": {
-    src: "/pictures/generative-art-study/topology-studies/agent-review-distillation.svg",
-    darkSrc: "/pictures/generative-art-study/topology-studies/agent-review-distillation-dark.svg",
-    alt: "Broad security exploration converges into one precise red scan path",
+    src: "/pictures/generative-art-study/topology-studies/neural-symbolic-automaton.svg",
+    darkSrc: "/pictures/generative-art-study/topology-studies/neural-symbolic-automaton-dark.svg",
+    alt: "Neural reasoning passes through an agentic transformation into exhaustive symbolic analysis",
   },
   "spring-analyzer": {
     src: "/pictures/generative-art-study/topology-studies/clustered-polygonal-topology.svg",

@@ -51,7 +51,11 @@ function SurfaceStory({ title, children, window }: { title: string; children: st
   );
 }
 
-function ReviewReport() {
+function ReviewReport({ progress }: { progress: number }) {
+  const completion = Math.max(0, Math.min(1, progress));
+  const activeInsight = Math.min(2, Math.floor(completion * 3));
+  const insightState = (index: number) => index < activeInsight ? "passed" : index === activeInsight ? "active" : "pending";
+
   return (
     <SurfaceStory
       title="Informal security knowledge"
@@ -63,22 +67,26 @@ function ReviewReport() {
           </div>
           <span className="ml-auto flex items-center gap-2 text-[12px] text-[#4c835e] dark:text-[#7fbd92]"><Check className="h-3.5 w-3.5" /> Saved</span>
         </div>
-        <div data-testid="review-report-scroll" className="min-h-0 flex-1 overflow-hidden px-6 py-4 xl:px-8">
+        <div data-testid="review-report-scroll" className="relative min-h-0 flex-1 overflow-hidden px-6 py-4 xl:px-8 xl:pr-12">
+        <div className="pointer-events-none absolute bottom-5 right-6 top-5 hidden w-px overflow-visible bg-border xl:block motion-reduce:hidden" aria-hidden="true">
+          <span className="absolute inset-x-0 top-0 h-full origin-top bg-primary will-change-transform" style={{ transform: `scaleY(${completion})` }} />
+          <i className="absolute left-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-primary bg-background will-change-[top]" style={{ top: `${completion * 100}%` }} />
+        </div>
         <article className="mx-auto max-w-[44rem] text-[14px] leading-5 text-[#443c38] dark:text-card-foreground xl:text-[15px] xl:leading-6">
           <h3 className="text-[22px] font-semibold leading-7 tracking-[-0.025em] text-foreground xl:text-[24px]">Unauthenticated execution review</h3>
           <p className="mt-1 text-muted-foreground">Security context captured from the reviewed request path.</p>
 
-          <section className="mt-4 rounded-[10px] border border-primary/25 bg-primary/[0.05] p-3">
+          <section data-state={insightState(0)} className="mt-4 rounded-[10px] border border-border bg-background p-3 transition-[border-color,background-color,opacity,transform] duration-300 ease-out data-[state=active]:translate-x-1 data-[state=active]:border-primary/45 data-[state=active]:bg-primary/[0.06] data-[state=pending]:opacity-60 motion-reduce:transition-none">
             <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary">Trust boundary</p>
             <p className="mt-2">Unauthenticated <code className="font-mono text-[13px] text-primary">POST /api/jobs</code> input controls the script passed into the execution pipeline.</p>
           </section>
 
-          <section className="mt-2 rounded-[10px] border border-border bg-background p-3">
+          <section data-state={insightState(1)} className="mt-2 rounded-[10px] border border-border bg-background p-3 transition-[border-color,background-color,opacity,transform] duration-300 ease-out data-[state=active]:translate-x-1 data-[state=active]:border-primary/45 data-[state=active]:bg-primary/[0.06] data-[state=pending]:opacity-60 motion-reduce:transition-none">
             <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary">Vulnerability pattern</p>
             <p className="mt-2">Request-controlled script reaches <code className="font-mono text-[13px] text-primary">Context.eval</code> with host access enabled.</p>
           </section>
 
-          <section className="mt-2 rounded-[10px] border border-border bg-background p-3">
+          <section data-state={insightState(2)} className="mt-2 rounded-[10px] border border-border bg-background p-3 transition-[border-color,background-color,opacity,transform] duration-300 ease-out data-[state=active]:translate-x-1 data-[state=active]:border-primary/45 data-[state=active]:bg-primary/[0.06] data-[state=pending]:opacity-60 motion-reduce:transition-none">
             <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary">Opaque method behavior</p>
             <p className="mt-2"><code className="font-mono text-[13px] text-primary">Context.Builder.option()</code> returns the same builder, preserving state through the chain.</p>
           </section>
@@ -679,7 +687,7 @@ function FindingReport({ progress }: { progress: number }) {
 }
 
 function WorkSurface({ stage, progress }: { stage: TimelineId; progress: number }) {
-  if (stage === "review") return <ReviewReport />;
+  if (stage === "review") return <ReviewReport progress={progress} />;
   if (stage === "enact") return <Specifications progress={progress} />;
   if (stage === "scan") return <ScanResults progress={progress} />;
   if (stage === "triage") return <TriageView progress={progress} />;

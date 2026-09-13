@@ -174,7 +174,7 @@ export function FirstScanFunnel() {
                   );
                 })}
               </div>
-              <div id="agent-skills-command" role="tabpanel" className="flex min-h-[7rem] items-center [&>*]:w-full">
+              <div id="agent-skills-command" role="tabpanel" className="flex h-[4.75rem] items-center [&>*]:w-full">
                 {activeAgentSkillMethod && <CommandLine id={`${activeAgentSkillMethod.label} skills install command`} value={activeAgentSkillMethod.command} copiedId={copiedId} onCopy={copy} />}
               </div>
             </div>

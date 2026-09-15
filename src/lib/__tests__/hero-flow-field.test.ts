@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   createHeroFlowField,
@@ -6,6 +7,8 @@ import {
   HERO_FLOW_FIELD_TABLET_HEIGHT,
   renderHeroFlowFieldSvg,
 } from "../heroFlowField";
+
+const landingCss = readFileSync("src/index.css", "utf8");
 
 describe("hero flow field", () => {
   it("produces a stable field of smooth cubic streamlines", () => {
@@ -44,8 +47,17 @@ describe("hero flow field", () => {
     expect(desktopSvg).toContain('stroke-width="1.5"');
     expect(desktopSvg).toContain('stroke-width="2.5"');
     expect(desktopSvg).toContain('stroke-dasharray="12 52"');
+    expect(desktopSvg).toContain('stroke="url(#field-stroke)"');
+    expect(desktopSvg).not.toContain("<mask");
     expect(renderHeroFlowFieldSvg(HERO_FLOW_FIELD_MOBILE_HEIGHT)).toContain(
       `viewBox="0 0 1200 ${HERO_FLOW_FIELD_MOBILE_HEIGHT}"`,
     );
+  });
+
+  it("paints the landing field without a page-sized CSS mask", () => {
+    const fieldRule = landingCss.match(/\.hero-workflow-signal-field\s*\{([^}]*)\}/)?.[1];
+
+    expect(fieldRule).toContain("background-image: var(--hero-flow-field-image)");
+    expect(fieldRule).not.toContain("mask-image");
   });
 });

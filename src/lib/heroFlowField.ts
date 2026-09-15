@@ -125,6 +125,8 @@ export function renderHeroFlowFieldSvg(height: number) {
   // The 3.5-unit samples are already close enough to render as a smooth line.
   // A compact linear path keeps this decorative field out of the page HTML
   // and reduces its transfer size without changing its generated trajectory.
+  // Paint the field directly instead of using it as a page-sized CSS mask:
+  // Firefox can spend an unbounded amount of time rasterizing that mask.
   const flowLines = createHeroFlowField({ height, pathStyle: "linear" });
   const basePath = flowLines.map((line) => line.d).join(" ");
   const activePaths = Array.from({ length: 3 }, (_, phase) => flowLines
@@ -132,5 +134,5 @@ export function renderHeroFlowFieldSvg(height: number) {
     .map((line) => line.d)
     .join(" "));
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none"><defs><linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop offset="96%" stop-color="#fff"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></linearGradient><mask id="field-mask"><rect width="${width}" height="${height}" fill="url(#fade)"/></mask></defs><g mask="url(#field-mask)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><path d="${basePath}" stroke-width="1.5" opacity=".34"/>${activePaths.map((path, phase) => `<path d="${path}" stroke-width="2.5" stroke-dasharray="12 52" stroke-dashoffset="${phase * -21.333}"/>`).join("")}</g></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none"><defs><linearGradient id="field-stroke" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="${height}"><stop offset="96%" stop-color="#ca2121"/><stop offset="100%" stop-color="#ca2121" stop-opacity="0"/></linearGradient></defs><g fill="none" stroke="url(#field-stroke)" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><path d="${basePath}" stroke-width="1.5" opacity=".34"/>${activePaths.map((path, phase) => `<path d="${path}" stroke-width="2.5" stroke-dasharray="12 52" stroke-dashoffset="${phase * -21.333}"/>`).join("")}</g></svg>`;
 }

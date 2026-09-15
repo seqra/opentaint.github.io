@@ -204,7 +204,7 @@ function BalanceVisual() {
 
         <text className="balance-edge-label" x="169" y="183" textAnchor="middle" transform="rotate(-60 169 183)">FEWER MISSED FINDINGS</text>
         <text className="balance-edge-label" x="351" y="183" textAnchor="middle" transform="rotate(60 351 183)">FEWER FALSE ALARMS</text>
-        <text className="balance-edge-label" x="260" y="343" textAnchor="middle">FAST SCAN TIME</text>
+        <text className="balance-edge-label" data-balance-scan-label x="260" y="372" textAnchor="middle">FAST SCAN TIME</text>
 
         <g className="balance-center-label" data-balance-center-label transform={`translate(${center.x} ${center.y})`}>
           <rect x="-31" y="-15" width="62" height="30" rx="15" />

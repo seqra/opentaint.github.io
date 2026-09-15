@@ -70,8 +70,12 @@ describe("ContinuousSecurity", () => {
     const activePoints = parsePoints(balanceVisual.querySelector("[data-balance-active]")!.getAttribute("points")!);
     const vertexDots = Array.from(balanceVisual.querySelectorAll<SVGCircleElement>("[data-balance-dot]"));
     const centerLabel = balanceVisual.querySelector<SVGGElement>("[data-balance-center-label]")!;
+    const scanLabel = balanceVisual.querySelector<SVGTextElement>("[data-balance-scan-label]")!;
 
     expect(centerLabel).toHaveAttribute("transform", `translate(${centerX} ${centerY})`);
+    expect(Number(scanLabel.getAttribute("y"))).toBeGreaterThan(
+      Math.max(...outerPoints.map(([, y]) => y)),
+    );
 
     const outerSideLengths = outerPoints.map(([x, y], index) => {
       const [nextX, nextY] = outerPoints[(index + 1) % outerPoints.length];

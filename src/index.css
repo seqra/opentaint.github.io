@@ -1029,8 +1029,7 @@
     background: hsl(var(--code-bg));
   }
 
-  .best-worlds-panel-heading,
-  .best-worlds-bindings > strong {
+  .best-worlds-panel-heading {
     display: flex;
     min-height: 35px;
     align-items: center;
@@ -1153,11 +1152,6 @@
       linear-gradient(90deg, hsl(var(--agent) / 0.025), transparent 48%, hsl(var(--brand) / 0.018)),
       hsl(var(--code-bg));
     font-family: var(--font-mono);
-  }
-
-  .best-worlds-bindings > strong {
-    grid-column: 1 / -1;
-    padding: var(--spacing-03) var(--spacing-04);
   }
 
   .best-worlds-metavar-map {
@@ -1435,6 +1429,26 @@
   @media (max-width: 800px) {
     .best-worlds-powers {
       grid-template-columns: 1fr;
+      gap: var(--spacing-05);
+      overflow: visible;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .best-worlds-bindings {
+      grid-template-columns: 1fr;
+    }
+
+    .best-worlds-metavar-map {
+      grid-column: 1;
+      border-right: 0;
+      border-bottom: 1px solid hsl(var(--border));
+    }
+
+    .best-worlds-data-trace {
+      grid-column: 1;
     }
   }
 
@@ -1522,8 +1536,11 @@
 
     .best-worlds-powers {
       gap: 0;
-      border-block: 1px solid hsl(var(--border));
-      background: hsl(var(--background) / 0.46);
+      overflow: hidden;
+      border: 1px solid hsl(var(--border-strong));
+      border-radius: 14px;
+      background: hsl(var(--background));
+      box-shadow: 0 1px 3px hsl(var(--foreground) / 0.05);
     }
 
     .best-worlds-side {
@@ -1531,7 +1548,7 @@
       overflow: visible;
       border: 0;
       border-radius: 0;
-      background: transparent;
+      background: hsl(var(--background));
       box-shadow: none;
     }
 
@@ -1644,30 +1661,30 @@
 
   @media (min-width: 1101px) {
     .best-worlds-core {
-      overflow: visible;
-      border: 0;
-      border-radius: 0;
-      background: transparent;
-      box-shadow: none;
+      overflow: hidden;
+      border: 1px solid hsl(var(--border-strong));
+      border-radius: 14px;
+      background: hsl(var(--background));
+      box-shadow: 0 1px 3px hsl(var(--foreground) / 0.05);
     }
 
     .best-worlds-core > header {
       min-height: auto;
-      border-bottom: 0;
-      background: transparent;
-      padding: 0 var(--spacing-08) var(--spacing-07);
+      border-bottom: 1px solid hsl(var(--border));
+      background: hsl(var(--background));
+      padding: var(--spacing-06) var(--spacing-08);
     }
 
     .best-worlds-core > header h3 {
-      max-width: 72ch;
-      font-size: 22px;
-      line-height: 1.35;
+      max-width: 58ch;
+      font-size: 20px;
+      line-height: 1.45;
     }
 
     .best-worlds-code-map {
       overflow: hidden;
-      border-block: 1px solid hsl(var(--border));
-      background: hsl(var(--background) / 0.42);
+      border-block: 0;
+      background: hsl(var(--code-bg));
     }
 
     .best-worlds-code-panel,
@@ -1703,18 +1720,6 @@
     .best-worlds-bindings {
       grid-template-columns: minmax(15rem, 0.45fr) minmax(0, 2fr);
       background: transparent;
-    }
-
-    .best-worlds-bindings > strong {
-      min-height: 44px;
-      justify-content: flex-start;
-      border-bottom: 0;
-      background: transparent;
-      padding-inline: var(--spacing-06);
-      color: hsl(var(--muted-foreground));
-      font-size: 13px;
-      font-weight: 750;
-      letter-spacing: 0.1em;
     }
 
     .best-worlds-metavar-map {

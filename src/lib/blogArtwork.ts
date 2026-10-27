@@ -25,6 +25,11 @@ const artworkBySlug: Record<string, BlogArtwork> = {
     darkSrc: "/pictures/generative-art-study/topology-studies/adaptive-proximity-lattice-dark.svg",
     alt: "A red exploit path crossing a structured proximity lattice",
   },
+  "sast-is-dead": {
+    src: "/pictures/generative-art-study/topology-studies/proof-of-absence.svg",
+    darkSrc: "/pictures/generative-art-study/topology-studies/proof-of-absence-dark.svg",
+    alt: "One program graph: red bugs scattered across the left half, every node checked in blue and none red on the right",
+  },
 };
 
 export function getBlogArtwork(slug: string): BlogArtwork | undefined {

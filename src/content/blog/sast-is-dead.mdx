@@ -1,0 +1,113 @@
+---
+title: "SAST Is Dead, Long Live SAST!"
+description: "AI agents now find more bugs than pattern-matching SAST ever did. But defenders need more than a list of bugs. They need to know a class of bugs isn't there. Dataflow analysis can show that for a whole project in about a minute of CPU time. Proving the same property with AI and a formal verifier would cost thousands of dollars in tokens."
+date: "2026-10-27"
+contentType: "Technical note"
+keywords:
+  - "sast is dead"
+  - "ai vulnerability detection"
+  - "formal verification"
+  - "taint analysis"
+  - "dataflow analysis"
+  - "static analysis vs ai agents"
+  - "opentaint"
+author: "Seqra Team"
+---
+
+If you use SAST to find bugs, it's dead.
+
+You can feel it everywhere right now. The best way to find a vulnerability today is to give the code to an AI agent. It reads the code like a reviewer, follows a hunch across files, and can even exploit what it finds to prove it's real. Pattern-matching SAST can't keep up with that. You either get too many false positives or you miss real bugs, and tuning the rules doesn't fix it. We saw this ourselves with [Conductor](/blog/conductor-rce-cve-2026-58138/). CodeQL, Semgrep OSS, Semgrep Pro, and our own stock rules gave 44 findings between them, and none of them was the unauthenticated RCE.
+
+So if you're asking which tool finds the most bugs, it's an agent. But for defenders, that's not really the question that matters.
+
+## Finding bugs isn't proving they're gone
+
+Anthropic recently published [research on making formal verification practical with LLMs](https://www.anthropic.com/research/formal-verification). It starts like this:
+
+> "Most software is riddled with bugs, which AI can now easily find and exploit. The standard defenses against cyberattacks are no longer sufficient: we need ways to prove that code is free of bugs."
+
+Attackers have the same agents you do. Finding bugs faster doesn't protect you on its own, because the attacker only needs the one you missed. What you actually want is to be able to say something like "no request parameter in this codebase ever reaches a file-system call," and to have better evidence for it than "an agent looked and didn't find anything."
+
+Formal verification can give you that. It has also always been too expensive for most real projects, and the research argues that AI changes this. We like the direction. But it's fair to ask what it costs today, and whether there's already a cheaper tool for a lot of the properties defenders care about.
+
+[@ccrisccris put it well](https://x.com/ccrisccris/status/2114210057105645679):
+
+> "Part of formal verification can be replaced by more efficient static analysis, and part of static analysis by better programming language design."
+
+We agree, and we can put some numbers on the first half.
+
+## What a proof costs
+
+We ran OpenTaint, our static taint analyzer, on a mid-sized Java project. It has about 100K lines of code and 0.65 MB of bytecode. We checked one property: no path-traversal data flows. OpenTaint finished in about a minute of CPU time and used no API tokens.
+
+Then we tried to estimate what it would cost to prove the same property with AI and a general-purpose formal verifier.
+
+To be fair, let's say it's done properly. You embed the JVM bytecode into a formal verifier. AI writes field- and context-sensitive dataflow semantics for every method (path-insensitive, like the analyzer). You prove those semantics are sound, and then you prove or disprove the security property. To be generous, we'll also assume the library models and security rules already exist and won't count them.
+
+The catch is that you need dataflow semantics for every single method in the project. AI can write them, but if you don't prove they're sound, you're just trusting whatever it came up with.
+
+On this project, for this one property, the analyzer produced about 440 MB of dataflow summaries and fixpoint data. That gives a rough idea of how much reasoning a proof would have to cover. From that, we estimate a cold AI-driven verification run would take about 28.5 billion input tokens and 145 million output tokens. At Claude Opus 5.5 API prices, that comes to around $11,500.
+
+<details>
+<summary>How we got that number, and how much to trust it</summary>
+
+- **Output.** At roughly 3 bytes per token, 440 MB of summaries and fixpoint data comes to about 145M tokens. That's what it costs to write every method's semantics and the intermediate fixpoint state once.
+- **Input.** Every piece the model writes needs context: the method's bytecode, the summaries of the methods it calls, and the proof state around it. If it reads about 200 tokens for every token it writes, that's about 28.5B input tokens.
+- **Price.** Opus 5.5 costs $4 per million input tokens, $20 per million output tokens, and $0.20 per million cached input tokens. Output comes to about $2,900. The ~$8,600 for input only works if almost all of it is served from the prompt cache. Without caching, input alone would be about $114,000.
+
+This is a ballpark figure, and it could be off either way.
+
+- It could be too high if a model can describe method semantics more compactly than the analyzer's internal format does, or if the proof engine takes on more of the work. But the more work the proof engine does, the more it's just running static analysis itself.
+- It could be too low because it leaves out failed proof attempts, retries, and the work of proving the semantics sound.
+
+It's also not a one-time cost. Some of the work has to be redone when the code changes, though proofs for unchanged code can be reused.
+
+</details>
+
+Don't read too much into the exact numbers. Even so, it's about a minute on a CPU versus thousands of dollars in tokens, for one property on one mid-sized project. Anthropic's write-up points the same way: their proofs often took hundreds of millions of tokens.
+
+So before you rewrite a codebase in another language, or pay for agents to prove dataflow properties, try static taint analysis first.
+
+## Dataflow SAST is lightweight formal verification
+
+Seen this way, the two are closer than they look. A formal proof needs a spec, a model of the environment, and the program's semantics. A taint analyzer needs the same three things:
+
+| Formal verification | Taint analysis (OpenTaint) |
+| --- | --- |
+| Specification | Rules: which sources must never reach which sinks |
+| Environment model | Models of external dependencies and frameworks |
+| Program semantics | Abstract dataflow semantics computed for every method |
+
+The difference is that the analyzer does it automatically. It works out the dataflow semantics on its own and computes the fixpoint over the whole project, which is the expensive part of the AI-driven proof.
+
+It isn't fully sound, though, and here's exactly where:
+
+- Dynamic dispatch is supported.
+- Frameworks are handled through a plugin model system. It's still in development, and today the built-in support is mostly for Spring.
+- Aliasing is supported only partly. We're working on covering more cases.
+- Field chains are limited to sequences that don't repeat a field.
+- Reflection and exception flows aren't supported.
+
+So when a scan comes back clean, it means that under these rules, these models, and these semantics, no such flow exists. That's a narrower claim than "the code is secure," and it's the honest one.
+
+Formal verification makes the same kind of claim. Anthropic is upfront about this: their guarantees depend on trusted hardware and OS models, the proof checker, and assumptions about how the programs run. A formal proof is only as good as its specs and assumptions. Both approaches depend on how much you've modeled. They just cost very different amounts.
+
+## What dies and what survives
+
+Back to the title. SAST as a bug finder is dead. Agents do that job better, and they'll keep improving.
+
+SAST as a prover is alive and well. A tool that can say "this kind of flow can't happen, given these stated assumptions" does something an agent can't. It does it in minutes, gives the same answer every time, and runs on every commit inside the processes teams already have: CI gates, SARIF reports, pull-request checks. To keep that role, these tools need to keep getting more sound and keep their assumptions out in the open.
+
+Pattern matchers don't make it. They only match syntax, so a clean result from a pattern matcher doesn't tell you anything about where data actually flows.
+
+Agents and analyzers also stop competing. The hard parts of running a taint analyzer are things AI is good at: writing rules (which are really formal security specs) and modeling the library methods the engine can't see into. That's what our [AppSec agent](/blog/appsec-agent/) does. You pay for the model's work once, and after that the engine re-checks every commit for the cost of CPU time.
+
+False positives work the same way. You get rid of most of them the way you'd get any proof to go through. You adopt coding standards the analyzer understands, and you configure it to match your real security assumptions, like known sanitizers and safe configurations. Sticking to a coding standard used to be a real cost for developers. When an agent writes a lot of the code, it costs almost nothing.
+
+What we find most interesting is making these analyzers flexible and interactive enough that an agent can tune one for a specific project, find where it slows down, and work around it, instead of trying to do the whole analysis itself.
+
+## Where to start
+
+Agents are the best bug finders you can get, but they don't give you a guarantee. Pair them with dataflow analysis: it's still SAST, so it fits the processes you already run, and it's fast and cheap. [Install OpenTaint](/#install), ask your agent to encode one property you care about, and see what comes back clean. If you like where this is going, [give us a star on GitHub](https://github.com/seqra/opentaint).
+
+SAST is dead, long live SAST!

@@ -1,0 +1,141 @@
+---
+import Figure from "./Figure.astro";
+
+// Two towers of the same three blocks, joined by bands. The taint analysis
+// tower is narrower: it solves a lighter version of each part.
+const rows = [
+  {
+    proof: { term: "Specification", text: "The security property, in the prover's logic" },
+    taint: { term: "Rules", text: "Which sources must never reach which sinks" },
+    tone: "input",
+  },
+  {
+    proof: { term: "Environment model", text: "Formal models of the JVM and the libraries" },
+    taint: { term: "Library models", text: "How external code moves data" },
+    tone: "input",
+  },
+  {
+    proof: { term: "Program semantics", text: "Written and proven by AI", cost: "≈ $11,500 in tokens" },
+    taint: { term: "Dataflow summaries", text: "Computed by the analyzer", cost: "≈ 1 min of CPU" },
+    tone: "computed",
+  },
+];
+---
+
+<Figure
+  number={4}
+  title="Taint analysis is a lightweight proof"
+  subtitle="Both need the same three things. Only the third one is expensive to get."
+  caption="The first two are inputs, written by people or by an AI agent. The third is computed, and that is where the cost of a proof goes."
+>
+  <div class="sid-map">
+    <div class="sid-map-head">Formal verification</div>
+    <div></div>
+    <div class="sid-map-head">Taint analysis</div>
+    {rows.map((row, i) => (
+      <>
+        <div class="sid-map-block" data-side="proof" data-tone={row.tone}>
+          <div class="sid-map-term">{row.proof.term}</div>
+          <div class="sid-map-text">{row.proof.text}</div>
+          {row.proof.cost && <div class="sid-map-cost">{row.proof.cost}</div>}
+        </div>
+        <svg class="sid-map-band" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" data-tone={row.tone}>
+          <defs>
+            <linearGradient id={`sid-band-${i}`}>
+              <stop offset="0" class="sid-map-stop-from" />
+              <stop offset="1" class="sid-map-stop-to" />
+            </linearGradient>
+          </defs>
+          <path d="M0 0C50 0 50 14 100 14V86C50 86 50 100 0 100Z" fill={`url(#sid-band-${i})`} />
+        </svg>
+        <div class="sid-map-block" data-side="taint" data-tone={row.tone}>
+          <div class="sid-map-term">{row.taint.term}</div>
+          <div class="sid-map-text">{row.taint.text}</div>
+          {row.taint.cost && <div class="sid-map-cost">{row.taint.cost}</div>}
+        </div>
+      </>
+    ))}
+  </div>
+</Figure>
+
+<style>
+  .sid-map {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 4.5rem minmax(0, 0.85fr);
+    row-gap: 0.75rem;
+    align-items: center;
+    max-width: 44rem;
+    margin: 0 auto;
+  }
+  .sid-map-head {
+    font-size: 1rem;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+  }
+  .sid-map-block {
+    padding: 0.875rem 1rem;
+    border: 1.5px solid hsl(var(--border-strong));
+    border-radius: 10px;
+    background: hsl(var(--card));
+  }
+  .sid-map-block[data-side="proof"] {
+    min-height: 6.5rem;
+  }
+  .sid-map-block[data-side="taint"] {
+    margin: 0.75rem 0;
+  }
+  .sid-map-block[data-tone="computed"][data-side="proof"] {
+    border-color: var(--sid-red);
+    background: color-mix(in srgb, var(--sid-red) 9%, hsl(var(--card)));
+  }
+  .sid-map-block[data-tone="computed"][data-side="taint"] {
+    border-color: var(--sid-blue);
+    background: color-mix(in srgb, var(--sid-blue) 9%, hsl(var(--card)));
+  }
+  .sid-map-term {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+  }
+  .sid-map-text {
+    margin-top: 0.125rem;
+    font-size: 0.875rem;
+    line-height: 1.375rem;
+    color: hsl(var(--muted-foreground));
+  }
+  .sid-map-cost {
+    margin-top: 0.375rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+  }
+  .sid-map-band {
+    width: 100%;
+    height: 100%;
+    min-height: 6.5rem;
+  }
+  .sid-map-stop-from,
+  .sid-map-stop-to {
+    stop-color: hsl(var(--muted-foreground));
+    stop-opacity: 0.1;
+  }
+  [data-tone="computed"] .sid-map-stop-from {
+    stop-color: var(--sid-red);
+    stop-opacity: 0.16;
+  }
+  [data-tone="computed"] .sid-map-stop-to {
+    stop-color: var(--sid-blue);
+    stop-opacity: 0.16;
+  }
+  @media (max-width: 640px) {
+    .sid-map {
+      grid-template-columns: minmax(0, 1fr) 1rem minmax(0, 1fr);
+    }
+    .sid-map-block {
+      padding: 0.75rem;
+    }
+    .sid-map-block[data-side="taint"] {
+      margin: 0.5rem 0;
+    }
+  }
+</style>

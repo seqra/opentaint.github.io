@@ -1,0 +1,85 @@
+---
+import Figure from "./Figure.astro";
+
+// Three short groups instead of a card per feature: what the dataflow
+// semantics follow, follow in part, and do not follow yet.
+const groups = [
+  { status: "supported", icon: "✓", name: "Followed", items: "Dynamic dispatch" },
+  { status: "partial", icon: "◐", name: "Partly followed", items: "Frameworks (mostly Spring today), aliasing, field chains without repeated fields" },
+  { status: "unsupported", icon: "✕", name: "Not followed", items: "Reflection, exception flows" },
+];
+---
+
+<Figure
+  number={5}
+  title="What the analyzer's semantics cover"
+  caption="A clean scan means no such flow exists under these semantics and the rules and models in use."
+>
+  <div class="sid-scope">
+    {groups.map((group) => (
+      <div class="sid-scope-group" data-status={group.status}>
+        <div class="sid-scope-head">
+          <span class="sid-scope-icon" aria-hidden="true">{group.icon}</span>
+          {group.name}
+        </div>
+        <div class="sid-scope-items">{group.items}</div>
+      </div>
+    ))}
+  </div>
+</Figure>
+
+<style>
+  .sid-scope {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+  .sid-scope-group {
+    padding-top: 0.875rem;
+    border-top: 3px solid var(--sid-off);
+  }
+  .sid-scope-group[data-status="supported"] {
+    border-top-color: var(--sid-good);
+  }
+  .sid-scope-group[data-status="partial"] {
+    border-top-color: var(--sid-warn);
+  }
+  .sid-scope-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+  }
+  .sid-scope-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.375rem;
+    height: 1.375rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: hsl(var(--muted));
+    background: var(--sid-off);
+  }
+  [data-status="supported"] .sid-scope-icon {
+    background: var(--sid-good);
+  }
+  [data-status="partial"] .sid-scope-icon {
+    background: var(--sid-warn);
+  }
+  .sid-scope-items {
+    margin-top: 0.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.5rem;
+    color: hsl(var(--muted-foreground));
+  }
+  @media (max-width: 640px) {
+    .sid-scope {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+  }
+</style>

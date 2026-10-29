@@ -20,7 +20,7 @@ type Props = {
 
 const { name, number, title, subtitle, caption, description, wide, tall } = Astro.props;
 const base = `/videos/sast-is-dead/${name}`;
-const PHONE = "(max-width: 640px)";
+const PHONE = "(max-width: 639.98px)";
 const ratios = `--wide-ratio: ${wide.width} / ${wide.height}; --tall-ratio: ${tall.width} / ${tall.height}`;
 ---
 
@@ -37,6 +37,19 @@ const ratios = `--wide-ratio: ${wide.width} / ${wide.height}; --tall-ratio: ${ta
 </Figure>
 
 <style>
+  /* The video runs to the panel's sides and bottom, so the browser's
+     controls span the whole panel. The renders carry the panel's padding
+     as margin, so the drawing sits where it would inside the padding. */
+  .sid-video {
+    margin: 0 -1rem -1.5rem;
+    overflow: hidden;
+    border-radius: 0 0 0.75rem 0.75rem;
+  }
+  @media (min-width: 640px) {
+    .sid-video {
+      margin: 0 -2rem -2rem;
+    }
+  }
   .sid-video img,
   .sid-video video {
     display: block;
@@ -46,7 +59,7 @@ const ratios = `--wide-ratio: ${wide.width} / ${wide.height}; --tall-ratio: ${ta
   .sid-video video {
     aspect-ratio: var(--wide-ratio);
   }
-  @media (max-width: 640px) {
+  @media (max-width: 639.98px) {
     .sid-video video {
       aspect-ratio: var(--tall-ratio);
     }

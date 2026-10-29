@@ -1,7 +1,7 @@
 ---
 title: "SAST Is Dead, Long Live SAST!"
 description: "AI agents have beaten SAST at finding bugs. So what's left for SAST to do? Quite a lot, as it turns out. Finding a bug and proving an entire class of bugs is absent are two very different problems. And when we put a price on the latter, SAST suddenly looked a lot less dead."
-date: "2026-10-27"
+date: "2026-10-30"
 contentType: "Technical note"
 keywords:
   - "sast is dead"
@@ -41,13 +41,13 @@ The logic is uncomfortable but simple. Attackers have access to the same agents 
   title="Sampling paths vs. covering all of them"
   caption="An illustration, not measured data. The agent checks only the paths it chooses, leaving the rest unknown. Taint analysis covers every path within the limits of its rules, models, and semantics."
   description="An agent checks 5 of the program's 22 paths, one at a time, with a counter tracking its progress. It finds 2 of the 3 bugs, while the paths it skips remain unchecked. Taint analysis sweeps across all 22 paths in one wave and finds all 3 bugs. Only paths with bugs reach a dangerous call, and when they do, the entry point and the call turn red. All other flows stop before reaching a dangerous call."
-  wide={{ width: 1600, height: 744 }}
-  tall={{ width: 760, height: 1528 }}
+  wide={{ width: 1728, height: 808 }}
+  tall={{ width: 836, height: 1584 }}
 />
 
 Formal verification can give you exactly that kind of guarantee. For decades, though, it has been too expensive for most real-world projects. Anthropic's research argues that AI is finally bringing the cost down. We like where this is heading, but it leaves us with two questions: how much does a formal proof actually cost today, and is there already a cheaper way to establish some of the properties defenders care about?
 
-[@ccrisccris](https://x.com/ccrisccris/status/2114210057105645679) has already offered an answer to the second question:
+[Cristiano Calcagno](https://x.com/ccrisccris), one of the creators of Facebook's Infer static analyzer, has already offered an answer to the second question:
 
 > "Part of formal verification can be replaced by more efficient static analysis, and part of static analysis by better programming language design."
 
@@ -86,8 +86,8 @@ And this isn't a one-time cost. Every code change can mean redoing part of the w
   subtitle="Checking one property on a 100K-line Java project, then again after every commit"
   caption="An illustration of where the two costs come from. The program is drawn as in Figure 2, with entry points on the left and dangerous calls on the right, and each tick of the red bar is one method's dataflow semantics and proof, written in tokens. The proof's figure is our estimate for the same property on the same project, from the breakdown above, and the analyzer's minute was measured. The program shown is a stand-in for the real one."
   description="Two copies of the same small program, drawn as in the previous figure: entry points on the left, 27 methods in between, dangerous calls on the right. On the left, an AI writes the dataflow semantics and proof of each method one at a time, callees first, so the methods and the calls they make turn red one by one from the dangerous calls back to the entry points. A status line counts the methods written, each one adds a tick to a red bar of tokens below the program, and a line under the bar climbs to about $11,500 in tokens, marked as an estimate. When all 27 are written, the status line notes 145M tokens out and 28.5B in. On the right, taint analysis sweeps across the whole program in one blue wave, computing all 27 methods in one pass, and the line below it reads 0 tokens, about 1 minute of CPU, marked as measured. Nothing ever appears where the bar would be. Then commit 1 changes 2 methods, which blink. On the left, the changed methods and every caller behind them lose their color, 10 methods in all, and the AI rewrites and re-proves them one by one, adding 10 more ticks to the bar. On the right, the analyzer simply recomputes all 27 methods with another wave, another minute of CPU and still 0 tokens. Commit 2 changes 2 more methods, 14 go stale on the proof side and are rewritten for 14 more ticks, and the analyzer runs again. The animation ends with the proof side's bar grown by two extra segments and the analyzer side with no bar at all. Every change costs the proof tokens again, and costs the analyzer another minute of CPU."
-  wide={{ width: 1600, height: 760 }}
-  tall={{ width: 760, height: 1560 }}
+  wide={{ width: 1728, height: 824 }}
+  tall={{ width: 836, height: 1616 }}
 />
 
 The exact numbers matter less than the gap: a minute of CPU time versus thousands of dollars, for a single property in a single project. So before rewriting your codebase in another language (the second half of the quote) or paying AI agents to prove dataflow properties, it's worth trying static taint analysis first.
@@ -100,23 +100,25 @@ How can an analyzer do in a minute what an AI-driven proof might cost thousands 
 
 The first two are inputs: someone has to write the rules and build the models. The third is where most of the cost comes from in our estimate. But instead of having AI write and prove the dataflow semantics method by method, the analyzer computes them itself, along with the fixpoint for the whole project, without spending a single API token.
 
-That speed comes with trade-offs. The analyzer approximates program behavior, and it isn't fully sound: it doesn't handle some language features, including reflection and exceptions. Here's what its analysis covers and where it stops:
+That speed comes with trade-offs. The analyzer approximates program behavior, and it isn't fully sound. Expanding its coverage is a hard computational problem, especially when dealing with aliasing, reflection, and exceptions. Here's what our analysis covers today and where its limits are:
 
 <AnalysisScope />
 
-So a clean scan doesn't mean "the code is secure." It means something more specific: under these rules, models, and supported semantics, no such flow exists. That's a narrower claim, but it's still a useful guarantee.
+Pushing those limits is one of our main goals. We want to prove more security properties automatically, without sacrificing the speed and practicality that make static analysis useful in the first place.
 
-Formal verification also comes with assumptions. Anthropic is upfront about this: its guarantees depend on trusted hardware and OS models, the proof checker, and assumptions about how programs run. Any proof is only as strong as the specifications and assumptions behind it. What matters is knowing exactly what you're proving, what you're leaving out, and how much it costs to get there.
+And there's another direction we're already exploring. For critical projects that need stronger guarantees, we could export the analyzer's dataflow semantics and summaries into a general-purpose formal verifier, then let AI agents fill the remaining gaps in the proof. Instead of having AI build everything from scratch, static analysis would do most of the work, leaving agents to focus on what it can't yet handle.
 
 ## What dies and what survives
 
-Which brings us back to the title, borrowed from the old phrase "The king is dead, long live the king": the role doesn't die, it passes on. SAST as a bug finder is dead, because agents do that job better and will only keep improving. Pattern matchers don't survive at all: they match syntax rather than data flow, so a clean result from one tells you nothing about where data actually goes.
+We're not the only ones seeing verification as the future of SAST. At AI Engineer World's Fair 2026, Sonar CEO Tariq Shaukat gave a talk titled [*In the Land of AI Agents, the Verifiers Are King*](https://ai.engineer/talks/VrpEyglYgeU-in-land-ai-agents-verifiers-are-king). One of his slides makes a useful distinction: algorithmic verification handles things like dataflow and taint analysis, while agentic verification handles intent, business logic, and anomalies.
 
-SAST as a prover is what survives. A tool that can say "this kind of flow can't happen, given these stated assumptions" gives you something a list of findings never will. It does so in minutes, with the same answer every time, on every commit, inside the processes teams already run: CI gates, SARIF reports, and pull-request checks. To keep that role, these tools have to keep getting more sound, and keep their assumptions out in the open.
+We agree. What survives is SAST as a prover. A tool that can say "this kind of flow cannot happen under these assumptions" gives you something a list of findings never could. And it can do that in minutes, consistently, on every commit, using the workflows teams already have: CI gates, SARIF reports, and pull-request checks. But to keep that role, analyzers need to expand what they can soundly cover and be explicit about their assumptions.
 
-That leaves the oldest complaint about SAST: false positives. From the proof point of view, a false positive is a proof that didn't go through, and you fix it the way you'd fix any proof. You adopt coding standards the analyzer understands, and you configure it to match your real security assumptions, such as known sanitizers and safe configurations. Sticking to a coding standard used to cost developers real effort. When an agent writes much of the code, it costs almost nothing.
+This also changes how we think about SAST's oldest complaint: false positives. From a proof perspective, a false positive isn't proof that a bug exists. It's a case the analyzer couldn't rule out. You address it much like a failed proof attempt: write code in ways the analyzer can reason about, and configure it to reflect your actual security assumptions, including known sanitizers and safe configurations. Following coding standards used to take real effort from developers. When agents write much of the code, that effort becomes much smaller.
 
-Seen this way, agents and analyzers don't compete. They complement each other. The two inputs the analyzer can't compute for itself, the rules and the library models, are exactly the kind of work AI is good at. The rules are really formal security specs, and our [AppSec agent](/blog/appsec-agent/) writes them the way it wrote the missing Conductor rule. You pay for the model's work once, and from then on the engine re-checks every commit on CPU.
+Seen this way, agents and analyzers aren't competing. They're solving different parts of the same problem. The two inputs an analyzer can't compute for itself, security rules and library models, are exactly the kind of work AI agents can help with. The rules are effectively formal security specifications, and our [AppSec agent](/blog/appsec-agent/) can write them, just as it wrote the missing Conductor rule. You pay for the agent's work to create the rule once, and from then on, the analyzer checks every commit using CPU time.
+
+That's the future we see for SAST: agents help define what needs to be checked, and static analysis checks it continuously, cheaply, and with guarantees whose limits we can understand.
 
 <FigureVideo
   name="every-commit"
@@ -125,14 +127,16 @@ Seen this way, agents and analyzers don't compete. They complement each other. T
   subtitle="The agent writes code and rules, and the analyzer checks every commit on CPU"
   caption="An illustration of the loop. Flows go back to the agent as traces to fix, and each security review ends with a new rule that the analyzer checks on every commit from then on."
   description="An agentic loop. A steady stream of commits runs from the AI agent through the analyzer into the main branch. One commit has a flow, turns red, and goes back to the agent along a traces loop. The agent's fix, outlined in red, passes and merges. The agent then runs a security review, shown as a soft band spreading over the merged commits, and sends the analyzer a new rule along a rules loop, moving it from rules v1 to v2. The new rule catches a flow in a later commit, which goes back as a trace, and the fix merges. A counter shows the number of commits checked and a status line narrates each step."
-  wide={{ width: 1600, height: 760 }}
-  tall={{ width: 760, height: 1520 }}
+  wide={{ width: 1728, height: 824 }}
+  tall={{ width: 836, height: 1576 }}
 />
 
 We want to take this further: make analyzers flexible and interactive enough that an agent can tune one for a specific project, find where it slows down, and work around the bottleneck, instead of trying to do the whole analysis itself.
 
 ## Where to start
 
-Agents are the best bug finders available today, but a list of bugs, however long, is not a guarantee. Pair them with taint analysis: it's still SAST, so it fits into the processes you already run. [Install OpenTaint](/#install), ask your agent to encode one property you care about, and see what comes back clean. And if you like where this is going, [give us a star on GitHub](https://github.com/seqra/opentaint).
+If SAST is going to have a second life as a prover, we believe that future should be open source. The rules, models, and assumptions behind its guarantees should be open to inspection, discussion, and improvement. That's why we're building [OpenTaint](https://github.com/seqra/opentaint) in the open.
 
-SAST is dead, long live SAST!
+[Install OpenTaint](/#install), ask your agent to write a rule for a security property you care about, and see what the analyzer can rule out in your own code. If you believe this is where SAST should be heading, [give us a star on GitHub](https://github.com/seqra/opentaint) and help us build it.
+
+**SAST is dead, long live SAST!**

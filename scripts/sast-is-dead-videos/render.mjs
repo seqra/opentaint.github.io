@@ -20,6 +20,12 @@ const LAYOUTS = ["wide", "tall"];
 const THEMES = ["light", "dark"];
 const FPS = 30;
 const SCALE = 2;
+// The page shows each video edge to edge across the figure panel's sides and
+// bottom, so the browser's controls span the whole panel. Each render carries
+// the panel's own padding as empty margin (viewBox units at the size it is
+// shown: 32px on wide screens, 16px sides and 24px bottom on phones), keeping
+// the drawing where the padding would have put it.
+const MARGIN = { wide: { side: 32, bottom: 32 }, tall: { side: 19, bottom: 28 } };
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".woff2": "font/woff2" };
 
 const serve = () =>
@@ -45,7 +51,17 @@ const record = async (browser, port, scene, layout, theme) => {
   const url = `http://localhost:${port}/scripts/sast-is-dead-videos/stage.html?scene=${scene}&layout=${layout}&theme=${theme}`;
   await page.goto(url);
   await page.waitForFunction(() => window.ready === true);
-  const { width, height, duration, poster } = await page.evaluate(() => window.scene);
+  const margin = MARGIN[layout];
+  const { width, height, duration, poster } = await page.evaluate(({ side, bottom }) => {
+    const { scene } = window;
+    const svg = document.getElementById("stage");
+    const width = scene.width + 2 * side;
+    const height = scene.height + bottom;
+    svg.setAttribute("viewBox", `${-side} 0 ${width} ${height}`);
+    svg.setAttribute("width", width);
+    svg.setAttribute("height", height);
+    return { width, height, duration: scene.duration, poster: scene.poster };
+  }, margin);
   await page.setViewportSize({ width, height });
   const frames = mkdtempSync(join(tmpdir(), `${scene}-`));
   const total = Math.round(duration * FPS);

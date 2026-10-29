@@ -15,7 +15,7 @@ import { chromium } from "@playwright/test";
 
 const ROOT = resolve(fileURLToPath(new URL("../..", import.meta.url)));
 const OUT = join(ROOT, "public/videos/sast-is-dead");
-const SCENES = ["taint-flow", "every-commit"];
+const SCENES = ["taint-flow", "cost-of-change", "every-commit"];
 const LAYOUTS = ["wide", "tall"];
 const THEMES = ["light", "dark"];
 const FPS = 30;

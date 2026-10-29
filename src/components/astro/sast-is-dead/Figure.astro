@@ -18,12 +18,12 @@ const { caption, label, number, title, subtitle } = Astro.props;
   <div class="rounded-xl bg-muted px-4 pb-6 pt-6 sm:px-8 sm:pb-8">
     <div class="mb-6 text-center">
       <div class="sid-figure-title text-lg font-semibold leading-tight text-foreground sm:text-xl">{title}</div>
-      {subtitle && <div class="mx-auto mt-1.5 max-w-xl text-sm leading-6 text-muted-foreground">{subtitle}</div>}
+      {subtitle && <div class="sid-figure-subtitle mx-auto mt-1.5 max-w-xl text-sm leading-6 text-muted-foreground">{subtitle}</div>}
     </div>
     <slot />
   </div>
   {caption && (
-    <figcaption class="mt-3 px-1 text-sm leading-6 text-muted-foreground">
+    <figcaption class="sid-figure-caption mt-3 px-1 text-sm leading-6 text-muted-foreground">
       {number !== undefined && <span class="font-semibold text-foreground">Figure {number}. </span>}
       {caption}
     </figcaption>
@@ -41,6 +41,13 @@ const { caption, label, number, title, subtitle } = Astro.props;
   }
   .sid-figure-title {
     letter-spacing: -0.01em;
+  }
+  .sid-figure-title,
+  .sid-figure-subtitle {
+    text-wrap: balance;
+  }
+  .sid-figure-caption {
+    text-wrap: pretty;
   }
   .dark .sid-figure {
     --sid-red: #dc1818;

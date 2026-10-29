@@ -75,9 +75,9 @@ This is a ballpark figure, and it could be off in either direction.
 - It could be too high if a model can describe method semantics more compactly than the analyzer's internal format, or if the proof engine does more of the work. But the more work the proof engine takes on, the more it turns into a static analyzer itself.
 - It could be too low, because it leaves out failed proof attempts, retries, and the work of proving the semantics sound.
 
-It also isn't a one-time cost: part of the work has to be redone whenever the code changes, although proofs for unchanged code can be reused.
-
 </details>
+
+It also isn't a one-time cost: part of the work has to be redone whenever the code changes, although proofs for unchanged code can be reused.
 
 <CostBars />
 
@@ -117,11 +117,11 @@ This view also means that agents and analyzers no longer compete but complement 
   name="every-commit"
   number={6}
   title="Pay for the model once, check every commit"
-  subtitle="The agent writes rules and models; the analyzer does the checking on CPU"
-  caption="An illustration of the workflow. The agent is called again only when the code brings in something the models don't cover yet."
-  description="An AI agent writes rules and models once. Commits then flow through the analyzer: most come out blue as proven clean, one comes out red with a flow to fix. When a commit adds a new library, the analyzer calls the agent back to add a model, and the stream continues. The counters end at 12 commits checked and 2 agent runs."
-  wide={{ width: 1600, height: 760 }}
-  tall={{ width: 760, height: 1440 }}
+  subtitle="The agent writes code and rules; the analyzer checks every commit on CPU"
+  caption="An illustration of the loop. Flows go back to the agent as traces to fix, and each security review ends with a new rule that the analyzer checks on every commit from then on."
+  description="An agentic loop. A steady stream of commits runs from the AI agent through the analyzer into the main branch. One commit has a flow, turns red, and goes back to the agent along a traces loop; the agent's fix, outlined in red, passes and merges. The agent then runs a security review, shown as a soft band spreading over the merged commits, and sends the analyzer a new rule along a rules loop, moving it from rules v1 to v2. The new rule catches a flow in a later commit, which goes back as a trace, and the fix merges. A counter shows the number of commits checked and a status line narrates each step."
+  wide={{ width: 1600, height: 800 }}
+  tall={{ width: 760, height: 1520 }}
 />
 
 We want to take this further by making analyzers flexible and interactive enough that an agent can tune one for a specific project, find where it slows down, and work around the bottleneck, rather than trying to do the whole analysis itself.

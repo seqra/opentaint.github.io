@@ -4,9 +4,14 @@ import Figure from "./Figure.astro";
 // Three short groups instead of a card per feature: what the dataflow
 // semantics follow, follow in part, and do not follow yet.
 const groups = [
-  { status: "supported", icon: "✓", name: "Followed", items: "Dynamic dispatch" },
-  { status: "partial", icon: "◐", name: "Partly followed", items: "Frameworks (mostly Spring today), aliasing, field chains without repeated fields" },
-  { status: "unsupported", icon: "✕", name: "Not followed", items: "Reflection, exception flows" },
+  {
+    status: "supported",
+    icon: "✓",
+    name: "Followed",
+    items: ["Flow", "Context", "Fields", "Dynamic dispatch", "Persistence", "External methods and frameworks (modulo models)"],
+  },
+  { status: "partial", icon: "◐", name: "Partly followed", items: ["Aliases"] },
+  { status: "unsupported", icon: "✕", name: "Not followed", items: ["Reflection", "Exceptions", "Path conditions"] },
 ];
 ---
 
@@ -22,7 +27,9 @@ const groups = [
           <span class="sid-scope-icon" aria-hidden="true">{group.icon}</span>
           {group.name}
         </div>
-        <div class="sid-scope-items">{group.items}</div>
+        <ul class="sid-scope-items">
+          {group.items.map((item) => <li>{item}</li>)}
+        </ul>
       </div>
     ))}
   </div>
@@ -71,10 +78,16 @@ const groups = [
     background: var(--sid-warn);
   }
   .sid-scope-items {
-    margin-top: 0.5rem;
+    margin: 0.5rem 0 0;
+    padding-left: 1.125rem;
+    list-style: disc;
     font-size: 0.9375rem;
     line-height: 1.5rem;
     color: hsl(var(--muted-foreground));
+  }
+  .sid-scope-items li {
+    margin: 0.125rem 0;
+    padding: 0;
   }
   @media (max-width: 640px) {
     .sid-scope {

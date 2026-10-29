@@ -1,0 +1,189 @@
+---
+import Figure from "./Figure.astro";
+
+// Two columns, read as inside and outside the semantics: what the dataflow
+// analysis follows, and what it follows in part or not at all. The two short
+// groups share the second column. Every item carries its group's mark, so a
+// row reads as a verdict on its own, and each column ends with what a clean
+// scan says about the flows through it.
+const columns = [
+  {
+    verdict: "A clean scan rules out flows through these.",
+    groups: [
+      {
+        status: "supported",
+        icon: "✓",
+        name: "Followed",
+        items: [
+          { name: "Flow" },
+          { name: "Context" },
+          { name: "Fields" },
+          { name: "Dynamic dispatch" },
+          { name: "Persistence" },
+          { name: "External methods and frameworks", note: "as far as their models go" },
+        ],
+      },
+    ],
+  },
+  {
+    verdict: "A clean scan can miss flows through these.",
+    groups: [
+      { status: "partial", icon: "◐", name: "Partly followed", items: [{ name: "Aliases" }] },
+      { status: "unsupported", icon: "✕", name: "Not followed", items: [{ name: "Reflection" }, { name: "Exceptions" }] },
+    ],
+  },
+];
+---
+
+<Figure
+  number={5}
+  title="What the analyzer's semantics cover"
+  caption="A clean scan means no such flow exists under these semantics and the rules and models in use."
+>
+  <div class="sid-scope">
+    {columns.map((column) => (
+      <div class="sid-scope-column">
+        {column.groups.map((group) => (
+          <div class="sid-scope-group" data-status={group.status}>
+            <div class="sid-scope-body">
+              <div class="sid-scope-head">
+                <span class="sid-scope-badge" aria-hidden="true">{group.icon}</span>
+                {group.name}
+              </div>
+              <ul class="sid-scope-items">
+                {group.items.map((item) => (
+                  <li class="sid-scope-item">
+                    <span class="sid-scope-mark" aria-hidden="true">{group.icon}</span>
+                    <span class="sid-scope-name">
+                      {item.name}
+                      {item.note && <span class="sid-scope-note">{item.note}</span>}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
+        <div class="sid-scope-verdict">{column.verdict}</div>
+      </div>
+    ))}
+  </div>
+</Figure>
+
+<style>
+  .sid-scope {
+    --row: 1.75rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 2.5rem;
+    max-width: 40rem;
+    margin: 0 auto;
+  }
+  /* A column is three tracks: the middle one is sized by its widest block,
+     so the groups that share a column line up on one left edge while the
+     block as a whole stays centered. The slack between the second column's
+     groups and its verdict is shared out so both columns end on one line. */
+  .sid-scope-column {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-content: space-between;
+    row-gap: 1.5rem;
+  }
+  .sid-scope-group {
+    --mark: var(--sid-off);
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-column: 1 / -1;
+    padding-top: 0.625rem;
+    border-top: 3px solid var(--mark);
+  }
+  .sid-scope-group[data-status="supported"] {
+    --mark: var(--sid-good);
+  }
+  .sid-scope-group[data-status="partial"] {
+    --mark: var(--sid-warn);
+  }
+  .sid-scope-body {
+    grid-column: 2;
+    min-width: 0;
+  }
+  .sid-scope-head {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    height: var(--row);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.5rem;
+    color: hsl(var(--foreground));
+  }
+  .sid-scope-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 1.375rem;
+    height: 1.375rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: hsl(var(--muted));
+    background: var(--mark);
+  }
+  .sid-scope-items {
+    margin: 0.25rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* Every row is one unit of the shared rhythm, so the two columns' lines
+     fall level with each other. */
+  .sid-scope-item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.625rem;
+    min-height: var(--row);
+    margin: 0;
+    padding: 0.125rem 0;
+    font-size: 0.9375rem;
+    line-height: 1.5rem;
+    color: hsl(var(--foreground));
+  }
+  /* The group's mark again, as the bullet: the row carries its own verdict. */
+  .sid-scope-mark {
+    flex: none;
+    width: 1.375rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--mark);
+  }
+  .sid-scope-name {
+    text-wrap: pretty;
+  }
+  .sid-scope-note {
+    display: block;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: hsl(var(--muted-foreground));
+  }
+  /* What a clean scan says about the flows through this column. */
+  .sid-scope-verdict {
+    grid-column: 1 / -1;
+    padding-top: 0.75rem;
+    border-top: 1px solid hsl(var(--border-strong));
+    font-size: 0.9375rem;
+    line-height: 1.5rem;
+    text-align: center;
+    text-wrap: balance;
+    color: hsl(var(--muted-foreground));
+  }
+  @media (max-width: 640px) {
+    .sid-scope {
+      grid-template-columns: 1fr;
+      row-gap: 2rem;
+    }
+    .sid-scope-column {
+      row-gap: 1.25rem;
+    }
+  }
+</style>

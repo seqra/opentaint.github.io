@@ -12,6 +12,7 @@ import { analysisDepthMeshStudies } from './topology-studies/analysis-depth-mesh
 import { neuralSymbolicAttentionStudies } from './topology-studies/neural-symbolic-attention.mjs';
 import { neuralSymbolicVolumeStudies } from './topology-studies/neural-symbolic-volume.mjs';
 import { neuralSymbolicAutomatonStudies } from './topology-studies/neural-symbolic-automaton.mjs';
+import { proofOfAbsenceStudies } from './topology-studies/proof-of-absence.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUTPUT = path.join(ROOT, 'public', 'pictures', 'generative-art-study', 'topology-studies');
@@ -25,6 +26,7 @@ const allStudies = [
   ...neuralSymbolicAttentionStudies,
   ...neuralSymbolicVolumeStudies,
   ...neuralSymbolicAutomatonStudies,
+  ...proofOfAbsenceStudies,
 ];
 const rejected = new Set([
   'connected-tree-forest',

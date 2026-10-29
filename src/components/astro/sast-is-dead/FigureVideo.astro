@@ -1,0 +1,139 @@
+---
+import Figure from "./Figure.astro";
+
+// A recorded figure animation (see scripts/sast-is-dead-videos). Each video
+// exists in two layouts (wide, tall for phones) and two themes. Without
+// JavaScript the posters show. With it, the video takes their place: muted
+// and looping, autoplaying while it is on screen unless the reader prefers
+// reduced motion or has paused it. The browser's own controls pause and scrub
+// it, as in Anthropic's posts.
+type Props = {
+  name: string;
+  number: number;
+  title: string;
+  subtitle?: string;
+  caption?: string;
+  description: string;
+  wide: { width: number; height: number };
+  tall: { width: number; height: number };
+};
+
+const { name, number, title, subtitle, caption, description, wide, tall } = Astro.props;
+const base = `/videos/sast-is-dead/${name}`;
+const PHONE = "(max-width: 639.98px)";
+const ratios = `--wide-ratio: ${wide.width} / ${wide.height}; --tall-ratio: ${tall.width} / ${tall.height}`;
+---
+
+<Figure number={number} title={title} subtitle={subtitle} caption={caption}>
+  <div class="sid-video" data-video={base} data-phone={PHONE} style={ratios}>
+    {["light", "dark"].map((theme) => (
+      <picture class={`sid-video-poster sid-video-${theme}`} role="img" aria-label={description}>
+        <source media={PHONE} srcset={`${base}-tall-${theme}.png`} width={tall.width} height={tall.height} />
+        <img src={`${base}-wide-${theme}.png`} width={wide.width} height={wide.height} alt="" loading="lazy" decoding="async" />
+      </picture>
+    ))}
+    <video muted loop playsinline controls preload="none" hidden aria-label={description}></video>
+  </div>
+</Figure>
+
+<style>
+  /* The video runs to the panel's sides and bottom, so the browser's
+     controls span the whole panel. The renders carry the panel's padding
+     as margin, so the drawing sits where it would inside the padding. */
+  .sid-video {
+    margin: 0 -1rem -1.5rem;
+    overflow: hidden;
+    border-radius: 0 0 0.75rem 0.75rem;
+  }
+  @media (min-width: 640px) {
+    .sid-video {
+      margin: 0 -2rem -2rem;
+    }
+  }
+  .sid-video img,
+  .sid-video video {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .sid-video video {
+    aspect-ratio: var(--wide-ratio);
+  }
+  @media (max-width: 639.98px) {
+    .sid-video video {
+      aspect-ratio: var(--tall-ratio);
+    }
+  }
+  .sid-video video[hidden],
+  .sid-video-dark,
+  :global(.dark) .sid-video-light {
+    display: none;
+  }
+  :global(.dark) .sid-video-dark {
+    display: block;
+  }
+  .sid-video[data-ready] .sid-video-poster {
+    display: none;
+  }
+</style>
+
+<script>
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  const setup = (root: HTMLElement) => {
+    const video = root.querySelector("video");
+    if (!video) return;
+    const phone = window.matchMedia(root.dataset.phone ?? "");
+    let visible = false;
+    // A pause the reader made with the controls sticks until they press play.
+    let held = false;
+    let ours = false;
+
+    const file = (ext: string) => {
+      const theme = document.documentElement.classList.contains("dark") ? "dark" : "light";
+      return `${root.dataset.video}-${phone.matches ? "tall" : "wide"}-${theme}.${ext}`;
+    };
+
+    const pause = () => {
+      ours = true;
+      video.pause();
+      ours = false;
+    };
+
+    // Swap to the variant for the current theme and layout, keeping the
+    // playback position when one was already loaded.
+    const load = () => {
+      const src = file("mp4");
+      if (video.src.endsWith(src)) return;
+      const at = video.currentTime;
+      video.poster = file("png");
+      video.src = src;
+      if (at > 0) video.addEventListener("loadedmetadata", () => (video.currentTime = at), { once: true });
+    };
+
+    const sync = () => {
+      load();
+      if (visible && !held && !reduced.matches) video.play().catch(() => undefined);
+      else if (!visible) pause();
+    };
+
+    video.addEventListener("pause", () => {
+      if (!ours && visible) held = true;
+    });
+    video.addEventListener("play", () => {
+      held = false;
+    });
+
+    load();
+    video.hidden = false;
+    root.setAttribute("data-ready", "");
+    new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      sync();
+    }, { threshold: 0.25 }).observe(root);
+    new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    phone.addEventListener("change", sync);
+  };
+
+  document.querySelectorAll<HTMLElement>("[data-video]").forEach(setup);
+</script>

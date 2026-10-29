@@ -1,0 +1,58 @@
+---
+// Shared frame for the figures in "SAST Is Dead, Long Live SAST!": a warm
+// panel with the title above the drawing and the caption below it. Red marks
+// bugs and cost; blue marks what is proven. Both colors are validated for
+// color-vision deficiency against the panel in each theme.
+type Props = {
+  caption?: string;
+  label?: string;
+  number?: number;
+  title: string;
+  subtitle?: string;
+};
+
+const { caption, label, number, title, subtitle } = Astro.props;
+---
+
+<figure class="sid-figure my-10" aria-label={label ?? title}>
+  <div class="rounded-xl bg-muted px-4 pb-6 pt-6 sm:px-8 sm:pb-8">
+    <div class="mb-6 text-center">
+      <div class="sid-figure-title text-lg font-semibold leading-tight text-foreground sm:text-xl">{title}</div>
+      {subtitle && <div class="sid-figure-subtitle mx-auto mt-1.5 max-w-xl text-sm leading-6 text-muted-foreground">{subtitle}</div>}
+    </div>
+    <slot />
+  </div>
+  {caption && (
+    <figcaption class="sid-figure-caption mt-3 px-1 text-sm leading-6 text-muted-foreground">
+      {number !== undefined && <span class="font-semibold text-foreground">Figure {number}. </span>}
+      {caption}
+    </figcaption>
+  )}
+</figure>
+
+<style is:global>
+  .sid-figure {
+    --sid-red: #ca2121;
+    --sid-blue: #2f62d6;
+    --sid-good: #1d7a45;
+    --sid-warn: #a8660b;
+    --sid-off: hsl(var(--muted-foreground));
+    font-family: var(--font-editorial);
+  }
+  .sid-figure-title {
+    letter-spacing: -0.01em;
+  }
+  .sid-figure-title,
+  .sid-figure-subtitle {
+    text-wrap: balance;
+  }
+  .sid-figure-caption {
+    text-wrap: pretty;
+  }
+  .dark .sid-figure {
+    --sid-red: #dc1818;
+    --sid-blue: #4a86ee;
+    --sid-good: #3fae6d;
+    --sid-warn: #d99a2b;
+  }
+</style>

@@ -1,0 +1,152 @@
+---
+import Figure from "./Figure.astro";
+
+// The actual RCE path in Conductor 3.23.0, step by step, marking which steps
+// the stock rules knew about and which two pieces were missing.
+const steps = [
+  {
+    code: "POST /api/workflow",
+    text: "The request body can carry a whole workflow definition, script included.",
+    gap: false,
+    status: "Stock rules: a known source",
+  },
+  {
+    code: "evaluator.evaluate(…)",
+    text: "An INLINE task hands the script from the definition to an evaluator.",
+  },
+  {
+    code: ".allowHostAccess(ALL).option(…)",
+    text: "The evaluator builds a GraalVM context with full access to the host JVM.",
+    gap: true,
+    status: "Stock rules: no model of the builder. The agent wrote one.",
+  },
+  {
+    code: "context.eval(\"js\", script)",
+    text: "The request's script runs inside that context.",
+    gap: true,
+    status: "Stock rules: not a sink. The agent wrote the rule.",
+  },
+];
+---
+
+<Figure
+  number={1}
+  title="The RCE path the stock rules couldn't see"
+  caption="The stock scans were CodeQL, Semgrep, and OpenTaint's stock rules. They knew the request body was untrusted, but had no sink at the evaluator, so no query connected the two. The agent added the missing sink and library model, and the flow showed up."
+>
+  <ol class="sid-path">
+    {steps.map((step) => (
+      <li class="sid-path-step">
+        <code class="sid-path-code">{step.code}</code>
+        <div class="sid-path-text">{step.text}</div>
+        {step.status && (
+          <div class="sid-path-status" data-gap={step.gap ? "" : undefined}>
+            <span class="sid-path-icon" aria-hidden="true">{step.gap ? "✕" : "✓"}</span>
+            {step.status}
+          </div>
+        )}
+      </li>
+    ))}
+    <li class="sid-path-step sid-path-end">
+      <div class="sid-path-outcome">The script runs OS commands as the Conductor process.</div>
+    </li>
+  </ol>
+</Figure>
+
+<style>
+  .sid-path {
+    position: relative;
+    max-width: 34rem;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+  /* The rail runs from this dot's center under the next dot (which sits above it). */
+  .sid-path-step:not(.sid-path-end)::after {
+    content: "";
+    position: absolute;
+    top: 0.8125rem;
+    bottom: -2rem;
+    left: 0.4375rem;
+    width: 2px;
+    background: var(--sid-red);
+  }
+  .sid-path-step {
+    position: relative;
+    padding-left: 2.25rem;
+  }
+  .sid-path-step + .sid-path-step {
+    margin-top: 1.5rem;
+  }
+  .sid-path-step::before {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    top: 0.3125rem;
+    left: 0;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 9999px;
+    background: var(--sid-red);
+    box-shadow: 0 0 0 4px hsl(var(--muted));
+  }
+  .sid-path-end::before {
+    top: 0.125rem;
+    left: -0.25rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  /* Explicit line box so the dot's center (0.8125rem) is the code line's center. */
+  .sid-path-code {
+    display: block;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+    font-size: 0.9375rem;
+    line-height: 1.625rem;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+    overflow-wrap: anywhere;
+  }
+  .sid-path-text {
+    margin-top: 0.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.5rem;
+    text-wrap: pretty;
+    color: hsl(var(--muted-foreground));
+  }
+  .sid-path-status {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.375rem;
+    font-weight: 500;
+    text-wrap: pretty;
+    color: hsl(var(--foreground));
+  }
+  .sid-path-icon {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.375rem;
+    height: 1.375rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: hsl(var(--muted));
+    background: var(--sid-good);
+  }
+  [data-gap] .sid-path-icon {
+    background: var(--sid-red);
+  }
+  .sid-path-outcome {
+    font-size: 1.0625rem;
+    line-height: 1.75rem;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+  }
+</style>
